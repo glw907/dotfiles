@@ -1,0 +1,26 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+.VolumeIcon.icns
+.fseventsd
+**/._*
+*/.qlgenerator
+._.com.apple.*
+__MACOSX/
+
+# NeoVim temporary files
+*.swp
+*.swo
+*.swn
+*~
+.netrwhist
+.viminfo
+.vimrc~
+
+# iA Writer backup files
+*.iwzip
