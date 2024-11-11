@@ -1,0 +1,82 @@
+# Starship Configuration
+
+# General Settings
+add_newline = true
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$cmd_duration\
+$line_break\
+$character"""
+
+# Prompt Character
+[character]
+success_symbol = "❯"
+error_symbol = "✗"
+vimcmd_symbol = "❮"
+
+# Username (show only if not the default user)
+[username]
+style_user = "bold yellow"
+show_always = false
+
+# Hostname (show only if on a remote system)
+[hostname]
+ssh_only = true
+style = "bold yellow"
+
+# Directory
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+style = "bold cyan"
+
+# Git Branch
+[git_branch]
+symbol = " "
+style = "bold magenta"
+
+# Git Status
+[git_status]
+style = "bold green"
+conflicted = "🏳"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?"
+stashed = "📦"
+modified = "!"
+staged = "+"
+
+# NodeJS (only show in directories with a Node.js project)
+[nodejs]
+symbol = "⬢ "
+style = "bold green"
+
+# Python (only show in directories with a Python project)
+[python]
+symbol = "🐍 "
+style = "bold green"
+pyenv_version_name = true
+
+# Go (only show in directories with a Go project)
+[golang]
+symbol = "🐹 "
+style = "bold cyan"
+
+# Package Version (shows only if a package.json file is present)
+[package]
+symbol = "📦 "
+style = "bold yellow"
+
+# Kubernetes (show only if within a Kubernetes context)
+[kubernetes]
+symbol = "☸️  "
+style = "bold blue"
+
+# Line Break for cleaner prompt separation
+[line_break]
+format = "\n"

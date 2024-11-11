@@ -1,0 +1,85 @@
+# Initialize Starship prompt
+# Starship provides a customizable, fast, and feature-rich prompt
+eval "$(starship init zsh)"
+
+# Set color scheme for ls and other commands
+# Ensures 'ls' uses colors to distinguish file types
+alias ls='ls -G'  # macOS flag for colored output in 'ls'
+alias ll='ls -lah'  # Common alias for detailed directory listing with hidden files
+
+# Enable command auto-suggestions (requires `zsh-autosuggestions` plugin)
+# Suggestions appear in gray and can be accepted with the right arrow key
+if [[ -f $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+# Syntax highlighting for better readability (requires `zsh-syntax-highlighting` plugin)
+# This highlights commands based on validity and shell syntax
+if [[ -f $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# Enable autojump (quickly navigate to frequently visited directories)
+# Must be installed via Homebrew (`brew install autojump`)
+[ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
+
+# History settings for efficient command recall and editing
+HISTSIZE=5000           # Keep 5000 commands in history
+SAVEHIST=5000           # Save 5000 commands between sessions
+HISTFILE=~/.zsh_history # File to store history
+setopt APPEND_HISTORY   # Append history instead of overwriting
+setopt HIST_IGNORE_ALL_DUPS  # Ignore duplicate commands in history
+setopt SHARE_HISTORY    # Share history across multiple terminal sessions
+
+# Aliases for common commands
+alias gs='git status'                # Shortcuts for git commands
+alias gp='git pull'
+alias gc='git commit'
+alias gco='git checkout'
+
+# Case-insensitive tab completion
+# Allows you to complete commands regardless of case sensitivity
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Set default editor
+export EDITOR="nvim"  # Set to NeoVim or your preferred editor
+
+# PATH settings
+# Add custom paths for Homebrew, core utilities, and other binaries
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:$PATH"
+
+# Key bindings
+# Make Ctrl+R history search more intuitive by using fzf if available
+if command -v fzf > /dev/null; then
+  export FZF_DEFAULT_COMMAND='fd --type f'
+  export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window=down:3:wrap"
+  bindkey '^R' fzf-history-widget
+fi
+
+# Customize the terminal bell
+# Silence the annoying bell sound on error
+export ERROR_BELL=false
+
+# Enable colored man pages for easier readability
+man() {
+  env LESS_TERMCAP_mb=$'\e[1;31m' \
+      LESS_TERMCAP_md=$'\e[1;31m' \
+      LESS_TERMCAP_me=$'\e[0m' \
+      LESS_TERMCAP_se=$'\e[0m' \
+      LESS_TERMCAP_so=$'\e[1;44;33m' \
+      LESS_TERMCAP_ue=$'\e[0m' \
+      LESS_TERMCAP_us=$'\e[1;32m' \
+      man "$@"
+}
+
+# MacOS-specific aliases
+alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"  # Clear DNS cache
+alias o="open ."  # Quick alias to open Finder in the current directory
+
+# Load .zshrc changes without restarting the terminal
+alias reload="source ~/.zshrc"
+
+# Function to make a new directory and navigate into it
+mkcd() {
+  mkdir -p "$1" && cd "$1"
+}
