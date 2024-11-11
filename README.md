@@ -4,6 +4,7 @@ Following is a list of packages to install. This assumes you’ve already instal
 - wezterm
 - nvim
 - starship
+- font-fira-code-nerd-font
 - zsh-syntax-highlighting
 - zsh-autosuggestions
 - autojump
