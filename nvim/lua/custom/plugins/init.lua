@@ -14,11 +14,5 @@ return {
   { 'dhruvasagar/vim-table-mode' }, -- Markdown table editing
 
   -- Vim Pencil for text-focused editing
-  {
-    'reedes/vim-pencil',
-    config = function()
-      vim.g['pencil#textwidth'] = 80 -- Set the preferred text width
-      vim.g['pencil#wrapModeDefault'] = 'soft' -- Enable soft wrapping by default
-    end,
-  },
+  { 'reedes/vim-pencil' },
 }

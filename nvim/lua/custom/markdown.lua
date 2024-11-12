@@ -13,6 +13,14 @@ vim.api.nvim_create_autocmd('FileType', {
 
     -- Enable Vim Pencil for Markdown-specific soft-wrapping
     vim.cmd 'Pencil'
+
+    -- Add a visual guide at 80 columns
+    vim.opt_local.colorcolumn = '80' -- Display a guide at 80 columns
+
+    -- Set wrapping to occur at 80 columns
+    vim.opt_local.textwidth = 80 -- Set preferred text width to 80 columns
+    vim.opt_local.wrap = true -- Enable soft wrapping
+    vim.opt_local.linebreak = true -- Prevent breaking words in the middle
   end,
 })
 
