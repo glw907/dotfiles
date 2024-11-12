@@ -31,6 +31,10 @@ setopt APPEND_HISTORY   # Append history instead of overwriting
 setopt HIST_IGNORE_ALL_DUPS  # Ignore duplicate commands in history
 setopt SHARE_HISTORY    # Share history across multiple terminal sessions
 
+# Aliases to use nvim for vi and vim commands
+alias vi="nvim"
+alias vim="nvim"
+
 # Aliases for common commands
 alias gs='git status'                # Shortcuts for git commands
 alias gp='git pull'

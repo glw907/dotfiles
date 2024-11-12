@@ -2,6 +2,7 @@
 Following is a list of packages to install. This assumes you’ve already installed brew.
 
 - wezterm
+- ripgrep
 - nvim
 - starship
 - font-fira-code-nerd-font
