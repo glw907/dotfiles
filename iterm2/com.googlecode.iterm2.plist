@@ -363,6 +363,8 @@
 	<string>D04AB0BD-2266-4B21-966E-D7E3F06CE0D6</string>
 	<key>HapticFeedbackForEsc</key>
 	<false/>
+	<key>HideScrollbar</key>
+	<true/>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
 	<key>New Bookmarks</key>
