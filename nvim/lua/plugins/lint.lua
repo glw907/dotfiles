@@ -1,60 +1,55 @@
-return {
+-- ============================================================================
+-- NVIM-LINT PLUGIN CONFIGURATION
+--
+-- This plugin provides asynchronous linting for various file types in Neovim.
+-- It is lightweight, highly configurable, and integrates well with other
+-- Neovim tools. This configuration includes specific linters and an autocommand
+-- for triggering linting on certain events.
+--
+-- For more information, see:
+--    https://github.com/mfussenegger/nvim-lint
+-- ============================================================================
 
-  { -- Linting
+return {
+  { -- Asynchronous linting for Neovim
     'mfussenegger/nvim-lint',
+
+    -- Trigger linting setup on file read or new file creation
     event = { 'BufReadPre', 'BufNewFile' },
+
     config = function()
       local lint = require 'lint'
+
+      -- Configure linters by filetype
       lint.linters_by_ft = {
-        markdown = { 'markdownlint' },
+        markdown = { 'markdownlint' }, -- Use `markdownlint` for Markdown files
       }
 
-      -- To allow other plugins to add linters to require('lint').linters_by_ft,
-      -- instead set linters_by_ft like this:
+      -- Example: Allow plugins to extend `linters_by_ft`
+      -- Uncomment the following code to add linters dynamically:
       -- lint.linters_by_ft = lint.linters_by_ft or {}
       -- lint.linters_by_ft['markdown'] = { 'markdownlint' }
-      --
-      -- However, note that this will enable a set of default linters,
-      -- which will cause errors unless these tools are available:
-      -- {
-      --   clojure = { "clj-kondo" },
-      --   dockerfile = { "hadolint" },
-      --   inko = { "inko" },
-      --   janet = { "janet" },
-      --   json = { "jsonlint" },
-      --   markdown = { "vale" },
-      --   rst = { "vale" },
-      --   ruby = { "ruby" },
-      --   terraform = { "tflint" },
-      --   text = { "vale" }
-      -- }
-      --
-      -- You can disable the default linters by setting their filetypes to nil:
+
+      -- Example: Disabling default linters
+      -- Uncomment the following lines to prevent default linters from causing errors:
       -- lint.linters_by_ft['clojure'] = nil
       -- lint.linters_by_ft['dockerfile'] = nil
-      -- lint.linters_by_ft['inko'] = nil
-      -- lint.linters_by_ft['janet'] = nil
       -- lint.linters_by_ft['json'] = nil
-      -- lint.linters_by_ft['markdown'] = nil
-      -- lint.linters_by_ft['rst'] = nil
-      -- lint.linters_by_ft['ruby'] = nil
-      -- lint.linters_by_ft['terraform'] = nil
-      -- lint.linters_by_ft['text'] = nil
 
-      -- Create autocommand which carries out the actual linting
-      -- on the specified events.
+      -- Create an autocommand group for linting
       local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
+
+      -- Set up autocommands to trigger linting
       vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
         group = lint_augroup,
         callback = function()
-          -- Only run the linter in buffers that you can modify in order to
-          -- avoid superfluous noise, notably within the handy LSP pop-ups that
-          -- describe the hovered symbol using Markdown.
+          -- Only lint modifiable buffers to avoid unnecessary noise
           if vim.opt_local.modifiable:get() then
-            lint.try_lint()
+            lint.try_lint() -- Run the linter
           end
         end,
       })
     end,
   },
 }
+-- vim: ts=2 sts=2 sw=2 et

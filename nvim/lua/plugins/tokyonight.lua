@@ -1,19 +1,29 @@
+-- ============================================================================
+-- TOKYONIGHT.NVIM PLUGIN CONFIGURATION
+--
+-- This plugin provides the "tokyonight" colorscheme for Neovim. It includes
+-- several styles (e.g., `storm`, `moon`, `day`, and `night`) and supports
+-- customization of highlights.
+--
+-- For more information, see:
+--    https://github.com/folke/tokyonight.nvim
+-- ============================================================================
+
 return {
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  {
     'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+
+    -- Ensure the colorscheme is loaded before other plugins
+    priority = 1000,
+
     init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+      -- Load the colorscheme
+      -- Available styles include 'tokyonight-night', 'tokyonight-storm',
+      -- 'tokyonight-moon', and 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
 
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
+      -- Example: Customize highlights
+      vim.cmd.hi 'Comment gui=none' -- Disable special formatting for comments
     end,
   },
 }
