@@ -27,8 +27,7 @@ require('lazy').setup({
   require 'plugins/mini',
   require 'plugins/treesitter',
   require 'plugins/comment',
-  require 'plugins/bullets',
-  -- require 'plugins/vim-pencil',
+  require 'plugins/vim-markdown',
 }, {
   ui = {
     -- Use Nerd Font icons if available, otherwise define Unicode icons
