@@ -58,6 +58,7 @@ return {
       -- Define formatters by filetype
       formatters_by_ft = {
         lua = { 'stylua' }, -- Use `stylua` for Lua formatting
+        markdown = { 'prettierd' }, -- Use `prettierd` for Markdown files
 
         -- Example: Multiple formatters for a single filetype
         -- python = { "isort", "black" },

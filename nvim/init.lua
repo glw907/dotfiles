@@ -20,5 +20,4 @@ require 'keymaps' -- Key mappings
 require 'lazy-bootstrap' -- Plugin manager setup
 require 'lazy-plugins' -- Plugin configurations
 
--- Modeline: Ensure consistent formatting
 -- vim: ts=2 sts=2 sw=2 et
