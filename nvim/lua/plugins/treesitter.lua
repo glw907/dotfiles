@@ -49,19 +49,19 @@ return {
 
       indent = {
         enable = true, -- Enable Treesitter-based indentation
-        disable = { 'ruby' }, -- Disable indentation for Ruby
+        disable = { 'markdown' }, -- Disable indentation for Markdown
+      },
+
+      -- Enable incremental selection for better navigation
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = 'gnn', -- Start incremental selection
+          node_incremental = 'grn', -- Expand selection to the next node
+          node_decremental = 'grm', -- Shrink selection
+        },
       },
     },
-
-    -- ============================================================================
-    -- ADDITIONAL MODULES
-    --
-    -- Treesitter provides additional modules to enhance its functionality.
-    -- Explore these modules to see which ones suit your workflow:
-    --    - Incremental Selection: See `:help nvim-treesitter-incremental-selection-mod`
-    --    - Context Viewer: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Text Objects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-    -- ============================================================================
   },
 }
 -- vim: ts=2 sts=2 sw=2 et

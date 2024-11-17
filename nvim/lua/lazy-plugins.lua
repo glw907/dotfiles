@@ -14,10 +14,8 @@
 -- ============================================================================
 
 require('lazy').setup({
-  -- Detect tabstop and shiftwidth automatically
-  'tpope/vim-sleuth',
-
   -- Modular approach: Plugin configurations are included via require statements
+  require 'plugins/vim-sleuth',
   require 'plugins/gitsigns',
   require 'plugins/which-key',
   require 'plugins/telescope',
@@ -28,9 +26,9 @@ require('lazy').setup({
   require 'plugins/todo-comments',
   require 'plugins/mini',
   require 'plugins/treesitter',
-  require 'plugins/vim-sleuth',
   require 'plugins/comment',
-  require 'plugins/vim-markdown',
+  require 'plugins/bullets',
+  -- require 'plugins/vim-pencil',
 }, {
   ui = {
     -- Use Nerd Font icons if available, otherwise define Unicode icons
