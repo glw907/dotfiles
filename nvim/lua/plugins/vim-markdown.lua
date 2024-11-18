@@ -18,12 +18,13 @@ return {
 
     -- Plugin options and settings
     config = function()
-      -- Disable folding by default
-      vim.g.vim_markdown_folding_disabled = 1
-
-      -- Use two spaces for bullet indentation in Markdown lists
-      vim.g.vim_markdown_new_list_item_indent = 2
+      -- Plugin-specific configurations
+      vim.g.vim_markdown_folding_disabled = 1 -- Disable folding
+      vim.g.vim_markdown_new_list_item_indent = 2 -- Two spaces for bullet indentation
+      vim.g.vim_markdown_conceal = 1 -- Enable conceal for a cleaner Markdown look
+      vim.g.vim_markdown_conceal_code_blocks = 0 -- Do not conceal code blocks
     end,
   },
 }
+
 -- vim: ts=2 sts=2 sw=2 et
