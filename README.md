@@ -2,12 +2,14 @@
 
 Ubuntu/Linux Mint configuration backup including shell setup, custom scripts, Claude CLI configuration, and VSCodium settings.
 
+Managed with [GNU Stow](https://www.gnu.org/software/stow/) for automatic symlink management.
+
 ## Contents
 
 - **bash/**: Shell configuration (.bashrc, .profile)
-- **git/**: Git configuration (.gitconfig)
+- **bin/**: Custom utility scripts for ~/.local/bin
 - **claude/**: Claude CLI mode configurations and settings
-- **scripts/**: Custom utility scripts for ~/.local/bin
+- **git/**: Git configuration (.gitconfig)
 - **vscodium/**: VSCodium editor settings and extension list
 - **android/**: Android SDK setup documentation
 - **themes/**: Nord theme setup and installation scripts
@@ -16,19 +18,45 @@ Ubuntu/Linux Mint configuration backup including shell setup, custom scripts, Cl
 ## Quick Setup on New System
 
 ```bash
-# Clone this repository
-cd ~
-git clone https://github.com/glw907/dotfiles.git
-cd dotfiles
+# Install GNU Stow
+sudo apt install -y stow
 
-# Run the setup script
-./setup.sh
+# Clone this repository
+git clone https://github.com/glw907/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+
+# Install desired packages (creates symlinks)
+stow bash bin claude
 
 # Reload shell configuration
 source ~/.bashrc
 ```
 
-## Manual Setup
+## Using Stow
+
+Stow creates symlinks from `~/.dotfiles/` to your home directory automatically:
+
+```bash
+cd ~/.dotfiles
+
+# Install a package (create symlinks)
+stow bash              # Links .bashrc and .profile
+stow bin               # Links scripts to ~/.local/bin/
+stow claude            # Links Claude config to ~/.claude/
+
+# Install multiple packages at once
+stow bash bin claude
+
+# Remove a package (remove symlinks)
+stow -D bash
+
+# Restow (useful after updates)
+stow -R bash
+```
+
+## Manual Setup (Alternative)
+
+If you prefer not to use Stow, you can manually copy files:
 
 ### 1. Shell Configuration
 
@@ -48,7 +76,7 @@ cp git/.gitconfig ~/.gitconfig
 
 ```bash
 mkdir -p ~/.local/bin
-cp scripts/* ~/.local/bin/
+cp bin/.local/bin/* ~/.local/bin/
 chmod +x ~/.local/bin/*
 ```
 
@@ -60,7 +88,7 @@ chmod +x ~/.local/bin/*
 
 # Copy Claude configuration
 mkdir -p ~/.claude
-cp claude/* ~/.claude/
+cp claude/.claude/* ~/.claude/
 ```
 
 ### 5. VSCodium Setup
@@ -87,7 +115,7 @@ Install Nord theme across system (GTK, icons, terminal, VSCodium):
 
 ```bash
 # Automated installation
-cd ~/dotfiles/themes
+cd ~/.dotfiles/themes
 ./setup-nord.sh
 
 # Or see themes/NORD.md for manual installation steps
