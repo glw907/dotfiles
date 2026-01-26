@@ -10,6 +10,8 @@ Ubuntu/Linux Mint configuration backup including shell setup, custom scripts, Cl
 - **scripts/**: Custom utility scripts for ~/.local/bin
 - **vscodium/**: VSCodium editor settings and extension list
 - **android/**: Android SDK setup documentation
+- **themes/**: Nord theme setup and installation scripts
+- **wallpapers/**: Nord-themed desktop wallpapers
 
 ## Quick Setup on New System
 
@@ -78,6 +80,25 @@ cat vscodium/extensions.txt | xargs -L 1 codium --install-extension
 ### 6. Android SDK Setup
 
 See `android/README.md` for detailed Android SDK installation instructions.
+
+### 7. Nord Theme Setup
+
+Install Nord theme across system (GTK, icons, terminal, VSCodium):
+
+```bash
+# Automated installation
+cd ~/dotfiles/themes
+./setup-nord.sh
+
+# Or see themes/NORD.md for manual installation steps
+```
+
+This will install:
+- Nordic GTK theme
+- Papirus icon theme (Nord-compatible)
+- Nord GNOME Terminal colors
+- Nord wallpapers
+- VSCodium Nord theme extension
 
 ## Key Features
 
