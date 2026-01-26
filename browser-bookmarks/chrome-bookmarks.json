@@ -1,0 +1,109 @@
+{
+   "checksum": "777eaa84eaf9f0baa177fa4d82096627",
+   "roots": {
+      "bookmark_bar": {
+         "children": [ {
+            "date_added": "13341517080924764",
+            "date_last_used": "13412461367183216",
+            "guid": "d12926f9-554c-4884-9d27-5ca4a4c06b1c",
+            "id": "5",
+            "name": "Gmail",
+            "type": "url",
+            "url": "https://mail.google.com/mail/u/0/#inbox"
+         }, {
+            "date_added": "13413856876970607",
+            "date_last_used": "13413927265521840",
+            "guid": "7615e90b-83fd-4279-a259-00a5b7f0ab76",
+            "id": "14",
+            "name": "ChatGPT",
+            "type": "url",
+            "url": "https://chatgpt.com/?utm_source=google&utm_medium=paid_search&utm_campaign=GOOG_C_SEM_GBR_Core_CHT_BAU_ACQ_PER_MIX_ALL_NAMER_US_EN_091724&c_id=21714513245&c_agid=169187630042&c_crid=713941893301&c_kwid={keywordid}&c_ims=&c_pms=9033842&c_nw=g&c_dvc=c&gad_source=1&gad_campaignid=21714513245&gbraid=0AAAAA-I0E5d5SQtHREXXGKTkD44ZbTczb&gclid=Cj0KCQiAm9fLBhCQARIsAJoNOcs2MACb9P5e2JEDggG0AxZ-CekNdrzASHFa5zAnDOn93CgcBvzstXwaAh7aEALw_wcB"
+         }, {
+            "date_added": "13338417024052878",
+            "date_last_used": "13413370749844544",
+            "guid": "b0231d28-b3b4-4000-b557-a0f3325be064",
+            "id": "6",
+            "name": "Calendar",
+            "type": "url",
+            "url": "https://calendar.google.com/calendar/u/0/r"
+         }, {
+            "date_added": "13412120512655086",
+            "date_last_used": "0",
+            "guid": "36570c04-4812-42d1-b48a-b20ca432d616",
+            "id": "7",
+            "name": "Credit Counseling",
+            "type": "url",
+            "url": "https://mail.google.com/mail/u/0/#chat/space/AAQAws04BOw"
+         }, {
+            "date_added": "13350507803148901",
+            "date_last_used": "13408055967900434",
+            "guid": "d8851a9f-b71f-45c4-85cc-6d68c0633de1",
+            "id": "8",
+            "name": "Docs",
+            "type": "url",
+            "url": "https://docs.google.com/document/u/0/?ec=asw-docs-hero-goto&tgif=d"
+         }, {
+            "date_added": "13413501504954431",
+            "date_last_used": "0",
+            "guid": "4cded8ee-e08f-4f1d-960c-74f2b2ea7fef",
+            "id": "9",
+            "name": "Neoserra",
+            "type": "url",
+            "url": "https://aksbdc.neoserra.com/"
+         }, {
+            "date_added": "13413502351237825",
+            "date_last_used": "13413849632485130",
+            "guid": "ac120b03-2a59-48ec-888b-f64a4b398005",
+            "id": "10",
+            "name": "Credit Counseling",
+            "type": "url",
+            "url": "https://drive.google.com/drive/folders/0AOjUvo_mR-VbUk9PVA"
+         }, {
+            "date_added": "13343532072251510",
+            "date_last_used": "13413849968215536",
+            "guid": "522a7c3d-0779-424d-98ec-b7aa6c5443bf",
+            "id": "11",
+            "name": "UAOnline",
+            "type": "url",
+            "url": "https://www.alaska.edu/uaonline/"
+         }, {
+            "date_added": "13412721831013247",
+            "date_last_used": "0",
+            "guid": "80ae8a47-a5e1-4162-b8c7-5156a711fa2c",
+            "id": "12",
+            "name": "Syncthing",
+            "type": "url",
+            "url": "http://127.0.0.1:8384/"
+         } ],
+         "date_added": "13413848109628544",
+         "date_last_used": "0",
+         "date_modified": "13413856884589038",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "1",
+         "name": "Bookmarks bar",
+         "type": "folder"
+      },
+      "other": {
+         "children": [  ],
+         "date_added": "13413848109628544",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "2",
+         "name": "Other bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13413848109628544",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "3",
+         "name": "Mobile bookmarks",
+         "type": "folder"
+      }
+   },
+   "sync_metadata": "Cm8KTwiIgQISSSAAkgE2CjQKDmNocm9tZV9zeW5jX2JtEgU1MSFibRoSCZK84SBNSQYAEZK84SBNSQYAKe/W4iBNSQYA6gELCOGw3ssGEIjGr1wSACoYSUllTldMQTZsbVp0Y3liM3l0K3p1QT09SAMSwwEIAhK+AQocWWNTVG9udkVTUHdxQ3M0TDJjclZodjY4TDk4PRJmWjpBRHF0QVp6bExMNlNCUEhUYVdhV2R1RlFzNS9IenFpWHV6b0txWGZGM1V0dDk2ZEZUK2lhMG10R2diZG5kSFVmSnNJN3JEeWFRQ0QvejdOSmRndFN6aGp2SnQxclpCSGZLdz09GAAgACgAMKTE+tSk9ZEDOABAAEocb1BWa2h3QlJiVjY1S0NXUjIrSU9OSFdvT3U4PVoAZQAAAAASwwEIAxK+AQocbmpnRHU4OGVDcnZYcDg2cEQ3ZkhHY3FGcDg4PRJmWjpBRHF0QVp4NmNnQWZlTWZUTnNYMEkyTkhwTVIrQTRlTDgzTUJUUDNUR01CTEdGSzFjNVlPWHpVeFdrVW4xNkdOdGtGWUEwV1cybGQ2eDdKSEVNaWFBd2JPcFZXTldDaXg5Zz09GAAgACgAMKTE+tSk9ZEDOABAAEoceXpOQjAxY241NEE3Y1JVMHVUKy9QZ21UdFVvPVoAZQAAAAAS7AEIChLnAQocNzBubUVCcTJPblAwN2pCRzVtMTlEblF2NmJBPRJmWjpBRHF0QVp5cFhLWUVydlpqMW9wU21URnNTcXpWMVQ5bm1rbjlkWGVOY0hHRDRRelFpalRsSkJ1REl1Uy9sTlJUZ09tVS9oR2ZYQVJZRzhnY2cyamdoV0MzMld4bnllM3c3UT09GAAgACgAMNWQ0OLBnZIDOIaf0pK+M0CGn9KSvjNKHDhDdU02UkxCV1JxeEFHWFVOVkpQZVA3MFJkZz1aHyIdmUh5aThxWnd1alRhNFVBbTIyTjZGVVlUUHUzcz1lamTuEhLsAQgGEucBChxJT08reUZZL2VmR29QaitwS0sxUjEwTzNNMFk9EmZaOkFEcXRBWnlwWEtZRXJ2Wmoxb3BTbVRGc1NxelZrSlB4RExYUFFDMVdndmdLZXpIM25tK1hwdzdZRlQ3aiswZnhFRTVNVHFDK2lFUTVQTURoaXlQZ3dEUVdZNzk5Y2NvZVh3PT0YACABKAEwgPOt8MqnkgM4tsiVt6YxQODz1Le/M0occjUvYW04ZnRlcTVKQkRvSWxnelFWdFh3bzNVPVofIh17QUx0UXp5bnZGbTZoc1FQZHJOSHB6a1dHSDBrPWWqJE4/EuwBCAkS5wEKHGFtQmN1enNNVkRwaC82YWdoNHFMWW1heWdKQT0SZlo6QURxdEFaeXBYS1lFcnZaajFvcFNtVEZzU3F6Vkh2LzEyMHNTSHcwREVNMDRwb3FRTVQwWHdRRWpWUzYyR1FDQkFmSGhsazBiT24xT2haV2NrKzVhKzhCd1l6UEdJbHZ4ZlE9PRgAIAAoADDjy8XDvp2SAzi6y56SvjNAusuekr4zShwxdEk1U3ZlN25RMnE0dXRiL2grdGhKRldoaHM9Wh8iHZZYaUhKdG9OaDlZWkxFbVR2enZPQlZpa1Z3c0E9ZWJ7HSASqwEIARKmAQoceXhKLzZmdmtlY3I3a3A1RVF6QjR0V0xwZGJFPRJOWjpBRHF0QVp4R213cmtYQXV5QkMydTJ2VUk1TllxTDdMTUFLYmp3bGdiT1lJMFJwV2dlZlJCU05hR0VuQ1lWNXJDcHFWbHZnWlYveGFXGAAgACgAMKTE+tSk9ZEDOABAAEocYVJDV0xnaEY5YjVJbnFLSUR2dUovanZRa0ZjPVoAZQAAAAAS7AEICBLnAQocdld6WGcyaTVtMjJGVS9ZWHRrN0diU3FGc3VRPRJmWjpBRHF0QVp5cFhLWUVydlpqMW9wU21URnNTcXpWc3lYa0Fnemt3N1pRMUQ5bElMS2tvWTlZNXlsNTZxa21Sc2NWODQ0RUtJZFR0UkI1eWpKeFFYOW5BRWprM0ROY3ZOd0RKZz09GAAgACgAMMvOn6mA/5ADOI2UwLzTMUCNlMC80zFKHFJZZnlSbVpBRlVOWHkwc2djVmtCQklZZkJJZz1aHyIdkTFrRlRnUDhtLzBneElBNG9YMk9FSDZ5REp3Yz1lOEjzGxLrAQgFEuYBChxSaUdtdGdpekl6bmJRZWQxYzhGZ1A5YW9rQUE9EmZaOkFEcXRBWnlwWEtZRXJ2Wmoxb3BTbVRGc1NxelZ5UUdCMDZJc2lYL0twVWlYek9IVGJJSjBmY3ZhK2REVWNJZTQyUElIMGwzMzVaNDMwMmV1TnRJOVFUTlFpSDVucDZyQ3lnPT0YACAAKAAw24qC2Jv/kQM4gf7YlaUxQIH+2JWlMUocMm81eElkZElhT0pISFFZVUlYemxldHJwMmRJPVoeIhxPRHBSYVhyOGZHRTA4ZWdmeGsvK3YyOWdUd289ZSI5mDYS7AEICxLnAQocQ3ZBc0thK3dqNnkwOHFkK2JKdEh5cDRXUy9vPRJmWjpBRHF0QVp5cFhLWUVydlpqMW9wU21URnNTcXpWV1Q4VlVNZFdtbzlGWkwrSFJGMS9NYUtyc2JrMG41bnhjc1B5T3pPZW83TmFwL0w3L3Fld3lzQzhQVmJkOWdNOTQxZnZrQT09GAAgACgAMMOKvJ3V/5EDOLyqm765MUC8qpu+uTFKHDFyNXZ6cmlBSzlkQXFlWTFEZ3lzcmlVTlZvRT1aHyId/3ZaZzE4L2puZXlCWXNlZzU4cXJaM2xXRW1rYz1lzK9XVxLsAQgOEucBChxZaDVHWlJnVEVwTVNaeXR6Um1vMXZkMnF4ZEE9EmZaOkFEcXRBWnlwWEtZRXJ2Wmoxb3BTbVRGc1NxelY1T3ppejZlcDZlQ3RlYko4WkRrcUpQODYySFpjQlpzaXFnZWcrZW82R3RyK2Y1T0dNYTdCNGhPNWV0S1FIRnloNDFoWkJRPT0YACADKAMwgumVsuqnkgM4q+PYu78zQO2e2bu/M0ocZS9NYXNNaU1nTTdYYitLc2krR2JFRWJxSXdBPVofIh1lRmZuYWYrSHcvU2xlbUZ4T09TNHJQOW5TbHE0PWX4kgPVEu0BCAwS6AEKHEhldHZIRXgwTklzaGtsd0pONUJEaWFFZmUzYz0SZlo6QURxdEFaeXBYS1lFcnZaajFvcFNtVEZzU3F6VjVMdnM4VCthbG9SeVBYVTlGbU9wenEvWXlxbDlheklnQUR2Y2lDV3ZKbkNTMC9lWWt1Q1RyUEY5dkRwZDZEaCs4TlhtS3c9PRgAIAAoADDspqnUoImSAzjliLueuzNA5Yi7nrszShw4aUZscEdvN2RTMTM1cGowaDBpSVpMcU1Uekk9WiAiHv+7azJDQTgvdW1GZHBqNE1kQ0lhVWJZL2kvdFhVPWVP6B9TEuwBCAcS5wEKHGlTenpGalZRajZPdll0TUFERGo5M1VZUzFHMD0SZlo6QURxdEFaeXBYS1lFcnZaajFvcFNtVEZzU3F6VjlvR3VOWmhWbjhUZDJDWDcvMVVmQzNzbzExTUJQTlZ2VGVVNytvM2p4YnJNMG0yWGVUTUU0dzVZOUs1NUZ1WjVYN2hOb2c9PRgAIAAoADCyl/H/pfWRAziPwd3/uDNAj8Hd/7gzShw2T2d6LzhvcnVzd2NVYW52UngzTUNBcm9zN1k9Wh8iHYZLUVB5L0hKMm5hS1NMTVlpcEkrZkQ5RVhnb1E9ZSI5mDYwATgA",
+   "version": 1
+}
