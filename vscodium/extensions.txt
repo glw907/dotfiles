@@ -1,0 +1,9 @@
+alefragnani.project-manager
+anthropic.claude-code
+budparr.language-hugo-vscode
+davidanson.vscode-markdownlint
+formulahendry.auto-close-tag
+formulahendry.auto-rename-tag
+mhutchie.git-graph
+redhat.vscode-yaml
+yzhang.markdown-all-in-one

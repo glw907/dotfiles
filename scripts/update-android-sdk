@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Update Android SDK components
+# Usage: update-android-sdk
+#
+# Checks for updates to all installed Android SDK components including:
+# - Platform tools (adb, fastboot)
+# - Build tools
+# - Platforms
+# - Command-line tools
+#
+# Requires ANDROID_HOME to be set in environment.
+
+# Color output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Check if ANDROID_HOME is set
+if [[ -z "${ANDROID_HOME:-}" ]]; then
+    echo -e "${RED}ERROR: ANDROID_HOME is not set${NC}"
+    echo "Please ensure Android SDK is installed and ANDROID_HOME is configured in ~/.bashrc"
+    exit 1
+fi
+
+# Check if sdkmanager exists
+if ! command -v sdkmanager &> /dev/null; then
+    echo -e "${RED}ERROR: sdkmanager not found${NC}"
+    echo "Expected location: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+    exit 1
+fi
+
+echo -e "${GREEN}Checking for Android SDK updates...${NC}"
+echo ""
+
+# Check for updates and capture output
+if sdkmanager --update; then
+    echo ""
+    echo -e "${GREEN}✓ Android SDK components updated successfully${NC}"
+    echo ""
+    echo "Current adb version:"
+    adb version 2>/dev/null || echo "adb not found"
+else
+    echo ""
+    echo -e "${YELLOW}Note: Update check completed with warnings (this is usually normal)${NC}"
+fi
+
+echo ""
+echo "To see all installed components, run: sdkmanager --list"
