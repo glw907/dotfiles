@@ -83,13 +83,20 @@ else
 fi
 
 echo ""
+echo "📁 Installing wallpapers..."
+mkdir -p ~/Pictures/Wallpapers
+cp "$DOTFILES_DIR/wallpapers/"*.png ~/Pictures/Wallpapers/ 2>/dev/null || print_warning "No wallpapers found to install"
+print_status "Wallpapers installed to ~/Pictures/Wallpapers"
+
+echo ""
 echo "✅ Dotfiles setup complete!"
 echo ""
 echo "📝 Next steps:"
 echo "   1. Reload your shell: source ~/.bashrc"
 echo "   2. Install Claude CLI if needed: https://docs.claude.ai/docs/claude-code"
 echo "   3. Install VSCodium if needed: https://vscodium.com/"
-echo "   4. Review android/README.md for Android SDK setup"
-echo "   5. Update git user info: git config --global user.name \"Your Name\""
-echo "   6.                       git config --global user.email \"your@email.com\""
+echo "   4. Install Nord theme: cd $DOTFILES_DIR/themes && ./setup-nord.sh"
+echo "   5. Review android/README.md for Android SDK setup"
+echo "   6. Update git user info: git config --global user.name \"Your Name\""
+echo "   7.                       git config --global user.email \"your@email.com\""
 echo ""
