@@ -7,13 +7,13 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/) for automatic symlin
 ## Contents
 
 - **bash/**: Shell configuration (.bashrc, .profile)
-- **bin/**: Custom utility scripts for ~/.local/bin
-- **claude/**: Claude CLI mode configurations and settings
+- **bin/**: System utility scripts (update-android-sdk)
 - **git/**: Git configuration (.gitconfig)
 - **vscodium/**: VSCodium editor settings and extension list
 - **android/**: Android SDK setup documentation
 - **themes/**: Nord theme setup and installation scripts
 - **wallpapers/**: Nord-themed desktop wallpapers
+- **sync-dotfiles.sh**: Health check script for tracking drift
 
 ## Quick Setup on New System
 
@@ -26,7 +26,7 @@ git clone https://github.com/glw907/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
 # Install desired packages (creates symlinks)
-stow bash bin claude
+stow bash bin vscodium
 
 # Reload shell configuration
 source ~/.bashrc
@@ -42,10 +42,10 @@ cd ~/.dotfiles
 # Install a package (create symlinks)
 stow bash              # Links .bashrc and .profile
 stow bin               # Links scripts to ~/.local/bin/
-stow claude            # Links Claude config to ~/.claude/
+stow vscodium          # Links VSCodium settings.json
 
 # Install multiple packages at once
-stow bash bin claude
+stow bash bin vscodium
 
 # Remove a package (remove symlinks)
 stow -D bash
@@ -80,18 +80,7 @@ cp bin/.local/bin/* ~/.local/bin/
 chmod +x ~/.local/bin/*
 ```
 
-### 4. Claude CLI Setup
-
-```bash
-# Install Claude CLI first (if not already installed)
-# Visit: https://docs.claude.ai/docs/claude-code
-
-# Copy Claude configuration
-mkdir -p ~/.claude
-cp claude/.claude/* ~/.claude/
-```
-
-### 5. VSCodium Setup
+### 4. VSCodium Setup
 
 ```bash
 # Install VSCodium first
@@ -105,11 +94,11 @@ cp vscodium/settings.json ~/.config/VSCodium/User/
 cat vscodium/extensions.txt | xargs -L 1 codium --install-extension
 ```
 
-### 6. Android SDK Setup
+### 5. Android SDK Setup
 
 See `android/README.md` for detailed Android SDK installation instructions.
 
-### 7. Nord Theme Setup
+### 6. Nord Theme Setup
 
 Install Nord theme across system (GTK, icons, terminal, VSCodium):
 
@@ -132,27 +121,31 @@ This will install:
 
 ### Shell Aliases & Functions
 
-- `cld` - Start Claude CLI mode with optional sudo caching
-- `research` - Start Claude in research mode (Opus model)
-- `blog` - Quick access to Hugo blog development
+- `blog` - Quick access to Hugo blog development (`cd ~/Projects/907-life && codium . && hugo server -D`)
 - `newpost` - Create new blog post with date prefix
 - `blogpush` - Commit and push blog changes
 - `blogdeploy` - Deploy blog to Cloudflare
 
-### Claude Sudo Helper
+### Modal Claude Integration
 
-The configuration includes a sudo helper that caches your password during Claude sessions:
+Modal Claude scripts are maintained in a separate repository (`~/Projects/modal-claude/`) and symlinked to `~/.local/bin/`:
 
-- Start Claude with sudo caching: `cld -s`
-- Password is automatically cleared when session ends
-- Uses `SUDO_ASKPASS` for non-interactive prompts
+**Mode Launchers:**
+- `cld` - CLI mode (execution and system changes)
+- `cld-arch` - Architecture mode (design and scaffolding)
+- `cld-research` - Research mode (external research)
+- `cld-write` - Write mode (documentation and prose)
+- `cld-critic` - Critic mode (media recommendations)
 
-### Custom Scripts
+**Helper Scripts:**
+- `claude-askpass` - SUDO_ASKPASS helper for Claude sessions
+- `claude-sudo-clear` - Clears cached sudo password
 
-- **claude-askpass**: SUDO_ASKPASS helper for Claude sessions
-- **claude-sudo-clear**: Clears cached sudo password
-- **cld**: Enhanced Claude CLI launcher with sudo support
-- **research**: Claude research mode launcher
+See: [github.com/glw907/modal-claude](https://github.com/glw907/modal-claude)
+
+### System Utility Scripts
+
+Scripts tracked in this repository:
 - **update-android-sdk**: Android SDK component updater
 
 ## System Information
@@ -172,12 +165,43 @@ The .bashrc includes shortcuts for managing the 907.life Hugo blog:
 - Create posts: `newpost YYYY-MM-DD-title`
 - Deploy: `npx wrangler deploy`
 
+## Script Distribution Strategy
+
+Configuration and scripts are distributed across two repositories:
+
+**This repository (`~/.dotfiles/`)** - System configuration
+- Shell config (bash)
+- Editor settings (vscodium)
+- Git configuration
+- System utilities (`update-android-sdk`)
+
+**Modal Claude (`~/Projects/modal-claude/`)** - Application code
+- Mode launchers (`cld`, `cld-arch`, `cld-research`, `cld-write`, `cld-critic`)
+- Claude-specific helpers (`claude-askpass`, `claude-sudo-clear`)
+
+This separation keeps system configuration portable while maintaining Modal Claude as versioned application code.
+
+## Maintenance
+
+Run the sync script to check for drift and update tracked files:
+```bash
+~/.dotfiles/sync-dotfiles.sh
+```
+
+This checks:
+- Stow package symlink status
+- Git config changes (auto-copies if changed)
+- VSCodium extension changes
+- Uncommitted changes in the repository
+
+CLI mode automatically runs this when making configuration changes.
+
 ## Notes
 
-- The VSCodium settings.json is intentionally minimal (empty object)
-- Extensions are listed in `vscodium/extensions.txt` for easy batch installation
-- Claude configuration includes both CLI mode and research mode setups
-- Sudo helper scripts require proper permissions (mode 700 or 600)
+- VSCodium settings.json is Stow-managed (symlinked)
+- Extensions are listed in `vscodium/extensions.txt` (manual sync via script)
+- Git config is NOT stowed - manually synced via `sync-dotfiles.sh`
+- Modal Claude scripts are separate - see modal-claude repository
 
 ## License
 
