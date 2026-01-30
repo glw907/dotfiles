@@ -1,3 +1,9 @@
 [user]
 	name = glw907
 	email = geoff-login@907.life
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

@@ -117,13 +117,13 @@ if ! shopt -oq posix; then
 fi
 export PATH="$HOME/.local/bin:$PATH"
 # Claude mode aliases
-# cld is now a script at ~/.local/bin/cld (prompts for sudo password on start)
-# research is now a script at ~/.local/bin/research
+# Modal Claude launchers at ~/.local/bin/cld*
+# cld, cld-arch, cld-research, cld-write, cld-critic
 
 # Claude sudo helper setup
 export SUDO_ASKPASS="$HOME/.local/bin/claude-askpass"
 
-# Claude wrapper function - clears sudo token on exit if it was used
+# Claude wrapper function - clears sudo token on exit
 claude() {
     command claude "$@"
     claude-sudo-clear 2>/dev/null
@@ -134,3 +134,7 @@ alias blog='cd ~/Projects/907-life && codium . && hugo server -D'
 alias newpost='cd ~/Projects/907-life && hugo new posts/$(date +%Y-%m-%d)-'
 alias blogpush='cd ~/Projects/907-life && git add -A && git commit -m "Update site content" && git push'
 alias blogdeploy='cd ~/Projects/907-life && npx wrangler deploy'
+
+# Android SDK
+export ANDROID_HOME="$HOME/Android"
+export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
