@@ -32,10 +32,11 @@ The Writing profile uses these settings for optimal readability:
 
 ```json
 {
-  "editor.fontFamily": "'iA Writer Quattro', 'iA Writer Quattro S', sans-serif",
-  "editor.fontSize": 18,
-  "editor.lineHeight": 1.6,
+  "editor.fontFamily": "'JetBrains Mono', monospace",
+  "editor.fontSize": 16,
+  "editor.lineHeight": 1.7,
   "editor.fontLigatures": false,
+  "editor.fontWeight": "400",
   
   "editor.lineNumbers": "off",
   "editor.renderLineHighlight": "none",
