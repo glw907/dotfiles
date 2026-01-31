@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Launch VSCodium in Writing mode
+# Usage: write [file]
+
+# If file provided, open it; otherwise open current directory
+if [ -n "$1" ]; then
+    codium --profile "Writing" "$1"
+else
+    codium --profile "Writing" .
+fi

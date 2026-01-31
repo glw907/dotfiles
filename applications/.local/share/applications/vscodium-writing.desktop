@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VSCodium Writing
+GenericName=Markdown Editor
+Comment=Distraction-free writing environment
+Exec=codium --profile "Writing" %F
+Icon=text-x-markdown
+Terminal=false
+Categories=Office;TextEditor;
+MimeType=text/markdown;text/x-markdown;
+Keywords=markdown;writing;prose;vscodium;
