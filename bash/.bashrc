@@ -145,3 +145,9 @@ export NVM_DIR="$HOME/.nvm"
 
 # Cloudflare API Token (for DNS and Workers management across projects)
 export CLOUDFLARE_API_TOKEN=Bmk6ADrx-4MYLwPbyx4dLziVbcJxRTRiB2U_7qOd
+
+# SSH Agent (auto-start for GitHub authentication)
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)" > /dev/null
+    ssh-add ~/.ssh/id_ed25519 2>/dev/null
+fi
