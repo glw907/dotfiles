@@ -142,3 +142,6 @@ export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Cloudflare API Token (for DNS and Workers management across projects)
+export CLOUDFLARE_API_TOKEN=Bmk6ADrx-4MYLwPbyx4dLziVbcJxRTRiB2U_7qOd
