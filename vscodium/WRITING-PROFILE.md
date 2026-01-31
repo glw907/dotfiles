@@ -1,15 +1,16 @@
 # VSCodium Writing Profile
 
-A dedicated VSCodium profile for distraction-free Markdown writing, designed to provide an iA Writer-like experience.
+A distraction-free Markdown writing environment inspired by iA Writer.
 
 ## Overview
 
-The "Writing" profile is a completely separate VSCodium configuration that:
-- Uses iA Writer Quattro font for readable typography
-- Provides inline Markdown rendering (bold appears bold, italics rendered, etc.)
-- Minimizes UI chrome for distraction-free writing
-- Centers text with comfortable padding for optimal readability
-- Is **opt-in only** - never affects regular coding workflow
+The "Writing" profile provides:
+- iA Writer Mono font at 20px for optimal readability
+- Nord theme for muted, comfortable colors matching your system
+- Centered layout with 80-character line width
+- Zen Mode for complete focus
+- Bold headers for visual hierarchy
+- Clean, minimal UI with no distractions
 
 ## Entry Points
 
@@ -26,14 +27,27 @@ The `write` command is tracked in `~/.dotfiles/bin/.local/bin/write`
 
 Desktop launcher is tracked in `~/.dotfiles/applications/.local/share/applications/vscodium-writing.desktop`
 
-## Profile Settings (Current Configuration)
+## Quick Start
 
-The Writing profile uses these settings for optimal readability:
+1. **Launch Writing mode:**
+   ```bash
+   write myfile.md
+   ```
+
+2. **Enter Zen Mode:** Press `Ctrl+K` then `Z`
+
+3. **Exit Zen Mode:** Press `Escape` twice
+
+4. **Toggle menu bar:** Press `Alt` (if needed)
+
+## Profile Settings (Final Configuration)
 
 ```json
 {
-  "editor.fontFamily": "'JetBrains Mono', monospace",
-  "editor.fontSize": 16,
+  "workbench.colorTheme": "Nord",
+  
+  "editor.fontFamily": "'iA Writer Mono S', 'iA Writer Mono V', monospace",
+  "editor.fontSize": 20,
   "editor.lineHeight": 1.7,
   "editor.fontLigatures": false,
   "editor.fontWeight": "400",
@@ -48,9 +62,16 @@ The Writing profile uses these settings for optimal readability:
   "editor.glyphMargin": false,
   "editor.folding": false,
   "editor.renderIndentGuides": false,
+  "editor.guides.indentation": false,
+  "editor.guides.bracketPairs": false,
+  "editor.guides.bracketPairsHorizontal": false,
+  "editor.guides.highlightActiveIndentation": false,
+  "editor.guides.highlightActiveBracketPair": false,
+  "editor.rulers": [],
+  "editor.renderWhitespace": "none",
   "breadcrumbs.enabled": false,
   
-  "editor.wordWrap": "bounded",
+  "editor.wordWrap": "wordWrapColumn",
   "editor.wordWrapColumn": 80,
   "editor.wrappingIndent": "same",
   
@@ -64,10 +85,44 @@ The Writing profile uses these settings for optimal readability:
   "workbench.activityBar.location": "hidden",
   "workbench.statusBar.visible": true,
   "workbench.editor.showTabs": "none",
+  "workbench.editor.tabCloseButton": "off",
+  "workbench.editor.tabSizing": "shrink",
   "workbench.sideBar.location": "right",
-  "workbench.editor.centered": true,
-  "workbench.editor.centeredLayoutAutoResize": false,
+  "workbench.startupEditor": "none",
   "window.menuBarVisibility": "toggle",
+  "window.title": "",
+  "window.titleBarStyle": "custom",
+  
+  "workbench.editor.centeredLayoutFixedWidth": true,
+  
+  "workbench.colorCustomizations": {
+    "editorGroup.border": "#00000000",
+    "editorPane.background": "#2e3440",
+    "sideBar.border": "#00000000",
+    "panel.border": "#00000000",
+    "tab.border": "#00000000",
+    "tab.activeBorder": "#00000000",
+    "tab.activeBorderTop": "#00000000",
+    "tab.unfocusedActiveBorder": "#00000000",
+    "tab.unfocusedActiveBorderTop": "#00000000",
+    "editorGroupHeader.tabsBackground": "#00000000",
+    "editorGroupHeader.tabsBorder": "#00000000",
+    "editorGroupHeader.border": "#00000000"
+  },
+  
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "markup.heading",
+        "settings": {
+          "fontStyle": "bold"
+        }
+      }
+    ]
+  },
+  
+  "security.workspace.trust.enabled": false,
+  "security.workspace.trust.untrustedFiles": "open",
   
   "zenMode.fullScreen": false,
   "zenMode.centerLayout": true,
@@ -77,55 +132,33 @@ The Writing profile uses these settings for optimal readability:
   "zenMode.silentNotifications": true,
   "zenMode.restore": true,
   
-  "markdownInlineEditor.decorations.ghostFaintOpacity": 0.25,
-  "markdownInlineEditor.emojis.enabled": true,
+  "cSpell.language": "en",
   
-  "cSpell.language": "en"
+  "[markdown]": {
+    "editor.guides.indentation": false,
+    "editor.guides.bracketPairs": false,
+    "editor.rulers": [],
+    "editor.renderIndentGuides": false,
+    "editor.renderWhitespace": "none"
+  }
 }
 ```
 
 ## Installed Extensions
 
-- **Markdown Inline Editor** (`CodeSmith.markdown-inline-editor-vscode`) - Inline rendering with 3-state syntax hiding
+- **Nord Theme** (`arcticicestudio.nord-visual-studio-code`) - Muted Arctic color palette
 - **Code Spell Checker** (`streetsidesoftware.code-spell-checker`) - Prose spell checking
-- **Markdown All in One** (includes word count, table of contents, etc.)
-
-## Customization Tips
-
-### Adjust padding
-Change vertical breathing room:
-```json
-"editor.padding.top": 60,
-"editor.padding.bottom": 60,
-```
-
-### Wider text column
-For longer lines:
-```json
-"editor.wordWrapColumn": 90,
-```
-
-### Font size
-Adjust for your display:
-```json
-"editor.fontSize": 16,  // or 20, 22, etc.
-```
+- **Markdown All in One** - Markdown editing enhancements
 
 ## Dependencies
 
-### iA Writer Quattro Fonts
-Location: `~/.local/share/fonts/ia-writer-quattro/`
+### iA Writer Fonts
+Location: `~/.local/share/fonts/ia-writer-mono/`
 
-To install fonts:
-```bash
-mkdir -p ~/.local/share/fonts/ia-writer-quattro
-# Download from https://github.com/iaolo/iA-Fonts
-# Copy Static/*.ttf and Variable/*.ttf to ~/.local/share/fonts/ia-writer-quattro/
-fc-cache -fv ~/.local/share/fonts/ia-writer-quattro/
-```
+Includes both Static and Variable font variants. Installed from [iA Fonts GitHub](https://github.com/iaolo/iA-Fonts).
 
 ### Pandoc (for export)
-Document export functionality requires Pandoc and XeLaTeX:
+Document export functionality:
 
 ```bash
 sudo apt install pandoc texlive-xetex
@@ -138,6 +171,29 @@ pandoc input.md -o output.pdf --pdf-engine=xelatex
 pandoc input.md -o output.rtf
 ```
 
+## Features
+
+### Zen Mode (Recommended)
+- **Enter:** `Ctrl+K` then `Z`
+- **Exit:** `Escape` twice
+- Provides centered layout with generous margins
+- Hides all UI distractions
+- Status bar remains visible for word count
+
+### Typography
+- **Font:** iA Writer Mono at 20px
+- **Line height:** 1.7 for comfortable reading
+- **Line width:** 80 characters (optimal for prose)
+- **Headers:** Bold with Nord theme colors
+
+### UI Minimalism
+- No line numbers
+- No scrollbars (scroll with trackpad/mouse wheel)
+- No minimap
+- No file tree (unless manually opened)
+- No tabs
+- Clean margins
+
 ## Philosophy
 
 **Writing mode is explicitly opt-in.**
@@ -147,6 +203,29 @@ pandoc input.md -o output.rtf
 - Only files opened via `write` command or desktop launcher use Writing profile
 - The two workflows are completely isolated
 
+## Customization
+
+### Font Size
+Adjust in settings.json:
+```json
+"editor.fontSize": 22,  // Larger
+"editor.fontSize": 18,  // Smaller
+```
+
+### Line Width
+Adjust column width:
+```json
+"editor.wordWrapColumn": 90,  // Wider
+"editor.wordWrapColumn": 70,  // Narrower
+```
+
+### Padding
+Adjust vertical breathing room:
+```json
+"editor.padding.top": 60,
+"editor.padding.bottom": 60,
+```
+
 ## Profile Location
 
 Profile settings are stored in:
@@ -155,9 +234,8 @@ Profile settings are stored in:
 - Profile registry: `~/.config/VSCodium/User/globalStorage/storage.json`
 
 Changes to profile settings are local to your machine (not tracked in dotfiles).
-If you modify the Writing profile settings, update this document with the new JSON.
 
 ## See Also
 
-- Full implementation plan: `~/Projects/vscodium-writing/IMPLEMENTATION_PLAN.md`
+- Original implementation plan: `~/Projects/vscodium-writing/IMPLEMENTATION_PLAN.md`
 - Dotfiles sync script: `~/.dotfiles/sync-dotfiles.sh`
