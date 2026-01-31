@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
-# Launch VSCodium in Writing mode
-# Usage: write [file]
+# Launch VSCodium in Writing mode with Zen mode enabled
 
 # If file provided, open it; otherwise open current directory
 if [ -n "$1" ]; then
-    codium --profile "Writing" "$1"
+    codium --profile "Writing" "$1" &
 else
-    codium --profile "Writing" .
+    codium --profile "Writing" . &
 fi
+
+# Wait for VSCodium to start, then trigger Zen mode
+sleep 2
+xdotool search --name "VSCodium" windowactivate --sync key ctrl+k z
