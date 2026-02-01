@@ -129,11 +129,10 @@ claude() {
     claude-sudo-clear 2>/dev/null
 }
 
-# 907.life blog shortcuts
-alias blog='cd ~/Projects/907-life && codium . && hugo server -D'
-alias newpost='cd ~/Projects/907-life && hugo new posts/$(date +%Y-%m-%d)-'
-alias blogpush='cd ~/Projects/907-life && git add -A && git commit -m "Update site content" && git push'
-alias blogdeploy='cd ~/Projects/907-life && npx wrangler deploy'
+# Hugo blog management functions (works across all blogs in ~/Projects)
+if [ -f ~/.bash_blog_functions ]; then
+    . ~/.bash_blog_functions
+fi
 
 # Android SDK
 export ANDROID_HOME="$HOME/Android"

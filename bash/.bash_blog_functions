@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+# Hugo blog management functions - work across multiple blogs in ~/Projects
+
+# Helper: Detect current Hugo blog or use provided name
+_get_blog_dir() {
+    local blog_name="$1"
+
+    # If in a Hugo project directory, use it
+    if [ -f "hugo.toml" ] || [ -f "config.toml" ] || [ -f "config.yaml" ]; then
+        pwd
+        return 0
+    fi
+
+    # If blog name provided, use it
+    if [ -n "$blog_name" ]; then
+        local blog_dir="$HOME/Projects/$blog_name"
+        if [ -d "$blog_dir" ]; then
+            echo "$blog_dir"
+            return 0
+        else
+            echo "Error: Blog '$blog_name' not found in ~/Projects" >&2
+            return 1
+        fi
+    fi
+
+    # Interactive selection
+    echo "Available Hugo blogs:" >&2
+    local blogs=($(find ~/Projects -maxdepth 2 -name "hugo.toml" -o -name "config.toml" -o -name "config.yaml" 2>/dev/null | xargs -I {} dirname {}))
+
+    if [ ${#blogs[@]} -eq 0 ]; then
+        echo "Error: No Hugo blogs found in ~/Projects" >&2
+        return 1
+    fi
+
+    if [ ${#blogs[@]} -eq 1 ]; then
+        echo "${blogs[0]}"
+        return 0
+    fi
+
+    # Multiple blogs - show menu
+    local i=1
+    for blog in "${blogs[@]}"; do
+        echo "  $i) $(basename $blog)" >&2
+        ((i++))
+    done
+
+    read -p "Select blog (1-${#blogs[@]}): " selection >&2
+
+    if [[ "$selection" =~ ^[0-9]+$ ]] && [ "$selection" -ge 1 ] && [ "$selection" -le "${#blogs[@]}" ]; then
+        echo "${blogs[$((selection-1))]}"
+        return 0
+    else
+        echo "Error: Invalid selection" >&2
+        return 1
+    fi
+}
+
+# Start Hugo dev server and open in editor
+# Usage: blog [blog-name]
+blog() {
+    local blog_dir
+    blog_dir=$(_get_blog_dir "$1") || return 1
+
+    cd "$blog_dir" || return 1
+    echo "Opening $(basename "$blog_dir")..."
+
+    # Open in VSCodium
+    codium . &
+
+    # Start Hugo server
+    hugo server -D
+}
+
+# Create a new post with today's date
+# Usage: newpost [blog-name] [optional-post-slug]
+newpost() {
+    local blog_name=""
+    local post_slug=""
+
+    # Parse arguments
+    if [ $# -eq 0 ]; then
+        # No args - detect blog or ask
+        blog_name=""
+    elif [ $# -eq 1 ]; then
+        # One arg - could be blog name or post slug
+        # If it's a directory in Projects, treat as blog name
+        if [ -d "$HOME/Projects/$1" ]; then
+            blog_name="$1"
+        else
+            # Otherwise treat as post slug
+            post_slug="$1"
+        fi
+    else
+        # Two args - blog name and post slug
+        blog_name="$1"
+        post_slug="$2"
+    fi
+
+    local blog_dir
+    blog_dir=$(_get_blog_dir "$blog_name") || return 1
+
+    cd "$blog_dir" || return 1
+
+    # Prompt for post slug if not provided
+    if [ -z "$post_slug" ]; then
+        read -p "Post slug (or press Enter to just use date): " post_slug
+    fi
+
+    # Build post path
+    local date_prefix=$(date +%Y-%m-%d)
+    local post_path="posts/${date_prefix}"
+
+    if [ -n "$post_slug" ]; then
+        post_path="${post_path}-${post_slug}"
+    fi
+
+    echo "Creating post in $(basename "$blog_dir"): $post_path"
+    hugo new "$post_path"
+}
+
+# Git commit and push blog changes
+# Usage: blogpush [blog-name] [optional-commit-message]
+blogpush() {
+    local blog_name=""
+    local commit_msg="Update site content"
+
+    # Parse arguments
+    if [ $# -eq 0 ]; then
+        blog_name=""
+    elif [ $# -eq 1 ]; then
+        # Could be blog name or commit message
+        if [ -d "$HOME/Projects/$1" ]; then
+            blog_name="$1"
+        else
+            commit_msg="$1"
+        fi
+    else
+        blog_name="$1"
+        commit_msg="$2"
+    fi
+
+    local blog_dir
+    blog_dir=$(_get_blog_dir "$blog_name") || return 1
+
+    cd "$blog_dir" || return 1
+
+    echo "Committing changes to $(basename "$blog_dir")..."
+    git add -A && git commit -m "$commit_msg" && git push
+}
+
+# Deploy blog to Cloudflare Workers
+# Usage: blogdeploy [blog-name]
+blogdeploy() {
+    local blog_dir
+    blog_dir=$(_get_blog_dir "$1") || return 1
+
+    cd "$blog_dir" || return 1
+
+    echo "Deploying $(basename "$blog_dir") to Cloudflare..."
+
+    # Check if wrangler.toml exists
+    if [ ! -f "wrangler.toml" ]; then
+        echo "Warning: No wrangler.toml found. Deploying with default settings..."
+    fi
+
+    npx wrangler pages deploy public
+}
+
+# Build blog for production
+# Usage: blogbuild [blog-name]
+blogbuild() {
+    local blog_dir
+    blog_dir=$(_get_blog_dir "$1") || return 1
+
+    cd "$blog_dir" || return 1
+
+    echo "Building $(basename "$blog_dir") for production..."
+    hugo --minify
+}
+
+# List all Hugo blogs in Projects directory
+bloglist() {
+    echo "Hugo blogs in ~/Projects:"
+    find ~/Projects -maxdepth 2 \( -name "hugo.toml" -o -name "config.toml" -o -name "config.yaml" \) 2>/dev/null | while read config; do
+        local blog_dir=$(dirname "$config")
+        local blog_name=$(basename "$blog_dir")
+        echo "  - $blog_name ($blog_dir)"
+    done
+}
