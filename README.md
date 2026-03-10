@@ -12,14 +12,14 @@ Personal workstation dotfiles — shell setup, custom scripts, Claude CLI tools,
 | Package | Destination | Contents |
 |---------|-------------|----------|
 | `bash` | `~/` | `.bashrc`, `.profile`, `.bash_blog_functions` |
-| `bin` | `~/.local/bin/` | `cld`, `claude-askpass`, `claude-sudo-clear`, `claude-sudo-setup`, `update-android-sdk`, `write` |
+| `bin` | `~/.local/bin/` | `cld`, `claude-askpass`, `claude-sudo-clear`, `claude-sudo-setup`, `update-android-sdk`, `update-kitty`, `workstation-update`, `write` |
 | `claude` | `~/.claude/` | CLI mode system prompt, context scripts, skills |
 | `vscodium` | `~/.config/VSCodium/User/` | `settings.json`, extension list, markdown snippets |
 | `git` | `~/` | `.gitconfig` — git identity and settings |
 | `android` | *(docs only)* | SDK setup guide — SDK itself lives in `~/Android/` |
 | `themes` | `~/.themes/` | Nord GTK theme installer |
 | `wallpapers` | `~/Pictures/Wallpapers/` | Nord-themed desktop wallpapers |
-| `applications` | `~/.local/share/applications/` | VSCodium writing profile launcher |
+| `applications` | `~/.local/share/applications/` | VSCodium writing profile launcher, Eudaimonia launcher |
 | `browser-bookmarks` | *(backup only)* | Chrome/Firefox bookmark exports |
 
 ---
@@ -91,15 +91,30 @@ Run it before committing, or when you've made system configuration changes.
 
 Checks for and installs updates to all installed Android SDK components via `sdkmanager`.
 
+### workstation-update
+
+Updates tools installed outside apt that don't update automatically:
+- **kitty** — official installer to `~/.local/kitty.app/`, not in apt repos
+- **Android SDK** — via `sdkmanager --update`
+
+```bash
+workstation-update          # kitty + Android SDK
+workstation-update --apt    # also runs apt upgrade/autoremove
+```
+
+Runs automatically every Monday at 9am via cron. Logs to `~/.local/share/workstation-update.log`.
+
 ---
 
 ## Maintenance
 
 ```bash
-~/.dotfiles/sync-dotfiles.sh
+~/.dotfiles/sync-dotfiles.sh   # dotfiles health check
+workstation-update --apt       # full system update (manual)
 ```
 
 **Notes:**
 - VSCodium `settings.json` is Stow-managed (symlinked) — changes are automatically tracked
 - VSCodium extensions are manually synced via `vscodium/sync-extensions.sh`
 - Git config is **not** stowed — manually synced via `sync-dotfiles.sh`
+- kitty is installed via official installer (`~/.local/kitty.app/`), not apt — update via `workstation-update`

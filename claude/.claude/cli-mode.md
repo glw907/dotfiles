@@ -197,7 +197,7 @@ Configuration files are managed with **GNU Stow** for automatic symlink tracking
 ### Stow Packages (Auto-tracked via Symlinks)
 
 - **bash** - Shell configuration (.bashrc, .profile)
-- **bin** - Custom utility scripts (`cld`, `claude-askpass`, `claude-sudo-*`, `update-android-sdk`, `write`)
+- **bin** - Custom utility scripts (`cld`, `claude-askpass`, `claude-sudo-*`, `update-android-sdk`, `update-kitty`, `workstation-update`, `write`)
 - **claude** - Claude config (`cli-mode.md`, `gather-dotfiles.sh`, `gather-scripts.sh`, skills)
 - **vscodium** - VSCodium settings.json (symlinked)
 - **git** - Git config (NOT stowed, manually synced)

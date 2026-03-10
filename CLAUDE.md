@@ -135,6 +135,21 @@ flatpak install flathub com.noson.Noson
 
 ---
 
+## Optional: kitty Terminal
+
+kitty is installed via the official installer (not apt) to `~/.local/kitty.app/`:
+
+```bash
+curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh
+```
+
+The launcher symlinks (`kitty`, `kitten`) are created automatically at `~/.local/bin/`.
+kitty config and the Eudaimonia session launcher are tracked in dotfiles — no extra steps needed after stowing `bin` and `applications`.
+
+To update kitty later: `workstation-update` (runs automatically weekly via cron).
+
+---
+
 ## Optional: Android SDK
 
 Follow `~/.dotfiles/android/README.md`. Summary:
