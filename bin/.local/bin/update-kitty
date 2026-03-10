@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Update kitty terminal emulator
+# Usage: update-kitty
+#
+# Kitty is installed via the official installer (not apt/flatpak), so it
+# doesn't update automatically with system packages. This script re-runs
+# the installer, which updates in-place at ~/.local/kitty.app/.
+#
+# Installer docs: https://sw.kovidgoyal.net/kitty/binary/
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+KITTY_BIN="$HOME/.local/kitty.app/bin/kitty"
+
+if [[ ! -x "$KITTY_BIN" ]]; then
+    echo -e "${RED}ERROR: kitty not found at $KITTY_BIN${NC}"
+    echo "Install with: curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh"
+    exit 1
+fi
+
+CURRENT_VERSION=$("$KITTY_BIN" --version 2>/dev/null | awk '{print $2}')
+echo -e "${GREEN}Current kitty version: ${CURRENT_VERSION}${NC}"
+echo "Checking for updates..."
+echo ""
+
+curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+
+echo ""
+NEW_VERSION=$("$KITTY_BIN" --version 2>/dev/null | awk '{print $2}')
+
+if [[ "$CURRENT_VERSION" == "$NEW_VERSION" ]]; then
+    echo -e "${GREEN}✓ Already up to date (${NEW_VERSION})${NC}"
+else
+    echo -e "${GREEN}✓ Updated: ${CURRENT_VERSION} → ${NEW_VERSION}${NC}"
+fi
