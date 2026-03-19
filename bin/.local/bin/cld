@@ -15,11 +15,11 @@ set -euo pipefail
 if [[ $# -eq 1 ]]; then
     echo "Starting Claude with prompt: $1"
     echo "Please wait..."
-    exec claude --dangerously-skip-permissions --model sonnet --system-prompt "$(cat ~/.claude/cli-mode.md && echo "" && ~/.claude/gather-dotfiles.sh && echo "" && ~/.claude/gather-scripts.sh)" "$1"
+    exec claude --dangerously-skip-permissions --model opus --system-prompt "$(cat ~/.claude/cli-mode.md && echo "" && ~/.claude/gather-dotfiles.sh && echo "" && ~/.claude/gather-scripts.sh)" "$1"
 elif [[ $# -gt 1 ]]; then
     echo "Error: Multiple arguments detected. Please use quotes around your prompt."
     echo "Example: cld \"install chrome\""
     exit 1
 else
-    exec claude --dangerously-skip-permissions --model sonnet --system-prompt "$(cat ~/.claude/cli-mode.md && echo "" && ~/.claude/gather-dotfiles.sh && echo "" && ~/.claude/gather-scripts.sh)"
+    exec claude --dangerously-skip-permissions --model opus --system-prompt "$(cat ~/.claude/cli-mode.md && echo "" && ~/.claude/gather-dotfiles.sh && echo "" && ~/.claude/gather-scripts.sh)"
 fi
