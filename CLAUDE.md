@@ -98,10 +98,10 @@ See `secrets/registry.md` for the full inventory and rotation instructions.
 
 ---
 
-## Sudo Password Helper (for `cld`)
+## Sudo Password Helper
 
-The `cld` script uses `claude-askpass` to supply sudo passwords without interactive prompts.
-Sudo password is stored in 1Password — run once at the start of a CLI session:
+`claude-askpass` supplies sudo passwords without interactive prompts.
+Sudo password is stored in 1Password — run once at the start of a privileged session:
 
 ```bash
 claude-sudo-setup   # Fetches password from 1Password, caches to ~/.cache/claude-sudo-token
@@ -188,9 +188,9 @@ gsettings set org.cinnamon.desktop.background picture-uri \
 
 ```bash
 ~/.dotfiles/sync-dotfiles.sh    # Should report all packages in sync
-which cld                        # → ~/.local/bin/cld
-ls -la ~/.claude/cli-mode.md    # → symlink into ~/.dotfiles
-cld "echo hello"                 # Launches Claude in CLI mode
+which cld                        # → ~/.local/bin/cld (thin alias for claude)
+ls -la ~/.claude/CLAUDE.md      # → symlink into ~/.dotfiles
+claude                           # Starts Claude (CLAUDE.md loads automatically)
 ```
 
 ---
@@ -201,7 +201,7 @@ cld "echo hello"                 # Launches Claude in CLI mode
 |---------|-------------|
 | `bash` | `~/.bashrc`, `~/.profile` |
 | `bin` | `~/.local/bin/` (cld, cld-arch, claude-askpass, etc.) |
-| `claude` | `~/.claude/` (cli-mode.md, settings, keybindings) |
+| `claude` | `~/.claude/` (CLAUDE.md, settings.json, gather scripts, skills) |
 | `vscodium` | `~/.config/VSCodium/User/settings.json` |
 | `git` | `~/.gitconfig` |
 | `android` | `~/.dotfiles/android/` (README only — SDK itself goes to `~/Android/`) |
