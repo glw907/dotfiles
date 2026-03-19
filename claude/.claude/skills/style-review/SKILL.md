@@ -12,13 +12,13 @@ description: >
 
 # Style Review Skill
 
-Periodic review of Alaska Sailing Club blog posts against `docs/site/content-style-guide.md`.
+Periodic review of Alaska Sailing Club blog posts against `handbook/content/technical/website/content-style-guide.md`.
 Run after every 4–5 new posts, or whenever the author wants a check. Analyzes the batch as a
 corpus to identify voice patterns, style guide violations, and opportunities to evolve the guide.
 
 ## Draft Log
 
-AI first drafts are appended to `docs/site/draft-log.md` before the author edits them. The file
+AI first drafts are appended to `draft-log.md` before the author edits them. The file
 is append-only with a simple structure:
 
 ```markdown
@@ -46,14 +46,14 @@ works with whatever pairs exist and reviews unpaired posts on their own.
 
 ### Step 1: Gather the Corpus
 
-1. **Read the style guide.** Read `docs/site/content-style-guide.md` in full. Internalize the
+1. **Read the style guide.** Read `handbook/content/technical/website/content-style-guide.md` in full. Internalize the
    blog post rules (Tone and Voice, Sentence Structure, What to Avoid) and the relevant
    Primary/Secondary Pages rules (Punctuation, What to Avoid). Do this before reading any posts.
 
 2. **Identify the posts to review.** Ask the author which posts, or look for posts published since
    the last review. A typical batch is 4–5 posts. Confirm the set before proceeding.
 
-3. **Read the draft log.** Read `docs/site/draft-log.md` and match entries to the posts being
+3. **Read the draft log.** Read `draft-log.md` and match entries to the posts being
    reviewed by title and date. Note which posts have drafts and which don't.
 
 4. **Read all posts and their drafts.** Read the full corpus before producing any analysis. You

@@ -39,10 +39,12 @@ Use - for bullet lists and 1. 2. 3. for numbered lists.
 
 Check that `DISCORD_WEBHOOK_START_HERE` is set:
 ```bash
-WEBHOOK=$(bash -c 'source ~/.bashrc && echo -n $DISCORD_WEBHOOK_START_HERE')
+grep -oP '(?<=DISCORD_WEBHOOK_START_HERE=")[^"]+' ~/.bashrc
 ```
 
 If empty, stop and tell the user: "DISCORD_WEBHOOK_START_HERE is not set in ~/.bashrc. Create a webhook in the #start-here channel settings → Integrations → Webhooks, then add it to ~/.bashrc."
+
+**Note:** `source ~/.bashrc` does not work in Bash tool invocations — ~/.bashrc has an interactive shell guard that returns early in non-interactive shells. Always extract the value with `grep -oP` and pass it inline to node.
 
 ### Step 2: Show state context
 
@@ -54,7 +56,7 @@ If any message will be POSTed as new, warn: "This will create a new message. Mak
 
 Run:
 ```bash
-source ~/.bashrc && node /home/glw907/Projects/aksailingclub-org/.scripts/discord-start-here/post.js --dry-run
+DISCORD_WEBHOOK_START_HERE=$(grep -oP '(?<=DISCORD_WEBHOOK_START_HERE=")[^"]+' ~/.bashrc) node /home/glw907/Projects/aksailingclub-org/.scripts/discord-start-here/post.js --dry-run
 ```
 
 Show the output to the user. Point out the `description` field for each embed — that's the body the Discord user will see.
@@ -67,7 +69,7 @@ Ask the user: "Ready to post/update these messages to #start-here?" Do not proce
 
 Run:
 ```bash
-source ~/.bashrc && node /home/glw907/Projects/aksailingclub-org/.scripts/discord-start-here/post.js
+DISCORD_WEBHOOK_START_HERE=$(grep -oP '(?<=DISCORD_WEBHOOK_START_HERE=")[^"]+' ~/.bashrc) node /home/glw907/Projects/aksailingclub-org/.scripts/discord-start-here/post.js
 ```
 
 ### Step 6: Report results

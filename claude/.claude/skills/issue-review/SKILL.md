@@ -65,7 +65,7 @@ For each open issue, assess:
 
 After matching issues, ask: **does any suggested closure complete a workstream phase?**
 
-The roadmap (`docs/implementation-roadmap.md`) tracks phases, not individual issues. Most closures don't require a roadmap update. But when a phase-completing issue is closed, update the roadmap alongside it.
+The roadmap (`handbook/content/technical/reference/roadmap.md`) tracks phases, not individual issues. Most closures don't require a roadmap update. But when a phase-completing issue is closed, update the roadmap alongside it.
 
 **Phase-completing signals:**
 - Issue title includes "Phase N", "WS1", "WS2", etc.
@@ -73,7 +73,7 @@ The roadmap (`docs/implementation-roadmap.md`) tracks phases, not individual iss
 - A workstream section in the roadmap still says "In Progress" or "Not Started" but the work is now done
 
 **If a roadmap update is needed:**
-- Update the phase status and completion date in `docs/implementation-roadmap.md`
+- Update the phase status and completion date in `handbook/content/technical/reference/roadmap.md`
 - Update the Summary table at the bottom
 - Update the "Current focus" line if it has shifted
 - Include the roadmap file in the commit alongside the issue closure
@@ -152,7 +152,7 @@ Example: "Implemented contact form with Turnstile validation, Resend email deliv
 
 ## Issue Creation Style
 
-When suggesting new issues, follow `docs/infrastructure/github-issues.md`:
+When suggesting new issues, follow `handbook/content/technical/infrastructure/github-issues.md`:
 - Clear, specific title
 - Exactly one label: `fix`, `build`, or `ops`
 - Body with context and (for build) acceptance criteria
