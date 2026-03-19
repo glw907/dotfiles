@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Retrieves sudo password from system keyring and caches it for the session
-# Used when user types "SUDO PASSWORD" in chat instead of actual password
+# Retrieves sudo password from 1Password and caches it for the Claude CLI session.
+# Run this once at the start of a CLI mode (cld) session.
+#
+# Prerequisites:
+#   - 1Password desktop app running with CLI integration enabled
+#   - eval $(op signin) must have been run in the terminal (or app integration active)
+#
+# Usage: claude-sudo-setup
 
-# Retrieve password from keyring
-PASSWORD=$(secret-tool lookup service claude-code account sudo 2>/dev/null)
+PASSWORD=$(op read "op://Private/Workstation sudo/password" 2>/dev/null)
 
 if [ -z "$PASSWORD" ]; then
-    echo "Error: Password not found in keyring. Run initial setup first." >&2
+    echo "Error: Could not read sudo password from 1Password." >&2
+    echo "Make sure 1Password is unlocked and CLI integration is enabled." >&2
     exit 1
 fi
 
-# Cache it in the temporary token file
 echo "$PASSWORD" > ~/.cache/claude-sudo-token
 chmod 600 ~/.cache/claude-sudo-token
-
-echo "Sudo password retrieved from keyring and cached for session."
+echo "Sudo password cached from 1Password."

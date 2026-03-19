@@ -24,3 +24,9 @@ Thumbs.db
 # Ignore temporary files
 *.tmp
 .*.tmp
+
+# Secrets — decrypted plaintext, never commit
+# values.age is NOT excluded — encrypted files are safe to commit
+secrets/*.txt
+secrets/*.env
+secrets/*.decrypted

@@ -80,34 +80,34 @@ nvm install --lts
 
 ## API Credentials
 
-The `.bashrc` (stowed from `bash/.bashrc`) already contains Geoff's API credentials:
-- Cloudflare API token and Zero Trust token
-- Resend API key
-- Google Workspace credentials
-- ClouDNS auth
-- Stripe keys
-- Discord webhook URLs
+The `.bashrc` sources `~/.local/secrets` for workstation infrastructure secrets.
+Non-secrets (Stripe keys, Discord webhooks) stay as plain exports in `.bashrc`.
 
-These are active as soon as `source ~/.bashrc` runs — **no manual step needed**.
+After cloning dotfiles, run the secrets sync to populate `~/.local/secrets`:
 
-**Do not overwrite `.bashrc` with placeholder values.**
+```bash
+# Prerequisites: 1Password desktop app running + CLI integration enabled
+eval $(op signin)   # if not already authenticated via desktop app
+~/.dotfiles/scripts/secrets/sync.sh --local
+```
+
+Encrypted secrets live in `secrets/values.age` (safe to commit).
+See `secrets/registry.md` for the full inventory and rotation instructions.
+
+**Do not add plaintext API tokens to .bashrc.**
 
 ---
 
 ## Sudo Password Helper (for `cld`)
 
 The `cld` script uses `claude-askpass` to supply sudo passwords without interactive prompts.
-After first login, prime the cache:
+Sudo password is stored in 1Password — run once at the start of a CLI session:
 
 ```bash
-claude-sudo-setup   # Retrieves password from system keyring via secret-tool
+claude-sudo-setup   # Fetches password from 1Password, caches to ~/.cache/claude-sudo-token
 ```
 
-Or manually cache it:
-
-```bash
-echo 'password' > ~/.cache/claude-sudo-token && chmod 600 ~/.cache/claude-sudo-token
-```
+Prerequisites: 1Password desktop app unlocked, CLI integration enabled in Settings > Developer.
 
 ---
 

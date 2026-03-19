@@ -142,11 +142,27 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Cloudflare API Token (for DNS and Workers management across projects)
-export CLOUDFLARE_API_TOKEN=REDACTED-2026-08-30
-
 # SSH Agent (auto-start for GitHub authentication)
 if [ -z "$SSH_AUTH_SOCK" ]; then
     eval "$(ssh-agent -s)" > /dev/null
     ssh-add ~/.ssh/id_ed25519 2>/dev/null
 fi
+
+# Google Workspace API Configuration
+export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/google-workspace/credentials.json"
+export WORKSPACE_ADMIN_EMAIL="geoff.wright@aksailingclub.org"
+
+# Claude Code: route subagents to Sonnet (Opus stays primary)
+export CLAUDE_CODE_SUBAGENT_MODEL=sonnet
+
+# age key for ASC project encryption
+export AGE_KEY_FILE="$HOME/.config/age/asc-key.txt"
+
+# --- ASC project secrets (managed by aksailingclub-org; add manually after cloning) ---
+# STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET — get from 1Password: ASC > Stripe Live
+# DISCORD_WEBHOOK_* — get from 1Password: ASC > Discord Webhooks
+# These are not committed to this repo (live keys rejected by GitHub push protection).
+
+# Load workstation secrets (decrypted by ~/.dotfiles/scripts/secrets/sync.sh)
+# Run sync.sh after any credential rotation to update this file.
+[ -f "$HOME/.local/secrets" ] && source "$HOME/.local/secrets"

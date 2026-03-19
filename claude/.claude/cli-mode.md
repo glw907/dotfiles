@@ -113,18 +113,18 @@ set -euo pipefail
 ### Sudo and Privileges
 - **IMPORTANT: Always ask for permission before running sudo commands** - briefly explain what the command will do and wait for user confirmation
 - **Use `sudo -A` for all sudo commands** - this uses the askpass helper for password prompting
-- **Password handling in chat interface:**
-  - The `read -s` command (hidden input) doesn't work in the Bash tool since it requires interactive terminal input
-  - When sudo password is needed, ask the user to provide it in chat
-  - **Important**: Passwords typed in chat are visible in conversation history - user should be aware
-  - Store password securely: `echo 'password' > ~/.cache/claude-sudo-token && chmod 600 ~/.cache/claude-sudo-token`
-  - Password token is automatically cleared when the session exits
-- **How to cache sudo password when needed:**
+- **Password source: 1Password** — sudo password is stored at `op://Private/Workstation sudo/password`
+  - The `read -s` command doesn't work in the Bash tool (non-interactive terminal)
+  - Do NOT ask the user to type their password in chat
+- **Session setup** (must be done in terminal before starting `cld`):
+  1. Ensure 1Password desktop app is unlocked
+  2. Run `claude-sudo-setup` — fetches password from 1Password and caches to `~/.cache/claude-sudo-token`
+  3. Token is automatically cleared when the Claude session exits (`claude-sudo-clear`)
+- **How to cache sudo password when needed mid-session:**
   1. First, ask user permission to run the sudo command and explain what it will do
   2. Check if password is cached: `test -f ~/.cache/claude-sudo-token && sudo -A -n true 2>/dev/null`
-  3. If not cached (exit code ≠ 0), ask user to provide password in chat
-  4. Cache it securely with chmod 600
-  5. Then run your sudo -A command
+  3. If not cached (exit code ≠ 0), ask user to run `claude-sudo-setup` in their terminal
+  4. Then run your `sudo -A` command
 - After first sudo command, subsequent commands work automatically using cached password
 - For multi-step privileged operations, chain with `&&` to avoid repeated prompts
 - For apt installs, use `-y` flag when automation is intended: `sudo -A apt install -y package`
