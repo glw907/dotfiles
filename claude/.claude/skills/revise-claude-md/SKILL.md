@@ -1,6 +1,7 @@
 ---
 name: revise-claude-md
 description: Audit and clean up CLAUDE.md for bloat and staleness
+model: haiku
 ---
 
 Review the current project's CLAUDE.md for hygiene and maintainability.
