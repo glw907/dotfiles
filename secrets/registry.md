@@ -50,6 +50,7 @@ Local secrets land in `~/.local/secrets` (chmod 600, gitignored), sourced by `.b
 | ANTHROPIC_API_KEY   | ✓                        | —               |
 | CMS_BOT_PAT         | ✓                        | —               |
 | RESEND_API_KEY      | ✓                        | ✓               |
+| FASTMAIL_API_TOKEN  | ✓                        | —               |
 
 **1Password only** (not in values.age):
 - `WORKSTATION_SUDO` — sudo password, stored as `op://Private/Workstation sudo/password`
@@ -99,6 +100,12 @@ Local secrets land in `~/.local/secrets` (chmod 600, gitignored), sourced by `.b
 - **Grants**: Resend transactional email API
 - **Used by**: 907-life contact form worker, local email testing
 - **Rotate at**: https://resend.com/api-keys
+
+### FASTMAIL_API_TOKEN
+- **Grants**: Full Fastmail JMAP access (mail, contacts, calendars, files, settings)
+- **Domain**: 907.life (business plan)
+- **Used by**: aerc (via `op read`), Claude Code JMAP scripting (via env var)
+- **Rotate at**: Fastmail > Settings > Privacy & Security > App Passwords
 
 ---
 
