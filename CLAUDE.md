@@ -204,7 +204,9 @@ claude                           # Starts Claude (CLAUDE.md loads automatically)
 | `claude` | `~/.claude/` (CLAUDE.md, settings.json, gather scripts, skills) |
 | `vscodium` | `~/.config/VSCodium/User/settings.json` |
 | `git` | `~/.gitconfig` |
+| `aerc` | `~/.config/aerc/` (accounts.conf, aerc.conf, binds.conf) |
 | `android` | `~/.dotfiles/android/` (README only — SDK itself goes to `~/Android/`) |
+| `contacts` | `~/.config/vdirsyncer/`, `~/.config/khard/`, `~/.config/systemd/user/vdirsyncer.*` |
 | `themes` | `~/.themes/` |
 | `wallpapers` | `~/Pictures/Wallpapers/` |
 | `applications` | `~/.local/share/applications/` |
