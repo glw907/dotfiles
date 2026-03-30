@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Launch the dedicated jrnl-md journaling environment.
+# Opens today's entries in Helix inside a styled Kitty window.
+
+exec kitty \
+    --config ~/.config/kitty/kitty-journal.conf \
+    --title Journal \
+    -e bash -l -c '
+        # Create a placeholder entry if none exist today
+        if ! jrnl-md --on today --short 2>/dev/null | grep -q .; then
+            jrnl-md " "
+        fi
+        jrnl-md --on today --edit
+    '
