@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec kitty --config ~/.config/kitty/kitty-mail.conf --title Mail aerc

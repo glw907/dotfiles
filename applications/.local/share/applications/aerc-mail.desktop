@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Mail (aerc)
+Comment=Terminal email client
+Exec=mail
+Icon=internet-mail
+Terminal=false
+Type=Application
+Categories=Network;Email;
+Keywords=mail;email;aerc;
