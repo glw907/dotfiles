@@ -106,6 +106,30 @@ Check `.claude/instructions/api-access.md` in each project for the specific acce
 - **CI/CD**: GitHub Actions secrets
 - **Runtime**: Cloudflare Workers secrets
 
+## Testing TUI Applications
+
+Use tmux to capture and verify TUI app rendering without human visual inspection:
+
+```bash
+# Launch app in detached tmux session
+tmux new-session -d -s test -x 140 -y 48 'aerc'
+sleep 8  # wait for app to initialize
+
+# Capture pane as plain text
+tmux capture-pane -t test -p > /tmp/snapshot.txt
+cat /tmp/snapshot.txt
+
+# Inspect specific elements
+head -15 /tmp/snapshot.txt   # sidebar/header area
+tail -1 /tmp/snapshot.txt    # statusline
+grep "pattern" /tmp/snapshot.txt
+
+# Clean up
+tmux kill-session -t test
+```
+
+Always verify TUI changes yourself using this method rather than asking the user for visual confirmation.
+
 ## Claude Code Agent Usage
 
 ### Time Estimates in Plans
