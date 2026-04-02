@@ -38,7 +38,7 @@ This opens a dedicated kitty window running aerc.
 
 - Config: `~/.config/kitty/kitty-mail.conf`
 - Font: iA Writer Mono S at 11.5pt
-- Window: 140c x 48c, asymmetric padding (2 5 2 5)
+- Window: 140c x 48c, asymmetric padding (15 30 15 30)
 - Colors: Nord 16-color palette
 
 ### Desktop Launcher
@@ -88,11 +88,39 @@ Inbox, Drafts, Sent, Archive, Notifications, Buccaneer 18, Remind, Spam, Trash
 | `rr` | Reply all |
 | `rq` | Reply all with quote |
 | `Rr` | Reply to sender |
+| `Rq` | Reply to sender with quote |
 | `d` | Delete (with confirmation) |
 | `a` | Archive |
 | `T` | Toggle threads |
 | `/` | Search |
 | `q` | Quit |
+
+## aerc Keybindings (Viewing a Message)
+
+| Key | Action |
+|---|---|
+| `q` | Close message |
+| `o/O` | Open attachment |
+| `S` | Save attachment |
+| `f` | Forward |
+| `rr` | Reply all |
+| `rq` | Reply all with quote |
+| `Rr` | Reply to sender |
+| `Rq` | Reply to sender with quote |
+| `H` | Toggle full headers |
+| `D` | Delete |
+| `A` | Archive |
+| `Ctrl+j/k` | Next/previous MIME part |
+| `J/K` | Next/previous message |
+
+## Contacts
+
+Address completion is provided by khard, synced from Fastmail via vdirsyncer/CardDAV.
+
+- Contacts dir: `~/.contacts/`
+- vdirsyncer config: `~/.config/vdirsyncer/config`
+- khard config: `~/.config/khard/khard.conf`
+- Sync: `vdirsyncer sync` (also runs via systemd timer)
 
 ## Dotfiles
 
