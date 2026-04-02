@@ -1,5 +1,9 @@
 # Global Claude Code Patterns — Workstation: thinkpad-x1
 
+## MANDATORY: Work Autonomously Until Done
+
+**Do not ask for review, confirmation, or approval until the task is fully complete.** Never say "ready for your review," "want me to commit?", "should I continue?", or similar. Keep working through all known issues until every quality gate passes and zero problems remain. The only reason to stop is a genuine blocker requiring information only the user can provide.
+
 ## Machine Environment
 
 - **OS**: Linux Mint 22.3 "Zena" (Ubuntu 24.04 base), Cinnamon desktop
@@ -11,7 +15,7 @@
 ## Sysadmin Preferences
 
 - **Troubleshooting**: Search web after 1-2 failed attempts — include "Linux Mint 22" in queries
-- **sudo**: Always `sudo -A`; run `claude-sudo-setup` (fetches from 1Password) before privileged sessions
+- **sudo**: Always `sudo -A`. The password is age-encrypted at `~/.cache/sudo-password.age` and decrypted automatically by `claude-askpass`. No setup needed - just use `sudo -A` directly. If the age file is missing or stale, run `claude-sudo-setup` (requires 1Password desktop app running - start it with `1password &` if needed, user must unlock it).
 - **Packages**: apt for system/CLI tools and libraries; flatpak for GUI apps
   - Current flatpaks: Discord, Fastmail, noson, Apostrophe
 - **Communication**: Direct answers; show command first, explain after; recommend one approach
@@ -28,7 +32,7 @@
 ## Dotfiles Management
 
 - **Location**: `~/.dotfiles` (git: github.com/glw907/workstation), managed via GNU Stow
-- **Stow packages**: `bash`, `bin`, `claude`, `vscodium`, `git`
+- **Stow packages**: `bash`, `bin`, `claude`, `vscodium`, `git`, `aerc`, `kitty`, `nvim-mail`, `applications`, `contacts`
 - **Key symlinks**: `~/.bashrc` → dotfiles/bash | `~/.claude/` files → dotfiles/claude | `~/.gitconfig` → dotfiles/git
 - **Sync script**: `~/.dotfiles/sync-dotfiles.sh` — checks stow status, git drift, VSCodium extensions
 - After sysadmin config changes: run sync-dotfiles.sh and commit updates to dotfiles repo

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 # SUDO_ASKPASS helper for Claude sessions
-# Reads the cached sudo password from token file to avoid interactive prompts
-cat ~/.cache/claude-sudo-token 2>/dev/null
+# Try age-encrypted file first, fall back to 1Password-cached token
+age -d -i "${AGE_KEY_FILE:-$HOME/.config/age/asc-key.txt}" \
+    ~/.cache/sudo-password.age 2>/dev/null \
+    || cat ~/.cache/claude-sudo-token 2>/dev/null
