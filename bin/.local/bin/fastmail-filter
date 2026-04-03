@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# fastmail-filter: Create Fastmail filter rules from aerc
+# Subcommands: extract, save, apply, folders
+
+set -euo pipefail
+
+RULES_FILE="$HOME/.config/aerc/mailrules.json"
+TMPDIR="${TMPDIR:-/tmp}"
+EXTRACT_FILE="$TMPDIR/fastmail-filter-extract"
+
+cmd_extract() {
+    local type="$1"
+    local headers
+    headers=$(cat)
+
+    local value
+    case "$type" in
+        from)
+            # Extract email address from From header
+            local raw
+            raw=$(echo "$headers" | grep -i '^From:' | head -1 | sed 's/^[Ff]rom:[[:space:]]*//')
+            if echo "$raw" | grep -q '<'; then
+                value=$(echo "$raw" | grep -oP '<\K[^>]+')
+            else
+                value=$(echo "$raw" | tr -d '[:space:]')
+            fi
+            ;;
+        subject)
+            value=$(echo "$headers" | grep -i '^Subject:' | head -1 | sed 's/^[Ss]ubject:[[:space:]]*//')
+            ;;
+        *)
+            echo "Unknown extract type: $type" >&2
+            exit 1
+            ;;
+    esac
+
+    echo "$value" > "$EXTRACT_FILE"
+}
+
+case "${1:-}" in
+    extract) shift; cmd_extract "$@" ;;
+    *) echo "Usage: fastmail-filter {extract|save|apply|folders} ..." >&2; exit 1 ;;
+esac
