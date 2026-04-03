@@ -29,7 +29,8 @@ Both pipe the current message headers to `fastmail-filter`.
 4. **Prompt 1**: Pre-filled with extracted value, user can edit
 5. **Prompt 2**: Destination folder with tab-completion against filtered mailbox list (excludes Inbox, Sent, Drafts, Outbox, Trash, Spam, Archive). User can also type a new folder name.
 6. Script appends the new rule to `~/.config/aerc/mailrules.json`
-7. Confirmation message displayed in aerc status bar
+7. **Prompt 3**: "Apply now? [y/N]" - if yes, uses JMAP to find matching messages in Inbox and move them to the destination folder
+8. Confirmation message displayed in aerc status bar
 
 ## Rule Format
 
@@ -61,6 +62,19 @@ New rules are appended to `mailrules.json` in Fastmail's native export format:
 
 - From address: `"search": "from:user@example.com"`
 - Subject contains: `"search": "subject:some text"`
+
+## Immediate Apply
+
+When the user opts to apply the filter immediately, the script:
+
+1. Calls JMAP `Mailbox/get` to resolve the Inbox and destination mailbox IDs
+2. Calls `Email/query` with the filter's search criteria scoped to the Inbox mailbox
+3. Calls `Email/set` to update matching messages' `mailboxIds` (remove Inbox, add destination)
+4. Reports the number of messages moved in the aerc status bar
+
+If the destination folder doesn't exist yet, the script creates it via `Mailbox/set` before moving messages.
+
+Requires `$FASTMAIL_API_TOKEN` to be set. If unavailable, the "Apply now?" prompt is skipped.
 
 ## Syncing to Fastmail
 
