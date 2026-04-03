@@ -38,7 +38,7 @@ New rules are appended to `mailrules.json` in Fastmail's native export format:
 
 ```json
 {
-  "name": "From user@example.com to Notifications",
+  "name": "from:user@example.com -> Notifications",
   "search": "from:user@example.com",
   "fileIn": "Notifications",
   "skipInbox": true,
@@ -62,6 +62,15 @@ New rules are appended to `mailrules.json` in Fastmail's native export format:
 
 - From address: `"search": "from:user@example.com"`
 - Subject contains: `"search": "subject:some text"`
+
+### Rule naming
+
+Auto-generated from the search and destination: `<search> -> <folder>`
+
+Examples:
+- `from:user@example.com -> Notifications`
+- `subject:weekly digest -> Archive`
+- `header:Fastmail-MaskedEmail -> Notifications`
 
 ## Immediate Apply
 
