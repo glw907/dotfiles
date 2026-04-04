@@ -115,7 +115,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/go/bin:/usr/local/go/bin:$PATH"
 # Claude mode aliases
 # Modal Claude launchers at ~/.local/bin/cld*
 # cld, cld-arch, cld-research, cld-write, cld-critic
@@ -158,10 +158,6 @@ export CLAUDE_CODE_SUBAGENT_MODEL=sonnet
 # age key for ASC project encryption
 export AGE_KEY_FILE="$HOME/.config/age/asc-key.txt"
 
-# --- ASC project secrets (managed by aksailingclub-org; add manually after cloning) ---
-# STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET — get from 1Password: ASC > Stripe Live
-# DISCORD_WEBHOOK_* — get from 1Password: ASC > Discord Webhooks
-# These are not committed to this repo (live keys rejected by GitHub push protection).
 
 # Load workstation secrets (decrypted by ~/.dotfiles/scripts/secrets/sync.sh)
 # Run sync.sh after any credential rotation to update this file.

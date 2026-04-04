@@ -77,5 +77,5 @@ cmd_folders() {
 case "${1:-}" in
     extract) shift; cmd_extract "$@" ;;
     folders) cmd_folders ;;
-    *) echo "Usage: fastmail-filter {extract|save|apply|folders} ..." >&2; exit 1 ;;
+    *) echo "Usage: fastmail-filter {extract|folders} ..." >&2; exit 1 ;;
 esac

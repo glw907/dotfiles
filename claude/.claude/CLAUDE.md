@@ -9,7 +9,7 @@
 - **OS**: Linux Mint 22.3 "Zena" (Ubuntu 24.04 base), Cinnamon desktop
 - **Shell**: bash | **Editor**: micro (quick edits), vscodium (scripts/code)
 - **Key paths**: `~/Projects/` (all repos), `~/.dotfiles/` (config), `~/.local/bin/` (scripts)
-- **Dev tools**: Python 3.12, Java 17 (OpenJDK), Node/nvm, Git 2.43
+- **Dev tools**: Python 3.12, Java 17 (OpenJDK), Node/nvm, Git 2.43, Go 1.26.1 (/usr/local/go)
 - **Android SDK**: `~/Android/` — `ANDROID_HOME` set in .bashrc; `adb`/`fastboot` in platform-tools
 
 ## Sysadmin Preferences
@@ -78,6 +78,19 @@ description: "Brief description for SEO and previews"
 - Never commit .env files or secrets
 - Never force push to main/master
 
+## Go Development
+
+**MANDATORY: Read and follow `~/.claude/docs/go-conventions.md` before writing ANY Go code.** This is not optional. Every Go file, function, test, and error message must conform to these conventions. The guide exists specifically to prevent Claude's tendency to write Go that looks like Python or JavaScript.
+
+Key non-negotiable rules:
+- No unnecessary interfaces, goroutines, builder patterns, or functional options
+- `cmd/` for CLI wiring only, `internal/` for business logic, no `pkg/`
+- cobra with `SilenceUsage: true`, flags in a struct
+- `fmt.Errorf("context: %w", err)` at every error boundary
+- Table-driven tests, no assertion libraries
+- `make check` (vet + test) must pass before any commit
+- Atomic file writes for all mutations
+
 ## Cloudflare / Wrangler
 
 ```bash
@@ -108,27 +121,112 @@ Check `.claude/instructions/api-access.md` in each project for the specific acce
 
 ## Testing TUI Applications
 
-Use tmux to capture and verify TUI app rendering without human visual inspection:
+**Default approach for all TUI and config testing.** Full reference: `~/.claude/docs/tui-testing.md`. Use tmux to launch, interact with, and verify TUI applications without requiring human visual inspection. Always test config changes this way before reporting results.
+
+### Basic Pattern
 
 ```bash
 # Launch app in detached tmux session
-tmux new-session -d -s test -x 140 -y 48 'aerc'
-sleep 8  # wait for app to initialize
+tmux new-session -d -s test -x 100 -y 30 'app-command'
+sleep 5  # wait for app to initialize
 
-# Capture pane as plain text
-tmux capture-pane -t test -p > /tmp/snapshot.txt
-cat /tmp/snapshot.txt
+# Capture current screen
+tmux capture-pane -t test -p
 
-# Inspect specific elements
-head -15 /tmp/snapshot.txt   # sidebar/header area
-tail -1 /tmp/snapshot.txt    # statusline
-grep "pattern" /tmp/snapshot.txt
+# Inspect specific regions
+tmux capture-pane -t test -p | head -15   # top of screen
+tmux capture-pane -t test -p | tail -5    # bottom of screen
 
 # Clean up
 tmux kill-session -t test
 ```
 
-Always verify TUI changes yourself using this method rather than asking the user for visual confirmation.
+### Interactive Testing
+
+Send keystrokes and verify results — essential for testing keybindings, editor behavior, and multi-step workflows:
+
+```bash
+# Send normal mode keys
+tmux send-keys -t test 'G' && sleep 1
+
+# Send special keys
+tmux send-keys -t test Enter && sleep 0.5
+tmux send-keys -t test Escape && sleep 0.3
+
+# Send Ctrl combinations
+tmux send-keys -t test C-y && sleep 0.5
+
+# Type text in insert mode
+tmux send-keys -t test 'iHello world' && sleep 0.5
+
+# Chain: enter command mode and run a command
+tmux send-keys -t test ':set number' Enter && sleep 0.5
+```
+
+### Verifying Neovim State
+
+Query neovim internals via `:lua` or `:echo` commands and capture the output:
+
+```bash
+# Check a vim option
+tmux send-keys -t test ':set scrolloff?' Enter && sleep 1
+tmux capture-pane -t test -p | tail -3
+
+# Check syntax group at a position (line, col)
+tmux send-keys -t test ':echo synIDattr(synID(3,1,1),"name")' Enter
+sleep 1 && tmux capture-pane -t test -p | tail -3
+
+# Check highlight group colors
+tmux send-keys -t test ':highlight GroupName' Enter
+sleep 1 && tmux capture-pane -t test -p | tail -3
+
+# Check lua values
+tmux send-keys -t test ':lua print(vim.api.nvim_win_get_height(0))' Enter
+sleep 1 && tmux capture-pane -t test -p | tail -3
+```
+
+### Testing aerc
+
+aerc needs longer startup time. Navigate with keybindings, verify message list and viewer rendering:
+
+```bash
+tmux new-session -d -s test -x 140 -y 40 'aerc'
+sleep 8  # aerc needs time to connect and sync
+
+# Open first message
+tmux send-keys -t test Enter && sleep 3
+tmux capture-pane -t test -p | head -20
+
+# Navigate to a folder
+tmux send-keys -t test 'c' && sleep 0.5
+tmux send-keys -t test 'Sent' Enter && sleep 2
+```
+
+### Important Patterns
+
+- **Always kill previous session** before starting a new test: `tmux kill-session -t test 2>/dev/null`
+- **Check if app survived** after testing crash-prone changes: `pgrep -a nvim`
+- **Empty capture = blank screen or crash** — check `tmux list-sessions` and process list
+- **Use line numbers** for precise neovim position verification: `:set number`
+- **Press Enter/Escape** to dismiss prompts before sending next command
+- **Undo test edits** before closing: `tmux send-keys -t test Escape && sleep 0.3 && tmux send-keys -t test 'u'`
+
+## aerc (Email)
+
+Setup documentation: `~/.claude/docs/aerc-setup.md` — covers account config, styleset, custom header filter, keybindings, filters, and compose settings. Quick reference: `~/Documents/aerc-quick-reference.md`.
+
+- **Config**: `~/.config/aerc/`
+- **Account**: `geoff@907.life` via Fastmail JMAP with caching enabled
+- **Styleset**: `nord-custom` (matched to nvim-mail colors)
+- **Custom filter**: `~/.config/aerc/filters/format-headers` (AWK, reorders/colorizes headers)
+
+## Neovim
+
+Setup documentation: `~/.claude/docs/neovim-setup.md` — covers both profiles, design decisions, known issues, and failed approaches.
+
+- **Version**: 0.12.0-dev from `ppa:neovim-ppa/unstable` (required for typewriter scrolling)
+- **nvim-journal**: `~/.config/nvim-journal/` — jrnl-md editor with zen-mode + typewriter scrolling
+- **nvim-mail**: `~/.dotfiles/nvim-mail/.config/nvim-mail/` — aerc compose editor with custom `aercmail` syntax
 
 ## Claude Code Agent Usage
 

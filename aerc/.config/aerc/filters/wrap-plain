@@ -1,0 +1,5 @@
+#!/bin/sh
+# Reflow hard-wrapped paragraphs to terminal width and apply
+# Nord-palette ANSI colorization (quotes, URLs, diffs).
+echo
+wrap -w "${AERC_COLUMNS:-80}" -r | colorize
