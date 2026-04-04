@@ -2,8 +2,9 @@
 Name=Mail (aerc)
 Comment=Terminal email client
 Exec=mail
-Icon=internet-mail
+Icon=mutt
 Terminal=false
 Type=Application
 Categories=Network;Email;
+StartupWMClass=aerc-mail
 Keywords=mail;email;aerc;

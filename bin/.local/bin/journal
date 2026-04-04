@@ -3,12 +3,11 @@
 # Opens today's entries in Helix inside a styled Kitty window.
 
 exec kitty \
+    --class journal \
     --config ~/.config/kitty/kitty-journal.conf \
     --title Journal \
     -e bash -l -c '
-        # Create a placeholder entry if none exist today
-        if ! jrnl-md --on today --short 2>/dev/null | grep -q .; then
-            jrnl-md " "
-        fi
+        # Create a new time-stamped entry, then edit today
+        jrnl-md ""
         jrnl-md --on today --edit
     '

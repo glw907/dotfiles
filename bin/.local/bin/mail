@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-exec kitty --config ~/.config/kitty/kitty-mail.conf --title Mail aerc
+exec kitty --class aerc-mail --config ~/.config/kitty/kitty-mail.conf --title Mail aerc
