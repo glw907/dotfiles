@@ -1,5 +1,16 @@
 #!/bin/sh
 # Reflow hard-wrapped paragraphs to terminal width and apply
 # Nord-palette ANSI colorization (quotes, URLs, diffs).
+#
+# Some senders put raw HTML in the text/plain MIME part.
+# Detect this and route through html-to-text instead of displaying tags.
+
+body=$(cat)
+
 echo
-wrap -w "${AERC_COLUMNS:-80}" -r | colorize
+
+if printf '%s' "$body" | head -50 | grep -qiE '<(div|html|body|table|span|br|p[ />])'; then
+    printf '%s\n' "$body" | html-to-text
+else
+    printf '%s\n' "$body" | wrap -w "${AERC_COLUMNS:-80}" -r | linkify | colorize
+fi

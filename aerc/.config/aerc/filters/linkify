@@ -1,0 +1,16 @@
+#!/usr/bin/perl -p
+# Convert markdown-style links and bare URLs to clickable OSC 8 terminal
+# hyperlinks (kitty, foot, etc.).
+#
+# Pass 1: [label](url) -> OSC 8 with label as display text
+# Pass 2: remaining bare URLs -> OSC 8 with URL as display text
+
+# Markdown links: show the label, link to the URL
+s{\[([^\]]+)\]\((https?://[^)]+)\)}{\e]8;;$2\e\\$1\e]8;;\e\\}g;
+
+# Bare domain URLs without scheme (e.g. rmd.me/abc) -> prepend https://
+# Only matches domain.tld/path at word boundary - won't match inside full URLs
+s{(?:^|(?<=\s))([a-zA-Z0-9][-a-zA-Z0-9]*(?:\.[a-zA-Z0-9][-a-zA-Z0-9]*)*\.[a-zA-Z]{2,}/[^\s)">]+)}{https://$1}g;
+
+# Bare URLs not already inside an OSC 8 sequence
+s{(?<!\x1b\\|\;)(https?://[^\s)">]+)}{\e]8;;$1\e\\$1\e]8;;\e\\}g;

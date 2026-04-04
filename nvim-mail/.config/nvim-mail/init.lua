@@ -248,6 +248,24 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
+-- Strip decorative blank lines before headers on save so aerc sees
+-- valid RFC 2822 (headers must start on line 1).
+vim.api.nvim_create_autocmd("BufWritePre", {
+  callback = function()
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local first_header = nil
+    for i, line in ipairs(lines) do
+      if line:match("^[A-Za-z-]+:") then
+        first_header = i
+        break
+      end
+    end
+    if first_header and first_header > 1 then
+      vim.api.nvim_buf_set_lines(0, 0, first_header - 1, false, {})
+    end
+  end,
+})
+
 -- Keybindings
 vim.keymap.set("n", "<leader>s", function()
   vim.opt.spell = not vim.opt.spell:get()
@@ -300,8 +318,8 @@ vim.keymap.set("n", "<leader>x", "<cmd>cq<cr>", { desc = "Abort compose" })
 vim.keymap.set("n", "<leader>sig", function()
   local sig = {
     "-- ",
-    "Geoffrey L. Wright",
-    "h 907-277-9397 | w 907-786-7289",
+    "**Geoffrey L. Wright**",
+    "h 907-277-9397",
     "m 907-317-8472 (intermittent)",
   }
   local row = vim.api.nvim_win_get_cursor(0)[1]
