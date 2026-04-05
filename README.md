@@ -4,6 +4,20 @@ Personal dotfiles and configuration reference -- Linux Mint 22 (Cinnamon), manag
 
 ---
 
+## Documentation
+
+| Doc | Contents |
+|-----|----------|
+| [docs/email.md](docs/email.md) | How the mail stack is wired together (aerc, beautiful-aerc, aerc-rules, contacts) |
+| [docs/aerc-quickref.md](docs/aerc-quickref.md) | aerc keybinding cheat sheet |
+| [docs/secrets.md](docs/secrets.md) | Secrets architecture, sync script, sudo helper |
+| [docs/new-machine.md](docs/new-machine.md) | Step-by-step bootstrap for a fresh machine |
+| [secrets/registry.md](secrets/registry.md) | Secret inventory, routing table, rotation guide |
+| [android/README.md](android/README.md) | Android SDK setup |
+| [themes/NORD.md](themes/NORD.md) | Nord theme installation (GTK, icons, wallpaper) |
+
+---
+
 ## Stow Packages
 
 | Package | Destination | Contents |
