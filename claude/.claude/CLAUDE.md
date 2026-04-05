@@ -7,7 +7,7 @@ Do not ask for review, confirmation, or approval until the task is fully complet
 ## Machine Environment
 
 - **OS**: Linux Mint 22.3 "Zena" (Ubuntu 24.04 base), Cinnamon desktop
-- **Shell**: bash | **Editor**: micro (quick edits), vscodium (scripts/code)
+- **Shell**: bash | **Editor**: neovim (primary), micro (quick edits)
 - **Key paths**: `~/Projects/` (all repos), `~/.dotfiles/` (config), `~/.local/bin/` (scripts)
 - **Dev tools**: Python 3.12, Java 17 (OpenJDK), Node/nvm, Git 2.43, Go 1.26.1 (/usr/local/go)
 - **Android SDK**: `~/Android/` -- `ANDROID_HOME` set in .bashrc
@@ -28,8 +28,8 @@ Do not ask for review, confirmation, or approval until the task is fully complet
 ## Dotfiles Management
 
 - **Location**: `~/.dotfiles` (git: github.com/glw907/workstation), managed via GNU Stow
-- **Stow packages**: `bash`, `bin`, `claude`, `vscodium`, `git`, `beautiful-aerc`, `kitty`, `applications`, `contacts`
-- **Sync script**: `~/.dotfiles/sync-dotfiles.sh` -- checks stow status, git drift, VSCodium extensions
+- **Stow packages**: `bash`, `bin`, `claude`, `git`, `beautiful-aerc`, `kitty`, `applications`, `contacts`
+- **Sync script**: `~/.dotfiles/sync-dotfiles.sh` -- checks stow status, git drift
 - Adding new tracked script: copy to `~/.dotfiles/bin/.local/bin/`, then `cd ~/.dotfiles && stow -R bin`
 
 ## Git Conventions
