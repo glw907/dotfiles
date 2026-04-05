@@ -22,6 +22,14 @@ secrets/values.age (encrypted, safe to commit)
 - **~/.local/secrets** is chmod 600, gitignored, sourced by `.bashrc`
 - Decryption happens in `/dev/shm` (tmpfs) -- nothing touches disk
 
+## Runtime vs. Sync-time
+
+**Sync-time** (occasional, requires 1Password): Run `sync.sh --local` once after cloning or when secrets change. This decrypts `values.age` and writes `~/.local/secrets`. Requires 1Password desktop app + CLI auth.
+
+**Runtime** (day-to-day, no 1Password needed): All secrets are plain env vars sourced by `.bashrc`. Just read `$FASTMAIL_API_TOKEN`, `$CLOUDFLARE_API_TOKEN`, etc. directly. Do not use `op` commands to fetch secrets at runtime -- the env vars are already there.
+
+**One exception**: the sudo password is fetched live from 1Password by `claude-askpass` (see Sudo Helper below). Everything else comes from env vars.
+
 ## Sync Script
 
 ```bash
