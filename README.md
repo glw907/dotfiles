@@ -1,120 +1,138 @@
 # Workstation Configuration
 
-Personal workstation dotfiles — shell setup, custom scripts, Claude CLI tools, and VSCodium settings.
-
-**Platform:** Linux Mint 22 (Cinnamon), Ubuntu 24.04 base
-**Managed with:** [GNU Stow](https://www.gnu.org/software/stow/)
+Personal dotfiles and configuration reference -- Linux Mint 22 (Cinnamon), managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
 ---
 
-## Packages
+## Stow Packages
 
 | Package | Destination | Contents |
 |---------|-------------|----------|
 | `bash` | `~/` | `.bashrc`, `.profile`, `.bash_blog_functions` |
-| `bin` | `~/.local/bin/` | `cld`, `claude-askpass`, `claude-sudo-clear`, `claude-sudo-setup`, `update-android-sdk`, `update-kitty`, `workstation-update`, `write` |
-| `claude` | `~/.claude/` | CLI mode system prompt, context scripts, skills |
-| `vscodium` | `~/.config/VSCodium/User/` | `settings.json`, extension list, markdown snippets |
-| `git` | `~/` | `.gitconfig` — git identity and settings |
-| `android` | *(docs only)* | SDK setup guide — SDK itself lives in `~/Android/` |
+| `bin` | `~/.local/bin/` | `cld`, `claude-askpass`, `claude-sudo-setup`, `fastmail-password`, `journal`, `workstation-update`, others |
+| `claude` | `~/.claude/` | `CLAUDE.md`, `settings.json`, docs, skills, gather scripts |
+| `git` | `~/` | `.gitconfig` |
+| `beautiful-aerc` | `~/.config/aerc/`, `~/.config/nvim-mail/`, `~/.local/bin/` | aerc config, theme, filters, compose editor (symlink to `~/Projects/beautiful-aerc`) |
+| `contacts` | `~/.config/vdirsyncer/`, `~/.config/khard/`, systemd units | CardDAV contact sync with Fastmail |
+| `kitty` | `~/.config/kitty/` | Terminal config (Monaspace Neon, Nord colors, powerline tabs) |
+| `applications` | `~/.local/share/applications/` | Eudaimonia desktop launcher |
+| `android` | *(docs only)* | SDK setup guide -- SDK itself lives in `~/Android/` |
 | `themes` | `~/.themes/` | Nord GTK theme installer |
-| `wallpapers` | `~/Pictures/Wallpapers/` | Nord-themed desktop wallpapers |
-| `applications` | `~/.local/share/applications/` | VSCodium writing profile launcher, Eudaimonia launcher |
-| `browser-bookmarks` | *(backup only)* | Chrome/Firefox bookmark exports |
+| `wallpapers` | `~/Pictures/Wallpapers/` | `nord-gradient.png`, `nord-minimal.png` |
+
+### Day-to-day Stow usage
+
+    cd ~/.dotfiles
+    stow bash              # Install (create symlinks)
+    stow -D bash           # Remove (delete symlinks)
+    stow -R bash           # Restow (after file changes)
+    stow bash bin claude git  # Multiple at once
 
 ---
 
-## Quick Setup (New Machine)
+## Shell
 
-```bash
-sudo apt update && sudo apt install -y stow git curl micro gh
-git clone https://github.com/glw907/workstation.git ~/.dotfiles
-cd ~/.dotfiles
-stow bash bin claude vscodium git
-source ~/.bashrc
-```
+`.bashrc` sets up PATH, sources secrets, and loads blog functions:
 
-→ See `CLAUDE.md` for the complete new machine setup guide (prerequisites, NVM, Android SDK, etc.)
+- **PATH**: `~/.local/bin`, Go, Android SDK, NVM
+- **Secrets**: `~/.local/secrets` sourced if present (see [docs/secrets.md](docs/secrets.md))
+- **Blog functions**: `.bash_blog_functions` -- `blog`, `newpost`, `blogpush`, `blogdeploy`, `blogbuild`, `bloglist`
 
 ---
 
-## Using Stow (Day-to-Day)
+## Email
 
-```bash
-cd ~/.dotfiles
+Terminal email via aerc + Fastmail, with custom rendering and filter management.
 
-# Install a package (create symlinks)
-stow bash
-stow bin
-stow vscodium
+| Component | Purpose |
+|-----------|---------|
+| **aerc** | Mail client (IMAP/SMTP) |
+| **beautiful-aerc** | Message rendering, Nord theme, link picker |
+| **aerc-rules** | Fastmail filter creation via JMAP |
+| **nvim-mail** | Compose editor (neovim profile) |
+| **vdirsyncer + khard** | Contact sync and address completion |
 
-# Install multiple packages at once
-stow bash bin claude vscodium git
+**Filter keybindings**: `ff`/`fs`/`ft` (message list) or `Ff`/`Fs`/`Ft` (viewer) to create filters by from/subject/to.
 
-# Remove a package (remove symlinks)
-stow -D bash
-
-# Restow (useful after updates)
-stow -R bash
-```
+Full wiring details: [docs/email.md](docs/email.md) | Keybinding cheat sheet: [docs/aerc-quickref.md](docs/aerc-quickref.md)
 
 ---
 
-## Key Tools
+## Editors
 
-### CLI Mode (`cld`)
-
-Launches Claude in system administration mode — for package management, dotfiles, system services, and workstation configuration. Tracked in the **bin** and **claude** Stow packages.
-
-Variant modes (`cld-arch`, `cld-research`, `cld-write`, `cld-critic`) live in `~/Projects/modal-claude/` and are not tracked here.
-
-### Blog Shortcuts
-
-Defined in `.bash_blog_functions`, targeting the Hugo blog at `~/Projects/907-life`:
-
-- `blog` — open blog in VSCodium and start Hugo dev server
-- `newpost` — create a new post with date prefix
-- `blogpush` — commit and push blog changes
-- `blogdeploy` — deploy to Cloudflare
-
-### sync-dotfiles.sh
-
-Health check script for tracking configuration drift. Checks:
-- Stow package symlink status
-- Git config changes (auto-copies to dotfiles if changed)
-- VSCodium extension changes
-- Uncommitted changes in this repository
-
-Run it before committing, or when you've made system configuration changes.
-
-### update-android-sdk
-
-Checks for and installs updates to all installed Android SDK components via `sdkmanager`.
-
-### workstation-update
-
-Updates tools installed outside apt that don't update automatically:
-- **kitty** — official installer to `~/.local/kitty.app/`, not in apt repos
-- **Android SDK** — via `sdkmanager --update`
-
-```bash
-workstation-update          # kitty + Android SDK
-workstation-update --apt    # also runs apt upgrade/autoremove
-```
-
-Runs automatically every Monday at 9am via cron. Logs to `~/.local/share/workstation-update.log`.
+- **Neovim** (primary) -- two profiles:
+  - `nvim-journal` (`~/.config/nvim-journal/`) -- jrnl-md editor with zen-mode + typewriter scrolling
+  - `nvim-mail` (`~/.config/nvim-mail/`) -- aerc compose editor with `aercmail` syntax
+- **micro** -- quick terminal edits
 
 ---
 
-## Maintenance
+## Terminal
 
-```bash
-~/.dotfiles/sync-dotfiles.sh   # dotfiles health check
-workstation-update --apt       # full system update (manual)
-```
+**kitty** installed via [official installer](https://sw.kovidgoyal.net/kitty/installer.sh) to `~/.local/kitty.app/`. Not in apt.
 
-**Notes:**
-- VSCodium `settings.json` is Stow-managed (symlinked) — changes are automatically tracked
-- VSCodium extensions are manually synced via `vscodium/sync-extensions.sh`
-- Git config is **not** stowed — manually synced via `sync-dotfiles.sh`
-- kitty is installed via official installer (`~/.local/kitty.app/`), not apt — update via `workstation-update`
+- Font: Monaspace Neon 11pt, JetBrainsMono Nerd Font for symbols
+- Colors: Nord palette
+- Config: `kitty` stow package
+
+**Eudaimonia** -- daily practice session launcher (`.desktop` file in `applications` package, runs a kitty session from `~/Projects/eudaimonia/`)
+
+---
+
+## Claude Code
+
+The `claude` stow package provides:
+
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | Global instructions for all projects |
+| `settings.json` | Claude Code configuration |
+| `docs/go-conventions.md` | Go coding standards (mandatory for all Go work) |
+| `instructions/aerc-mail.md` | aerc environment context |
+| `instructions/fastmail-api.md` | Fastmail JMAP API context |
+| `gather-dotfiles.sh` | Collects dotfiles state for context |
+| `gather-scripts.sh` | Collects script inventory for context |
+| `skills/` | Custom skills: `go-review`, `ship`, `log-issue`, `log-project`, `pull-data`, `start-server` |
+
+---
+
+## Dev Tools
+
+- **Go** 1.26.1 -- `/usr/local/go`, conventions in `~/.claude/docs/go-conventions.md`
+- **Node/NVM** -- `~/.nvm/`, LTS version, used for wrangler and Claude CLI
+- **Android SDK** -- `~/Android/`, details in [android/README.md](android/README.md)
+- **Cloudflare/Wrangler** -- `npx wrangler deploy/dev/secret put/tail`, token in `~/.local/secrets`
+
+---
+
+## Secrets
+
+1Password is the source of truth. Secrets are age-encrypted in this repo and synced to local env vars and Cloudflare Workers.
+
+    scripts/secrets/sync.sh --local    # Push to ~/.local/secrets
+    scripts/secrets/sync.sh --verify   # Check all targets match registry
+
+Full details: [docs/secrets.md](docs/secrets.md) | Secret inventory: [secrets/registry.md](secrets/registry.md)
+
+---
+
+## System Maintenance
+
+| Command | Purpose |
+|---------|---------|
+| `sync-dotfiles.sh` | Check stow status, git config drift, uncommitted changes |
+| `workstation-update` | Update kitty + Android SDK (runs Monday 9am via cron) |
+| `workstation-update --apt` | Also runs apt upgrade/autoremove |
+
+---
+
+## Desktop
+
+- **Theme**: Nord -- GTK via `themes/setup-nord.sh`, details in [themes/NORD.md](themes/NORD.md)
+- **Wallpapers**: `nord-gradient.png`, `nord-minimal.png` in `~/Pictures/Wallpapers/` (stow package)
+
+---
+
+## New Machine Setup
+
+See [docs/new-machine.md](docs/new-machine.md) for the complete bootstrap guide.
