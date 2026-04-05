@@ -9,7 +9,7 @@ Personal dotfiles and configuration reference -- Linux Mint 22 (Cinnamon), manag
 | Doc | Contents |
 |-----|----------|
 | [docs/email.md](docs/email.md) | How the mail stack is wired together (aerc, beautiful-aerc, aerc-rules, contacts) |
-| [docs/aerc-quickref.md](docs/aerc-quickref.md) | aerc keybinding cheat sheet |
+| [aerc-quickref.html](https://glw907.github.io/workstation/aerc-quickref.html) | aerc keybinding cheat sheet |
 | [docs/secrets.md](docs/secrets.md) | Secrets architecture, sync script, sudo helper |
 | [docs/new-machine.md](docs/new-machine.md) | Step-by-step bootstrap for a fresh machine |
 | [secrets/registry.md](secrets/registry.md) | Secret inventory, routing table, rotation guide |
@@ -68,7 +68,7 @@ Terminal email via aerc + Fastmail, with custom rendering and filter management.
 
 **Filter keybindings**: `ff`/`fs`/`ft` (message list) or `Ff`/`Fs`/`Ft` (viewer) to create filters by from/subject/to.
 
-Full wiring details: [docs/email.md](docs/email.md) | Keybinding cheat sheet: [docs/aerc-quickref.md](docs/aerc-quickref.md)
+Full wiring details: [docs/email.md](docs/email.md) | Keybinding cheat sheet: [aerc-quickref.html](https://glw907.github.io/workstation/aerc-quickref.html)
 
 ---
 

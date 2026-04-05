@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>aerc Quick Reference</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 1200px; margin: 0 auto; padding: 1rem; }
+    h1 { margin-bottom: 0.25rem; }
+    h1 + p { color: #666; margin-top: 0; }
+    h2 { border-bottom: 1px solid #ddd; padding-bottom: 0.25rem; }
+    .columns { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .col { flex: 1; min-width: 250px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+    th { text-align: left; padding: 0.25rem 0.5rem; border-bottom: 2px solid #ddd; }
+    td { padding: 0.25rem 0.5rem; border-bottom: 1px solid #eee; }
+    kbd { font-family: ui-monospace, monospace; font-size: 0.9em; padding: 0.1em 0.3em; border: 1px solid #ccc; border-radius: 3px; background: #f5f5f5; }
+    h3 { margin: 0.75rem 0 0.25rem; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+<h1>aerc Quick Reference</h1>
+<p>Personal keybinding cheat sheet. Source: <code>~/.config/aerc/binds.conf</code></p>
+
+<h2>Message List</h2>
+<div class="columns">
+  <div class="col">
+    <h3>Navigation</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>j</kbd> / <kbd>k</kbd></td><td>Next / prev message</td></tr>
+        <tr><td><kbd>g</kbd> / <kbd>G</kbd></td><td>First / last message</td></tr>
+        <tr><td><kbd>Ctrl-d</kbd> / <kbd>Ctrl-u</kbd></td><td>Half-page down / up</td></tr>
+        <tr><td><kbd>Ctrl-f</kbd> / <kbd>Ctrl-b</kbd></td><td>Full page down / up</td></tr>
+        <tr><td><kbd>J</kbd> / <kbd>K</kbd></td><td>Next / prev folder</td></tr>
+        <tr><td><kbd>H</kbd> / <kbd>L</kbd></td><td>Collapse / expand folder</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Search</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>/</kbd></td><td>Search</td></tr>
+        <tr><td><kbd>\</kbd></td><td>Filter</td></tr>
+        <tr><td><kbd>n</kbd> / <kbd>N</kbd></td><td>Next / prev result</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Clear</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Actions</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Enter</kbd></td><td>Open message</td></tr>
+        <tr><td><kbd>d</kbd></td><td>Delete (confirm)</td></tr>
+        <tr><td><kbd>D</kbd></td><td>Delete (immediate)</td></tr>
+        <tr><td><kbd>a</kbd></td><td>Archive (flat)</td></tr>
+        <tr><td><kbd>A</kbd></td><td>Archive all marked</td></tr>
+        <tr><td><kbd>c</kbd></td><td>Change folder</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Compose</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>C</kbd> / <kbd>m</kbd></td><td>New message</td></tr>
+        <tr><td><kbd>rr</kbd></td><td>Reply all</td></tr>
+        <tr><td><kbd>rq</kbd></td><td>Reply all, quote</td></tr>
+        <tr><td><kbd>Rr</kbd></td><td>Reply sender</td></tr>
+        <tr><td><kbd>Rq</kbd></td><td>Reply sender, quote</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Marking</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>v</kbd></td><td>Toggle mark</td></tr>
+        <tr><td><kbd>Space</kbd></td><td>Mark + next</td></tr>
+        <tr><td><kbd>V</kbd></td><td>Visual mark mode</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Threads</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>T</kbd></td><td>Toggle threads</td></tr>
+        <tr><td><kbd>Tab</kbd></td><td>Toggle fold</td></tr>
+        <tr><td><kbd>zc</kbd> / <kbd>zo</kbd></td><td>Fold / unfold</td></tr>
+        <tr><td><kbd>zM</kbd> / <kbd>zR</kbd></td><td>Fold all / unfold all</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Splits</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>s</kbd> / <kbd>S</kbd></td><td>Horizontal / vertical</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="columns">
+  <div class="col">
+    <h3>Filters (aerc-rules)</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>ff</kbd></td><td>Filter by sender</td></tr>
+        <tr><td><kbd>fs</kbd></td><td>Filter by subject</td></tr>
+        <tr><td><kbd>ft</kbd></td><td>Filter by recipient</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Patches</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>pl</kbd></td><td>List</td></tr>
+        <tr><td><kbd>pa</kbd></td><td>Apply</td></tr>
+        <tr><td><kbd>pd</kbd></td><td>Drop</td></tr>
+        <tr><td><kbd>pb</kbd></td><td>Rebase</td></tr>
+        <tr><td><kbd>pt</kbd></td><td>Terminal</td></tr>
+        <tr><td><kbd>ps</kbd></td><td>Switch</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col"></div>
+</div>
+
+<h2>Message Viewer</h2>
+<div class="columns">
+  <div class="col">
+    <h3>Navigation</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>J</kbd> / <kbd>K</kbd></td><td>Next / prev message</td></tr>
+        <tr><td><kbd>Ctrl-j</kbd> / <kbd>Ctrl-k</kbd></td><td>Next / prev MIME part</td></tr>
+        <tr><td><kbd>H</kbd></td><td>Toggle headers</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Links</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Tab</kbd></td><td>Link picker</td></tr>
+        <tr><td><kbd>Ctrl-l</kbd></td><td>Open link (manual URL)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Actions</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>q</kbd></td><td>Close viewer</td></tr>
+        <tr><td><kbd>o</kbd> / <kbd>O</kbd></td><td>Open attachment</td></tr>
+        <tr><td><kbd>S</kbd></td><td>Save attachment</td></tr>
+        <tr><td><kbd>d</kbd></td><td>Delete message</td></tr>
+        <tr><td><kbd>D</kbd></td><td>Close + delete</td></tr>
+        <tr><td><kbd>a</kbd></td><td>Archive</td></tr>
+        <tr><td><kbd>A</kbd></td><td>Close + archive</td></tr>
+        <tr><td><kbd>f</kbd></td><td>Forward</td></tr>
+        <tr><td><kbd>b</kbd></td><td>Save to corpus</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Reply</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>rr</kbd></td><td>Reply all</td></tr>
+        <tr><td><kbd>rq</kbd></td><td>Reply all, quote</td></tr>
+        <tr><td><kbd>Rr</kbd></td><td>Reply sender</td></tr>
+        <tr><td><kbd>Rq</kbd></td><td>Reply sender, quote</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Filters (aerc-rules)</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Ff</kbd></td><td>Filter by sender</td></tr>
+        <tr><td><kbd>Fs</kbd></td><td>Filter by subject</td></tr>
+        <tr><td><kbd>Ft</kbd></td><td>Filter by recipient</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<h2>Compose</h2>
+<div class="columns">
+  <div class="col">
+    <h3>Field Navigation</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Ctrl-j</kbd> / <kbd>Tab</kbd></td><td>Next field</td></tr>
+        <tr><td><kbd>Ctrl-k</kbd> / <kbd>Shift-Tab</kbd></td><td>Prev field</td></tr>
+        <tr><td><kbd>Alt-n</kbd> / <kbd>Alt-p</kbd></td><td>Switch account</td></tr>
+        <tr><td><kbd>Ctrl-o</kbd></td><td>Complete address</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Review Screen</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>y</kbd></td><td>HTML multipart + send</td></tr>
+        <tr><td><kbd>n</kbd></td><td>Abort</td></tr>
+        <tr><td><kbd>v</kbd></td><td>Preview</td></tr>
+        <tr><td><kbd>p</kbd></td><td>Postpone</td></tr>
+        <tr><td><kbd>e</kbd></td><td>Back to editor</td></tr>
+        <tr><td><kbd>a</kbd> / <kbd>d</kbd></td><td>Attach / detach file</td></tr>
+        <tr><td><kbd>q</kbd></td><td>Discard or postpone</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Global</h3>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Ctrl-p</kbd> / <kbd>Ctrl-n</kbd></td><td>Prev / next tab</td></tr>
+        <tr><td><kbd>Ctrl-t</kbd></td><td>Open terminal</td></tr>
+        <tr><td><kbd>?</kbd></td><td>Help</td></tr>
+        <tr><td><kbd>Ctrl-c</kbd> / <kbd>Ctrl-q</kbd></td><td>Quit (confirm)</td></tr>
+        <tr><td><kbd>$</kbd> / <kbd>!</kbd></td><td>Terminal with cmd</td></tr>
+        <tr><td><kbd>|</kbd></td><td>Pipe to command</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
