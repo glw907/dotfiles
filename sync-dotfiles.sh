@@ -18,7 +18,7 @@ needs_commit=false
 
 # 1. Check Stow-managed packages
 echo -e "${BOLD}📦 Checking Stow packages...${NC}"
-for package in bash bin claude vscodium; do
+for package in bash bin claude git; do
     if [ -d "$DOTFILES/$package" ]; then
         echo -e "  ${GREEN}✓${NC} $package (Stow-managed)"
     fi
@@ -37,25 +37,7 @@ else
     fi
 fi
 
-# 3. Sync VSCodium extensions
-echo -e "\n${BOLD}🔌 Checking VSCodium extensions...${NC}"
-if command -v codium &>/dev/null; then
-    temp_ext=$(mktemp)
-    codium --list-extensions > "$temp_ext"
-    
-    if ! diff -q "$temp_ext" "$DOTFILES/vscodium/extensions.txt" &>/dev/null; then
-        echo -e "  ${YELLOW}→${NC} Extension list changed, updating..."
-        mv "$temp_ext" "$DOTFILES/vscodium/extensions.txt"
-        needs_commit=true
-    else
-        echo -e "  ${GREEN}✓${NC} Extensions in sync ($(wc -l < "$temp_ext") installed)"
-        rm "$temp_ext"
-    fi
-else
-    echo -e "  ${YELLOW}⚠${NC} VSCodium not found"
-fi
-
-# 4. Check for uncommitted changes
+# 3. Check for uncommitted changes
 echo -e "\n${BOLD}📝 Checking Git status...${NC}"
 cd "$DOTFILES"
 if [[ -n $(git status --porcelain) ]]; then

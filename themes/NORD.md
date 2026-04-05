@@ -67,25 +67,6 @@ cd nord-gnome-terminal/src
 
 For other terminals, see: https://www.nordtheme.com/ports
 
-### 5. Configure VSCodium Nord Theme
-
-Install Nord theme extension:
-
-```bash
-codium --install-extension arcticicestudio.nord-visual-studio-code
-```
-
-Then in VSCodium settings:
-- `Ctrl+Shift+P` → "Preferences: Color Theme"
-- Select "Nord"
-
-Or set in `settings.json`:
-```json
-{
-  "workbench.colorTheme": "Nord"
-}
-```
-
 ## Quick Setup Script
 
 Run the included setup script for automatic Nord installation:
@@ -123,9 +104,6 @@ Install Nord theme from Chrome Web Store:
 ### Recommended Extensions
 
 For a complete Nord experience:
-
-**VSCodium:**
-- `arcticicestudio.nord-visual-studio-code` - Nord theme
 
 **Terminal:**
 - Configure Nord color scheme (see terminal-specific instructions above)

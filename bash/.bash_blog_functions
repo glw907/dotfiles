@@ -64,9 +64,6 @@ blog() {
     cd "$blog_dir" || return 1
     echo "Opening $(basename "$blog_dir")..."
 
-    # Open in VSCodium
-    codium . &
-
     # Start Hugo server
     hugo server -D
 }
