@@ -77,6 +77,8 @@
     .s-view h2::after { background: var(--green); opacity: 0.3; }
     .s-compose h2 { color: var(--purple); }
     .s-compose h2::after { background: var(--purple); opacity: 0.3; }
+    .s-nvim h2 { color: var(--orange); }
+    .s-nvim h2::after { background: var(--orange); opacity: 0.3; }
 
     /* ---- grid ---- */
     .grid {
@@ -97,6 +99,7 @@
     .s-list .card h3 { color: var(--frost1); }
     .s-view .card h3 { color: var(--green); }
     .s-compose .card h3 { color: var(--purple); }
+    .s-nvim .card h3 { color: var(--orange); }
     .card h3 {
       padding: 0.55rem 0.75rem;
       font: 600 0.75rem 'JetBrains Mono', monospace;
@@ -259,6 +262,36 @@
           <div class="row"><dt><kbd>Ctrl-c</kbd> <span class="sep">/</span> <kbd>Ctrl-q</kbd></dt><dd>Quit (confirm)</dd></div>
           <div class="row"><dt><kbd>$</kbd> <span class="sep">/</span> <kbd>!</kbd></dt><dd>Terminal with cmd</dd></div>
           <div class="row"><dt><kbd>|</kbd></dt><dd>Pipe to command</dd></div>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- NVIM-MAIL COMPOSE EDITOR -->
+  <section class="s-nvim">
+    <h2>nvim-mail (Compose Editor)</h2>
+    <div class="grid">
+
+      <div class="card"><h3>Exit &amp; Send</h3>
+        <dl>
+          <div class="row"><dt><kbd>Space</kbd><kbd>q</kbd></dt><dd>Save &amp; exit to review screen</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>x</kbd></dt><dd>Abort compose (no prompt)</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Spellcheck Prompt</h3>
+        <dl>
+          <div class="row"><dt><kbd>s</kbd></dt><dd>Jump to first misspelling</dd></div>
+          <div class="row"><dt><kbd>y</kbd></dt><dd>Send anyway</dd></div>
+          <div class="row"><dt><kbd>n</kbd></dt><dd>Stay in editor</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Tools</h3>
+        <dl>
+          <div class="row"><dt><kbd>Space</kbd><kbd>s</kbd></dt><dd>Toggle spell check</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>sig</kbd></dt><dd>Insert signature</dd></div>
         </dl>
       </div>
 
