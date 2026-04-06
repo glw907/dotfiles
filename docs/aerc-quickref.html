@@ -175,7 +175,7 @@
   <header>
     <div class="title">
       <h1><em>aerc</em> quick reference</h1>
-      <span class="subtitle">keybinding cheat sheet</span>
+      <span class="subtitle">keybinding &amp; compose reference</span>
     </div>
     <div class="meta">
       <span><span class="dot" style="background:var(--frost1)"></span>geoff@907.life</span>
@@ -183,6 +183,87 @@
       <span><span class="dot" style="background:var(--purple)"></span>nvim-mail</span>
     </div>
   </header>
+
+  <!-- NVIM-MAIL COMPOSE EDITOR -->
+  <section class="s-nvim">
+    <h2>nvim-mail (Compose Editor)</h2>
+    <div class="grid">
+
+      <div class="card"><h3>Exit &amp; Send</h3>
+        <dl>
+          <div class="row"><dt><kbd>Space</kbd><kbd>q</kbd></dt><dd>Save &amp; exit → review screen (spellcheck first)</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>x</kbd></dt><dd>Abort compose (no prompt)</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Spellcheck Prompt</h3>
+        <dl>
+          <div class="row"><dt><kbd>s</kbd></dt><dd>Jump to first misspelling</dd></div>
+          <div class="row"><dt><kbd>y</kbd></dt><dd>Send anyway</dd></div>
+          <div class="row"><dt><kbd>n</kbd></dt><dd>Stay in editor</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Spell Navigation</h3>
+        <dl>
+          <div class="row"><dt><kbd>]s</kbd> <span class="sep">/</span> <kbd>Space</kbd><kbd>]</kbd></dt><dd>Next misspelled word</dd></div>
+          <div class="row"><dt><kbd>[s</kbd> <span class="sep">/</span> <kbd>Space</kbd><kbd>[</kbd></dt><dd>Prev misspelled word</dd></div>
+          <div class="row"><dt><kbd>z=</kbd> <span class="sep">/</span> <kbd>Space</kbd><kbd>z</kbd></dt><dd>Spelling suggestions</dd></div>
+          <div class="row"><dt><kbd>zg</kbd></dt><dd>Add word to dictionary</dd></div>
+          <div class="row"><dt><kbd>zw</kbd></dt><dd>Mark word as misspelled</dd></div>
+          <div class="row"><dt><kbd>Ctrl-x</kbd><kbd>Ctrl-s</kbd></dt><dd>Spell suggestion (insert mode)</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Text &amp; Formatting</h3>
+        <dl>
+          <div class="row"><dt><kbd>Space</kbd><kbd>r</kbd> <span class="sep">/</span> <kbd>gqip</kbd></dt><dd>Reflow paragraph to 72 cols</dd></div>
+          <div class="row"><dt><kbd>gqq</kbd></dt><dd>Reflow current line</dd></div>
+          <div class="row"><dt><kbd>(</kbd> <span class="sep">/</span> <kbd>)</kbd></dt><dd>Sentence backward / forward</dd></div>
+          <div class="row"><dt><kbd>{</kbd> <span class="sep">/</span> <kbd>}</kbd></dt><dd>Paragraph backward / forward</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>khard &amp; Tools</h3>
+        <dl>
+          <div class="row"><dt><kbd>Space</kbd><kbd>k</kbd></dt><dd>Insert contact (khard picker)</dd></div>
+          <div class="row"><dt><kbd>Ctrl-o</kbd></dt><dd>Address complete in aerc header (pre-editor)</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>s</kbd></dt><dd>Toggle spell check</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>sig</kbd></dt><dd>Insert signature</dd></div>
+          <div class="row"><dt><kbd>g</kbd><kbd>Ctrl-g</kbd></dt><dd>Word / char count</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Insert Mode</h3>
+        <dl>
+          <div class="row"><dt><kbd>Ctrl-x</kbd><kbd>Ctrl-s</kbd></dt><dd>Spell suggestion</dd></div>
+          <div class="row"><dt><kbd>Ctrl-n</kbd> <span class="sep">/</span> <kbd>Ctrl-p</kbd></dt><dd>Word complete next / prev</dd></div>
+          <div class="row"><dt><kbd>Ctrl-w</kbd></dt><dd>Delete word backward</dd></div>
+          <div class="row"><dt><kbd>Ctrl-u</kbd></dt><dd>Delete to line start</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Editing</h3>
+        <dl>
+          <div class="row"><dt><kbd>ciw</kbd> <span class="sep">/</span> <kbd>cis</kbd> <span class="sep">/</span> <kbd>cip</kbd></dt><dd>Change word / sentence / paragraph</dd></div>
+          <div class="row"><dt><kbd>J</kbd></dt><dd>Join lines</dd></div>
+          <div class="row"><dt><kbd>gUw</kbd> <span class="sep">/</span> <kbd>guw</kbd></dt><dd>Uppercase / lowercase word</dd></div>
+          <div class="row"><dt><kbd>~</kbd></dt><dd>Toggle character case</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Copy / Paste / Delete</h3>
+        <dl>
+          <div class="row"><dt><kbd>yy</kbd> <span class="sep">/</span> <kbd>yiw</kbd> <span class="sep">/</span> <kbd>yis</kbd> <span class="sep">/</span> <kbd>yip</kbd></dt><dd>Yank line / word / sentence / paragraph</dd></div>
+          <div class="row"><dt><kbd>p</kbd> <span class="sep">/</span> <kbd>P</kbd></dt><dd>Paste after / before</dd></div>
+          <div class="row"><dt><kbd>dd</kbd> <span class="sep">/</span> <kbd>diw</kbd> <span class="sep">/</span> <kbd>dis</kbd> <span class="sep">/</span> <kbd>dip</kbd></dt><dd>Delete line / word / sentence / paragraph</dd></div>
+          <div class="row"><dt><kbd>D</kbd></dt><dd>Delete to end of line</dd></div>
+          <div class="row"><dt><kbd>x</kbd></dt><dd>Delete character</dd></div>
+        </dl>
+      </div>
+
+    </div>
+  </section>
 
   <!-- MESSAGE VIEWER -->
   <section class="s-view">
@@ -268,36 +349,6 @@
     </div>
   </section>
 
-  <!-- NVIM-MAIL COMPOSE EDITOR -->
-  <section class="s-nvim">
-    <h2>nvim-mail (Compose Editor)</h2>
-    <div class="grid">
-
-      <div class="card"><h3>Exit &amp; Send</h3>
-        <dl>
-          <div class="row"><dt><kbd>Space</kbd><kbd>q</kbd></dt><dd>Save &amp; exit to review screen</dd></div>
-          <div class="row"><dt><kbd>Space</kbd><kbd>x</kbd></dt><dd>Abort compose (no prompt)</dd></div>
-        </dl>
-      </div>
-
-      <div class="card"><h3>Spellcheck Prompt</h3>
-        <dl>
-          <div class="row"><dt><kbd>s</kbd></dt><dd>Jump to first misspelling</dd></div>
-          <div class="row"><dt><kbd>y</kbd></dt><dd>Send anyway</dd></div>
-          <div class="row"><dt><kbd>n</kbd></dt><dd>Stay in editor</dd></div>
-        </dl>
-      </div>
-
-      <div class="card"><h3>Tools</h3>
-        <dl>
-          <div class="row"><dt><kbd>Space</kbd><kbd>s</kbd></dt><dd>Toggle spell check</dd></div>
-          <div class="row"><dt><kbd>Space</kbd><kbd>sig</kbd></dt><dd>Insert signature</dd></div>
-        </dl>
-      </div>
-
-    </div>
-  </section>
-
   <!-- MESSAGE LIST -->
   <section class="s-list">
     <h2>Message List</h2>
@@ -353,6 +404,8 @@
           <div class="row"><dt><kbd>Tab</kbd></dt><dd>Toggle fold</dd></div>
           <div class="row"><dt><kbd>zc</kbd> <span class="sep">/</span> <kbd>zo</kbd></dt><dd>Fold / unfold</dd></div>
           <div class="row"><dt><kbd>zM</kbd> <span class="sep">/</span> <kbd>zR</kbd></dt><dd>Fold all / unfold all</dd></div>
+          <div class="row"><dt><kbd>:mark -a</kbd></dt><dd>Mark all messages</dd></div>
+          <div class="row"><dt><kbd>:unmark -a</kbd></dt><dd>Unmark all messages</dd></div>
         </dl>
       </div>
 
