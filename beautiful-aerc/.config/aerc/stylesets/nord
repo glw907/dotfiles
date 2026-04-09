@@ -1,8 +1,9 @@
 #
-# aerc styleset -- auto-generated from nord theme
-# Do not edit above the override marker -- re-generate with:
-#   themes/generate themes/nord.sh
+# aerc styleset -- auto-generated from Nord theme
+# Re-generate with: mailrender themes generate
 #
+
+[ui]
 
 *.default=true
 *.normal=true
@@ -113,6 +114,3 @@ diff_meta.bold=true
 diff_chunk.dim=true
 diff_add.fg=#a3be8c
 diff_del.fg=#bf616a
-
-# --- overrides below this line are preserved across regeneration ---
-# Override any generated value here.
