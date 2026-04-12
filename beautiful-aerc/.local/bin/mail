@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-export PATH="$HOME/.local/bin:$PATH"
-exec ~/.local/bin/kitty --class aerc-mail --config ~/.config/kitty/kitty-mail.conf --title Mail aerc

@@ -28,12 +28,13 @@ Do not ask for review, confirmation, or approval until the task is fully complet
 ## Dotfiles Management
 
 - **Location**: `~/.dotfiles` (git: github.com/glw907/workstation), managed via GNU Stow
-- **Stow packages**: `bash`, `bin`, `claude`, `git`, `beautiful-aerc`, `kitty`, `applications`, `contacts`
+- **Stow packages**: `bash`, `bin`, `claude`, `git`, `kitty`, `applications`, `contacts`
 - **Sync script**: `~/.dotfiles/sync-dotfiles.sh` -- checks stow status, git drift
 - Adding new tracked script: copy to `~/.dotfiles/bin/.local/bin/`, then `cd ~/.dotfiles && stow -R bin`
 
 ## Git Conventions
 
+- **Always run `/simplify` before committing code changes.** It launches three review agents (reuse, quality, efficiency) in parallel; aggregate the findings, apply genuine wins, then commit. Docs-only commits don't need it. Skip only when explicitly told to.
 - Imperative mood: "Add feature" not "Added feature"
 - Co-authored footer: `Co-Authored-By: Claude <noreply@anthropic.com>`
 - Commit specific files, not `git add -A`
@@ -41,7 +42,7 @@ Do not ask for review, confirmation, or approval until the task is fully complet
 
 ## Go Development
 
-**MANDATORY: Read and follow `~/.claude/docs/go-conventions.md` before writing ANY Go code.** Every Go file, function, test, and error message must conform.
+**MANDATORY: Invoke the `go-conventions` skill before writing ANY Go code.** Every Go file, function, test, and error message must conform. (For bubbletea UI work, additionally invoke `elm-conventions`.)
 
 ## Cloudflare / Wrangler
 
@@ -58,30 +59,17 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 - **Local dev**: `~/.bashrc` (non-sensitive) or `~/.local/secrets` (sensitive, sourced from 1Password)
 - **CI/CD**: GitHub Actions secrets | **Runtime**: Cloudflare Workers secrets
 
-## aerc (Email)
+## Email (poplar)
 
-- **Client**: aerc terminal email client, launched via `mail` script in `~/.local/bin/`
-- **Config**: `~/.dotfiles/beautiful-aerc/.config/aerc/` (stow package: `beautiful-aerc`)
-- **Account**: Fastmail via IMAP/SMTP, with JMAP API for programmatic operations
-- **Filters**: `beautiful-aerc` Go binary handles message rendering (headers, HTML, plain text)
-- **Compose editor**: nvim-mail profile (`~/.config/nvim-mail/`) with custom `aercmail` syntax
-- **Theme**: Nord-based, generated from `.config/aerc/themes/` via generator script
-- **Full setup docs**: @~/.claude/docs/aerc-setup.md
-
-### aerc-rules (Fastmail Filter Manager)
-
-- **Project**: `~/Projects/aerc-rules/` -- Go CLI for managing Fastmail mail filters
-- **Binary**: `~/.local/bin/aerc-rules`
-- **Rules file**: `~/.config/aerc/mailrules.json` (or `$AERC_RULES_FILE`)
+- **Client**: poplar — bubbletea terminal email client built from `~/Projects/poplar/`
+- **Account**: Fastmail via JMAP (primary), Gmail via IMAP (v1 target)
 - **JMAP auth**: `$FASTMAIL_API_TOKEN` (in `~/.local/secrets`)
-- **Keybindings**: `ff`/`fs`/`ft` (message list), `Ff`/`Fs`/`Ft` (viewer) -- filter by from/subject/to
-- **Key commands**: `interactive` (full flow), `add`, `sweep`, `count`, `export`
+- **Binary**: `~/.local/bin/poplar`, installed via `make install`
 
 ## Neovim
 
 - **Version**: 0.12.0-dev from `ppa:neovim-ppa/unstable`
 - **nvim-journal**: `~/.config/nvim-journal/` -- jrnl-md editor with zen-mode + typewriter scrolling
-- **nvim-mail**: `~/.dotfiles/nvim-mail/.config/nvim-mail/` -- aerc compose editor
 - **Full setup docs**: @~/.claude/docs/neovim-setup.md
 
 ## Claude Code Agent Usage
