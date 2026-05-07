@@ -295,6 +295,29 @@ The full guide is `~/.claude/docs/go-comment-voice.md` — load it
 before writing or reviewing comments. Below is the operative
 summary + the §7 AI-tell catalogue with mechanical avoidance rules.
 
+### §0 — Comment-or-not (write-time gate)
+
+Before reaching for the placement rubric below, run the three-
+question gate from `~/.claude/docs/go-comment-voice.md` §0:
+
+```
+(a) Does the function/type name already say this?
+(b) Is the why obvious from the next ≤5 lines?
+(c) Would a reader otherwise miss a hidden constraint, invariant,
+    or surprising consequence?
+```
+
+Skip rule: if (a) or (b), don't write the comment. Write rule:
+only when (c). **Mechanical test: if the comment paraphrases the
+next ≤5 lines, delete it.** The paraphrase test is the primary
+check — it is the single most effective filter against AI-shaped
+in-function comments.
+
+Godoc on unexported symbols is **opt-in, not opt-out** (Google's
+"unobvious" bar): comment only when name + signature leaves
+something a competent Go reader wouldn't immediately know.
+Silence is the default.
+
 ### Decision rubric
 
 Apply before writing any comment:
@@ -505,6 +528,25 @@ T10b covers cross-function chorus in one file. Don't double-flag.
   `cfg := NewConfigBuilder().WithA(1).WithB(2).Build()`. Builders
   earn their place only when construction is multi-stage and
   validates between stages.
+- **T38 — Comment frequency: library density on application
+  code.** *Avoid:* application code (`internal/`, project-private
+  helpers) lives at ~7–9% comment-line ratio. Stdlib library
+  density (~15%) is for contract-bearing public API. If a file
+  is heading toward library density and isn't a public API,
+  apply §0 to each comment and delete the ones that fail.
+- **T39 — Section-boundary commenting.** *Avoid:* humans comment
+  where understanding *fails*, not where structure *changes*. A
+  comment at the top of a loop, ahead of a transformation, or
+  before a branch that paraphrases the next 3–5 lines is the
+  signature failure mode. Apply the §0 paraphrase test before
+  saving.
+- **T40 — Markdown shape leaking into godoc.** *Avoid:* no
+  label-colon paragraphs (`Picker list:`), no `NOTE:` /
+  `IMPORTANT:` / `TODO:` prefixes (real TODOs use
+  `// TODO(owner):`), no closing aphoristic summary sentence,
+  at most one ADR or RFC cite per godoc. Go godoc is prose
+  paragraphs. If the comment wants headings, it is an ADR or a
+  package doc, not a function godoc.
 
 When a tell is hard to spot at write-time, `/simplify` runs a
 voice lens against the diff that names tells by number.

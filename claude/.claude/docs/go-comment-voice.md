@@ -9,6 +9,34 @@ picks a voice. Apply it at write-time; `/simplify` catches drift.
 
 ---
 
+## §0. Comment-or-not (write-time gate)
+
+Before reaching for §1, run this three-question gate. It is
+upstream of the placement matrix: most comments are decided here
+and never make it past step (b).
+
+```
+(a) Does the function/type name already say this?
+(b) Is the why obvious from the next ≤5 lines?
+(c) Would a reader otherwise miss a hidden constraint, invariant,
+    or surprising consequence?
+```
+
+- **Skip rule.** If (a) or (b), don't write the comment.
+- **Write rule.** Only when (c).
+- **Mechanical test.** *If the comment paraphrases the next ≤5
+  lines, delete it.*
+
+The paraphrase test is the primary check. A comment that summarizes
+the loop body, the transformation step, or the next branch is the
+single most common AI-shaped failure mode (see T39). Run the test
+on every in-function comment before saving the file.
+
+§1 still governs the *shape* of comments that survive this gate.
+§0 governs whether they exist at all.
+
+---
+
 ## §1. Decision Rubric
 
 Apply this before writing any comment.
@@ -365,7 +393,17 @@ sentences.
 
 - Doc comments end with a period. Always.
 - Fragment inline comments: period optional, consistent within a file.
-- Em-dash (`—`) in prose comments: fine for parenthetical asides.
+- Em-dash (`—`) in comments: rare. Stdlib density is ~0.02 per Go file
+  (≈60 of 7,700 files). Avoid as a clause-joiner; use a period and a
+  new sentence instead. Reserved for short, comma-like asides — at
+  most a handful per repo. See T33.
+- Semicolons in comments: avoid as clause-joiners. Fine inside a list
+  of items. See T34.
+- Documentation labels (`Preference:` / `Fallback:` / `Priority:` /
+  `Rationale:`) inside inline comments: don't. State the rule in
+  prose. See T35.
+- Parenthetical asides: short only (≤3 words). Longer asides become
+  follow-up sentences or get cut. See T36.
 - Backticks for Go identifiers in doc comments: `[Name]` for cross-links;
   bare backtick `` `identifier` `` for inline literals in flowing prose.
 
@@ -471,6 +509,10 @@ mechanical avoidance rule.
   name suffices.
 - **T11 covers within-function adjacent error sites; T10b covers cross-
   function chorus in one file.** Don't double-flag.
+- **T37 is the meta-tell for prose-rhythm comments; T33–T36 are the
+  individual signals.** Flag the most specific tell that applies. T37
+  is for cases where the rhythm reads as AI even though no single
+  clause trips T33–T36.
 
 ---
 
@@ -1349,6 +1391,266 @@ and use the struct literal at the call site.
 
 ---
 
+### T33: Em-dash clause-joining in comments
+
+**Placement:** comments (especially inline `//`).
+
+**AI example:**
+```go
+// bucket order is deterministic — important for tests that compare
+// fetched) without crashing — the synthetic root and any other
+// active filter, or 0 if no filter is active. Thread count — not
+// message count — because the filter predicate runs per bucket
+```
+
+**Cue:** the em dash joining a statement to its qualification, repeated
+across comments in a file. The character itself isn't the tell; the
+*frequency and clause-joining shape* is. Stdlib density is ~0.02 em
+dashes per Go file (≈60 of 7,700). AI-authored Go runs 1+ per file and
+uses the em dash as a primary clause-joiner — the GPT/Claude prose voice
+leaking into Go.
+
+**Human counter-example:**
+```go
+// bucket order is deterministic. Tests compare slice indices.
+```
+
+**Avoidance rule:** Use a period and a new sentence, or cut the
+qualification. Reserve em dashes for genuine parentheticals (the kind
+that would otherwise be commas), and at most a handful per repo. If a
+comment needs em dashes to flow, it is trying to say too much — split
+or shorten it.
+
+This supersedes the earlier §5 note that em dashes were "fine for
+parenthetical asides." They are not fine in volume; the volume is the
+tell.
+
+---
+
+### T34: Semicolon clause-joining in comments
+
+**Placement:** comments.
+
+**AI example:**
+```go
+// thread always sort chronologically ascending; SortOrder controls
+// comparator runs in O(1); pairing with the bucket keeps the
+// Move/Destroy hide the source; Flag updates ui_flags.
+```
+
+**Cue:** the semicolon doing the same work as the em dash — joining two
+independent clauses into one comment to avoid restating subjects. Stdlib
+uses semicolons mostly inside parenthetical asides and lists, not as
+the primary join between two complete thoughts.
+
+**Human counter-example:**
+```go
+// Move/Destroy hide the source. Flag updates ui_flags.
+```
+
+**Avoidance rule:** Replace `; ` with `. ` and start a new sentence, or
+rewrite to say one thing. Semicolons inside lists (`X, Y; W, Z`) are
+fine; semicolons joining independent clauses are not.
+
+---
+
+### T35: Documentation labels inside code comments
+
+**Placement:** comments.
+
+**AI example:**
+```go
+// be treated as the thread root. Preference: the message with empty
+// InReplyTo. Fallback: the earliest message by Sent time...
+// renderFlagCell renders the flag column. Priority: flagged > answered >
+```
+
+**Cue:** `Preference:` / `Fallback:` / `Priority:` / `Rationale:` /
+`Caveat:` / `Otherwise:` / `Constraint:` / `Invariant:` labels turn
+inline comments into miniature spec documents. Stdlib comments use
+prose ("prefer the empty-InReplyTo message; fall back to...") not
+labeled sections. The labels are a translation artifact of LLMs
+internally treating docstrings as structured fields.
+
+**Human counter-example:**
+```go
+// Pick the empty-InReplyTo message. Fall back to earliest Sent.
+```
+
+**Avoidance rule:** Drop the label. State the rule as prose. If the
+rule is genuinely structured (a precedence list, a state table), use a
+real format — bullet list inside a doc comment, or a code-level
+constant — not inline labels.
+
+---
+
+### T36: Long parenthetical asides
+
+**Placement:** comments.
+
+**AI example:**
+```go
+// (lipgloss.Width is canonical and the helper degenerates).
+// (the user explicitly chose that path; no template is written).
+// (we only parse the first complete sequence).
+```
+
+**Cue:** parenthetical aside ≥4 words doing the work of a follow-up
+sentence the writer wouldn't commit to. Real Go uses parens for short
+qualifications ("(approximate)", "(lowercase)") not embedded clauses.
+
+**Human counter-example:**
+```go
+// Helper is only needed when icons render at 2 cells.
+```
+
+**Avoidance rule:** If the paren is more than 3–4 words, either commit
+to it as a real sentence or cut it. Test: read the comment without the
+paren — if the meaning is intact, delete the paren. If the meaning
+collapses, promote the paren to a sentence.
+
+---
+
+### T37: Multi-clause comment rhythm (meta-tell)
+
+**Placement:** any comment.
+
+**AI example:**
+```go
+// X happens — Y is the reason — Z is the consequence; W edge case
+// applies when V, in which case U.
+```
+
+**Cue:** the cumulative effect of T33+T34+T35+T36 inside a single
+comment. One thought stretched across multiple clauses joined by em
+dashes, semicolons, and labels. Reads as documentation prose rather
+than a developer's marginalia. This is the meta-tell; individual
+clauses may pass T33–T36 in isolation, but the rhythm still reads as
+machine-generated.
+
+**Human counter-example:**
+```go
+// X happens. Y when V.
+```
+
+**Avoidance rule:** One thought per comment. If a comment contains more
+than one of (em dash, semicolon, parenthetical aside, labeled clause),
+rewrite. The shape "X. Y when V." is human; "X — Y because Z; W
+otherwise" is AI. When in doubt, count the punctuation marks: more
+than one non-comma per comment and you're writing prose, not code.
+
+---
+
+### T38: Comment frequency — library density on application code
+
+**Placement:** any file.
+
+**AI example:** every helper carries a godoc; every loop has a
+preamble; the comment-line ratio over a single file or function
+runs at ~13–15%.
+
+**Cue:** stdlib library code lives at ~15% comment-line ratio
+because it is contract-bearing API surface for every Go program.
+Application code (`internal/`, command packages, project-private
+helpers) lives at ~7–9% in well-maintained Go projects (glow,
+gh-dash, k9s). Doubling that ratio is the structural symptom of
+write-time over-commenting.
+
+**Human counter-example:** an unexported helper named
+`clamp(low, high, v int) int` with no comment. Its name and
+signature are the documentation.
+
+**Avoidance rule:** track frequency at the file boundary. If a
+new file (or a function being heavily commented) is heading toward
+~15% comment lines and isn't a contract-bearing public API, run
+§0 on each comment and delete the ones that fail. Library density
+on application code is a tell.
+
+---
+
+### T39: Section-boundary commenting
+
+**Placement:** in-function, at structural seams.
+
+**AI example:**
+```go
+// Walk the messages and collect the visible UIDs.
+for _, m := range msgs {
+    if m.Hidden {
+        continue
+    }
+    out = append(out, m.UID)
+}
+```
+
+**Cue:** the comment sits where structure changes — top of a
+loop, before a transformation step, ahead of a branch — and
+paraphrases the next 3–5 lines. Removing the comment costs the
+reader nothing because the loop body is self-evident.
+
+**Human counter-example:**
+```go
+// Skip hidden rows; the picker treats Hidden as a tombstone.
+for _, m := range msgs {
+    if m.Hidden {
+        continue
+    }
+    out = append(out, m.UID)
+}
+```
+
+**Avoidance rule:** humans comment where understanding *fails*,
+not where structure *changes*. Before saving an in-function
+comment, apply the §0 paraphrase test: if the comment summarizes
+the next ≤5 lines, delete it. Replace with a comment on the
+surprising bit (a tombstone semantic, a performance concern, a
+constraint that isn't local) only when the surprise is real.
+
+---
+
+### T40: Markdown shape leaking into godoc
+
+**Placement:** doc comment on a type, function, or package.
+
+**AI example:**
+```go
+// Picker is the App-owned overlay for selecting a destination
+// folder.
+//
+// Picker list:
+//   - Renders the classified-folder list, grouped by canonical
+//     role, with the cursor pinned to the first match.
+//
+// NOTE: the picker shares its frame chrome with ConfirmModal
+// (see ADR-0089, ADR-0090, ADR-0091).
+//
+// In short, the picker is the move-target surface for triage.
+```
+
+**Cue:** label-colon paragraphs (`Picker list:`,
+`Footnote section:`, `Behavior:`); `NOTE:` / `IMPORTANT:` /
+`TODO:` prefixes that aren't tracked TODOs; closing aphoristic
+summary sentences (`In short, …`, `In other words, …`); inline
+reference-stuffing with multiple ADR or RFC cites in one godoc.
+This is markdown-document shape, not Go-godoc shape.
+
+**Human counter-example:**
+```go
+// Picker is the App-owned overlay for selecting a destination
+// folder. It renders the classified-folder list grouped by
+// canonical role; the cursor pins to the first match. Picker
+// shares frame chrome with ConfirmModal.
+```
+
+**Avoidance rule:** Go godoc is prose paragraphs. No labels, no
+`NOTE:` or `IMPORTANT:` prefixes (real TODOs use
+`// TODO(owner):`), no closing summary sentence, at most one
+authoritative reference per godoc — pick the strongest. If the
+comment wants headings, it's an ADR or a package doc, not a
+function godoc.
+
+---
+
 ## §8. Anti-Patterns by Placement
 
 **Unexported helpers:** godoc on every function regardless of whether the
@@ -1490,6 +1792,178 @@ done atomic.Bool
 // of message subjects and e-mail address names, users can set Options.WordDecoder.
 ```
 `2026-05-04-third-party-exemplars.md`, emersion/go-imap, imapclient/client.go:1–20
+
+---
+
+## §9b. Calibrated Pairs from the Audit
+
+Drawn from the poplar tree on the day the §0 rubric and T38–T40
+landed. Each pair shows the as-written shape and the rewrite the
+new rules pull toward. Cited as `package/path.go:line` so the
+pre-sweep state can be recovered from `git log`.
+
+**Pair 1 — frequency + restated-name (T4 + T38).**
+`internal/mail/types.go:14, :27`
+
+Before:
+```go
+// Flag represents email message flags.
+type Flag uint32
+
+// Folder represents a mail folder with summary counts.
+type Folder struct { … }
+```
+
+After: delete both godocs. `Flag uint32` and `Folder struct {…}`
+already say what `Flag represents email message flags` adds. Per
+§0(a) the names carry the meaning; per T38 every type in the
+package picking up a one-sentence "X represents Y" godoc is the
+library-density signature.
+
+---
+
+**Pair 2 — section-boundary commenting (T39).**
+`internal/content/render_footnote.go:42`
+
+Before:
+```go
+// Collect only marker-bearing URLs for the footnote section.
+// Footnote labels [^1]..[^M] index this subset, not the picker list.
+var markerURLs []string
+for i, u := range pickerURLs {
+    if hasMarker[i] {
+        markerURLs = append(markerURLs, u)
+    }
+}
+```
+
+After:
+```go
+// [^N] labels index marker-bearing URLs only. The picker list spans
+// all URLs including short bare ones, so the two index spaces differ.
+var markerURLs []string
+for i, u := range pickerURLs {
+    if hasMarker[i] {
+        markerURLs = append(markerURLs, u)
+    }
+}
+```
+
+The first line of the original ("Collect only marker-bearing URLs
+for the footnote section.") paraphrases the next four lines and
+fails the §0 mechanical test. The non-obvious bit — that the
+picker list and the footnote labels use different index spaces —
+survives in the rewrite because that is the part a reader would
+otherwise miss.
+
+---
+
+**Pair 3 — markdown shape in godoc (T40).**
+`internal/content/render_footnote.go:16–34`
+
+Before:
+```go
+// RenderBodyWithFootnotes renders blocks via RenderBody and harvests
+// outbound links into a picker URL list and a footnote section.
+// Returns the rendered body and the ordered picker URL list.
+//
+// Picker list: all outbound URLs in first-seen order, deduped. This
+// includes both marker-bearing URLs (markdown links, long bare URLs)
+// and short bare URLs. The caller uses this list for Tab/1-9 dispatch.
+//
+// Footnote section: only URLs that received a [^N] marker in the body
+// appear in the footnote list. Short bare URLs render inline without a
+// marker and are not emitted in the footnote section.
+//
+// NOTE: [^N] markers in the body are
+// numbered within the marker-bearing subset only. Picker indices 1..N
+// span all URLs including short bare URLs. These two numbering schemes
+// may differ when short bare URLs are present. The picker is the
+// canonical multi-URL launcher. Markers are an inline reading aid.
+// See ADR-0086 (n/N nav), ADR-0085 (long bare URL footnoting),
+// ADR-0087 (link picker).
+```
+
+After:
+```go
+// RenderBodyWithFootnotes renders blocks and harvests outbound URLs.
+// The picker list spans every URL in first-seen order. The footnote
+// section spans only URLs that received a [^N] marker, so short bare
+// URLs appear in the picker but not the footnote list. See ADR-0086.
+```
+
+Two label-colon paragraphs (`Picker list:`, `Footnote section:`),
+one `NOTE:` prefix, three ADR cites, and a closing aphoristic
+sentence ("Markers are an inline reading aid.") collapse to a
+prose paragraph. One ADR cite — pick the strongest. The contract
+is the same; the shape is now Go godoc instead of a markdown
+section.
+
+---
+
+**Pair 4 — restated function name on an obvious helper (T1 + T38).**
+`internal/ui/messagelist/model.go:272`
+
+Before:
+```go
+// matchMessage tests one message against a pre-lowercased query
+// under the active filter mode. [name] matches subject + sender;
+// [all] additionally matches the rendered date text the user sees
+// in the date column (not the wire RFC2822 string). Each field is
+// lowercased once per call.
+func (m *Model) matchMessage(msg mail.MessageInfo, lowerQuery string) bool {
+    if strings.Contains(strings.ToLower(msg.Subject), lowerQuery) {
+        return true
+    }
+    if strings.Contains(strings.ToLower(msg.From), lowerQuery) {
+        return true
+    }
+    if m.filter.mode == uicore.SearchModeAll {
+        dateText := displayDate(msg, m.now, m.layout.Date)
+        if strings.Contains(strings.ToLower(dateText), lowerQuery) {
+            return true
+        }
+    }
+    return false
+}
+```
+
+After:
+```go
+// matchMessage matches subject + sender always; date text only
+// when filter.mode is SearchModeAll. lowerQuery is pre-lowercased.
+func (m *Model) matchMessage(msg mail.MessageInfo, lowerQuery string) bool { … }
+```
+
+The original is a five-line godoc on a 14-line function whose body
+is direct. §0(b) — the body is the documentation for everything
+except the mode-switch contract and the pre-lowercased
+precondition. Keep those; drop the rest.
+
+---
+
+**Pair 5 — a comment that earns its place (positive example).**
+`internal/cache/drainer.go:33`
+
+```go
+return drainerConfig{
+    BackoffMin:  1 * time.Second,
+    BackoffMax:  60 * time.Second,
+    MaxAttempts: 10,
+    // drainSignal handles immediate wake on every QueueOp.
+    // The idle ticker exists only so failed-row backoff windows
+    // are re-checked without an external signal. 5s is a
+    // comfortable floor: well under typical backoff windows,
+    // well above what would burn CPU.
+    Idle: 5 * time.Second,
+}
+```
+
+The reader otherwise wouldn't know why 5 seconds is the right
+choice — too short and the loop spins; too long and failed-row
+backoff windows lapse before the next pickup. This is §0(c)
+exactly: a hidden constraint a reader couldn't recover from the
+literal `5 * time.Second`. Keep it.
 
 ---
 

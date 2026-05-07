@@ -54,21 +54,27 @@ Review the same changes for efficiency:
 
 Skip this agent if the diff has no Go files.
 
-The agent must first read `~/.claude/docs/go-comment-voice.md` to load the full T1–T32 catalogue (§7) and the decision rubric (§1). Then scan the Go portion of the diff for tells. Each finding cites the tell number, quotes the offending lines, and quotes the avoidance rule. Bias toward precision over recall — false positives on voice waste apply-phase time.
+The agent must first read `~/.claude/docs/go-comment-voice.md` to load the §0 write-time gate, the §1 placement rubric, and the full T1–T40 catalogue (§7 plus the §9b calibrated pairs). Then scan the Go portion of the diff for tells. Each finding cites the tell number, quotes the offending lines, and quotes the avoidance rule. Bias toward precision over recall — false positives on voice waste apply-phase time.
 
-Tells to scan for, by category:
+**Primary check: the §0 paraphrase test.** Run this *before* the catalogue scans. For every in-function comment in the diff, ask: *does this comment paraphrase the next ≤5 lines?* If yes, flag it under T39 with the paraphrase as the avoidance rule. This is the highest-value scan in the agent — the audit that motivated T38–T40 found 1,227 in-function comments clustered at structural seams paraphrasing the lines below. Calibration: the bar is *paraphrasing the next ≤5 lines*, not *summarizing a package*. Don't fire on legitimate package summaries or contract-bearing godocs.
 
-1. **Comment tells (T1–T9):** WHAT-comments restating obvious code; godoc on unexported symbols where the name suffices; uniform comment density across functions of different complexity; hedge phrases (`// for now`, `// Note:` opener, unlinked TODO); task-framing comments ("added for X flow", "used by Y", "fixes #N"); first-person plural in unexported docs; every doc beginning "Foo does X"; multi-paragraph docstrings on self-describing functions; per-case docstrings in table tests.
+**Grep-tier tells already covered by tooling — do not re-scan.** If the project ships a voice-check script (poplar: `scripts/voice-check.sh`, run by `make check`), it catches T4 (`for now` / stub TODO), T10 (`"failed to"` chorus), T14 (`Get*` getter prefix), T16 (Manager/Helper/Util/Service suffix), T27 (apologetic phrases), T28 (over-explained Go idioms), T33 (em dash in comment), T34 (semicolon clause-joiner in comment), T35 (documentation labels in comments), the narrow label-colon godoc form of T39, T40a (`NOTE:` / `IMPORTANT:` / `TODO:` prefixes), and T41 (SPDX header) mechanically with zero false-positives. Skip those tells in this agent — they're either already clean or the apply-phase will surface them on the next `make check`. Spend attention on the semantic tells below.
 
-2. **Error-phrasing tells (T10–T13):** `fmt.Errorf("failed to X: %w", err)` template; adjacent error sites reading identically; function name embedded in its own error string; bare `%w` wrapping where no caller branches on the sentinel.
+Semantic tells to scan for, by category:
 
-3. **Naming tells (T14–T18):** `GetX` getter prefix; package-doubled types (`mail.MailMessage`); `Manager` / `Helper` / `Util` / `Service` suffixes on single-field types; over-descriptive locals in tight scopes; exported names that read like docstrings.
+1. **Comment tells (T1–T3, T5–T9):** WHAT-comments restating obvious code (T1); godoc on unexported symbols where the name suffices (T2); uniform comment density across functions of different complexity (T3); task-framing comments ("added for X flow", "used by Y", "fixes #N") (T5); first-person plural in unexported docs (T6); every doc beginning "Foo does X" (T7); multi-paragraph docstrings on self-describing functions (T8); per-case docstrings in table tests (T9). T4 is grep-tier — skip.
 
-4. **Structural tells (T19–T23):** reflexive `doc.go` / `errors.go` / `types.go` skeleton; single-impl interfaces with no test fake or DI seam; `New<X>` constructors that only set fields a struct literal would set; defensive nil checks between same-package functions; length checks before indexing on internal callers.
+2. **Error-phrasing tells (T10b, T11–T13):** cross-function error chorus in one file (T10b); adjacent error sites reading identically within one function (T11); function name embedded in its own error string (T12); bare `%w` wrapping where no caller branches on the sentinel (T13). T10 is grep-tier — skip.
 
-5. **Test tells (T24–T26):** identical assertion phrasing copy-pasted across files; tautological cases; subtests for trivial scalar functions.
+3. **Naming tells (T15, T17, T18):** package-doubled types (`mail.MailMessage`) (T15); over-descriptive locals in tight scopes (T17); exported names that read like docstrings (T18). T14 and T16 are grep-tier — skip.
 
-6. **Voice tells (T27–T32):** apologetic or hedging documentation; over-explanation of standard Go idioms; uniform sentence length across a file; identical paragraph rhythm; uniform verbosity (identical doc shape and length); `Builder` patterns where a struct literal would suffice.
+4. **Structural tells (T19–T23):** reflexive `doc.go` / `errors.go` / `types.go` skeleton (T19); single-impl interfaces with no test fake or DI seam (T20); `New<X>` constructors that only set fields a struct literal would set (T21); defensive nil checks between same-package functions (T22); length checks before indexing on internal callers (T23).
+
+5. **Test tells (T24–T26):** identical assertion phrasing copy-pasted across files (T24); tautological cases (T25); subtests for trivial scalar functions (T26).
+
+6. **Voice tells (T29–T32):** uniform sentence length across a file (T29); identical paragraph rhythm (T30); uniform verbosity (identical doc shape and length) (T31); `Builder` patterns where a struct literal would suffice (T32). T27 and T28 are grep-tier — skip.
+
+7. **Structural tells (T38–T40):** comment frequency tracking library density (~15%) on application code rather than the ~7–9% application-code norm (T38); section-boundary commenting at structural seams that paraphrases the next 3–5 lines (T39 — see the primary check above; the broader paraphrase form sits here, the narrow `^// Foo: ` label-colon godoc is grep-tier); markdown shape leaking into godoc — closing aphoristic summary sentences, reference-stuffing with multiple ADR/RFC cites per godoc (T40 — the `NOTE:`/`IMPORTANT:`/`TODO:` prefix form is grep-tier, the rest stays here). Calibrated examples for all three live in §9b of the voice doc.
 
 Output format per finding:
 
