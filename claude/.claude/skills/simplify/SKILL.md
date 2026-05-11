@@ -49,6 +49,15 @@ Review the same changes for efficiency:
 5. **Unnecessary existence checks**: pre-checking file/resource existence before operating (TOCTOU anti-pattern) — operate directly and handle the error
 6. **Memory**: unbounded data structures, missing cleanup, event listener leaks
 7. **Overly broad operations**: reading entire files when only a portion is needed, loading all items when filtering for one
+8. **Pre-modern Go stdlib idioms** (Go diffs only, when `go.mod` is `>= 1.21`): surface as findings, do not auto-fix. Mirror the precision-over-recall bias of the voice agent — false positives waste apply-phase time.
+   - `sync.Once` + package-level result var that `sync.OnceValue[T]` / `sync.OnceFunc` would collapse to one declaration.
+   - Push-callback iterators (`func(emit func(T))` shapes, hand-rolled `Next`/`Stop` pairs) with ≥ 2 call sites — candidates for `iter.Seq[T]` / `iter.Seq2[K,V]`. Single-caller helpers stay.
+   - Raw `fmt.Fprintf(os.Stderr, ...)` for log-shaped messages inside `internal/` packages — `log/slog` belongs here. `cmd/` stays on stderr for user-facing startup errors.
+   - Hand-rolled multi-error accumulation (`var errs []error; … errs = append(errs, err); …`) where `errors.Join(errs...)` fits.
+   - Nil/zero-coalescing chains (`if a != "" { return a }; if b != "" { ... }; return c`) where `cmp.Or(a, b, c)` fits.
+   - Leftover `x := x` loop-variable shadow lines (pre-1.22 workaround; every loop variable is per-iteration since 1.22).
+
+**Grep-tier idioms already covered by tooling — do not re-scan.** If the project ships `scripts/modern-go-check.sh` (poplar: yes, run by `make check`), it catches `sort.SliceStable` / `sort.Slice`, `sort.Strings` / `sort.Ints`, `for i := 0; i < N` with unused `i`, and package-scope `sync.Once` mechanically with zero false-positives. Skip those — they'll surface on the next `make check`. Spend attention on the semantic findings above.
 
 ### Agent 4: Voice Review (Go diffs only)
 
