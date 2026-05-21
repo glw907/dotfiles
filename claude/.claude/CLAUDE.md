@@ -34,7 +34,7 @@ Do not ask for review, confirmation, or approval until the task is fully complet
 
 ## Git Conventions
 
-- **Always run `/simplify` before committing code changes.** It launches three review agents (reuse, quality, efficiency) in parallel; aggregate the findings, apply genuine wins, then commit. Docs-only commits don't need it. Skip only when explicitly told to.
+- **Before committing code changes, run Anthropic's official `code-simplifier` agent** over the code you just changed (dispatch the `code-simplifier` subagent). It refines recently-modified code for clarity, consistency, and maintainability while preserving behavior; review and apply its refinements, then commit. Docs-only commits don't need it. Skip only when explicitly told to. (poplar keeps its own Go-aware `simplify` skill.)
 - Imperative mood: "Add feature" not "Added feature"
 - Co-authored footer: `Co-Authored-By: Claude <noreply@anthropic.com>`
 - Commit specific files, not `git add -A`
@@ -70,7 +70,7 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 
 - **Version**: 0.12.0-dev from `ppa:neovim-ppa/unstable`
 - **nvim-journal**: `~/.config/nvim-journal/` -- jrnl-md editor with zen-mode + typewriter scrolling
-- **Full setup docs**: @~/.claude/docs/neovim-setup.md
+- **Full setup docs**: `~/.claude/docs/neovim-setup.md` (read on demand)
 
 ## Claude Code Agent Usage
 
