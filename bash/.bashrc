@@ -127,6 +127,7 @@ export SUDO_ASKPASS="$HOME/.local/bin/claude-askpass"
 claude() {
     command claude "$@"
     claude-sudo-clear 2>/dev/null
+    ~/.dotfiles/scripts/secrets/secret-session-clear.sh >/dev/null 2>&1
 }
 
 # Hugo blog management functions (works across all blogs in ~/Projects)
