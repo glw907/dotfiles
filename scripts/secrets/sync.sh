@@ -32,6 +32,10 @@ trap 'shred -u "$AGE_KEY_FILE" "$DECRYPTED_FILE" 2>/dev/null; true' EXIT
 # Maps worker name -> space-separated list of secrets to push
 declare -A WORKER_SECRETS
 WORKER_SECRETS["907-life"]="CLOUDFLARE_API_TOKEN RESEND_API_KEY"
+# cairn-cms admin (shared GitHub App — one app installed on both repos). Per-site
+# MAGIC_LINK_SECRET/SESSION_SECRET are NOT managed here (worker-only, rotatable —
+# set directly via `wrangler secret put`; they must differ per site for session isolation).
+WORKER_SECRETS["ecnordic"]="GITHUB_APP_ID GITHUB_APP_INSTALLATION_ID GITHUB_APP_PRIVATE_KEY_B64"
 
 # --- Argument parsing ---
 MODE="all"

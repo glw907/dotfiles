@@ -74,22 +74,31 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 
 ## Master Routing Table
 
-| Secret              | Local (~/.local/secrets) | 907-life Worker |
-|---------------------|--------------------------|-----------------|
-| CLOUDFLARE_API_TOKEN | ✓                       | ✓               |
-| CF_ZT_TOKEN         | ✓                        | —               |
-| CF_ACCESS_CLIENT_SECRET | ✓                   | —               |
-| ANTHROPIC_API_KEY   | ✓                        | —               |
-| CMS_BOT_PAT         | ✓                        | —               |
-| RESEND_API_KEY      | ✓                        | ✓               |
-| FASTMAIL_API_TOKEN  | ✓                        | —               |
-| GITHUB_APP_ID       | ✓                        | (Pass A)        |
-| GITHUB_APP_INSTALLATION_ID | ✓                 | (Pass A)        |
-| GITHUB_APP_PRIVATE_KEY_B64 | ✓                 | (Pass A)        |
+(Worker names: 907-life's worker is `907-life`; ecnordic.ski's worker is `ecnordic`.)
 
-> `GITHUB_APP_*` are the cairn-cms committing identity (GitHub App, App ID 3847496).
-> Worker push (ecnordic + 907-life) is wired in cairn Pass A, not yet in the routing table
-> above. Installation ID `135372268` (single install on glw907, both repos selected).
+| Secret              | Local (~/.local/secrets) | 907-life Worker | ecnordic Worker |
+|---------------------|--------------------------|-----------------|-----------------|
+| CLOUDFLARE_API_TOKEN | ✓                       | ✓               | —               |
+| CF_ZT_TOKEN         | ✓                        | —               | —               |
+| CF_ACCESS_CLIENT_SECRET | ✓                   | —               | —               |
+| ANTHROPIC_API_KEY   | ✓                        | —               | —               |
+| CMS_BOT_PAT         | ✓                        | —               | —               |
+| RESEND_API_KEY      | ✓                        | ✓               | —               |
+| FASTMAIL_API_TOKEN  | ✓                        | —               | —               |
+| GITHUB_APP_ID       | ✓                        | (when live)     | ✓               |
+| GITHUB_APP_INSTALLATION_ID | ✓                 | (when live)     | ✓               |
+| GITHUB_APP_PRIVATE_KEY_B64 | ✓                 | (when live)     | ✓               |
+
+> `GITHUB_APP_*` are the cairn-cms committing identity (GitHub App, App ID 3847496,
+> Installation `135372268` — single install on glw907, both repos selected). **The `ecnordic`
+> worker is wired into `sync.sh` and pushed (go-live 2026-05-25);** 907-life will be added to the
+> routing table when its `/admin` goes live.
+>
+> **Per-site, NOT in this registry:** each cairn site's `MAGIC_LINK_SECRET` + `SESSION_SECRET`
+> are worker-only (set directly via `wrangler secret put`, freshly generated per site so sessions
+> don't cross sites — the locked "no cross-site SSO" decision). Rotatable: regenerate + re-put to
+> invalidate all active links/sessions. `sync.sh --verify` will list them as "extra" on the
+> ecnordic worker — expected (same as CONTACT_EMAIL / TURNSTILE_SECRET_KEY).
 
 **1Password only** (not in values.age):
 - `WORKSTATION_SUDO` — sudo password, stored as `op://Private/Workstation sudo/password`
