@@ -85,20 +85,20 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 | CMS_BOT_PAT         | ✓                        | —               | —               |
 | RESEND_API_KEY      | ✓                        | ✓               | —               |
 | FASTMAIL_API_TOKEN  | ✓                        | —               | —               |
-| GITHUB_APP_ID       | ✓                        | (when live)     | ✓               |
-| GITHUB_APP_INSTALLATION_ID | ✓                 | (when live)     | ✓               |
-| GITHUB_APP_PRIVATE_KEY_B64 | ✓                 | (when live)     | ✓               |
+| GITHUB_APP_ID       | ✓                        | ✓               | ✓               |
+| GITHUB_APP_INSTALLATION_ID | ✓                 | ✓               | ✓               |
+| GITHUB_APP_PRIVATE_KEY_B64 | ✓                 | ✓               | ✓               |
 
 > `GITHUB_APP_*` are the cairn-cms committing identity (GitHub App, App ID 3847496,
-> Installation `135372268` — single install on glw907, both repos selected). **The `ecnordic`
-> worker is wired into `sync.sh` and pushed (go-live 2026-05-25);** 907-life will be added to the
-> routing table when its `/admin` goes live.
+> Installation `135372268` — single install on glw907, both repos selected). **Both the `ecnordic`
+> and `907-life` workers are wired into `sync.sh` and pushed (ecnordic go-live 2026-05-25, 907-life
+> go-live 2026-05-26);** `sync.sh --worker 907-life` re-pushes the shared App secrets reproducibly.
 >
 > **Per-site, NOT in this registry:** each cairn site's `MAGIC_LINK_SECRET` + `SESSION_SECRET`
 > are worker-only (set directly via `wrangler secret put`, freshly generated per site so sessions
 > don't cross sites — the locked "no cross-site SSO" decision). Rotatable: regenerate + re-put to
-> invalidate all active links/sessions. `sync.sh --verify` will list them as "extra" on the
-> ecnordic worker — expected (same as CONTACT_EMAIL / TURNSTILE_SECRET_KEY).
+> invalidate all active links/sessions. `sync.sh --verify` will list them as "extra" on both the
+> ecnordic and 907-life workers — expected (same as CONTACT_EMAIL / TURNSTILE_SECRET_KEY).
 
 **1Password only** (not in values.age):
 - `WORKSTATION_SUDO` — sudo password, stored as `op://Private/Workstation sudo/password`
@@ -175,13 +175,17 @@ Secrets currently set on the worker (via `wrangler secret list --name 907-life`)
 - CONTACT_EMAIL — not managed by this registry (worker-only config)
 - RESEND_API_KEY — managed here
 - TURNSTILE_SECRET_KEY — not managed by this registry (worker-only config)
+- GITHUB_APP_ID / GITHUB_APP_INSTALLATION_ID / GITHUB_APP_PRIVATE_KEY_B64 — managed here (cairn admin, go-live 2026-05-26)
+- MAGIC_LINK_SECRET / SESSION_SECRET — worker-only (per-site cairn HMAC keys, set directly via `wrangler secret put`)
 
 Secrets this registry will set:
 - CLOUDFLARE_API_TOKEN — added by sync.sh
 - RESEND_API_KEY — updated by sync.sh
+- GITHUB_APP_ID / GITHUB_APP_INSTALLATION_ID / GITHUB_APP_PRIVATE_KEY_B64 — pushed by sync.sh
 
-> The `--verify` mode will report CONTACT_EMAIL and TURNSTILE_SECRET_KEY as "extra"
-> (present on worker but not in registry). This is expected — they're managed elsewhere.
+> The `--verify` mode will report CONTACT_EMAIL, TURNSTILE_SECRET_KEY, MAGIC_LINK_SECRET, and
+> SESSION_SECRET as "extra" (present on worker but not in registry). This is expected — they're
+> managed elsewhere (worker-only config / per-site HMAC keys).
 
 ---
 
