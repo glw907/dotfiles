@@ -134,6 +134,11 @@ def test_anaphora_flagged():
     kinds = [k for k, _s, _h in pg.analyze_document(text, "docs")]
     assert any("anaphora" in k for k in kinds)
 
+def test_anaphora_ignores_bullet_lists():
+    text = "- first item here.\n- second item here.\n- third item here.\n- fourth item here."
+    kinds = [k for k, _s, _h in pg.analyze_document(text, "docs")]
+    assert not any("anaphora" in k for k in kinds)
+
 def test_stats_skipped_for_comments_tier():
     flat = " ".join(["The system reads the file and writes the result now."] * 12)
     assert pg.analyze_document(flat, "comments") == []

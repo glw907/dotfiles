@@ -179,8 +179,13 @@ def analyze_document(text, tier):
             elif burst < 0.40:
                 issues.append(("low burstiness", f"B={burst:.2f} over {len(sents)} sentences",
                                "Cadence is flat. Add some short sentences and some long ones."))
-    # anaphora: 3+ consecutive sentences opening with the same word
-    heads = [s.split()[0].lower() for s in sents if s.split()]
+    # anaphora: 3+ consecutive sentences opening with the same word.
+    # Skip markdown list items, headings, tables, and link/code openers — they aren't prose.
+    heads = []
+    for s in sents:
+        toks = s.split()
+        if toks and toks[0][0] not in "-*#>|[`" and not toks[0][0].isdigit():
+            heads.append(toks[0].lower())
     for i in range(len(heads) - 2):
         if heads[i] == heads[i + 1] == heads[i + 2]:
             issues.append(("anaphora", f"3+ sentences open with '{heads[i]}'",
