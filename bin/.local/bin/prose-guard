@@ -71,6 +71,8 @@ BANNED_OPENERS = [
     "moreover", "additionally", "furthermore", "in conclusion",
     "needless to say", "certainly", "it should be noted",
 ]
+# Filler intensifiers that read as machine-written in any tier.
+FILLER_WORDS = ["genuinely", "honestly"]
 SLOP_WORDS = ["tapestry", "multifaceted", "testament", "seamless"]
 JUDGMENT_WORDS = [
     "robust", "leverage", "comprehensive", "dedicated", "curated", "tailored",
@@ -127,6 +129,9 @@ def scan(text, tier):
         for phrase in BANNED_PHRASES:
             if phrase in low:
                 issues.append((f"banned phrase: {phrase}", line, "Reword in a human voice."))
+        for filler in FILLER_WORDS:
+            if re.search(rf"\b{filler}\b", low):
+                issues.append((f"filler word: {filler}", line, "Drop the filler intensifier."))
         for opener in BANNED_OPENERS:
             for sent in SENTENCE_SPLIT.split(line):
                 head = re.sub(r"^[\s\-*>#]+", "", sent).lower()

@@ -66,6 +66,12 @@ def test_phrase_all_tiers():
         assert any("dive into" in k for k in _kinds(pg.scan("Let us dive into the code.", t)))
 def test_opener():
     assert any("moreover" in k for k in _kinds(pg.scan("Moreover, the cache helps.", "docs")))
+def test_filler_words_all_tiers():
+    for t in ("general", "docs", "comments"):
+        assert any("genuinely" in k for k in _kinds(pg.scan("This is genuinely fast.", t)))
+        assert any("honestly" in k for k in _kinds(pg.scan("Honestly, it works.", t)))
+def test_filler_word_boundary():
+    assert pg.scan("The dishonestly named flag.", "docs") == []
 def test_word_tiering_judgment():
     assert any("robust" in k for k in _kinds(pg.scan("a robust system", "general")))
     assert not any("robust" in k for k in _kinds(pg.scan("a robust system", "docs")))
