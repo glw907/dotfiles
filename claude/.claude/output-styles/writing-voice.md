@@ -18,7 +18,9 @@ Avoid these structural habits:
 - The explicit contrast frame ("it's not X, it's Y"; "not just X but Y"). Prefer an
   implicit contrast, or just state the point.
 - Tricolons by reflex. Keep the one item that earns its place.
-- The setup-colon payoff ("The point: ..."). Fold it into the sentence.
+- The setup-colon payoff ("The point: ...") and the short-clause-then-colon-list
+  ("The standard is clear: a, b, c"). Fold the list into the sentence with a word
+  like "including", or write the items as their own sentences.
 - Opening with a participial bridge ("Building on this, ...") or a connector
   ("Moreover, ..."). Start with the subject.
 - Restating a paragraph's point at its end.
