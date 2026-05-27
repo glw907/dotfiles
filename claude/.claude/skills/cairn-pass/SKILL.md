@@ -12,10 +12,10 @@ description: >
 # Cairn Pass (cairn-cms initiative)
 
 The cairn-cms library is built pass-by-pass (0, then A–F). Unlike a site's own
-roadmap, this initiative is tracked in **`cairn-cms/docs/PLAN.md`** — not in any
+roadmap, this initiative is tracked in **`cairn-cms/docs/PLAN.md`**, not in any
 site's `STATUS.md`. Passes A–F write code *inside a site repo* (mostly
 `ecnordic-ski/` until the Pass F extraction), so you work in that repo and honor
-its `CLAUDE.md`, rules, and tooling (e.g. the `svelte-check` skill) — but the
+its `CLAUDE.md`, rules, and tooling (e.g. the `svelte-check` skill). The
 plan, decisions, and progress live in PLAN.md.
 
 > **Which skill?** This is for the cairn-cms library. If the user means a
@@ -24,7 +24,7 @@ plan, decisions, and progress live in PLAN.md.
 
 ## Starting a pass
 
-1. **Read `cairn-cms/docs/PLAN.md` in full** — locked decisions, architecture,
+1. **Read `cairn-cms/docs/PLAN.md` in full.** It covers locked decisions, architecture,
    the phased passes (0–F), the ranked risk register, and the Notes / progress
    log (where each pass's state lives).
 2. Find the requested pass; note which site repo it executes in and what
@@ -32,13 +32,13 @@ plan, decisions, and progress live in PLAN.md.
 3. Execute it. Honor the host site repo's `CLAUDE.md` and skills while working
    there. For multi-task plans, use `superpowers:subagent-driven-development`.
 
-## Ending a pass — consolidation ritual
+## Ending a pass: consolidation ritual
 
 No pass is done until every step has run.
 
 ### 1. Simplify
 
-Dispatch the code-simplifier agent over the code changed this pass —
+Dispatch the code-simplifier agent over the code changed this pass. Use
 `subagent_type` = **`code-simplifier:code-simplifier`** (plugin-namespaced; the
 bare name errors). Docs-only passes skip this.
 
@@ -51,17 +51,17 @@ before continuing. Also run the test suite if the pass touched tested code.
 
 Append/update the **Notes / progress log**: what was built, what was verified
 (with evidence), decisions locked in, and any blockers. Update the risk register
-if a risk was retired or newly hit. This is the cairn tracker — do **not** write
+if a risk was retired or newly hit. This is the cairn tracker. Do **not** write
 cairn state into a site's `STATUS.md`.
 
 ### 4. Commit
 
 Commit in the repo where the code landed (the host site repo for A–E; the
 `cairn-cms` repo once code is extracted in Pass F), following that repo's git
-conventions — run the workstation `code-simplifier` first (done in step 1),
+conventions. Run the workstation `code-simplifier` first (done in step 1),
 commit specific files, and push only when the user asks.
 
 ## When NOT to use
 
-- A site's own numbered passes — use `site-pass`.
+- A site's own numbered passes: use `site-pass`.
 - Mid-pass debugging or single-file edits.

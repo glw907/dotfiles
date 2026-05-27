@@ -10,8 +10,8 @@
 
 ## JMAP Endpoints
 
-- **Session**: `https://api.fastmail.com/jmap/session` — GET with Bearer auth to discover account ID and capabilities
-- **API**: `https://api.fastmail.com/jmap/api/` — POST with Bearer auth for all JMAP method calls
+- **Session**: GET `https://api.fastmail.com/jmap/session` with Bearer auth to discover the account ID and capabilities
+- **API**: POST `https://api.fastmail.com/jmap/api/` with Bearer auth for all JMAP method calls
 
 ## Authentication
 

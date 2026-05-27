@@ -16,32 +16,32 @@ description: >
 Each site repo develops in numbered passes. A pass has a starter prompt in
 this repo's `docs/STATUS.md`, a plan under `docs/superpowers/plans/`, and
 (usually) a spec under `docs/superpowers/specs/`. This skill encodes the
-ritual at both ends. It is site-agnostic — all paths are relative to the
+ritual at both ends. It is site-agnostic; all paths are relative to the
 repo you're working in.
 
 > **Which skill?** This skill is for a *site's own* roadmap. If the user
 > says "Start pass A/B/…" or otherwise means the **cairn-cms** library
-> initiative, stop and use **`cairn-pass`** — that work is tracked in
+> initiative, stop and use **`cairn-pass`**. That work is tracked in
 > `cairn-cms/docs/PLAN.md`, and its end-ritual updates PLAN.md, not this
 > repo's STATUS.md.
 
 ## Starting a pass
 
-1. Read `docs/STATUS.md` — grab the current pass number and starter prompt.
+1. Read `docs/STATUS.md` to get the current pass number and starter prompt.
 2. Read the plan doc for the current pass. If none exists and the starter
    prompt lists open questions, brainstorm first (invoke
    `superpowers:brainstorming`) and write a plan at
    `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` (see `plan-template.md`).
 3. Execute the plan using `superpowers:subagent-driven-development`.
 
-## Ending a pass — the consolidation ritual
+## Ending a pass: the consolidation ritual
 
 Every pass ends here. No pass is done until every step has run.
 
 ### 1. Simplify
 
-Dispatch the code-simplifier agent over the code changed this pass — the
-`Agent` tool's `subagent_type` is **`code-simplifier:code-simplifier`** (the
+Dispatch the code-simplifier agent over the code changed this pass. Use the
+`Agent` tool's `subagent_type` = **`code-simplifier:code-simplifier`** (the
 plugin-namespaced name; the bare `code-simplifier` is not a valid agent type
 and will error). Docs-only passes skip this.
 
@@ -53,7 +53,7 @@ Docs-only passes skip this.
 ### 3. Update docs/architecture.md
 
 Add any design decisions made this pass that belong in the long-term record.
-Keep it factual — decisions, not narration.
+Keep it factual: decisions, not narration.
 
 ### 4. Update docs/STATUS.md
 
@@ -98,6 +98,6 @@ git push
 
 ## When NOT to use
 
-- The cairn-cms library initiative (passes 0/A–F) — use `cairn-pass`.
+- The cairn-cms library initiative (passes 0/A–F): use `cairn-pass`.
 - Mid-pass debugging or single-file edits.
-- Purely doc changes (typo fix, content update) — no ritual needed.
+- Purely doc changes (typo fix, content update): no ritual needed.

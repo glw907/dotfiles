@@ -45,13 +45,13 @@ Proceed to Step 2.
 
 This is first-run setup. Ask the user these questions in a single message:
 
-1. **Backlog location** — "Where should the backlog file live? (default: `BACKLOG.md`
+1. **Backlog location:** "Where should the backlog file live? (default: `BACKLOG.md`
    at project root)"
-2. **Roadmap location** — "Where should the roadmap file live? (default: `ROADMAP.md`
+2. **Roadmap location:** "Where should the roadmap file live? (default: `ROADMAP.md`
    at project root)"
-3. **Domains** — "What are the main work areas for this project? These become tags
+3. **Domains:** "What are the main work areas for this project? These become tags
    for categorizing issues. Examples: `frontend`, `backend`, `api`, `infra`, `docs`"
-4. **Default priority** — "What default priority for new issues? (default: `medium`)"
+4. **Default priority:** "What default priority for new issues? (default: `medium`)"
 
 After the user answers:
 
@@ -59,7 +59,7 @@ After the user answers:
 2. Create the backlog file at the specified path using the template in Step 4
 3. Confirm: "Created backlog config and `BACKLOG.md`. Ready to log issues."
 4. If the user triggered this skill with an issue to log, continue to Step 2 with
-   that issue — don't make them repeat it.
+   that issue. Don't make them repeat it.
 
 ### Config validation
 
@@ -77,12 +77,12 @@ Extract what you can from the user's message and current context. You need:
 
 | Field | Required | How to get it |
 |-------|----------|---------------|
-| **Title** | Yes | From the user's description — concise, imperative ("Fix modal close on mobile") |
-| **Type** | Yes | `bug`, `feature`, or `improvement` — infer from language, confirm if ambiguous |
-| **Domain** | Yes | Match against config domains — infer from which files are open or what the user is working on |
-| **Priority** | Yes | `high`, `medium`, or `low` — use config default if user doesn't specify |
+| **Title** | Yes | Concise, imperative phrasing from the user's description ("Fix modal close on mobile") |
+| **Type** | Yes | `bug`, `feature`, or `improvement`; infer from language, confirm if ambiguous |
+| **Domain** | Yes | Match against config domains; infer from open files or what the user is working on |
+| **Priority** | Yes | `high`, `medium`, or `low`; fall back to config default if user doesn't specify |
 | **Description** | No | One or two sentences of context if the title isn't self-explanatory |
-| **Project** | No | Link to a `ROADMAP.md` initiative if this issue is part of one — tag as `#project:slug` |
+| **Project** | No | Link to a `ROADMAP.md` initiative if this issue is part of one (tag as `#project:slug`) |
 | **Related files** | No | Include if obvious from context (e.g., the file being edited when the issue was noticed) |
 
 If the user gave enough information to fill everything, confirm the entry in one message
@@ -93,7 +93,7 @@ rather than prompting field by field:
 
 If key fields are missing (especially domain or type), ask in one prompt:
 
-> Got it. Quick question — is this a bug or a feature? And which area: ops-dashboard, website, or handbook?
+> Got it. Quick question: is this a bug or a feature? And which area: ops-dashboard, website, or handbook?
 
 ## Step 3: Assign an issue number
 
@@ -131,8 +131,8 @@ easy to edit by hand.
 - [x] **#0** Example completed issue `#bug` `#website` *(2026-03-15 → 2026-03-18)*
 ```
 
-When creating a new backlog file, use only the header and section headers — no
-example items:
+When creating a new backlog file, use only the header and section headers (no
+example items):
 
 ```markdown
 # BACKLOG
@@ -158,7 +158,7 @@ Priority sections are created as needed when issues are added.
 
 Tell the user what was logged, briefly:
 
-> Logged **#3** `(H)` `#bug` `#ops-dashboard` — Fix modal close on mobile
+> Logged **#3** `(H)` `#bug` `#ops-dashboard`: Fix modal close on mobile
 
 ## Step 6: Commit and push
 
@@ -177,7 +177,7 @@ When the user says "close issue #3", "mark #3 done", or similar:
 1. Change `- [ ]` to `- [x]`
 2. Move the line (and any detail lines) to the `## Done` section
 3. Append the completion date: `*(2026-03-22 → 2026-03-25)*`
-4. Confirm: "Closed **#3** — Fix modal close on mobile"
+4. Confirm: "Closed **#3**: Fix modal close on mobile"
 
 ## Changing priority
 

@@ -1,4 +1,4 @@
-# Pass <n> — <topic>
+# Pass <n>: <topic>
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:subagent-driven-development (recommended) or
@@ -7,8 +7,8 @@
 
 **Goal:** One sentence stating what this pass produces.
 
-**Architecture:** What this pass delivers — files created/modified,
-key decisions locked in.
+**Architecture:** What this pass delivers, including files created/modified
+and key decisions locked in.
 
 **Tech Stack:** SvelteKit, TypeScript, Tailwind CSS v4, DaisyUI v5,
 mdsvex. Note any new deps.
@@ -29,7 +29,7 @@ mdsvex. Note any new deps.
 - Create/Modify: `exact/path/to/file`
 
 - [ ] Step 1: ...
-- [ ] Step 2: Run `npm run check` — expected: no errors
+- [ ] Step 2: Run `npm run check` (expected: no errors)
 - [ ] Step 3: Commit
 
 ---
@@ -37,7 +37,7 @@ mdsvex. Note any new deps.
 ## Pass-end checklist
 
 - [ ] `code-simplifier` agent on changed code
-- [ ] `/svelte-check` — no errors
+- [ ] `/svelte-check` (no errors)
 - [ ] Update `docs/architecture.md`
 - [ ] Update `docs/STATUS.md` (mark done, write next starter prompt)
 - [ ] Archive plan: `git mv docs/superpowers/plans/<this>.md docs/superpowers/archive/plans/`

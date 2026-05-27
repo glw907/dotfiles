@@ -16,7 +16,7 @@ when they want a fresh production copy.
 
 ## Usage
 
-`/pull-data` — back up local, then pull remote data into local DB.
+`/pull-data`: backs up local data, then pulls remote data into the local DB.
 
 ## Steps
 

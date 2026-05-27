@@ -12,7 +12,7 @@ description: >
 
 Simplify, commit, push, and install a Go project in one pass. Go
 conventions are enforced by `~/.claude/docs/go-conventions.md` plus
-project hooks — no separate review step.
+project hooks. No separate review step.
 
 ## Pipeline
 

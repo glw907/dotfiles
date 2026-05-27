@@ -8,20 +8,19 @@ description: >
 
 # Start Server
 
-Start or stop the local Eudaimonia development server. No data
-operations — use `/pull-data` separately if you need fresh
+Start or stop the local Eudaimonia development server. No data operations. Use `/pull-data` separately if you need fresh
 production data.
 
 ## Usage
 
-`/start-server` — build and start wrangler dev server.
-`/start-server stop` — stop the running dev server.
+`/start-server`: build and start wrangler dev server.
+`/start-server stop`: stop the running dev server.
 
 ## Start
 
 Run these steps in order:
 
-1. **Build** (required — wrangler serves pre-built assets, not source):
+1. **Build** (required; wrangler serves pre-built assets, not source):
 
 ```bash
 npm run build
@@ -48,12 +47,12 @@ firefox --new-window http://localhost:8787/ &
 5. Report the URL: `http://localhost:8787`
 
 The server stays up for the entire session. Do not poll or check on
-it — you'll be notified if it exits.
+it. You'll be notified if it exits.
 
 ## Refreshing after UI changes
 
 After making UI changes, **rebuild, verify freshness, and refresh** the
-existing browser window — never open a new tab or window:
+existing browser window (never open a new tab or window):
 
 ```bash
 npm run build 2>&1 | tail -3

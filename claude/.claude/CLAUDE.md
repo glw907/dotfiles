@@ -51,7 +51,7 @@ Do not ask for review, confirmation, or approval until the task is fully complet
 
 ## API-First Policy
 
-Use API or CLI first for external services -- never suggest the web dashboard unless the API genuinely cannot do it. Check `.claude/instructions/api-access.md` in each project for the specific access inventory.
+Use API or CLI first for external services -- never suggest the web dashboard unless the API cannot do it. Check `.claude/instructions/api-access.md` in each project for the specific access inventory.
 
 ## Secrets
 
@@ -61,7 +61,7 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 
 ## Email (poplar)
 
-- **Client**: poplar — bubbletea terminal email client built from `~/Projects/poplar/`
+- **Client**: poplar, a bubbletea terminal email client built from `~/Projects/poplar/`
 - **Account**: Fastmail via JMAP (primary), Gmail via IMAP (v1 target)
 - **JMAP auth**: `$FASTMAIL_API_TOKEN` (in `~/.local/secrets`)
 - **Binary**: `~/.local/bin/poplar`, installed via `make install`
