@@ -35,3 +35,17 @@ import pytest
 ])
 def test_classify(path, tier):
     assert pg.classify(path) == tier
+
+
+def test_scannable_skips_frontmatter_fence_placeholder():
+    text = (
+        "---\ntitle: robust thing\n---\n"
+        "real prose line\n"
+        "```\nfenced robust code\n```\n"
+        "PLACEHOLDER: ignore me\n"
+        "second prose line\n"
+    )
+    lines = list(pg._scannable_lines(text))
+    assert "real prose line" in lines and "second prose line" in lines
+    assert all("robust" not in ln for ln in lines)
+    assert all("PLACEHOLDER" not in ln for ln in lines)

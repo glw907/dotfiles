@@ -39,6 +39,28 @@ def classify(path):
     return None
 
 
+def _strip_frontmatter(text):
+    """Drop a leading YAML frontmatter block so field values aren't scanned."""
+    if text.lstrip().startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) == 3:
+            return parts[2]
+    return text
+
+
+def _scannable_lines(text):
+    """Yield prose lines; skip fenced code, frontmatter, blanks, and PLACEHOLDER notes."""
+    in_fence = False
+    for line in _strip_frontmatter(text).split("\n"):
+        s = line.strip()
+        if s.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence or not s or "PLACEHOLDER" in s:
+            continue
+        yield s
+
+
 def main():
     args = sys.argv[1:]
     if args and args[0] == "--hook":
