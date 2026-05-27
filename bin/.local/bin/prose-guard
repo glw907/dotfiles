@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""prose-guard — flag AI-flavored-writing tells in docs, code comments, and content.
+"""prose-guard: flag AI-flavored-writing tells in docs, code comments, and content.
 
 Two modes:
   prose-guard --hook    PreToolUse guard. Reads the tool-call JSON on stdin,
                         classifies the target file, scans the content being
                         written, and on a hit prints a JSON deny decision and
                         exits 0. Clean files print nothing. Any internal error
-                        also exits 0 — a hook bug must never block real work.
+                        also exits 0: a hook bug must never block real work.
   prose-guard PATHS...  Sweep mode. Scans whole files (every layer, including
   prose-guard --all     statistics), prints a grouped report, exits 1 on a hit.
 
@@ -15,52 +15,18 @@ Three tiers, chosen by path: general (marketing), docs (technical), comments
 tells; statistics and multi-sentence patterns are sweep-only/advisory.
 """
 import json
+import os
 import re
 import statistics
 import sys
 
-EM_DASH = "—"  # em dash. The en dash (–, ranges) is never flagged.
+EM_DASH = "—"  # The en dash (ranges) is never flagged.
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
-
 
 CODE_EXTS = {
     ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".svelte",
     ".py", ".go", ".sh", ".bash", ".rs", ".java", ".c", ".h", ".cpp", ".css", ".scss",
 }
-
-
-def classify(path):
-    """Return the tier for a path, or None to skip it."""
-    p = path.replace("\\", "/")
-    if p.endswith(".md"):
-        return "general" if "/src/content/" in p else "docs"
-    dot = p.rfind(".")
-    if dot != -1 and p[dot:].lower() in CODE_EXTS:
-        return "comments"
-    return None
-
-
-def _strip_frontmatter(text):
-    """Drop a leading YAML frontmatter block so field values aren't scanned."""
-    if text.lstrip().startswith("---"):
-        parts = text.split("---", 2)
-        if len(parts) == 3:
-            return parts[2]
-    return text
-
-
-def _scannable_lines(text):
-    """Yield prose lines; skip fenced code, frontmatter, blanks, and PLACEHOLDER notes."""
-    in_fence = False
-    for line in _strip_frontmatter(text).split("\n"):
-        s = line.strip()
-        if s.startswith("```"):
-            in_fence = not in_fence
-            continue
-        if in_fence or not s or "PLACEHOLDER" in s:
-            continue
-        yield s
-
 
 BANNED_PHRASES = [
     "it's worth noting", "when it comes to", "dive into", "delve", "let's explore",
@@ -71,17 +37,18 @@ BANNED_OPENERS = [
     "moreover", "additionally", "furthermore", "in conclusion",
     "needless to say", "certainly", "it should be noted",
 ]
-# Filler intensifiers that read as machine-written in any tier.
 FILLER_WORDS = ["genuinely", "honestly"]
 SLOP_WORDS = ["tapestry", "multifaceted", "testament", "seamless"]
 JUDGMENT_WORDS = [
     "robust", "leverage", "comprehensive", "dedicated", "curated", "tailored",
     "foster", "elevate", "transformative", "pivotal", "thriving", "meticulous", "nuanced",
 ]
-RULES = {
-    "general":  {"words": SLOP_WORDS + JUDGMENT_WORDS},
-    "docs":     {"words": SLOP_WORDS},
-    "comments": {"words": []},
+
+# Per-tier word lists. comments tier has none beyond the shared rules above.
+TIER_WORDS = {
+    "general":  SLOP_WORDS + JUDGMENT_WORDS,
+    "docs":     SLOP_WORDS,
+    "comments": [],
 }
 
 # (kind, compiled regex, hint). High-precision; run in every tier.
@@ -109,13 +76,44 @@ STRUCTURAL = [
 ]
 
 
+def classify(path):
+    """Return the tier for a path, or None to skip it."""
+    p = path.replace("\\", "/")
+    if p.endswith(".md"):
+        return "general" if "/src/content/" in p else "docs"
+    dot = p.rfind(".")
+    if dot != -1 and p[dot:].lower() in CODE_EXTS:
+        return "comments"
+    return None
+
+
+def _strip_frontmatter(text):
+    """Drop a leading YAML frontmatter block so field values are not scanned."""
+    if text.lstrip().startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) == 3:
+            return parts[2]
+    return text
+
+
+def _scannable_lines(text):
+    """Yield prose lines; skip fenced code, frontmatter, blanks, and PLACEHOLDER notes."""
+    in_fence = False
+    for line in _strip_frontmatter(text).split("\n"):
+        s = line.strip()
+        if s.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence or not s or "PLACEHOLDER" in s:
+            continue
+        yield s
+
+
 def scan(text, tier):
     """Lexical + structural tells (the blocking layer). Returns [(kind, snippet, hint)]."""
-    words = RULES[tier]["words"]
-    technical = tier in ("docs", "comments")
     issues = []
     for line in _scannable_lines(text):
-        if technical:
+        if tier in ("docs", "comments"):
             # Humans rarely use em dashes in technical writing, so any one is a tell.
             if EM_DASH in line:
                 issues.append(("em dash", line,
@@ -146,7 +144,7 @@ def scan(text, tier):
                 head = re.sub(r"^[\s\-*>#]+", "", sent).lower()
                 if head.startswith(opener):
                     issues.append((f"banned opener: {opener}", sent.strip(), "Start with a subject, not a connector."))
-        for word in words:
+        for word in TIER_WORDS[tier]:
             if re.search(rf"\b{re.escape(word)}\w*\b", low):
                 issues.append((f"banned word: {word}", line, "Reword in a human voice."))
         for kind, rx, hint in STRUCTURAL:
@@ -164,7 +162,7 @@ def _sentences(text):
 def analyze_document(text, tier):
     """Advisory whole-document signals (sweep-only). Empty for the comments tier."""
     if tier == "comments":
-        return []  # comments are too short for these to mean anything
+        return []
     issues = []
     sents = _sentences(text)
     counts = [len(s.split()) for s in sents]
@@ -175,12 +173,12 @@ def analyze_document(text, tier):
             burst = statistics.pstdev(counts) / mean
             if burst < 0.25:
                 issues.append(("low burstiness (strong)", f"B={burst:.2f} over {len(sents)} sentences",
-                               "Sentences are uniform in length. Vary them — mix short and long."))
+                               "Sentences are uniform in length. Vary them: mix short and long."))
             elif burst < 0.40:
                 issues.append(("low burstiness", f"B={burst:.2f} over {len(sents)} sentences",
                                "Cadence is flat. Add some short sentences and some long ones."))
     # anaphora: 3+ consecutive sentences opening with the same word.
-    # Skip markdown list items, headings, tables, and link/code openers — they aren't prose.
+    # Skip markdown list items, headings, tables, and link/code openers.
     heads = []
     for s in sents:
         toks = s.split()
@@ -229,9 +227,12 @@ def report(issues, path, tier):
 
 def _reason(issues):
     """One-line reason for the hook deny decision."""
-    parts = [f"{kind} ({(snip[:40] + '…') if len(snip) > 40 else snip})" for kind, snip, _h in issues[:5]]
-    extra = "" if len(issues) <= 5 else f" (+{len(issues) - 5} more)"
-    return "prose-guard: " + "; ".join(parts) + extra + ". Rewrite and retry."
+    parts = []
+    for kind, snip, _h in issues[:5]:
+        short = (snip[:40] + "…") if len(snip) > 40 else snip
+        parts.append(f"{kind} ({short})")
+    suffix = "" if len(issues) <= 5 else f" (+{len(issues) - 5} more)"
+    return "prose-guard: " + "; ".join(parts) + suffix + ". Rewrite and retry."
 
 
 def _content_being_written(tool_name, tool_input):
@@ -273,7 +274,6 @@ SKIP_DIRS = {".git", "node_modules", "dist", "build", ".svelte-kit", ".wrangler"
 
 
 def _walk(root="."):
-    import os
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
         for name in filenames:

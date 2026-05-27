@@ -1,4 +1,10 @@
-import importlib.machinery, importlib.util, pathlib
+import importlib.machinery
+import importlib.util
+import io
+import json
+import pathlib
+
+import pytest
 
 TOOL = pathlib.Path(__file__).resolve().parent.parent / "bin" / ".local" / "bin" / "prose-guard"
 
@@ -14,11 +20,20 @@ def _load():
 pg = _load()
 
 
+def _kinds(issues):
+    return [k for k, _s, _h in issues]
+
+
+def _run_hook(monkeypatch, payload):
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
+    out = io.StringIO()
+    monkeypatch.setattr("sys.stdout", out)
+    code = pg.main_hook()
+    return code, out.getvalue()
+
+
 def test_module_loads():
     assert hasattr(pg, "classify")
-
-
-import pytest
 
 
 @pytest.mark.parametrize("path,tier", [
@@ -51,60 +66,94 @@ def test_scannable_skips_frontmatter_fence_placeholder():
     assert all("PLACEHOLDER" not in ln for ln in lines)
 
 
-def _kinds(issues):
-    return [k for k, _s, _h in issues]
-
 # lexical
+
 def test_em_dash_any_in_technical_tiers():
     # docs + comments: humans rarely use em dashes in technical writing, so any one is a tell
     assert any("em dash" in k for k in _kinds(pg.scan("We tap the button — it then saves.", "comments")))
     assert any("em dash" in k for k in _kinds(pg.scan("The cache warms the path — then serves it fast and reliably.", "docs")))
     assert any("em dash" in k for k in _kinds(pg.scan("The camp — four days long — is the highlight.", "docs")))
+
+
 def test_em_dash_appendage_general():
     # general/marketing keeps the appendage nuance
     assert any("appendage" in k for k in _kinds(pg.scan("We tap the button — it then saves.", "general")))
+
+
 def test_em_dash_pair_ok_general():
     # a balanced pair in marketing prose is allowed
     assert not any("em-dash" in k for k in _kinds(pg.scan("The camp — four days long — is the week's highlight.", "general")))
+
+
 def test_en_dash_ok():
     assert pg.scan("Open 9–17 on weekdays.", "docs") == []
+
+
 def test_phrase_all_tiers():
-    for t in ("general","docs","comments"):
+    for t in ("general", "docs", "comments"):
         assert any("dive into" in k for k in _kinds(pg.scan("Let us dive into the code.", t)))
+
+
 def test_opener():
     assert any("moreover" in k for k in _kinds(pg.scan("Moreover, the cache helps.", "docs")))
+
+
 def test_filler_words_all_tiers():
     for t in ("general", "docs", "comments"):
         assert any("genuinely" in k for k in _kinds(pg.scan("This is genuinely fast.", t)))
         assert any("honestly" in k for k in _kinds(pg.scan("Honestly, it works.", t)))
+
+
 def test_filler_word_boundary():
     assert pg.scan("The dishonestly named flag.", "docs") == []
+
+
 def test_word_tiering_judgment():
     assert any("robust" in k for k in _kinds(pg.scan("a robust system", "general")))
     assert not any("robust" in k for k in _kinds(pg.scan("a robust system", "docs")))
     assert not any("robust" in k for k in _kinds(pg.scan("a robust system", "comments")))
+
+
 def test_word_tiering_slop():
     assert any("tapestry" in k for k in _kinds(pg.scan("a rich tapestry", "docs")))
     assert not any("tapestry" in k for k in _kinds(pg.scan("a rich tapestry", "comments")))
 
+
 # structural (every tier; high precision)
+
 def test_negative_antithesis():
     assert any("antithesis" in k for k in _kinds(pg.scan("It's not a bug, it's a feature.", "comments")))
+
+
 def test_not_just_but():
     assert any("not just" in k for k in _kinds(pg.scan("This is not just fast but also safe.", "docs")))
+
+
 def test_setup_colon_payoff():
     assert any("setup-colon" in k for k in _kinds(pg.scan("The takeaway: ship it.", "docs")))
+
+
 def test_setup_colon_negative():
     # a normal definitional colon must NOT fire (hollow-noun list only)
     assert not any("setup-colon" in k for k in _kinds(pg.scan("The config: a JSON file.", "docs")))
+
+
 def test_serves_as():
     assert any("copula" in k for k in _kinds(pg.scan("The cache serves as a buffer.", "docs")))
+
+
 def test_participial_windup():
     assert any("wind-up" in k for k in _kinds(pg.scan("Building on this, the system scales.", "docs")))
+
+
 def test_bold_header_bullet():
     assert any("bold-header" in k for k in _kinds(pg.scan("- **Performance**: it is fast", "docs")))
+
+
 def test_bold_header_bullet_capital_pronoun():
     assert any("bold-header" in k for k in _kinds(pg.scan("- **Speed**: It scales well.", "docs")))
+
+
 def test_bold_header_bullet_skips_definition_list():
     # terse key-value reference bullets are legitimate, not the AI listicle tell
     for line in ("- **OS**: Linux Mint 22.3",
@@ -114,11 +163,14 @@ def test_bold_header_bullet_skips_definition_list():
         assert not any("bold-header" in k for k in _kinds(pg.scan(line, "docs")))
 
 
+# analyze_document
+
 def test_burstiness_flags_flat_prose():
     # 13 sentences (>=150 words), all near-identical length -> low burstiness
     flat = " ".join(["The system reads the file and writes the result to disk now."] * 13)
     kinds = [k for k, _s, _h in pg.analyze_document(flat, "docs")]
     assert any("burstiness" in k for k in kinds)
+
 
 def test_burstiness_ok_for_varied_prose():
     varied = ("Stop. "
@@ -129,20 +181,25 @@ def test_burstiness_ok_for_varied_prose():
     kinds = [k for k, _s, _h in pg.analyze_document(varied, "docs")]
     assert not any("burstiness" in k for k in kinds)
 
+
 def test_anaphora_flagged():
     text = "We ship fast. We test first. We never guess."
     kinds = [k for k, _s, _h in pg.analyze_document(text, "docs")]
     assert any("anaphora" in k for k in kinds)
+
 
 def test_anaphora_ignores_bullet_lists():
     text = "- first item here.\n- second item here.\n- third item here.\n- fourth item here."
     kinds = [k for k, _s, _h in pg.analyze_document(text, "docs")]
     assert not any("anaphora" in k for k in kinds)
 
+
 def test_stats_skipped_for_comments_tier():
     flat = " ".join(["The system reads the file and writes the result now."] * 12)
     assert pg.analyze_document(flat, "comments") == []
 
+
+# extract_comments
 
 def test_extract_ts_comment_vs_string():
     src = ('// it\'s worth noting this loop is slow\n'
@@ -152,48 +209,49 @@ def test_extract_ts_comment_vs_string():
     assert "it's worth noting" in c and "delve here" in c
     assert "https://example.com" not in c and "const robust" not in c
 
+
 def test_extract_python():
     c = pg.extract_comments("y.py", '# moreover this matters\nx = "moreover not this"\n')
     assert "moreover this matters" in c and "not this" not in c
+
 
 def test_extract_svelte_fallback():
     c = pg.extract_comments("App.svelte", "<!-- it's worth noting the layout -->\n<div>plain</div>\n")
     assert "it's worth noting" in c
 
+
 def test_extract_unknown_graceful():
     assert pg.extract_comments("weird.xyz", "delve in") == ""
 
 
-import io, json as _json
-
-def _run_hook(monkeypatch, payload):
-    monkeypatch.setattr("sys.stdin", io.StringIO(_json.dumps(payload)))
-    out = io.StringIO(); monkeypatch.setattr("sys.stdout", out)
-    code = pg.main_hook()
-    return code, out.getvalue()
+# hook
 
 def test_hook_denies_doc_with_tell(monkeypatch):
     code, out = _run_hook(monkeypatch, {"tool_name": "Write",
         "tool_input": {"file_path": "docs/X.md", "content": "Moreover, this matters."}})
     assert code == 0
-    payload = _json.loads(out)
+    payload = json.loads(out)
     assert payload["hookSpecificOutput"]["permissionDecision"] == "deny"
     assert "opener" in payload["hookSpecificOutput"]["permissionDecisionReason"]
+
 
 def test_hook_allows_clean_doc(monkeypatch):
     code, out = _run_hook(monkeypatch, {"tool_name": "Write",
         "tool_input": {"file_path": "docs/X.md", "content": "This matters because the cache is warm."}})
     assert code == 0 and out.strip() == ""
 
+
 def test_hook_comments_tier_ts(monkeypatch):
     code, out = _run_hook(monkeypatch, {"tool_name": "Edit",
         "tool_input": {"file_path": "a.ts", "new_string": "// let's dive into this\nconst x=1;"}})
-    assert _json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+    assert json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+
 
 def test_hook_skips_unknown_path(monkeypatch):
     code, out = _run_hook(monkeypatch, {"tool_name": "Write",
         "tool_input": {"file_path": "img.png", "content": "delve delve delve"}})
     assert code == 0 and out.strip() == ""
+
 
 def test_hook_multiedit(monkeypatch):
     code, out = _run_hook(monkeypatch, {"tool_name": "MultiEdit",
@@ -201,14 +259,20 @@ def test_hook_multiedit(monkeypatch):
     assert "furthermore" in out.lower()
 
 
+# sweep
+
 def test_sweep_reports_nonzero(tmp_path, capsys):
-    f = tmp_path / "doc.md"; f.write_text("Moreover, this is a tell.\n")
+    f = tmp_path / "doc.md"
+    f.write_text("Moreover, this is a tell.\n")
     assert pg.main_sweep([str(f)]) == 1
     assert "banned opener" in capsys.readouterr().out
 
+
 def test_sweep_clean_zero(tmp_path):
-    f = tmp_path / "doc.md"; f.write_text("This sentence is clean and direct.\n")
+    f = tmp_path / "doc.md"
+    f.write_text("This sentence is clean and direct.\n")
     assert pg.main_sweep([str(f)]) == 0
+
 
 def test_sweep_runs_stats(tmp_path, capsys):
     f = tmp_path / "flat.md"
@@ -216,8 +280,10 @@ def test_sweep_runs_stats(tmp_path, capsys):
     assert pg.main_sweep([str(f)]) == 1
     assert "burstiness" in capsys.readouterr().out
 
+
 def test_sweep_skips_unreadable(tmp_path):
     assert pg.main_sweep([str(tmp_path / "nope.md")]) == 0
+
 
 def test_sweep_all_skips_vendor(tmp_path, monkeypatch, capsys):
     (tmp_path / "node_modules").mkdir()

@@ -33,7 +33,7 @@ openers: moreover, additionally, furthermore, in conclusion, needless to say, ce
 phrases: it's worth noting, when it comes to, dive into, delve, let's explore,
          at the end of the day, game-changer, state-of-the-art
 slop:    seamless, tapestry, multifaceted, testament
-filler:  genuinely, honestly
+filler:  genuinely, honestly, genuine (drop it unless you mean "authentic"; "a genuine bug" is filler)
 ```
 
 Code comments also follow their stack's conventions: the go-conventions skill for
