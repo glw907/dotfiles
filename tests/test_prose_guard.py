@@ -90,6 +90,15 @@ def test_participial_windup():
     assert any("wind-up" in k for k in _kinds(pg.scan("Building on this, the system scales.", "docs")))
 def test_bold_header_bullet():
     assert any("bold-header" in k for k in _kinds(pg.scan("- **Performance**: it is fast", "docs")))
+def test_bold_header_bullet_capital_pronoun():
+    assert any("bold-header" in k for k in _kinds(pg.scan("- **Speed**: It scales well.", "docs")))
+def test_bold_header_bullet_skips_definition_list():
+    # terse key-value reference bullets are legitimate, not the AI listicle tell
+    for line in ("- **OS**: Linux Mint 22.3",
+                 "- **Shell**: bash",
+                 "- **Packages**: apt for system tools",
+                 "- **Destructive ops**: Show a dry-run first"):
+        assert not any("bold-header" in k for k in _kinds(pg.scan(line, "docs")))
 
 
 def test_burstiness_flags_flat_prose():

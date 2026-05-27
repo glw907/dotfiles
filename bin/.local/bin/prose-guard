@@ -100,8 +100,10 @@ STRUCTURAL = [
      re.compile(r"(?im)^\s*(building on|recognizing|leveraging|drawing on|having established|taking)\b[^,]{0,40},\s"),
      "Start with the subject, not a participial bridge."),
     ("bold-header bullet",
-     re.compile(r"(?m)^\s*[-*]\s+\*\*[^*]+\*\*\s*[:—-]"),
-     "The '**Bolded**:' bullet is the AI list default. Write a plain bullet."),
+     re.compile(r"(?im)^\s*[-*]\s+\*\*[^*]+\*\*\s*[:—-]\s+"
+                r"(it|this|that|these|those|they|we|you|our|your|its|a|an|the)\b"),
+     "The '**Bolded**:' fake-heading bullet (the value continues as a sentence) is the "
+     "AI list default. Write a plain bullet. A terse key-value definition list is fine."),
 ]
 
 
