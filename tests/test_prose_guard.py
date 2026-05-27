@@ -55,10 +55,17 @@ def _kinds(issues):
     return [k for k, _s, _h in issues]
 
 # lexical
-def test_em_dash_appendage():
-    assert any("appendage" in k for k in _kinds(pg.scan("We tap the button — it then saves.", "comments")))
-def test_em_dash_pair_ok():
-    assert not any("appendage" in k or "spray" in k for k in _kinds(pg.scan("The camp — four days long — is the week's highlight.", "docs")))
+def test_em_dash_any_in_technical_tiers():
+    # docs + comments: humans rarely use em dashes in technical writing, so any one is a tell
+    assert any("em dash" in k for k in _kinds(pg.scan("We tap the button — it then saves.", "comments")))
+    assert any("em dash" in k for k in _kinds(pg.scan("The cache warms the path — then serves it fast and reliably.", "docs")))
+    assert any("em dash" in k for k in _kinds(pg.scan("The camp — four days long — is the highlight.", "docs")))
+def test_em_dash_appendage_general():
+    # general/marketing keeps the appendage nuance
+    assert any("appendage" in k for k in _kinds(pg.scan("We tap the button — it then saves.", "general")))
+def test_em_dash_pair_ok_general():
+    # a balanced pair in marketing prose is allowed
+    assert not any("em-dash" in k for k in _kinds(pg.scan("The camp — four days long — is the week's highlight.", "general")))
 def test_en_dash_ok():
     assert pg.scan("Open 9–17 on weekdays.", "docs") == []
 def test_phrase_all_tiers():

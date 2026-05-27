@@ -112,17 +112,26 @@ STRUCTURAL = [
 def scan(text, tier):
     """Lexical + structural tells (the blocking layer). Returns [(kind, snippet, hint)]."""
     words = RULES[tier]["words"]
+    technical = tier in ("docs", "comments")
     issues = []
     for line in _scannable_lines(text):
-        if line.count(EM_DASH) > 2:
-            issues.append(("em-dash spray", line, "Keep at most one interruption (a pair) per line."))
-        for sent in SENTENCE_SPLIT.split(line):
-            if sent.count(EM_DASH) == 1:
-                after = sent.split(EM_DASH, 1)[1]
-                after = re.sub(r"[*_`)\]]+$", "", after).strip().rstrip(".!?").strip()
-                if 1 <= len(after.split()) <= 6:
-                    issues.append(("em-dash appendage", sent.strip(),
-                                   "A clause + tacked-on fragment after a dash is a tell. Use a period, comma, or colon."))
+        if technical:
+            # Humans rarely use em dashes in technical writing, so any one is a tell.
+            if EM_DASH in line:
+                issues.append(("em dash", line,
+                               "Humans rarely use em dashes in technical writing. Rewrite to remove it: "
+                               "a period, comma, or parentheses, or recast the sentence."))
+        else:
+            # General/marketing prose: an occasional em dash is human; flag overuse.
+            if line.count(EM_DASH) > 2:
+                issues.append(("em-dash spray", line, "Keep at most one interruption (a pair) per line."))
+            for sent in SENTENCE_SPLIT.split(line):
+                if sent.count(EM_DASH) == 1:
+                    after = sent.split(EM_DASH, 1)[1]
+                    after = re.sub(r"[*_`)\]]+$", "", after).strip().rstrip(".!?").strip()
+                    if 1 <= len(after.split()) <= 6:
+                        issues.append(("em-dash appendage", sent.strip(),
+                                       "A clause + tacked-on fragment after a dash is a tell. Use a period, comma, or colon."))
         low = line.lower()
         if "not only" in low and "but also" in low:
             issues.append(("not only … but also", line, "Reword without the correlative pair."))
