@@ -75,3 +75,11 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 ## Claude Code Agent Usage
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
+
+## Writing voice
+
+The `writing-voice` output style is always on (set in settings.json) and carries the
+full prose standard: plain voice, varied sentence length, no AI-writing tells. The
+`prose-guard` PreToolUse hook (`~/.local/bin/prose-guard`) blocks writes that trip it.
+Write clean the first time; the hook is a backstop. Code comments also follow their
+stack's conventions (go-conventions for Go, file idiom for TS/Svelte, PEP 257 for Python).
