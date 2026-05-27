@@ -61,6 +61,83 @@ def _scannable_lines(text):
         yield s
 
 
+BANNED_PHRASES = [
+    "it's worth noting", "when it comes to", "dive into", "delve", "let's explore",
+    "at the end of the day", "game-changer", "game changer", "state-of-the-art",
+    "look no further", "in today's world",
+]
+BANNED_OPENERS = [
+    "moreover", "additionally", "furthermore", "in conclusion",
+    "needless to say", "certainly", "it should be noted",
+]
+SLOP_WORDS = ["tapestry", "multifaceted", "testament", "seamless"]
+JUDGMENT_WORDS = [
+    "robust", "leverage", "comprehensive", "dedicated", "curated", "tailored",
+    "foster", "elevate", "transformative", "pivotal", "thriving", "meticulous", "nuanced",
+]
+RULES = {
+    "general":  {"words": SLOP_WORDS + JUDGMENT_WORDS},
+    "docs":     {"words": SLOP_WORDS},
+    "comments": {"words": []},
+}
+
+# (kind, compiled regex, hint). High-precision; run in every tier.
+STRUCTURAL = [
+    ("negative antithesis",
+     re.compile(r"(?i)\b(it|this|that)'?s?\s+(not|isn'?t)\b[^.!?;]{3,60}[,;]\s+(it|this|that|but)'?s?\b"),
+     "Explicit 'not X, it's Y' antithesis. Prefer an implicit contrast or a plain statement."),
+    ("not just … but",
+     re.compile(r"(?i)\bnot\s+just\b[^.!?]{5,60}\bbut\s+(also\s+)?"),
+     "The escalation frame reads as AI. State the point directly."),
+    ("setup-colon payoff",
+     re.compile(r"(?i)\b(the\s+)?(point|takeaway|truth|reality|bottom line|catch|kicker)\s*:\s+[A-Z]"),
+     "The 'The point:' setup-payoff is a tell. Fold it into the sentence."),
+    ("copula dodge (serves/stands as)",
+     re.compile(r"(?i)\b(serves?|stands?|acts?|functions?)\s+as\s+a\b"),
+     "Use 'is' instead of 'serves as a'."),
+    ("participial wind-up",
+     re.compile(r"(?im)^\s*(building on|recognizing|leveraging|drawing on|having established|taking)\b[^,]{0,40},\s"),
+     "Start with the subject, not a participial bridge."),
+    ("bold-header bullet",
+     re.compile(r"(?m)^\s*[-*]\s+\*\*[^*]+\*\*\s*[:—-]"),
+     "The '**Bolded**:' bullet is the AI list default. Write a plain bullet."),
+]
+
+
+def scan(text, tier):
+    """Lexical + structural tells (the blocking layer). Returns [(kind, snippet, hint)]."""
+    words = RULES[tier]["words"]
+    issues = []
+    for line in _scannable_lines(text):
+        if line.count(EM_DASH) > 2:
+            issues.append(("em-dash spray", line, "Keep at most one interruption (a pair) per line."))
+        for sent in SENTENCE_SPLIT.split(line):
+            if sent.count(EM_DASH) == 1:
+                after = sent.split(EM_DASH, 1)[1]
+                after = re.sub(r"[*_`)\]]+$", "", after).strip().rstrip(".!?").strip()
+                if 1 <= len(after.split()) <= 6:
+                    issues.append(("em-dash appendage", sent.strip(),
+                                   "A clause + tacked-on fragment after a dash is a tell. Use a period, comma, or colon."))
+        low = line.lower()
+        if "not only" in low and "but also" in low:
+            issues.append(("not only … but also", line, "Reword without the correlative pair."))
+        for phrase in BANNED_PHRASES:
+            if phrase in low:
+                issues.append((f"banned phrase: {phrase}", line, "Reword in a human voice."))
+        for opener in BANNED_OPENERS:
+            for sent in SENTENCE_SPLIT.split(line):
+                head = re.sub(r"^[\s\-*>#]+", "", sent).lower()
+                if head.startswith(opener):
+                    issues.append((f"banned opener: {opener}", sent.strip(), "Start with a subject, not a connector."))
+        for word in words:
+            if re.search(rf"\b{re.escape(word)}\w*\b", low):
+                issues.append((f"banned word: {word}", line, "Reword in a human voice."))
+        for kind, rx, hint in STRUCTURAL:
+            if rx.search(line):
+                issues.append((kind, line, hint))
+    return issues
+
+
 def main():
     args = sys.argv[1:]
     if args and args[0] == "--hook":
