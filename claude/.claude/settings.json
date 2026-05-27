@@ -40,8 +40,7 @@
     "skill-creator@claude-plugins-official": true
   },
   "effortLevel": "medium",
-  "voiceEnabled": true,
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
-  "model": "claude-opus-4-6"
+  "voiceEnabled": true
 }
