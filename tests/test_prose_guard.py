@@ -172,3 +172,31 @@ def test_hook_multiedit(monkeypatch):
     code, out = _run_hook(monkeypatch, {"tool_name": "MultiEdit",
         "tool_input": {"file_path": "d.md", "edits": [{"new_string": "fine line"}, {"new_string": "Furthermore, no."}]}})
     assert "furthermore" in out.lower()
+
+
+def test_sweep_reports_nonzero(tmp_path, capsys):
+    f = tmp_path / "doc.md"; f.write_text("Moreover, this is a tell.\n")
+    assert pg.main_sweep([str(f)]) == 1
+    assert "banned opener" in capsys.readouterr().out
+
+def test_sweep_clean_zero(tmp_path):
+    f = tmp_path / "doc.md"; f.write_text("This sentence is clean and direct.\n")
+    assert pg.main_sweep([str(f)]) == 0
+
+def test_sweep_runs_stats(tmp_path, capsys):
+    f = tmp_path / "flat.md"
+    f.write_text(" ".join(["The system reads the file and writes the result to disk now."] * 13) + "\n")
+    assert pg.main_sweep([str(f)]) == 1
+    assert "burstiness" in capsys.readouterr().out
+
+def test_sweep_skips_unreadable(tmp_path):
+    assert pg.main_sweep([str(tmp_path / "nope.md")]) == 0
+
+def test_sweep_all_skips_vendor(tmp_path, monkeypatch, capsys):
+    (tmp_path / "node_modules").mkdir()
+    (tmp_path / "node_modules" / "x.md").write_text("Moreover bad.\n")
+    (tmp_path / "keep.md").write_text("Furthermore bad.\n")
+    monkeypatch.chdir(tmp_path)
+    assert pg.main_sweep(["--all"]) == 1
+    out = capsys.readouterr().out
+    assert "keep.md" in out and "node_modules" not in out

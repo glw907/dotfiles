@@ -248,11 +248,43 @@ def main_hook():
     return 0
 
 
+SKIP_DIRS = {".git", "node_modules", "dist", "build", ".svelte-kit", ".wrangler", "__pycache__", ".venv"}
+
+
+def _walk(root="."):
+    import os
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
+        for name in filenames:
+            yield os.path.join(dirpath, name)
+
+
+def main_sweep(args):
+    paths = list(_walk(".")) if args == ["--all"] else args
+    any_hit = False
+    for path in paths:
+        tier = classify(path)
+        if tier is None:
+            continue
+        try:
+            with open(path, encoding="utf-8") as fh:
+                raw = fh.read()
+        except (OSError, UnicodeDecodeError) as exc:
+            sys.stderr.write(f"skip {path}: {exc}\n")
+            continue
+        text = extract_comments(path, raw) if tier == "comments" else raw
+        issues = scan(text, tier) + analyze_document(text, tier)
+        if issues:
+            any_hit = True
+            sys.stdout.write(report(issues, path, tier))
+    return 1 if any_hit else 0
+
+
 def main():
     args = sys.argv[1:]
     if args and args[0] == "--hook":
         return main_hook()
-    return main_sweep(args)  # Task 8
+    return main_sweep(args)
 
 
 if __name__ == "__main__":
