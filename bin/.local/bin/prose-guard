@@ -173,6 +173,30 @@ def analyze_document(text, tier):
     return issues
 
 
+def _lexer_for(path):
+    from pygments.lexers import get_lexer_for_filename
+    from pygments.util import ClassNotFound
+    try:
+        return get_lexer_for_filename(path)
+    except ClassNotFound:
+        if path.endswith(".svelte"):
+            from pygments.lexers import HtmlLexer
+            return HtmlLexer()  # <!-- --> plus embedded <script>/<style>
+        return None
+
+
+def extract_comments(path, text):
+    """Return only comment-token text from a code file (never identifiers/strings)."""
+    try:
+        from pygments.token import Comment
+        lexer = _lexer_for(path)
+        if lexer is None:
+            return ""
+        return "".join(val for tok, val in lexer.get_tokens(text) if tok in Comment)
+    except Exception:
+        return ""
+
+
 def main():
     args = sys.argv[1:]
     if args and args[0] == "--hook":

@@ -115,3 +115,23 @@ def test_anaphora_flagged():
 def test_stats_skipped_for_comments_tier():
     flat = " ".join(["The system reads the file and writes the result now."] * 12)
     assert pg.analyze_document(flat, "comments") == []
+
+
+def test_extract_ts_comment_vs_string():
+    src = ('// it\'s worth noting this loop is slow\n'
+           'const url = "https://example.com/dive-into";  // delve here\n'
+           'const robust = 1;\n')
+    c = pg.extract_comments("x.ts", src)
+    assert "it's worth noting" in c and "delve here" in c
+    assert "https://example.com" not in c and "const robust" not in c
+
+def test_extract_python():
+    c = pg.extract_comments("y.py", '# moreover this matters\nx = "moreover not this"\n')
+    assert "moreover this matters" in c and "not this" not in c
+
+def test_extract_svelte_fallback():
+    c = pg.extract_comments("App.svelte", "<!-- it's worth noting the layout -->\n<div>plain</div>\n")
+    assert "it's worth noting" in c
+
+def test_extract_unknown_graceful():
+    assert pg.extract_comments("weird.xyz", "delve in") == ""
