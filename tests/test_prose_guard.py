@@ -93,8 +93,8 @@ def test_bold_header_bullet():
 
 
 def test_burstiness_flags_flat_prose():
-    # ~12 sentences, all near-identical length -> low burstiness
-    flat = " ".join(["The system reads the file and writes the result to disk now."] * 12)
+    # 13 sentences (>=150 words), all near-identical length -> low burstiness
+    flat = " ".join(["The system reads the file and writes the result to disk now."] * 13)
     kinds = [k for k, _s, _h in pg.analyze_document(flat, "docs")]
     assert any("burstiness" in k for k in kinds)
 
