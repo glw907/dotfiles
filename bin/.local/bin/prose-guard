@@ -22,9 +22,21 @@ EM_DASH = "—"  # em dash. The en dash (–, ranges) is never flagged.
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
 
 
+CODE_EXTS = {
+    ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".svelte",
+    ".py", ".go", ".sh", ".bash", ".rs", ".java", ".c", ".h", ".cpp", ".css", ".scss",
+}
+
+
 def classify(path):
     """Return the tier for a path, or None to skip it."""
-    return None  # Task 2
+    p = path.replace("\\", "/")
+    if p.endswith(".md"):
+        return "general" if "/src/content/" in p else "docs"
+    dot = p.rfind(".")
+    if dot != -1 and p[dot:].lower() in CODE_EXTS:
+        return "comments"
+    return None
 
 
 def main():

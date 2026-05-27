@@ -16,3 +16,22 @@ pg = _load()
 
 def test_module_loads():
     assert hasattr(pg, "classify")
+
+
+import pytest
+
+
+@pytest.mark.parametrize("path,tier", [
+    ("ecnordic-ski/src/content/posts/x.md", "general"),
+    ("/abs/site/src/content/pages/y.md", "general"),
+    ("cairn-cms/docs/PLAN.md", "docs"),
+    ("README.md", "docs"),
+    ("/home/glw907/.claude/CLAUDE.md", "docs"),
+    ("src/lib/cairn/auth.ts", "comments"),
+    ("App.svelte", "comments"),
+    ("scripts/mint.py", "comments"),
+    ("photo.png", None),
+    ("data.json", None),
+])
+def test_classify(path, tier):
+    assert pg.classify(path) == tier
