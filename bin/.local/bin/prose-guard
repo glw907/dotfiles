@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""prose-guard — flag AI-flavored-writing tells in docs, code comments, and content.
+
+Two modes:
+  prose-guard --hook    PreToolUse guard. Reads the tool-call JSON on stdin,
+                        classifies the target file, scans the content being
+                        written, and on a hit prints a JSON deny decision and
+                        exits 0. Clean files print nothing. Any internal error
+                        also exits 0 — a hook bug must never block real work.
+  prose-guard PATHS...  Sweep mode. Scans whole files (every layer, including
+  prose-guard --all     statistics), prints a grouped report, exits 1 on a hit.
+
+Three tiers, chosen by path: general (marketing), docs (technical), comments
+(code, Pygments comment text only). The hook blocks on lexical + structural
+tells; statistics and multi-sentence patterns are sweep-only/advisory.
+"""
+import json
+import re
+import sys
+
+EM_DASH = "—"  # em dash. The en dash (–, ranges) is never flagged.
+SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
+
+
+def classify(path):
+    """Return the tier for a path, or None to skip it."""
+    return None  # Task 2
+
+
+def main():
+    args = sys.argv[1:]
+    if args and args[0] == "--hook":
+        return 0  # Task 7
+    return 0  # Task 8
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "--hook":
+        try:
+            sys.exit(main())
+        except Exception:
+            sys.exit(0)  # fail open
+    else:
+        sys.exit(main())
