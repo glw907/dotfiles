@@ -16,6 +16,7 @@ tells; statistics and multi-sentence patterns are sweep-only/advisory.
 """
 import json
 import re
+import statistics
 import sys
 
 EM_DASH = "—"  # em dash. The en dash (–, ranges) is never flagged.
@@ -135,6 +136,40 @@ def scan(text, tier):
         for kind, rx, hint in STRUCTURAL:
             if rx.search(line):
                 issues.append((kind, line, hint))
+    return issues
+
+
+def _sentences(text):
+    """Flatten scannable prose into sentences for whole-document analysis."""
+    joined = " ".join(_scannable_lines(text))
+    return [s.strip() for s in SENTENCE_SPLIT.split(joined) if s.strip()]
+
+
+def analyze_document(text, tier):
+    """Advisory whole-document signals (sweep-only). Empty for the comments tier."""
+    if tier == "comments":
+        return []  # comments are too short for these to mean anything
+    issues = []
+    sents = _sentences(text)
+    counts = [len(s.split()) for s in sents]
+    total_words = sum(counts)
+    if len(sents) >= 5 and total_words >= 150:
+        mean = statistics.fmean(counts)
+        if mean > 0:
+            burst = statistics.pstdev(counts) / mean
+            if burst < 0.25:
+                issues.append(("low burstiness (strong)", f"B={burst:.2f} over {len(sents)} sentences",
+                               "Sentences are uniform in length. Vary them — mix short and long."))
+            elif burst < 0.40:
+                issues.append(("low burstiness", f"B={burst:.2f} over {len(sents)} sentences",
+                               "Cadence is flat. Add some short sentences and some long ones."))
+    # anaphora: 3+ consecutive sentences opening with the same word
+    heads = [s.split()[0].lower() for s in sents if s.split()]
+    for i in range(len(heads) - 2):
+        if heads[i] == heads[i + 1] == heads[i + 2]:
+            issues.append(("anaphora", f"3+ sentences open with '{heads[i]}'",
+                           "Vary sentence openings."))
+            break
     return issues
 
 

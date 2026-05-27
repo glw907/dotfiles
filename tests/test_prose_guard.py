@@ -90,3 +90,28 @@ def test_participial_windup():
     assert any("wind-up" in k for k in _kinds(pg.scan("Building on this, the system scales.", "docs")))
 def test_bold_header_bullet():
     assert any("bold-header" in k for k in _kinds(pg.scan("- **Performance**: it is fast", "docs")))
+
+
+def test_burstiness_flags_flat_prose():
+    # ~12 sentences, all near-identical length -> low burstiness
+    flat = " ".join(["The system reads the file and writes the result to disk now."] * 12)
+    kinds = [k for k, _s, _h in pg.analyze_document(flat, "docs")]
+    assert any("burstiness" in k for k in kinds)
+
+def test_burstiness_ok_for_varied_prose():
+    varied = ("Stop. "
+              "The cache warms on the first request and stays warm for the rest of a long session that touches many files. "
+              "It helps. "
+              "When a write misses, the loader falls back to the slow path, reads from origin, and repopulates every layer it can. "
+              "Fast again.")
+    kinds = [k for k, _s, _h in pg.analyze_document(varied, "docs")]
+    assert not any("burstiness" in k for k in kinds)
+
+def test_anaphora_flagged():
+    text = "We ship fast. We test first. We never guess."
+    kinds = [k for k, _s, _h in pg.analyze_document(text, "docs")]
+    assert any("anaphora" in k for k in kinds)
+
+def test_stats_skipped_for_comments_tier():
+    flat = " ".join(["The system reads the file and writes the result now."] * 12)
+    assert pg.analyze_document(flat, "comments") == []
