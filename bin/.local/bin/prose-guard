@@ -197,11 +197,62 @@ def extract_comments(path, text):
         return ""
 
 
+def report(issues, path, tier):
+    """Human-readable hit list (sweep stdout)."""
+    out = [f"PROSE GUARD ({tier}) — {len(issues)} tell(s) in {path}", ""]
+    for kind, snippet, hint in issues:
+        snippet = (snippet[:140] + "…") if len(snippet) > 140 else snippet
+        out += [f"  [{kind}]  {snippet}", f"      → {hint}"]
+    return "\n".join(out) + "\n"
+
+
+def _reason(issues):
+    """One-line reason for the hook deny decision."""
+    parts = [f"{kind} ({(snip[:40] + '…') if len(snip) > 40 else snip})" for kind, snip, _h in issues[:5]]
+    extra = "" if len(issues) <= 5 else f" (+{len(issues) - 5} more)"
+    return "prose-guard: " + "; ".join(parts) + extra + ". Rewrite and retry."
+
+
+def _content_being_written(tool_name, tool_input):
+    if tool_name == "Write":
+        return tool_input.get("content", "")
+    if tool_name == "Edit":
+        return tool_input.get("new_string", "")
+    if tool_name == "MultiEdit":
+        return "\n".join(e.get("new_string", "") for e in tool_input.get("edits", []))
+    return ""
+
+
+def _scan_for_hook(path, text):
+    """Blocking layer only: lexical + structural. Returns (tier, issues)."""
+    tier = classify(path)
+    if tier is None:
+        return None, []
+    if tier == "comments":
+        text = extract_comments(path, text)
+    return tier, scan(text, tier)
+
+
+def main_hook():
+    data = json.loads(sys.stdin.read())
+    ti = data.get("tool_input", {})
+    path = ti.get("file_path", "")
+    _tier, issues = _scan_for_hook(path, _content_being_written(data.get("tool_name", ""), ti))
+    if not issues:
+        return 0
+    sys.stdout.write(json.dumps({"hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": _reason(issues),
+    }}))
+    return 0
+
+
 def main():
     args = sys.argv[1:]
     if args and args[0] == "--hook":
-        return 0  # Task 7
-    return 0  # Task 8
+        return main_hook()
+    return main_sweep(args)  # Task 8
 
 
 if __name__ == "__main__":

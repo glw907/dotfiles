@@ -135,3 +135,40 @@ def test_extract_svelte_fallback():
 
 def test_extract_unknown_graceful():
     assert pg.extract_comments("weird.xyz", "delve in") == ""
+
+
+import io, json as _json
+
+def _run_hook(monkeypatch, payload):
+    monkeypatch.setattr("sys.stdin", io.StringIO(_json.dumps(payload)))
+    out = io.StringIO(); monkeypatch.setattr("sys.stdout", out)
+    code = pg.main_hook()
+    return code, out.getvalue()
+
+def test_hook_denies_doc_with_tell(monkeypatch):
+    code, out = _run_hook(monkeypatch, {"tool_name": "Write",
+        "tool_input": {"file_path": "docs/X.md", "content": "Moreover, this matters."}})
+    assert code == 0
+    payload = _json.loads(out)
+    assert payload["hookSpecificOutput"]["permissionDecision"] == "deny"
+    assert "opener" in payload["hookSpecificOutput"]["permissionDecisionReason"]
+
+def test_hook_allows_clean_doc(monkeypatch):
+    code, out = _run_hook(monkeypatch, {"tool_name": "Write",
+        "tool_input": {"file_path": "docs/X.md", "content": "This matters because the cache is warm."}})
+    assert code == 0 and out.strip() == ""
+
+def test_hook_comments_tier_ts(monkeypatch):
+    code, out = _run_hook(monkeypatch, {"tool_name": "Edit",
+        "tool_input": {"file_path": "a.ts", "new_string": "// let's dive into this\nconst x=1;"}})
+    assert _json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+def test_hook_skips_unknown_path(monkeypatch):
+    code, out = _run_hook(monkeypatch, {"tool_name": "Write",
+        "tool_input": {"file_path": "img.png", "content": "delve delve delve"}})
+    assert code == 0 and out.strip() == ""
+
+def test_hook_multiedit(monkeypatch):
+    code, out = _run_hook(monkeypatch, {"tool_name": "MultiEdit",
+        "tool_input": {"file_path": "d.md", "edits": [{"new_string": "fine line"}, {"new_string": "Furthermore, no."}]}})
+    assert "furthermore" in out.lower()
