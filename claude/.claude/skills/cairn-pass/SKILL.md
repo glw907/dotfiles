@@ -47,14 +47,24 @@ bare name errors). Docs-only passes skip this.
 Run the host site repo's `svelte-check` skill (or `npm run check`). Fix errors
 before continuing. Also run the test suite if the pass touched tested code.
 
-### 3. Update `cairn-cms/docs/PLAN.md`
+### 3. Live admin smoke
+
+For any pass touching the `/admin` surface, run the live admin smoke against a real
+Worker. The standard procedure is **`cairn-cms/docs/admin-smoke-test.md`**: start
+`wrangler dev`, mint a session with the site's `scripts/mint-session.mjs` (it forges a
+better-auth signed cookie, so no email loop is needed), and run the curl checklist on both
+sites. Do not re-derive the cookie scheme; the doc and the script already encode it. The
+final Firefox magic-link click stays a user step (the email token is hashed). Record the
+results in the progress log. Skip for passes that do not touch `/admin`.
+
+### 4. Update `cairn-cms/docs/PLAN.md`
 
 Append/update the **Notes / progress log**: what was built, what was verified
 (with evidence), decisions locked in, and any blockers. Update the risk register
 if a risk was retired or newly hit. This is the cairn tracker. Do **not** write
 cairn state into a site's `STATUS.md`.
 
-### 4. Commit
+### 5. Commit
 
 Commit in the repo where the code landed (the host site repo for A–E; the
 `cairn-cms` repo once code is extracted in Pass F), following that repo's git
