@@ -25,6 +25,13 @@ Thumbs.db
 *.tmp
 .*.tmp
 
+# Python bytecode caches
+__pycache__/
+*.pyc
+
+# Wrangler local state (e.g. under scripts/secrets/)
+.wrangler/
+
 # Secrets — decrypted plaintext, never commit
 # values.age is NOT excluded — encrypted files are safe to commit
 secrets/*.txt

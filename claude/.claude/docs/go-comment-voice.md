@@ -79,8 +79,8 @@ examples cite source file:line from the research files.
 
 ### Package doc (`// Package foo …`)
 
-Required sentence shape: `// Package [name] …` — first word "Package",
-second the package name, third starts the description. This is mechanical.
+Required sentence shape: `// Package [name] …` (first word "Package",
+second the package name, third starts the description). This is mechanical.
 
 | Circumstance | Length | Include | Exclude |
 |---|---|---|---|
@@ -185,7 +185,7 @@ ErrLeadershipLost = errors.New("leadership lost while committing log")
 
 ### Struct field (exported and unexported)
 
-Self-documenting fields: no comment. Comment only when the type alone
+Self-documenting fields need no comment. Write one only when the type alone
 doesn't describe valid values, nil semantics, or role-switching behavior.
 
 ```go
@@ -208,7 +208,7 @@ mu      sync.Mutex // guards following
 
 ### Unexported symbol (type, func, var)
 
-Default: no comment. Comment only when the name + signature leaves
+Default: no comment. Only add one when the name + signature leaves
 something unobvious.
 
 ```go
@@ -232,7 +232,7 @@ type chunkWriter struct {
 
 ### Inline mid-function `//` comment
 
-Default: no comment. Comment when:
+Default: no comment. Write one when:
 - A branch takes a non-obvious path (why, not what)
 - Protocol or spec deviation (rule + issue link)
 - Historical context required to prevent a regression (paragraph)
@@ -255,11 +255,11 @@ if wt, ok := src.(WriterTo); ok {
 
 ### TODO / HACK / FIXME / BUG markers
 
-- `// TODO(username): …` — open question or deferred work with owner.
+- `// TODO(username): …` for open questions or deferred work with an owner.
   Bare `// TODO:` acceptable. Never without a real decision pending.
-- `// HACK:` / `// XXX:` — known deviation. One sentence on why. Source
+- `// HACK:` / `// XXX:` for known deviations. One sentence on why. Source
   must be citable.
-- `// FIXME:` / `// BUG:` — known incorrect behavior. Include reproduction.
+- `// FIXME:` / `// BUG:` for known incorrect behavior. Include reproduction.
 - Never `// for now` or `// temporary` without one of these markers.
 
 ### Test function name / table-case label
@@ -291,7 +291,7 @@ Upper bounds for healthy code; the lower bound is zero for internal-only package
 - `io/io.go` (~620 lines): ~8/100, almost entirely exported symbol docs.
   Zero inline restatements, zero TODOs. Target for a clean public interface.
 - `sync/once.go` (~80 lines): ~15/100. Includes one load-bearing block that
-  explains why the obvious CAS approach is wrong — without it the code
+  explains why the obvious CAS approach is wrong. Without it, the code
   invites a regression.
 - `encoding/json/encode.go` (~1400 lines): ~6 inline comments/100 lines of
   function body. Internal complexity carries explanation; boilerplate does not.
@@ -319,13 +319,13 @@ infrastructure, not UI).
 Poplar's v0.9.0 contributors are experienced Go developers; Gerrand-warmth
 signals "tutorial" and underestimates them. Charm's own libraries use
 stdlib-formal for internal types and a light Gerrand-welcoming tone for
-package docs — matching that is credible because poplar builds on bubbletea.
+package docs, and matching that is credible because poplar builds on bubbletea.
 Pike-aphoristic is correct for error strings and proverbs, not API contracts.
 
 **Register shifts:**
 - **Package docs:** lean Gerrand-welcoming. One example per non-obvious
   import concern. First-person plural permitted: "For non-UTF-8 decoding,
-  set Options.WordDecoder" — not "you can set."
+  set Options.WordDecoder" (not "you can set.")
 - **Exported type and function docs:** stdlib-formal. Third-person, name-
   first, period-last. No "you", no "we", no hedging.
 - **Internal helpers:** Pike-terse. One sentence. If the name says it, none.
@@ -393,10 +393,10 @@ sentences.
 
 - Doc comments end with a period. Always.
 - Fragment inline comments: period optional, consistent within a file.
-- Em-dash (`—`) in comments: rare. Stdlib density is ~0.02 per Go file
+- Em-dash in comments: rare. Stdlib density is ~0.02 per Go file
   (≈60 of 7,700 files). Avoid as a clause-joiner; use a period and a
-  new sentence instead. Reserved for short, comma-like asides — at
-  most a handful per repo. See T33.
+  new sentence instead. Short comma-like asides are the only acceptable
+  use, and at most a handful per repo. See T33.
 - Semicolons in comments: avoid as clause-joiners. Fine inside a list
   of items. See T34.
 - Documentation labels (`Preference:` / `Fallback:` / `Priority:` /
@@ -440,7 +440,7 @@ Full-sentence inline comments follow standard English punctuation.
    The error chain `"failed to x: failed to y: failed to create store: the
    error"` degrades into noise. Strip it: `"x: y: new store: the error"`.
    Stdlib models this: `"short write"`, `"invalid write result"`,
-   `"unexpected EOF"` — none of them say "failed to."
+   `"unexpected EOF"`. None of them say "failed to."
    Source: `2026-05-04-authoritative-docs.md`, Uber § Error Wrapping
 
 ### Patterns from stdlib and emersion
@@ -483,7 +483,7 @@ errors.New("bootstrap only works on new clusters")
 ### Adjacent error sites
 
 Two adjacent returns in one function must not use identical phrasing unless
-the failures are genuinely identical. emersion/go-imap models this:
+the failures are identical. emersion/go-imap models this:
 ```go
 fmt.Errorf("in continue-req: %v", err)
 fmt.Errorf("in response: cannot read tag: %v", c.dec.Err())
@@ -494,7 +494,7 @@ fmt.Errorf("received unmatched continuation request")
 
 ---
 
-## §7. AI Tells — Catalogue and Avoidance
+## §7. AI Tells: Catalogue and Avoidance
 
 This section is self-contained. It is copied verbatim into `go-conventions`
 and referenced by `/simplify`. Each entry: name, placement, AI-shaped
@@ -583,7 +583,7 @@ complex parsers, has a two-sentence doc comment of identical length.
 **Cue:** scrolling the file, comments have the same visual weight
 regardless of the function body below them.
 
-**Human counter-example:** `io/io.go` — `LimitReader` gets one sentence;
+**Human counter-example:** `io/io.go`: `LimitReader` gets one sentence;
 `io.Reader` gets a multi-paragraph contract specifying edge cases. The
 disparity is correct.
 
@@ -596,7 +596,7 @@ requires.
 
 ---
 
-### T4: Hedge phrases — "for now", "Note:", unlinked "TODO"
+### T4: Hedge phrases ("for now", "Note:", unlinked "TODO")
 
 **Placement:** inline, doc comment.
 
@@ -628,7 +628,7 @@ or nothing. Bare `// TODO: improve this` is not acceptable.
 
 ---
 
-### T5: Task-framing comments — "added for X flow", "used by Y"
+### T5: Task-framing comments ("added for X flow", "used by Y")
 
 **Placement:** inline, unexported symbol doc.
 
@@ -775,7 +775,7 @@ the name-first opener.
 **Avoidance rule:** `name:` is a noun phrase. No "returns", "should", "when",
 "given". Explanation goes as an inline comment in the case body.
 
-**Extension — test function names.** The same anti-pattern appears at
+**Extension: test function names.** The same anti-pattern appears at
 the function level: `TestQueueOp_Atomicity_FlagAppliesOptimistic`
 encodes a sentence-form assertion in the test name. Convert to a
 noun-phrase suffix (`TestQueueOp_OptimisticFlagApply`) or split into
@@ -871,7 +871,7 @@ if err != nil {
 }
 ```
 
-**Cue:** identical verb, identical template — interchangeable error messages.
+**Cue:** identical verb, identical template, interchangeable error messages.
 
 **Human counter-example:**
 ```go
@@ -887,7 +887,7 @@ formatted with the operation name inline.
 
 ---
 
-### T12: Redundant context — error includes the function name
+### T12: Redundant context (error includes the function name)
 
 **Placement:** error strings.
 
@@ -985,7 +985,7 @@ type MailFolder struct { … }
 // bufio.Reader not bufio.BufReader
 // ring.New not ring.NewRing
 ```
-Source: `2026-05-04-authoritative-docs.md`, Effective Go § Names — Package names
+Source: `2026-05-04-authoritative-docs.md`, Effective Go § Names, Package names
 
 **Avoidance rule:** Check every exported type name: does it start with
 the package name or a synonym? If yes, drop the prefix.
@@ -1007,7 +1007,7 @@ type UIService struct { … }
 information content beyond "this does stuff."
 
 **Human counter-example:** net/http uses `Handler`, `Transport`, `Client`,
-`Server` — role-nouns that are meaningful because there's a concrete
+`Server`: role-nouns that are meaningful because there's a concrete
 contract. `Manager` is not a contract.
 
 **Avoidance rule:** If the type name ends in Manager, Helper, Util, or
@@ -1029,7 +1029,7 @@ for _, messageInfo := range messageInfoList {
 **Cue:** `messageInfo` instead of `m`, `currentMessageUID` instead of `uid`,
 inside a 5-line loop.
 
-**Human counter-example:** `for _, msg := range msgs { … }` — stdlib everywhere.
+**Human counter-example:** `for _, msg := range msgs { … }` (stdlib everywhere).
 `2026-05-04-stdlib-exemplars.md`, various
 
 **Avoidance rule:** Name length proportional to scope, inversely proportional
@@ -1073,8 +1073,8 @@ and `helpers.go` regardless of the package's size or content.
 **Cue:** the file structure is uniform. A 200-line package has the same
 file layout as a 2000-line package.
 
-**Human counter-example:** `io` package — `io.go`, `io_test.go`, `multi.go`,
-`pipe.go`. No doc.go. No errors.go. No types.go. Files split by function,
+**Human counter-example:** The `io` package: `io.go`, `io_test.go`, `multi.go`,
+`pipe.go`. There's no doc.go, no errors.go, no types.go. Files split by function,
 not by role.
 
 **Avoidance rule:** Split files when one file got unwieldy. Do not create
@@ -1099,8 +1099,8 @@ type sqlMessageRepository struct { … }
 **Cue:** the interface has one concrete implementation and no test double
 uses it.
 
-**Human counter-example:** `mail.Backend` in poplar — multiple
-implementations (JMAP, IMAP) plus the interface exists specifically for
+**Human counter-example:** `mail.Backend` in poplar has multiple
+implementations (JMAP, IMAP), and the interface exists specifically for
 the DI seam between `internal/ui/` and the backends.
 
 **Avoidance rule:** An interface requires at least two implementations or
@@ -1149,8 +1149,8 @@ func (a *Account) process(m *Message) {
 **Cue:** the check defends against a caller that doesn't exist in the
 codebase. Internal callers are known at write time.
 
-**Human counter-example:** `io.copyBuffer` does not nil-check `dst`/`src` —
-validated by exported entry points.
+**Human counter-example:** `io.copyBuffer` does not nil-check `dst`/`src`.
+Validation happens at the exported entry points.
 
 **Avoidance rule:** Nil-check at exported API boundaries. Not between
 functions in the same package.
@@ -1160,7 +1160,7 @@ value of a field can occur through the package's own API surface
 (constructor accepts nil, factory returns nil on a path, optional
 field), the check is a real boundary and stays. If only constructed-
 and-handed-off code reaches the check (constructor rejects nil, no
-public method ever sets it to nil), it's T22 — the field has an
+public method ever sets it to nil), it's T22. The field has an
 internal invariant the package itself maintains.
 
 ---
@@ -1237,7 +1237,7 @@ func TestAdd(t *testing.T) {
 **Cue:** subtests for a three-line function with no error paths or edge cases.
 
 **Avoidance rule:** Subtests add value when they have setup/teardown or
-conditions that genuinely differ in non-trivial ways. Scalar functions
+conditions that differ in non-trivial ways. Scalar functions
 get table-driven tests in the parent.
 
 ---
@@ -1252,7 +1252,7 @@ get table-driven tests in the parent.
 // all edge cases perfectly and could be improved in the future.
 ```
 
-**Cue:** "may not handle", "could be improved" — undermines confidence in
+**Cue:** "may not handle", "could be improved". These undermine confidence in
 code that presumably works.
 
 **Human counter-example:**
@@ -1261,7 +1261,7 @@ code that presumably works.
 // and use of TryLock is often a sign of a deeper problem in a particular
 // use of mutexes.
 ```
-`2026-05-04-stdlib-exemplars.md`, sync/mutex.go:49–53 — precise, no apology.
+`2026-05-04-stdlib-exemplars.md`, sync/mutex.go:49–53. Precise, no apology.
 
 **Avoidance rule:** State real limitations precisely. Delete speculative ones
 ("could be improved"). Known bugs get `// BUG:`.
@@ -1284,7 +1284,7 @@ close(done)
 **Cue:** comments explain Go mechanics to Go developers.
 
 **Human counter-example:** sync/once.go explains why the obvious CAS
-approach is wrong — not what CAS is:
+approach is wrong, not what CAS is:
 ```go
 // Here is an incorrect implementation of Do:
 //  if o.done.CompareAndSwap(false, true) { f() }
@@ -1303,8 +1303,8 @@ range). Comment only on why *this* specific use is structured the way it is.
 
 **Placement:** any.
 
-**Cue:** every doc comment in a file is 10–15 words. No short ones, no
-long ones. The visual rhythm is metronomic.
+**Cue:** every doc comment in a file is 10–15 words, no short ones, no
+long ones. Metronomic visual rhythm.
 
 **Human counter-example:**
 ```go
@@ -1324,7 +1324,7 @@ If the distribution is uniform, it's wrong.
 
 ---
 
-### T30: Identical rhythm — every paragraph the same shape
+### T30: Identical rhythm (every paragraph the same shape)
 
 **Placement:** doc comment.
 
@@ -1341,13 +1341,13 @@ The regularity is mechanical.
 Source: `2026-05-04-stdlib-exemplars.md`, net/http
 
 **Avoidance rule:** Vary the opener: sometimes article, sometimes
-name-first, sometimes predicate-form. The rule is that doc comments begin
-with a subject that includes the symbol name — the shape of the sentence
-around that subject should vary.
+name-first, sometimes predicate-form. Doc comments begin with a subject
+that includes the symbol name. How the sentence is shaped around that
+subject should vary.
 
 ---
 
-### T31: Uniform verbosity — identical doc shape and length across a file
+### T31: Uniform verbosity (identical doc shape and length across a file)
 
 **Placement:** any.
 
@@ -1407,7 +1407,7 @@ and use the struct literal at the call site.
 across comments in a file. The character itself isn't the tell; the
 *frequency and clause-joining shape* is. Stdlib density is ~0.02 em
 dashes per Go file (≈60 of 7,700). AI-authored Go runs 1+ per file and
-uses the em dash as a primary clause-joiner — the GPT/Claude prose voice
+uses the em dash as a primary clause-joiner. This is GPT/Claude prose voice
 leaking into Go.
 
 **Human counter-example:**
@@ -1418,7 +1418,7 @@ leaking into Go.
 **Avoidance rule:** Use a period and a new sentence, or cut the
 qualification. Reserve em dashes for genuine parentheticals (the kind
 that would otherwise be commas), and at most a handful per repo. If a
-comment needs em dashes to flow, it is trying to say too much — split
+comment needs em dashes to flow, it is trying to say too much. Split
 or shorten it.
 
 This supersedes the earlier §5 note that em dashes were "fine for
@@ -1429,7 +1429,12 @@ tell.
 
 ### T34: Semicolon clause-joining in comments
 
-**Placement:** comments.
+**Placement:** comments. **Status:** voice-lens only as of poplar Pass
+9k.3. Originally a mechanical commit-gate. Demoted because periods are
+the right default, but the gate was rejecting legitimate cases where two
+tightly-related clauses read better with a semicolon than as two
+sentences. Reviews still flag overuse, and the same standard applies to
+this catalogue and to all Claude-authored docs.
 
 **AI example:**
 ```go
@@ -1438,7 +1443,7 @@ tell.
 // Move/Destroy hide the source; Flag updates ui_flags.
 ```
 
-**Cue:** the semicolon doing the same work as the em dash — joining two
+**Cue:** the semicolon doing the same work as the em dash, joining two
 independent clauses into one comment to avoid restating subjects. Stdlib
 uses semicolons mostly inside parenthetical asides and lists, not as
 the primary join between two complete thoughts.
@@ -1448,9 +1453,9 @@ the primary join between two complete thoughts.
 // Move/Destroy hide the source. Flag updates ui_flags.
 ```
 
-**Avoidance rule:** Replace `; ` with `. ` and start a new sentence, or
-rewrite to say one thing. Semicolons inside lists (`X, Y; W, Z`) are
-fine; semicolons joining independent clauses are not.
+**Avoidance rule:** Default to a period. Reach for a semicolon only when
+the two clauses form one thought and the period would read as choppy. Three semicolons in a paragraph is the AI-prose chorus. One
+considered semicolon is fine.
 
 ---
 
@@ -1478,9 +1483,9 @@ internally treating docstrings as structured fields.
 ```
 
 **Avoidance rule:** Drop the label. State the rule as prose. If the
-rule is genuinely structured (a precedence list, a state table), use a
-real format — bullet list inside a doc comment, or a code-level
-constant — not inline labels.
+rule is structured (a precedence list, a state table), use a real
+format: a bullet list inside a doc comment, or a code-level constant.
+Not inline labels.
 
 ---
 
@@ -1506,7 +1511,7 @@ qualifications ("(approximate)", "(lowercase)") not embedded clauses.
 
 **Avoidance rule:** If the paren is more than 3–4 words, either commit
 to it as a real sentence or cut it. Test: read the comment without the
-paren — if the meaning is intact, delete the paren. If the meaning
+paren: if the meaning is intact, delete the paren. If the meaning
 collapses, promote the paren to a sentence.
 
 ---
@@ -1535,13 +1540,19 @@ machine-generated.
 
 **Avoidance rule:** One thought per comment. If a comment contains more
 than one of (em dash, semicolon, parenthetical aside, labeled clause),
-rewrite. The shape "X. Y when V." is human; "X — Y because Z; W
-otherwise" is AI. When in doubt, count the punctuation marks: more
-than one non-comma per comment and you're writing prose, not code.
+rewrite. The human shape is `"X. Y when V."`; the AI shape looks like
+this:
+
+```
+"X — Y because Z; W otherwise"
+```
+
+When in doubt, count the punctuation marks: more than one non-comma
+per comment and you're writing prose, not code.
 
 ---
 
-### T38: Comment frequency — library density on application code
+### T38: Comment frequency (library density on application code)
 
 **Placement:** any file.
 
@@ -1583,8 +1594,8 @@ for _, m := range msgs {
 }
 ```
 
-**Cue:** the comment sits where structure changes — top of a
-loop, before a transformation step, ahead of a branch — and
+**Cue:** the comment sits where structure changes (top of a
+loop, before a transformation step, ahead of a branch) and
 paraphrases the next 3–5 lines. Removing the comment costs the
 reader nothing because the loop body is self-evident.
 
@@ -1645,7 +1656,7 @@ This is markdown-document shape, not Go-godoc shape.
 **Avoidance rule:** Go godoc is prose paragraphs. No labels, no
 `NOTE:` or `IMPORTANT:` prefixes (real TODOs use
 `// TODO(owner):`), no closing summary sentence, at most one
-authoritative reference per godoc — pick the strongest. If the
+authoritative reference per godoc (pick the strongest). If the
 comment wants headings, it's an ADR or a package doc, not a
 function godoc.
 
@@ -1658,8 +1669,8 @@ name leaves anything unsaid. `slugify`, `clamp`, `min` need no comment.
 `io.copyBuffer` earns one sentence because the name doesn't tell you which
 exported functions delegate to it, or the nil-buf behavior.
 
-**Struct fields:** `Name string`, `Port int`, `Enabled bool` — no comment.
-`Body io.ReadCloser` in `http.Request` earns a comment because nil/non-nil
+**Struct fields:** `Name string`, `Port int`, `Enabled bool` need no comment.
+`Body io.ReadCloser` in `http.Request` earns one because nil/non-nil
 semantics differ between client and server roles.
 
 **Table-test cases:** `name: "should return error when input is nil and
@@ -1763,7 +1774,7 @@ if wt, ok := src.(WriterTo); ok {
 ```
 `2026-05-04-third-party-exemplars.md`, go-message, entity.go:34–39
 
-**8. Error variable — comment and string don't repeat each other:**
+**8. Error variable (comment and string don't repeat each other):**
 ```go
 // ErrLeadershipLost is returned when a leader fails to commit a log entry
 // because it's been deposed in the process.
@@ -1771,7 +1782,7 @@ ErrLeadershipLost = errors.New("leadership lost while committing log")
 ```
 `2026-05-04-third-party-exemplars.md`, HashiCorp raft, api.go:30–75
 
-**9. Layout-for-performance — invisible without the comment:**
+**9. Layout-for-performance (invisible without the comment):**
 ```go
 // done indicates whether the action has been performed.
 // It is first in the struct because it is used in the hot path.
@@ -1802,7 +1813,7 @@ landed. Each pair shows the as-written shape and the rewrite the
 new rules pull toward. Cited as `package/path.go:line` so the
 pre-sweep state can be recovered from `git log`.
 
-**Pair 1 — frequency + restated-name (T4 + T38).**
+**Pair 1: frequency + restated-name (T4 + T38).**
 `internal/mail/types.go:14, :27`
 
 Before:
@@ -1822,7 +1833,7 @@ library-density signature.
 
 ---
 
-**Pair 2 — section-boundary commenting (T39).**
+**Pair 2: section-boundary commenting (T39).**
 `internal/content/render_footnote.go:42`
 
 Before:
@@ -1851,14 +1862,14 @@ for i, u := range pickerURLs {
 
 The first line of the original ("Collect only marker-bearing URLs
 for the footnote section.") paraphrases the next four lines and
-fails the §0 mechanical test. The non-obvious bit — that the
-picker list and the footnote labels use different index spaces —
+fails the §0 mechanical test. The non-obvious bit (that the
+picker list and the footnote labels use different index spaces)
 survives in the rewrite because that is the part a reader would
 otherwise miss.
 
 ---
 
-**Pair 3 — markdown shape in godoc (T40).**
+**Pair 3: markdown shape in godoc (T40).**
 `internal/content/render_footnote.go:16–34`
 
 Before:
@@ -1895,13 +1906,13 @@ After:
 Two label-colon paragraphs (`Picker list:`, `Footnote section:`),
 one `NOTE:` prefix, three ADR cites, and a closing aphoristic
 sentence ("Markers are an inline reading aid.") collapse to a
-prose paragraph. One ADR cite — pick the strongest. The contract
+prose paragraph. One ADR cite; pick the strongest. The contract
 is the same; the shape is now Go godoc instead of a markdown
 section.
 
 ---
 
-**Pair 4 — restated function name on an obvious helper (T1 + T38).**
+**Pair 4: restated function name on an obvious helper (T1 + T38).**
 `internal/ui/messagelist/model.go:272`
 
 Before:
@@ -1936,13 +1947,12 @@ func (m *Model) matchMessage(msg mail.MessageInfo, lowerQuery string) bool { …
 ```
 
 The original is a five-line godoc on a 14-line function whose body
-is direct. §0(b) — the body is the documentation for everything
-except the mode-switch contract and the pre-lowercased
-precondition. Keep those; drop the rest.
+is direct. §0(b) applies: the body documents everything except the
+mode-switch contract and the pre-lowercased precondition. Keep those; drop the rest.
 
 ---
 
-**Pair 5 — a comment that earns its place (positive example).**
+**Pair 5: a comment that earns its place (positive example).**
 `internal/cache/drainer.go:33`
 
 ```go
@@ -1959,8 +1969,8 @@ return drainerConfig{
 }
 ```
 
-The reader otherwise wouldn't know why 5 seconds is the right
-choice — too short and the loop spins; too long and failed-row
+Without the comment a reader wouldn't know why 5 seconds is the right
+choice. Too short and the loop spins; too long and failed-row
 backoff windows lapse before the next pickup. This is §0(c)
 exactly: a hidden constraint a reader couldn't recover from the
 literal `5 * time.Second`. Keep it.
@@ -1971,27 +1981,27 @@ literal `5 * time.Second`. Keep it.
 
 ### Propagation plan
 
-**`go-conventions` skill** — append a "Human voice & AI tells" section
+**`go-conventions` skill:** append a "Human voice & AI tells" section
 that reproduces §5–§7 of this guide inline. The full §7 catalogue with
 mechanical avoidance rules per tell. This skill loads before every Go file
-edit, so the catalogue is in-context at write-time. No paraphrase —
-paraphrasing decays into "use judgment" within two revisions.
+edit, so the catalogue is in-context at write-time. Paraphrasing decays
+into "use judgment" within two revisions, so reproduce it verbatim.
 
-**`/simplify` voice lens** — add a fourth parallel reviewer agent that
+**`/simplify` voice lens:** add a fourth parallel reviewer agent that
 scans the diff against the §7 catalogue by tell number. Each finding cites
-the tell (e.g., "T10: failed-to chorus — three adjacent error returns use
-identical phrasing") and quotes the avoidance rule. Catches drift that
+the tell and quotes the avoidance rule (e.g., "T10: failed-to chorus;
+three adjacent error returns use identical phrasing"). Catches drift that
 slipped past write-time.
 
-**`CLAUDE.md` `Human voice` section** (poplar) — the short-form rules
+**`CLAUDE.md` `Human voice` section** (poplar): the short-form rules
 remain there; add a pointer to this guide and to §7. Path-scoped rules
 don't replicate the full catalogue, only point to it.
 
-**ADR-0141** — already exists as the binding policy decision. Ensure it
+**ADR-0141** already exists as the binding policy decision. Ensure it
 references this guide and the updated go-conventions skill as the
 enforcement mechanism.
 
-**Cross-project reuse** — the `go-conventions` update benefits every Go
+**Cross-project reuse:** the `go-conventions` update benefits every Go
 project on this workstation. The §7 catalogue is generic (no poplar-
 specific examples in the skill copy; those stay in this guide and ADR-0141).
 
@@ -2001,14 +2011,14 @@ Three sources differ:
 - **CodeReviewComments:** "non-trivial unexported type or function
   declarations" should have doc comments.
 - **Google:** "unexported type or function declarations with unobvious
-  behavior or meaning" — a harder bar.
+  behavior or meaning" (a harder bar).
 - **go.dev/doc/comment (Russ Cox):** unexported declarations are exempt
   from the doc comment rule entirely.
 
 **Poplar default:** Google's "unobvious" is the operative standard.
 Comment an unexported symbol when the name + signature leaves something
-that a competent Go reader wouldn't immediately know. Obvious helpers —
-where the name is the documentation — get no comment. The rationale:
+that a competent Go reader wouldn't immediately know. Obvious helpers,
+where the name is the documentation, get no comment. The rationale:
 comments that restate obvious names accumulate into noise and train
 readers to skip them, which defeats the purpose of the comments that
 matter.
@@ -2027,10 +2037,9 @@ that underestimates readers.
 "non-trivial." Silence is the default for unexported symbols; a comment is
 a decision that requires justification.
 
-**"failed to" in errors:** Uber's rule adopted. The stdlib evidence confirms
-it — `io.EOF`, `"short write"`, `"unexpected EOF"` — none of them hedge
-with "failed to." The pattern accumulates as the stack unwinds and degrades
-readability. Dropped.
+**"failed to" in errors:** Uber's rule adopted. Stdlib evidence confirms
+it: `io.EOF`, `"short write"`, `"unexpected EOF"` none hedge with "failed
+to." Piling up "failed to" as the stack unwinds degrades readability. Dropped.
 
 **`%w` vs `%v`:** `%w` only when a caller branches on the error sentinel.
 Otherwise `%v`. The distinction matters because `%w` makes the underlying

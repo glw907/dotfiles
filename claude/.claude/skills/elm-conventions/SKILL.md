@@ -17,10 +17,10 @@ keep the tea loop predictable and auditable.
 
 Applies exclusively to `internal/ui/`. Does not apply to:
 
-- `internal/mail/` — backend adapter, goroutines and mutexes are normal
-- `internal/mailworker/` — forked worker code, channel-based async
-- `internal/filter/` — stdin/stdout filters, no tea loop
-- `cmd/poplar/` — bootstrap wiring before the tea loop starts
+- `internal/mail/`: backend adapter; goroutines and mutexes are normal
+- `internal/mailworker/`: forked worker code, channel-based async
+- `internal/filter/`: stdin/stdout filters, no tea loop
+- `cmd/poplar/`: bootstrap wiring before the tea loop starts
 
 ## Rule 1: All State in Models
 
@@ -63,7 +63,7 @@ func (m Sidebar) Update(msg tea.Msg) (Sidebar, tea.Cmd) {
 }
 ```
 
-**Wrong — mutation in View:**
+**Wrong (mutation in View):**
 ```go
 func (m Sidebar) View() string {
     m.lastRendered = time.Now() // mutation in View
@@ -71,7 +71,7 @@ func (m Sidebar) View() string {
 }
 ```
 
-**Wrong — mutation in Cmd closure:**
+**Wrong (mutation in Cmd closure):**
 ```go
 func fetchFolders(m *Sidebar, backend mail.Backend) tea.Cmd {
     return func() tea.Msg {
@@ -125,8 +125,8 @@ func (m App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 ## Rule 4: Message-Driven Communication
 
 Children signal parents by returning sentinel `Msg` types from
-`Update`. No parent method calls, no upward pointers, no callbacks
-stored in child models.
+`Update`. Parent method calls, upward pointers, and callbacks stored
+in child models are all prohibited.
 
 **Right:**
 ```go
@@ -234,26 +234,26 @@ Rules:
 - Parent handles its own Msg types before delegating.
 - Every child returns `(ChildModel, tea.Cmd)`, never `(tea.Model, tea.Cmd)`.
 - Collect all cmds into a slice; return `tea.Batch(cmds...)`.
-- Never discard a cmd — missed cmds cause silent dropped messages.
+- Never discard a cmd. Missed cmds cause silent dropped messages.
 
 ## Rule 6: Components Own Their Size Contract
 
 Every component's `View()` returns content **at exactly its assigned
-width and height** — no wider, no taller. The parent calls
+width and height**, no wider, no taller. The parent calls
 `lipgloss.JoinHorizontal`/`JoinVertical` and trusts each child's
 output. A child that returns lines wider than its assigned width
-makes the joined output exceed terminal width; the terminal
-soft-wraps and content displaces adjacent panes — **always the
-child's bug, never the parent's.**
+makes the joined output exceed terminal width. The terminal
+soft-wraps and content displaces adjacent panes. **This is always
+the child's bug, never the parent's.**
 
 This is the canonical bubbles pattern: `viewport.View()` ends with
 `Width().Height().MaxHeight().MaxWidth().Render(content)` (Width +
-Height pad; MaxWidth + MaxHeight truncate) — research at
+Height pad; MaxWidth + MaxHeight truncate). Research at
 `docs/poplar/research/2026-04-26-bubbletea-norms.md` §2 cites
 `viewport/viewport.go:518-525`. Poplar's `clipPane` helper in
 `internal/ui/viewer.go` implements the same idiom.
 
-**Right — self-guarded View:**
+**Right (self-guarded View):**
 ```go
 func (m Component) View() string {
     out := /* compose content */
@@ -261,7 +261,7 @@ func (m Component) View() string {
 }
 ```
 
-**Right — width-honoring renderer (wordwrap + hardwrap):**
+**Right (width-honoring renderer, wordwrap + hardwrap):**
 ```go
 // A renderer that takes width returns lines no wider than width.
 // wordwrap respects word boundaries; hardwrap catches the residue
@@ -274,7 +274,7 @@ func render(text string, width int) string {
 }
 ```
 
-**Right — display-cell-aware width math:**
+**Right (display-cell-aware width math):**
 ```go
 // lipgloss.Width measures display cells correctly for ASCII, box-
 // drawing, and most BMP characters. Nerd Font SPUA-A glyphs
@@ -284,7 +284,7 @@ func render(text string, width int) string {
 w := displayCells(rowWithIcons)
 ```
 
-**Wrong — defensive parent-side clip:**
+**Wrong (defensive parent-side clip):**
 ```go
 // Papering over a child contract violation. Fix the child instead.
 func (m Parent) View() string {
@@ -293,7 +293,7 @@ func (m Parent) View() string {
 }
 ```
 
-**Wrong — wordwrap without hardwrap:**
+**Wrong (wordwrap without hardwrap):**
 ```go
 text = ansi.Wordwrap(text, width, "") // a single long URL overflows
 ```
@@ -311,27 +311,27 @@ When a parent receives `tea.WindowSizeMsg`, it must:
    (research at `docs/poplar/research/2026-04-26-reference-apps.md` §4,
    §8 avoid #6).
 
-The full contract — including the planning + review checklists
-that confirm this discipline before and after any UI change — lives
-in `docs/poplar/bubbletea-conventions.md`. Load that doc before
+The full contract lives in `docs/poplar/bubbletea-conventions.md`,
+including the planning and review checklists that confirm this
+discipline before and after any UI change. Load that doc before
 planning UI/UX work, and run its review checklist after.
 
 ## Rule 7: Key Bindings via `key.Binding` and `key.Matches`
 
 Keys are declared as `key.Binding` values in a `KeyMap` struct and
-dispatched with `key.Matches(msg, binding)` — never via raw
+dispatched with `key.Matches(msg, binding)`, never via raw
 `switch msg.String()` for actionable keys.
 
 This is the canonical pattern across every reference app surveyed
 (soft-serve, gh-dash, official examples; research at
-`docs/poplar/research/2026-04-26-reference-apps.md` §3) — only glow
-falls back to string switches and that's listed as an anti-pattern
+`docs/poplar/research/2026-04-26-reference-apps.md` §3). Only glow
+falls back to string switches, and that's listed as an anti-pattern
 (ref-apps §8 avoid #4). `key.Matches` respects each binding's
 `Enabled()` flag (norms §3, `key/key.go:130-138`), making per-state
 activation declarative; string switches force inline state checks.
 
 Poplar's keybindings are modifier-free single keys (ADR-0015, 0024,
-0051, 0068, 0076) — that doesn't change the declaration form. The
+0051, 0068, 0076). That doesn't change the declaration form. The
 `KeyMap` struct still uses `key.Binding`; the help text just reads
 `"k"` instead of `"↑/k"`.
 
@@ -383,14 +383,14 @@ parent App, in its own `View()`, walks the focus chain and pulls
 the active cursor up into its returned `tea.View.Cursor`. One blink
 ticker lives at the App level; per-input `cursor.Model` instances
 go away. Set `VirtualCursor=false` on every textinput/textarea so
-the App is the cursor authority — the input never paints a cursor
+the App is the cursor authority. The input never paints a cursor
 into its string.
 
 This matches the shared-state-at-the-root rule (Rule 5): cursor
 position and blink phase are App-scope concerns expressed by the
 focused child.
 
-**Right — child exposes a cursor:**
+**Right (child exposes a cursor):**
 ```go
 func (m Compose) Cursor() *tea.Cursor {
     if m.focus != focusBody {
@@ -410,7 +410,7 @@ func (m App) View() tea.View {
 }
 ```
 
-**Wrong — child renders cursor inline:**
+**Wrong (child renders cursor inline):**
 ```go
 // Bypasses tea.Cursor; defeats blink coordination at the root.
 func (m Compose) View() string {
@@ -453,3 +453,33 @@ func (m *App) fetchHeadersCmd() tea.Cmd {
 
 Extract the values you need before returning the Cmd. The closure
 captures those values, not the model.
+
+## Rule 9: Style Tests Assert Resolved Attributes
+
+`lipgloss.Style{}` (zero value) `Render`s its argument unchanged.
+`style.Render("test") != ""` passes for the zero-value style, so
+that check proves nothing. Style smoke tests must assert the
+*resolved attributes* that the style sets.
+
+**Right:**
+```go
+if styles.HelpKey.GetForeground() == nil {
+    t.Error("HelpKey has no foreground color")
+}
+if !styles.HelpKey.GetBold() {
+    t.Error("HelpKey is not bold")
+}
+```
+
+**Wrong:**
+```go
+// Passes against lipgloss.Style{} — proves nothing.
+if styles.HelpKey.Render("test") == "" {
+    t.Error("HelpKey rendered empty string")
+}
+```
+
+`GetForeground` / `GetBackground` / `GetBold` / `GetItalic` /
+`GetUnderline` return the resolved attribute (nil / false / true)
+and let the test name a specific claim the style must satisfy.
+ADR-0233.

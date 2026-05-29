@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 # Launch the dedicated jrnl-md journaling environment.
-# Opens today's entries in Helix inside a styled Kitty window.
+# Opens today's journal in a styled Kitty window.
 
 exec kitty \
     --class journal \
     --config ~/.config/kitty/kitty-journal.conf \
     --title Journal \
-    -e bash -l -c '
-        # Create a new time-stamped entry, then edit today
-        jrnl-md ""
-        jrnl-md --on today --edit
-    '
+    -e bash -l -c '$HOME/go/bin/jrnl-md edit'

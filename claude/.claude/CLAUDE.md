@@ -80,6 +80,8 @@ Do not provide human-scale time estimates. Describe relative complexity: "quick"
 
 The `writing-voice` output style is always on (set in settings.json) and carries the
 full prose standard: plain voice, varied sentence length, no AI-writing tells. The
-`prose-guard` PreToolUse hook (`~/.local/bin/prose-guard`) blocks writes that trip it.
-Write clean the first time; the hook is a backstop. Code comments also follow their
-stack's conventions (go-conventions for Go, file idiom for TS/Svelte, PEP 257 for Python).
+concrete banned constructions and the first-draft rule live in `~/.claude/docs/prose-voice.md`;
+read it before writing a doc, plan, or spec, and draft clean on the first pass (the
+`prose-guard` hook at `~/.local/bin/prose-guard` rejects the whole file, so a rewrite is the
+costly path). Code comments also follow their stack's conventions (go-conventions for Go,
+file idiom for TS/Svelte, PEP 257 for Python).

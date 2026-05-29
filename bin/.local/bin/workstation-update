@@ -50,6 +50,26 @@ else
     echo -e "${YELLOW}⚠ kitty not found, skipping${NC}"
 fi
 
+# ── Go ──────────────────────────────────────────────────────────────────────
+
+section "Go"
+if command -v update-go &>/dev/null; then
+    if update-go; then
+        :
+    else
+        rc=$?
+        # exit 3 = minor-series bump withheld; surface but don't fail the run.
+        if [[ $rc -eq 3 ]]; then
+            echo -e "${YELLOW}⚠ Go minor-series bump pending — run: update-go --allow-minor${NC}"
+        else
+            echo -e "${RED}✗ update-go failed${NC}"
+            ERRORS+=("go")
+        fi
+    fi
+else
+    echo -e "${YELLOW}⚠ update-go not on PATH, skipping${NC}"
+fi
+
 # ── Android SDK ─────────────────────────────────────────────────────────────
 
 section "Android SDK"
