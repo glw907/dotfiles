@@ -32,8 +32,17 @@ topology A). The live branch and both consumer sites stay untouched until cutove
    the plan file holds the task-by-task steps and the exit criteria.
 2. Confirm you are in the `rebuild` worktree, not the live checkout.
 3. Execute task-by-task with `superpowers:subagent-driven-development` (or
-   `superpowers:executing-plans`). The suite is the acceptance contract: write or
-   confirm the failing test first, then make it green.
+   `superpowers:executing-plans`). Dispatch the `cairn-implementer` agent per task
+   (Sonnet by default; pass `model: opus` for judgment-heavy tasks). The suite is the
+   acceptance contract: write or confirm the failing test first, then make it green.
+
+> **Legacy discipline.** The frozen `legacy/` build only ever got smoke tests, not real
+> use, so it is an accelerator and a behavioral reference, not a proven artifact to
+> preserve. Port pure, framework-agnostic logic from it to move fast, but hold everything
+> to the rebuild's current standards (Svelte 5 runes, DaisyUI v5, the a11y bar) and prove
+> it with our own tests. Re-derive UI and framework-coupled code clean rather than copying
+> legacy markup; copying v4/better-auth-era assumptions forward is what the Plan 05 review
+> gate had to undo.
 
 ## Ending a plan: consolidation ritual
 
@@ -47,9 +56,12 @@ Docs-only plans skip this.
 
 ### 2. Check and test
 
-Run `npm run check` (svelte-check) and `npm test` (the unit and integration
-projects). The integration layer runs in workerd against a real miniflare D1.
-Fix every failure before continuing; green is the bar.
+Run `npm run check` (svelte-check, 0 errors and 0 warnings) and `npm test` (the
+unit, integration, and component projects; the integration layer runs in workerd
+against a real miniflare D1, the component layer in a real browser). Green is the
+bar, and that means `npm test` **exits 0**: a passing assertion count is not enough,
+since an unhandled rejection can leave every test green while the process exits 1.
+Fix every failure before continuing.
 
 ### 3. Review gate
 
@@ -79,6 +91,18 @@ and any blockers. Do **not** write cairn state into a site's `STATUS.md`.
 Commit in the `cairn-cms` worktree (branch `rebuild`), following the repo's git
 conventions: simplify first (step 1), commit specific files, push only when the
 user asks.
+
+### 7. Draft the next plan (while context is warm)
+
+Preferred, not skippable lightly. The just-landed pass is fresh now: its patterns,
+carried follow-ups, and lessons are in context, and re-deriving them cold next
+session is waste. So before stopping, draft the next plan. Run
+`superpowers:brainstorming` first to settle the open design decisions with the user
+(the spec locks most of it; surface only what it leaves open), then
+`superpowers:writing-plans` to author the numbered plan file. Keep the
+design-and-approval gate: never auto-write a plan without the user's calls on the
+open decisions. The plan stays revisable next session. Skip only when the next pass's
+direction is unsettled or the user wants to stop here.
 
 ## When NOT to use
 
