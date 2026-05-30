@@ -1662,6 +1662,86 @@ function godoc.
 
 ---
 
+### T41: SPDX-License-Identifier header in a source file
+
+**Placement:** top-of-file comment.
+
+**Cue:** `// SPDX-License-Identifier: MIT` (or similar) at the head
+of a `.go` file. The repo-root LICENSE is canonical (ADR-0169); the
+per-file header is AI-reflexive boilerplate.
+
+**Avoidance rule:** no SPDX line in source. Vendored files carry a
+prose provenance comment (source repo, commit, license) that is
+strictly more informative. This tell is a grep gate
+(`voice-check.sh`), not a voice-lens judgment.
+
+---
+
+### T42: Reflexive pointer receivers on small value types
+
+**Placement:** the method set of a small value type.
+
+**AI example:**
+```go
+type Point struct{ X, Y int }
+
+func (p *Point) Add(q Point) Point { return Point{p.X + q.X, p.Y + q.Y} }
+func (p *Point) String() string    { return fmt.Sprintf("(%d,%d)", p.X, p.Y) }
+```
+
+**Cue:** every method takes a pointer receiver whether or not it
+mutates. The type has no mutating method, no embedded mutex, and
+fits in a word or two, yet the receivers are pointers by reflex.
+
+**Human counter-example:**
+```go
+func (p Point) Add(q Point) Point { return Point{p.X + q.X, p.Y + q.Y} }
+func (p Point) String() string    { return fmt.Sprintf("(%d,%d)", p.X, p.Y) }
+```
+
+**Avoidance rule:** receiver type follows semantics. Use a value
+receiver for a small immutable value. Use a pointer receiver when
+the method mutates, when the struct is large enough that copying
+costs, or when the type already has pointer methods and consistency
+requires it. Do not default to pointer. Semantic tell: the
+`/simplify` voice lens flags it, the grep gate cannot.
+
+---
+
+### T43: Goroutine-per-task without lifecycle coordination
+
+**Placement:** a `go` statement in non-test code.
+
+**AI example:**
+```go
+for _, job := range jobs {
+	go process(job)
+}
+return nil
+```
+
+**Cue:** a bare `go f()` whose completion nobody waits on and whose
+error nobody collects. No `sync.WaitGroup`, no `errgroup.Group`, no
+channel the caller drains. The function returns before the
+goroutines finish, so a panic is lost and an error vanishes.
+
+**Human counter-example:**
+```go
+g, ctx := errgroup.WithContext(ctx)
+for _, job := range jobs {
+	g.Go(func() error { return process(ctx, job) })
+}
+return g.Wait()
+```
+
+**Avoidance rule:** every goroutine has an owner that waits for it
+and a path for its error. Use `errgroup` when tasks can fail, a
+`WaitGroup` when they cannot, or a channel the caller drains. A
+fire-and-forget `go` in library code is the tell. Semantic;
+`/simplify` voice lens, not the grep gate.
+
+---
+
 ## §8. Anti-Patterns by Placement
 
 **Unexported helpers:** godoc on every function regardless of whether the

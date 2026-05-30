@@ -153,8 +153,10 @@ fi
 export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/google-workspace/credentials.json"
 export WORKSPACE_ADMIN_EMAIL="geoff.wright@aksailingclub.org"
 
-# Claude Code: route subagents to Sonnet (Opus stays primary)
-export CLAUDE_CODE_SUBAGENT_MODEL=sonnet
+# Claude Code: restore normal subagent model resolution so each
+# agent's frontmatter model: wins (per-dispatch model beats
+# frontmatter beats the main model). Pin cheap roles in frontmatter.
+export CLAUDE_CODE_SUBAGENT_MODEL=inherit
 
 # age key for ASC project encryption
 export AGE_KEY_FILE="$HOME/.config/age/asc-key.txt"

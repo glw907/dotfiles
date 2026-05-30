@@ -2,7 +2,8 @@
 name: cloudflare-workers-reviewer
 description: Reviews Cloudflare Workers and D1 code for bundle and startup limits, SQL injection and prepared-statement use, batching and consistency, bindings access, secrets handling, and edge-runtime gotchas. Use after changing Worker code, D1 queries, migrations, or wrangler config.
 tools: Read, Grep, Glob, Bash
-model: opus
+model: claude-opus-4-8
+effort: high
 color: yellow
 ---
 

@@ -173,7 +173,10 @@ builtin. Generic `MinInt` / `MaxInt` helpers go away.
 ### Comparators
 
 `cmp.Or(a, b, c)` for nil/zero coalescing across a fixed list of
-candidates, not stacked `if a != "" { return a }` chains.
+candidates, not stacked `if a != "" { return a }` chains. The
+absence is a voice-lens flag, not a grep gate: a manual coalescing
+chain that `cmp.Or` would collapse is what `/simplify` Agent 3
+looks for.
 
 ### Errors
 
@@ -649,6 +652,17 @@ T10b covers cross-function chorus in one file. Don't double-flag.
 - **T23: Length checks before indexing on internal callers.**
   *Avoid:* let the runtime panic. Length-check at boundaries
   only.
+- **T42: Reflexive pointer receivers on small value types.**
+  *Avoid:* receiver type follows semantics. Value receiver for a
+  small immutable value; pointer receiver when the method mutates,
+  the struct is large enough to cost on copy, or the type already
+  has pointer methods. Don't default to pointer. Semantic; voice
+  lens, not grep.
+- **T43: Goroutine-per-task without lifecycle coordination.**
+  *Avoid:* a bare `go f()` whose error nobody collects and whose
+  completion nobody waits on. Use `errgroup` when tasks can fail, a
+  `WaitGroup` when they cannot, or a channel the caller drains.
+  Semantic; voice lens, not grep.
 
 **Test tells:**
 

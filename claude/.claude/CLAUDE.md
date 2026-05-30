@@ -79,9 +79,19 @@ Do not provide human-scale time estimates. Describe relative complexity: "quick"
 ## Writing voice
 
 The `writing-voice` output style is always on (set in settings.json) and carries the
-full prose standard: plain voice, varied sentence length, no AI-writing tells. The
-concrete banned constructions and the first-draft rule live in `~/.claude/docs/prose-voice.md`;
-read it before writing a doc, plan, or spec, and draft clean on the first pass (the
-`prose-guard` hook at `~/.local/bin/prose-guard` rejects the whole file, so a rewrite is the
-costly path). Code comments also follow their stack's conventions (go-conventions for Go,
-file idiom for TS/Svelte, PEP 257 for Python).
+full prose standard: plain voice, varied sentence length, no AI-writing tells.
+
+**Pre-flight, not cleanup.** Before composing any doc, plan, spec, ADR, or longer
+commit body, read `~/.claude/docs/prose-voice.md` first. It holds the full banned-
+construction list and the first-draft rule. The `prose-guard` hook
+(`~/.local/bin/prose-guard`) rejects the whole file on a violation, so a dirty draft
+costs a full rewrite. Drafting clean on the first pass is the cheap path.
+
+The highest-frequency tells, inline so they are unmissable without opening the file:
+- No em dashes in prose. End the sentence, or use a colon, a comma, or parentheses.
+- One idea per sentence. Do not bridge two or three clauses into one.
+- No "not X but Y" contrast frame. No reflexive three-item lists. No setup-colon payoff.
+- No participial or connector openers ("Building on this", "Moreover", "Additionally").
+
+Code comments also follow their stack's conventions (go-conventions for Go, file idiom
+for TS/Svelte, PEP 257 for Python).
