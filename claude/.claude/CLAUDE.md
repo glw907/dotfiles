@@ -76,6 +76,17 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
 
+## Plan execution: clear context first
+
+I execute an implementation plan in a fresh session, separate from the one that wrote it. A plan is written to be run with zero prior context, so the brainstorming and research that produced it are noise during execution, and a clean session gives the implementer full attention and a lean cache.
+
+So after authoring a plan, do NOT run the `superpowers:writing-plans` "which execution method?" handoff question. Instead:
+1. Pre-bake the handoff while context is warm: commit the plan, update the project's status/tracking doc to flag the plan as the immediate next action (with the method baked in), refresh any relevant memory, and leave the tree clean. Anything load-bearing must live in the plan, spec, status doc, or memory, never only in the conversation.
+2. Recommend clearing context, and give the exact prompt to paste in the fresh session to begin, including which directory to launch in.
+3. Default the execution method to `superpowers:subagent-driven-development` (one implementer subagent per task); bake it into the resume instructions rather than asking which to use.
+
+Skip the clear only for a trivial one- or two-task plan, where a fresh session's re-read cost outweighs the benefit. This is the pre-bake half of the autonomy-and-handoff practice.
+
 ## Writing voice
 
 The `writing-voice` output style is always on (set in settings.json) and carries the
