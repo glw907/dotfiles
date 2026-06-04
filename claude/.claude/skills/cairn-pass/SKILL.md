@@ -98,6 +98,14 @@ part of the merge. Durable cross-cutting gotchas stay as focused `cairn-*` memor
 locked architecture decisions stay in the functional spec. Do **not** write cairn state
 into a consumer site's `STATUS.md`; that is the site's own.
 
+**Changelog convention (enforced).** If the pass made any breaking change to the public
+surface, its `CHANGELOG.md` entry must carry a `Consumers must:` line per breaking change,
+stating the concrete consumer action (the rename, the moved import, the new required
+argument). A non-breaking change needs no such line. This convention exists so a site
+crossing several `0.x` versions reads the actions off the changelog instead of
+rediscovering each rename. The `0.x` renames also accumulate in `docs/upgrading.md`, one
+line each; add the pass's renames there too.
+
 ### 6. Commit
 
 Commit in the cairn-cms feature worktree, following the repo's git conventions.
