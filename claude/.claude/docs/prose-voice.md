@@ -31,6 +31,18 @@ sentence instead.
   bullets. The hook treats this as advisory; vary the structure. Natural repetition over a long file
   is fine.
 
+## What blocks versus what advises
+
+The hook blocks a write on the lexical and structural tells. The softer tells surface only in the
+`prose-guard` sweep, so they guide a rewrite without stopping the file. Active voice is the standard,
+which is why passive phrasing advises rather than blocks. Keep passive only where it truly fits.
+
+| Layer | Examples | Enforcement |
+|---|---|---|
+| Lexical, structural | em dash in docs and comments, banned phrases and openers, marketing words (`empower`, `streamline`, `supercharge`, `effortless`, `plethora`, `myriad`), `to be honest`, `in the realm of`, the antithesis, setup-colon, and bold-header patterns | Blocks the write |
+| Soft line-level | passive phrasing (`allows you to`, `enables you to`), passive with a named agent, soft words (`leverage`, `unlock`, `elevate`, `foster`, `boost`), throat-clearing openers (`importantly`, `notably`, `of course`), adjective tricolon, decorative emoji, the spaced-hyphen dodge | Advisory, sweep only |
+| Statistics | low burstiness, anaphora | Advisory, sweep only |
+
 ## How to apply
 
 - Write in plain voice with varied sentence length.
@@ -42,9 +54,9 @@ sentence instead.
 
 ## Where the rules are encoded
 
-- `~/.local/bin/prose-guard`: the machine encoding (lexical, structural, statistics layers), source
-  in `~/.dotfiles`. Tiers differ: the docs and comments tiers treat any em dash as a tell; the
-  general content tier keeps some nuance. Key-value definition lists are exempt from the bold-header
-  rule.
+- `~/.local/bin/prose-guard`: the machine encoding (lexical, structural, advisory, and statistics
+  layers), source in `~/.dotfiles`. Tiers differ: the docs and comments tiers treat any em dash as a
+  tell; the general content tier keeps some nuance. Key-value definition lists are exempt from the
+  bold-header rule. The advisory layer surfaces in the sweep only and never blocks a write.
 - `writing-voice` output style: the always-on prose standard for replies.
 - This doc: the readable list to consult before writing.

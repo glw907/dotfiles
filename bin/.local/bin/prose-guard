@@ -12,7 +12,9 @@ Two modes:
 
 Three tiers, chosen by path: general (marketing), docs (technical), comments
 (code, Pygments comment text only). The hook blocks on lexical + structural
-tells; statistics and multi-sentence patterns are sweep-only/advisory.
+tells. The softer line-level tells (passive phrasing, soft marketing words,
+throat-clearing openers, tricolons, emoji), the statistics, and the multi-
+sentence patterns are sweep-only advisory and never block a write.
 """
 import json
 import os
@@ -32,6 +34,8 @@ BANNED_PHRASES = [
     "it's worth noting", "when it comes to", "dive into", "delve", "let's explore",
     "at the end of the day", "game-changer", "game changer", "state-of-the-art",
     "look no further", "in today's world",
+    "to be honest", "to be frank", "the honest answer is", "in the realm of",
+    "in the world of",
 ]
 BANNED_OPENERS = [
     "moreover", "additionally", "furthermore", "in conclusion",
@@ -39,10 +43,37 @@ BANNED_OPENERS = [
 ]
 FILLER_WORDS = ["genuinely", "honestly"]
 SLOP_WORDS = ["tapestry", "multifaceted", "testament", "seamless"]
+# Marketing verbs and vague-quantity words with no exact technical sense. Blocked in every
+# tier, because they read as a tell wherever they land.
+MARKETING_WORDS = [
+    "empower", "streamline", "supercharge", "turbocharge", "revolutionize",
+    "effortless", "effortlessly", "plethora", "myriad",
+]
 JUDGMENT_WORDS = [
     "robust", "leverage", "comprehensive", "dedicated", "curated", "tailored",
     "foster", "elevate", "transformative", "pivotal", "thriving", "meticulous", "nuanced",
 ]
+
+# Advisory tells: surfaced in the sweep, never blocked at write time. Active voice is the
+# standard, so passive phrasing and the softer marketing words advise rather than block.
+ADVISORY_OPENERS = [
+    "importantly", "notably", "of course", "ultimately", "overall", "in essence",
+    "at its core",
+]
+ADVISORY_PHRASES = [
+    "allows you to", "enables you to", "makes it easy to", "a wide range of",
+    "a variety of", "vast array",
+]
+ADVISORY_WORDS = ["leverage", "unlock", "elevate", "foster", "boost"]
+PASSIVE_AGENT = re.compile(
+    r"(?i)\b(?:is|are|was|were|been|being|be)\s+"
+    r"(?:\w+ed|\w+en|built|sent|made|kept|held|run|read|set|done|found|paid|told|drawn|known)"
+    r"\b\s+by\b")
+# Lowercase-only so a capitalized entity list (Posts, Pages, and Fragments) does not match.
+ADJ_TRICOLON = re.compile(r"\b([a-z]{3,}),\s+([a-z]{3,}),?\s+and\s+([a-z]{3,})\s*[.!?]")
+SPACED_HYPHEN = re.compile(r"(?i)[a-z]\s-\s[a-z]")
+EMOJI = re.compile(
+    "[\U0001F300-\U0001FAFF☀-⛿✀-➿⬀-⯿️]")
 
 # Per-tier word lists. comments tier has none beyond the shared rules above.
 TIER_WORDS = {
@@ -96,17 +127,30 @@ def _strip_frontmatter(text):
     return text
 
 
+INLINE_CODE = re.compile(r"`[^`]*`")
+
+
 def _scannable_lines(text):
-    """Yield prose lines; skip fenced code, frontmatter, blanks, and PLACEHOLDER notes."""
-    in_fence = False
+    """Yield prose lines, with code removed so a sample never reads as a tell.
+
+    Skips fenced code (``` and ~~~), four-space indented code blocks, frontmatter, blank
+    lines, and PLACEHOLDER notes, and strips inline `code` spans from each yielded line.
+    """
+    fence = None  # the marker that opened the open fence, ``` or ~~~
     for line in _strip_frontmatter(text).split("\n"):
         s = line.strip()
-        if s.startswith("```"):
-            in_fence = not in_fence
+        if fence is None and (s.startswith("```") or s.startswith("~~~")):
+            fence = s[:3]
             continue
-        if in_fence or not s or "PLACEHOLDER" in s:
+        if fence is not None:
+            if s.startswith(fence):
+                fence = None
             continue
-        yield s
+        if line[:4] == "    " or line[:1] == "\t":  # indented code block
+            continue
+        if not s or "PLACEHOLDER" in s:
+            continue
+        yield INLINE_CODE.sub(" ", s)
 
 
 def scan(text, tier):
@@ -139,6 +183,9 @@ def scan(text, tier):
         for filler in FILLER_WORDS:
             if re.search(rf"\b{filler}\b", low):
                 issues.append((f"filler word: {filler}", line, "Drop the filler intensifier."))
+        for word in MARKETING_WORDS:
+            if re.search(rf"\b{word}\w*\b", low):
+                issues.append((f"marketing word: {word}", line, "Cut the marketing verb; say what it does plainly."))
         for opener in BANNED_OPENERS:
             for sent in SENTENCE_SPLIT.split(line):
                 head = re.sub(r"^[\s\-*>#]+", "", sent).lower()
@@ -150,6 +197,44 @@ def scan(text, tier):
         for kind, rx, hint in STRUCTURAL:
             if rx.search(line):
                 issues.append((kind, line, hint))
+    return issues
+
+
+def scan_advisory(text, tier):
+    """Softer line-level tells. Sweep-only; the hook never runs these, so none block a write.
+
+    Active voice is the standard, so passive phrasing and the softer marketing words advise
+    a rewrite rather than forcing one. The comments tier only gets the spaced-hyphen dodge.
+    """
+    issues = []
+    for line in _scannable_lines(text):
+        if SPACED_HYPHEN.search(line):
+            issues.append(("advisory: spaced-hyphen dash", line,
+                           "A spaced hyphen reads as an em-dash dodge. Recast the sentence."))
+        if tier == "comments":
+            continue
+        low = line.lower()
+        for phrase in ADVISORY_PHRASES:
+            if phrase in low:
+                issues.append((f"advisory: passive phrasing: {phrase}", line,
+                               "Prefer active voice. Keep passive only where it truly fits."))
+        for word in ADVISORY_WORDS:
+            if re.search(rf"\b{word}\w*\b", low):
+                issues.append((f"advisory: soft tell: {word}", line, "Consider a plainer word."))
+        for opener in ADVISORY_OPENERS:
+            for sent in SENTENCE_SPLIT.split(line):
+                head = re.sub(r"^[\s\-*>#]+", "", sent).lower()
+                if head.startswith(opener):
+                    issues.append((f"advisory: opener: {opener}", sent.strip(),
+                                   "Throat-clearing opener. State the point directly."))
+        if PASSIVE_AGENT.search(line):
+            issues.append(("advisory: passive (named agent)", line,
+                           "Passive with a named agent. Active is usually clearer."))
+        if ADJ_TRICOLON.search(line):
+            issues.append(("advisory: tricolon", line,
+                           "A three-adjective list can read as AI. Keep the one that earns its place."))
+        if EMOJI.search(line):
+            issues.append(("advisory: emoji", line, "Drop decorative emoji from technical prose."))
     return issues
 
 
@@ -294,7 +379,7 @@ def main_sweep(args):
             sys.stderr.write(f"skip {path}: {exc}\n")
             continue
         text = extract_comments(path, raw) if tier == "comments" else raw
-        issues = scan(text, tier) + analyze_document(text, tier)
+        issues = scan(text, tier) + scan_advisory(text, tier) + analyze_document(text, tier)
         if issues:
             any_hit = True
             sys.stdout.write(report(issues, path, tier))

@@ -293,3 +293,86 @@ def test_sweep_all_skips_vendor(tmp_path, monkeypatch, capsys):
     assert pg.main_sweep(["--all"]) == 1
     out = capsys.readouterr().out
     assert "keep.md" in out and "node_modules" not in out
+
+
+# code-fence and inline-code precision
+
+def test_tilde_fence_skipped():
+    text = "prose line\n~~~js\nconst y = \"x — delve\";\n~~~\nmore prose\n"
+    assert pg.scan(text, "docs") == []
+
+
+def test_indented_code_block_skipped():
+    text = "A code sample:\n\n    const x = a—b;\n\nback to prose\n"
+    lines = list(pg._scannable_lines(text))
+    assert all("const x" not in ln for ln in lines)
+    assert pg.scan(text, "docs") == []
+
+
+def test_inline_code_stripped():
+    # an em dash and a banned word inside an inline span must not flag
+    assert pg.scan("Run `npm build — watch` to start.", "docs") == []
+    assert pg.scan("The `delve` helper is internal.", "docs") == []
+
+
+# new blocking lexical rules
+
+def test_marketing_word_blocks_all_tiers():
+    for t in ("general", "docs", "comments"):
+        assert any("streamline" in k for k in _kinds(pg.scan("We streamline the loop.", t)))
+
+
+def test_marketing_word_inflections():
+    assert any("effortless" in k for k in _kinds(pg.scan("an effortlessly fast setup", "docs")))
+
+
+def test_honest_throat_clearing_phrase():
+    assert any("to be honest" in k for k in _kinds(pg.scan("To be honest, it works.", "docs")))
+    assert any("realm of" in k for k in _kinds(pg.scan("In the realm of CMSes.", "docs")))
+
+
+# advisory layer is never blocking
+
+def test_advisory_passive_phrase_not_in_scan():
+    # the blocking layer (what the hook runs) ignores passive phrasing
+    assert pg.scan("This lets the plugin: it allows you to publish.", "docs") == []
+
+
+def test_advisory_passive_phrase_flagged_in_sweep():
+    assert any("allows you to" in k for k in _kinds(pg.scan_advisory("It allows you to publish.", "docs")))
+
+
+def test_advisory_passive_named_agent():
+    assert any("named agent" in k for k in _kinds(pg.scan_advisory("The file is verified by the build.", "docs")))
+    assert pg.scan_advisory("The build verifies the file.", "docs") == []
+
+
+def test_advisory_tricolon_lowercase_only():
+    assert any("tricolon" in k for k in _kinds(pg.scan_advisory("It is fast, lean, and maintainable.", "docs")))
+    # capitalized entity lists are legitimate, not the rhetorical tricolon
+    assert not any("tricolon" in k for k in _kinds(pg.scan_advisory("Posts, Pages, and Fragments.", "docs")))
+
+
+def test_advisory_emoji():
+    assert any("emoji" in k for k in _kinds(pg.scan_advisory("Ship it 🚀", "docs")))
+    assert not any("emoji" in k for k in _kinds(pg.scan_advisory("A flows to B then C.", "docs")))
+
+
+def test_advisory_opener_not_blocking():
+    assert pg.scan("Importantly, the cache is warm.", "docs") == []
+    assert any("importantly" in k for k in _kinds(pg.scan_advisory("Importantly, the cache is warm.", "docs")))
+
+
+def test_advisory_comments_tier_only_spaced_hyphen():
+    issues = pg.scan_advisory("// it allows you to win - a lot 🚀", "comments")
+    kinds = _kinds(issues)
+    assert any("spaced-hyphen" in k for k in kinds)
+    assert not any("allows you to" in k for k in kinds)
+    assert not any("emoji" in k for k in kinds)
+
+
+def test_hook_allows_advisory_only_doc(monkeypatch):
+    # a doc whose only issues are advisory must NOT be blocked at write time
+    code, out = _run_hook(monkeypatch, {"tool_name": "Write",
+        "tool_input": {"file_path": "docs/X.md", "content": "It allows you to publish posts."}})
+    assert code == 0 and out.strip() == ""
