@@ -6,9 +6,9 @@ description: >
   read plan, execute) and pass-end consolidation (code-simplifier,
   svelte-check, architecture + STATUS update, plan archival, commit + push).
   Trigger on "continue development", "next pass", "finish pass", "ship pass",
-  or explicit invocation — when the work is the site's own roadmap.
-  For the cross-repo cairn-cms CMS initiative (passes 0/A–F) use `cairn-pass`
-  instead; it tracks `cairn-cms/docs/PLAN.md`, not this repo's STATUS.md.
+  or explicit invocation, when the work is the site's own roadmap.
+  For the cross-repo cairn-cms library initiative use `cairn-pass` instead; it
+  tracks the cairn-cms repo's own `docs/STATUS.md`, not this repo's STATUS.md.
 ---
 
 # Site Pass
@@ -20,10 +20,9 @@ ritual at both ends. It is site-agnostic; all paths are relative to the
 repo you're working in.
 
 > **Which skill?** This skill is for a *site's own* roadmap. If the user
-> says "Start pass A/B/…" or otherwise means the **cairn-cms** library
-> initiative, stop and use **`cairn-pass`**. That work is tracked in
-> `cairn-cms/docs/PLAN.md`, and its end-ritual updates PLAN.md, not this
-> repo's STATUS.md.
+> means the **cairn-cms** library initiative, stop and use **`cairn-pass`**.
+> That work is tracked in the cairn-cms repo's own `docs/STATUS.md` and the
+> functional spec, not this repo's STATUS.md.
 
 ## Starting a pass
 
@@ -90,7 +89,7 @@ git push
 >
 > **Settled (do not re-brainstorm):** Decisions already made.
 >
-> **Still open — brainstorm these:** Questions the pass must answer before
+> **Still open, brainstorm these:** Questions the pass must answer before
 > coding. Omit section if none.
 >
 > **Approach.** "Invoke site-pass to start. Standard pass-end checklist applies."
@@ -98,6 +97,6 @@ git push
 
 ## When NOT to use
 
-- The cairn-cms library initiative (passes 0/A–F): use `cairn-pass`.
+- The cairn-cms library initiative: use `cairn-pass`.
 - Mid-pass debugging or single-file edits.
 - Purely doc changes (typo fix, content update): no ritual needed.
