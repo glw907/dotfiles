@@ -54,6 +54,10 @@ Docs-only passes skip this.
 Add any design decisions made this pass that belong in the long-term record.
 Keep it factual: decisions, not narration.
 
+Also keep the site's own docs current for whatever the pass changed (a README
+note, a config comment, or an architecture entry). The cairn-cms library carries
+the full docs-as-a-pass-dimension rule; for a site this is the light version.
+
 ### 4. Update docs/STATUS.md
 
 - Mark the current pass `done` in the pass table.
