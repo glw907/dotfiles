@@ -88,7 +88,25 @@ the final magic-link click in a browser stays a user step. Follow the smoke doc
 in `cairn-cms/docs/` once Plan 01 rewrites it for the new auth. Record results as
 evidence. Skip for plans that do not touch `/admin`.
 
-### 5. Update tracking
+### 5. Documentation
+
+Documentation is a pass dimension, not a follow-up. Before the pass is done, update the docs for
+whatever it changed.
+
+- Update the relevant `docs/` arm: the reference page for any public-API change, and the guides,
+  explanation, or tutorial as the change touches them. Update `CHANGELOG.md` and `docs/upgrading.md`
+  for any breaking change, which is where the "Consumers must:" convention below applies.
+- A public-API change is not done until its reference page matches. Enforce it by running
+  `npm run check:reference` (the export-coverage gate fails on an undocumented export) and
+  `npm run check:package`. Both must pass.
+- Append any design friction the writing surfaced to `docs/internal/docs-friction-log.md`, one entry
+  per finding with its perspective (developer or editor) and a short note. Triage candidates into
+  `ROADMAP.md` (Now or Next) and the STATUS carry-forwards. This repo keeps no separate backlog file.
+
+A docs-only pass skips the engine check and test (step 2) but still does this step. See the
+`docs-is-a-pass-dimension` memory.
+
+### 6. Update tracking
 
 Append the post-mortem to the active plan file (what was built, what was verified
 with evidence, decisions locked in, blockers). Then update `cairn-cms/docs/STATUS.md`,
@@ -106,13 +124,13 @@ crossing several `0.x` versions reads the actions off the changelog instead of
 rediscovering each rename. The `0.x` renames also accumulate in `docs/upgrading.md`, one
 line each; add the pass's renames there too.
 
-### 6. Commit
+### 7. Commit
 
 Commit in the cairn-cms feature worktree, following the repo's git conventions.
 Simplify first (step 1), commit specific files, and push or merge only when the user
 asks.
 
-### 7. Draft the next plan (while context is warm)
+### 8. Draft the next plan (while context is warm)
 
 Preferred, not skippable lightly. The just-landed pass is fresh now: its patterns,
 carried follow-ups, and lessons are in context, and re-deriving them cold next
@@ -124,7 +142,7 @@ design-and-approval gate: never auto-write a plan without the user's calls on th
 open decisions. The plan stays revisable next session. Skip only when the next pass's
 direction is unsettled or the user wants to stop here.
 
-### 8. Hand off for a fresh-session execution
+### 9. Hand off for a fresh-session execution
 
 Geoff executes a plan in a fresh session, so the writing session's last job is to make
 resuming frictionless. Do this after the plan is written; do **not** run the
