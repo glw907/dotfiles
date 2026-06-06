@@ -52,6 +52,8 @@ MARKETING_WORDS = [
 JUDGMENT_WORDS = [
     "robust", "leverage", "comprehensive", "dedicated", "curated", "tailored",
     "foster", "elevate", "transformative", "pivotal", "thriving", "meticulous", "nuanced",
+    "embark", "harness", "bolster", "groundbreaking", "cutting-edge", "innovative",
+    "foundational",
 ]
 
 # Advisory tells: surfaced in the sweep, never blocked at write time. Active voice is the
@@ -64,7 +66,8 @@ ADVISORY_PHRASES = [
     "allows you to", "enables you to", "makes it easy to", "a wide range of",
     "a variety of", "vast array",
 ]
-ADVISORY_WORDS = ["leverage", "unlock", "elevate", "foster", "boost"]
+ADVISORY_WORDS = ["leverage", "unlock", "elevate", "foster", "boost",
+                  "vital", "crucial", "essential", "dynamic", "journey", "passion"]
 PASSIVE_AGENT = re.compile(
     r"(?i)\b(?:is|are|was|were|been|being|be)\s+"
     r"(?:\w+ed|\w+en|built|sent|made|kept|held|run|read|set|done|found|paid|told|drawn|known)"

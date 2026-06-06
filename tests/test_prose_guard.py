@@ -376,3 +376,33 @@ def test_hook_allows_advisory_only_doc(monkeypatch):
     code, out = _run_hook(monkeypatch, {"tool_name": "Write",
         "tool_input": {"file_path": "docs/X.md", "content": "It allows you to publish posts."}})
     assert code == 0 and out.strip() == ""
+
+
+# web-content lexicon expansion (2026-06-06)
+NEW_BLOCKING = ["embark", "harness", "bolster", "groundbreaking",
+                "cutting-edge", "innovative", "foundational"]
+NEW_ADVISORY = ["vital", "crucial", "essential", "dynamic", "journey", "passion"]
+
+
+@pytest.mark.parametrize("word", NEW_BLOCKING)
+def test_new_blocking_words_block_in_general(word):
+    issues = pg.scan(f"We {word} the season together.", "general")
+    assert f"banned word: {word}" in _kinds(issues)
+
+
+@pytest.mark.parametrize("word", NEW_BLOCKING)
+def test_new_blocking_words_skip_docs_tier(word):
+    issues = pg.scan(f"We {word} the season together.", "docs")
+    assert f"banned word: {word}" not in _kinds(issues)
+
+
+@pytest.mark.parametrize("word", NEW_ADVISORY)
+def test_new_advisory_words_do_not_block(word):
+    issues = pg.scan(f"This is a {word} part of training.", "general")
+    assert not any(k.startswith("banned word") for k in _kinds(issues))
+
+
+@pytest.mark.parametrize("word", NEW_ADVISORY)
+def test_new_advisory_words_surface_in_sweep(word):
+    issues = pg.scan_advisory(f"This is a {word} part of training.", "general")
+    assert any(word in k for k in _kinds(issues))
