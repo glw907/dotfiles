@@ -91,20 +91,30 @@ evidence. Skip for plans that do not touch `/admin`.
 ### 5. Documentation
 
 Documentation is a pass dimension, not a follow-up. Before the pass is done, update the docs for
-whatever it changed.
+whatever it changed. The standing principle is that docs stay current and never drift, so a pass
+fixes every doc its change touched, including the inbound references on other pages.
 
 - Update the relevant `docs/` arm: the reference page for any public-API change, and the guides,
-  explanation, or tutorial as the change touches them. Update `CHANGELOG.md` and `docs/upgrading.md`
-  for any breaking change, which is where the "Consumers must:" convention below applies.
-- A public-API change is not done until its reference page matches. Enforce it by running
-  `npm run check:reference` (the export-coverage gate fails on an undocumented export) and
-  `npm run check:package`. Both must pass.
+  explanation, or tutorial as the change touches them. Update `CHANGELOG.md` and the upgrade guide
+  (`docs/guides/upgrade-cairn.md`) for any **behavior** change, not only a rename, with a short
+  per-version entry. The "Consumers must:" convention below applies to the changelog; a behavior change
+  that needs no consumer action still gets an entry that says so, so an upgrader who hits it has a
+  reference.
+- **Hunt drift on a removed or renamed symbol.** When a pass removes a symbol from the public surface
+  or renames it, the reference page is not the only place that names it. `grep -rn` the whole `docs/`
+  tree (and `README.md`) for the old name and any reference anchor (`core.md#<oldname>`), and repoint
+  or rewrite every hit. The reference-coverage gate does not catch a stale inbound link.
+- **Run all three doc gates.** `npm run check:reference` (the export-coverage gate fails on an
+  undocumented export), `npm run check:package` (the entry-point shapes), and `npm run check:docs`
+  (the link gate, which fails on a dead relative link or a stale `#anchor` anywhere under `docs/`).
+  All three must pass. A public-API change is not done until its reference page matches and no doc
+  links to a name the pass removed.
 - Append any design friction the writing surfaced to `docs/internal/docs-friction-log.md`, one entry
   per finding with its perspective (developer or editor) and a short note. Triage candidates into
   `ROADMAP.md` (Now or Next) and the STATUS carry-forwards. This repo keeps no separate backlog file.
 
-A docs-only pass skips the engine check and test (step 2) but still does this step. See the
-`docs-is-a-pass-dimension` memory.
+A docs-only pass skips the engine check and test (step 2) but still does this step, including the doc
+gates. See the `docs-is-a-pass-dimension` memory.
 
 ### 6. Update tracking
 
@@ -121,8 +131,16 @@ surface, its `CHANGELOG.md` entry must carry a `Consumers must:` line per breaki
 stating the concrete consumer action (the rename, the moved import, the new required
 argument). A non-breaking change needs no such line. This convention exists so a site
 crossing several `0.x` versions reads the actions off the changelog instead of
-rediscovering each rename. The `0.x` renames also accumulate in `docs/upgrading.md`, one
-line each; add the pass's renames there too.
+rediscovering each rename. The `0.x` changes also accumulate in the upgrade guide
+(`docs/guides/upgrade-cairn.md`), one per-version entry each; add the pass's entry there too,
+for a behavior change as well as a rename.
+
+**Release notes (on publish).** Every publish ships a GitHub Release, and its body is the
+changelog window since the last published tag, not an empty release. When a publish rolls
+several held minors into one (the common case in this initiative), the release body summarizes
+each minor in the window and carries every `Consumers must:` line from the breaking ones. The
+release is also what fires the OIDC trusted-publishing workflow, so cutting it with real notes
+is the publish step, not a chore after it. Cut it with `gh release create v<x.y.z> --target main`.
 
 ### 7. Commit
 
