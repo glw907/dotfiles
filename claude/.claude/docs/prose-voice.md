@@ -33,7 +33,7 @@ inherited as standing battles from the last model.
 | Developer docs, README, design doc in a SvelteKit/web repo | `~/.claude/docs/voice/technical-doc-web.md` |
 | CLAUDE.md, skills, agent definitions, hook text | `~/.claude/docs/voice/agent-facing.md` |
 | Commit messages and PR bodies | `~/.claude/docs/voice/commit-and-pr.md` |
-| Code comments | the stack's own rules (go-conventions, file idiom for TS/Svelte, PEP 257) |
+| Code comments | go-conventions for Go; `~/.claude/docs/voice/ts-svelte-comments.md` for TS/Svelte; PEP 257 for Python |
 
 The dialect follows the repo's stack; a project CLAUDE.md may override with an explicit register
 line. Exemplars beat rules: when a sentence feels off, reread the register's exemplars and imitate,
