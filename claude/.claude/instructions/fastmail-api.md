@@ -58,6 +58,8 @@ curl -s -X POST \
 
 ## Local Clients
 
-- **aerc** terminal mail client configured with JMAP backend (`~/.config/aerc/`)
-- **vdirsyncer** syncs contacts via CardDAV to `~/.contacts/`
-- **khard** terminal address book, provides aerc tab-completion
+- **poplar** terminal mail client (`~/Projects/poplar/`, installed at `~/.local/bin/poplar`)
+  talks JMAP with `$FASTMAIL_API_TOKEN`
+- **vdirsyncer** syncs contacts via CardDAV to `~/.contacts/` (config stowed from the
+  `contacts` package)
+- **khard** terminal address book over the synced contacts

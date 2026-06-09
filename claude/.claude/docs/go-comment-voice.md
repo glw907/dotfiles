@@ -393,10 +393,10 @@ sentences.
 
 - Doc comments end with a period. Always.
 - Fragment inline comments: period optional, consistent within a file.
-- Em-dash in comments: rare. Stdlib density is ~0.02 per Go file
-  (≈60 of 7,700 files). Avoid as a clause-joiner; use a period and a
-  new sentence instead. Short comma-like asides are the only acceptable
-  use, and at most a handful per repo. See T33.
+- Em-dash in comments: none. The stdlib tolerates a rare aside
+  (~0.02 per Go file), but the prose-guard comments tier blocks a
+  write on any em dash, so that allowance does not apply here. Use a
+  period and a new sentence, or commas. See T33.
 - Semicolons in comments: avoid as clause-joiners. Fine inside a list
   of items. See T34.
 - Documentation labels (`Preference:` / `Fallback:` / `Priority:` /
@@ -1416,14 +1416,9 @@ leaking into Go.
 ```
 
 **Avoidance rule:** Use a period and a new sentence, or cut the
-qualification. Reserve em dashes for genuine parentheticals (the kind
-that would otherwise be commas), and at most a handful per repo. If a
-comment needs em dashes to flow, it is trying to say too much. Split
-or shorten it.
-
-This supersedes the earlier §5 note that em dashes were "fine for
-parenthetical asides." They are not fine in volume; the volume is the
-tell.
+qualification. Do not use em dashes in comments at all; the prose-guard
+comments tier blocks the write on a single one. If a comment needs an
+em dash to flow, it is trying to say too much. Split or shorten it.
 
 ---
 

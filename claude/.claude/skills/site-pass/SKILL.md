@@ -31,7 +31,10 @@ repo you're working in.
    prompt lists open questions, brainstorm first (invoke
    `superpowers:brainstorming`) and write a plan at
    `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` (see `plan-template.md`).
-3. Execute the plan using `superpowers:subagent-driven-development`.
+3. Execute the plan task-by-task in the main loop: confirm or write the failing check
+   first, make it green, and verify before the next task. Dispatch an implementer
+   subagent only for tasks independent enough to run in parallel or for a
+   high-blast-radius change that wants worktree isolation.
 
 ## Ending a pass: the consolidation ritual
 
@@ -74,8 +77,10 @@ git mv docs/superpowers/specs/<this-pass>-design.md docs/superpowers/archive/spe
 
 ### 6. Commit and push
 
+Stage the pass's files explicitly (never `git add -A`), then:
+
 ```bash
-git add -A
+git add <files changed this pass>
 git commit -m "Pass <n>: <summary>
 
 Co-Authored-By: Claude <noreply@anthropic.com>"

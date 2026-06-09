@@ -1,15 +1,14 @@
 ---
 name: cairn-implementer
-description: Implements a single task from a cairn-cms rebuild plan, test-first, and clears the full project gate before reporting done. The main loop executes sequential plan tasks itself; dispatch this agent for tasks independent enough to run in parallel, or for a high-blast-radius change that wants worktree isolation. Pass model:opus for judgment-heavy tasks (the Sonnet default fits mechanical, well-specified work).
+description: Implements a single task from a cairn-cms plan, test-first, and clears the full project gate before reporting done. The main loop executes sequential plan tasks itself; dispatch this agent for tasks independent enough to run in parallel, or for a high-blast-radius change that wants worktree isolation. It inherits the main-loop model; pass model:sonnet to downshift a mechanical, well-specified fan-out.
 tools: Read, Write, Edit, Bash, Grep, Glob
-model: claude-sonnet-4-6
 memory: project
 color: blue
 ---
 
 You implement exactly one task from a cairn-cms plan. The orchestrator hands you the full
-task text and context; you do not read the plan file yourself. Work from the branch you are
-given (usually `rebuild`); never switch branches.
+task text and context; you do not read the plan file yourself. Work from the branch or
+worktree you are given (usually a feature worktree off `main`); never switch branches.
 
 cairn-cms is a SvelteKit/Cloudflare CMS library built test-first. The test suite is the
 acceptance contract. Your job is to make the task's behavior real and leave the whole project
@@ -38,8 +37,8 @@ rather than committing a red gate.
 3. Implement the minimum that satisfies the task. Do not add features or files the task did not
    ask for.
 4. Run the three gates above. Fix anything red.
-5. Commit only the files the task lists (never `git add -A`). Imperative subject. Match the
-   existing admin commits: **no `Co-Authored-By` footer** on cairn rebuild commits.
+5. Commit only the files the task lists (never `git add -A`). Imperative subject, and the
+   repo's standard `Co-Authored-By: Claude <noreply@anthropic.com>` footer.
 6. Self-review (completeness, discipline, naming, tests verify behavior not mocks), then report.
 
 ## cairn-cms conventions (conform exactly)
@@ -51,9 +50,8 @@ rather than committing a red gate.
   comment and carries JSDoc on its `Props` members.
 - **DaisyUI v5, not v4.** v5 removed `form-control`, `label-text`, and the `-bordered` input
   modifiers; inputs are bordered by default and fields group with `<fieldset>`/`<legend>`. Do
-  not emit the removed classes. (DaisyUI is a host peer dep and is not installed in this repo,
-  so component tests assert DOM and roles, not computed styles, and will not catch dead classes;
-  that is your responsibility.)
+  not emit the removed classes. (Component tests assert DOM and roles, not computed styles,
+  so they will not catch a dead class; that is your responsibility.)
 - **No em dashes anywhere**, including comments and strings. A `prose-guard` hook rejects files
   that contain them. Write in a plain voice.
 - **carta-md** is client-only: import it only inside `.svelte` files (the carta-boundary test

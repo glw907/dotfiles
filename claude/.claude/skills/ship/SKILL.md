@@ -11,8 +11,8 @@ description: >
 # Ship
 
 Simplify, commit, push, and install a Go project in one pass. Go
-conventions are enforced by `~/.claude/docs/go-conventions.md` plus
-project hooks. No separate review step.
+conventions are enforced by the `go-conventions` skill plus project
+hooks. No separate review step.
 
 ## Pipeline
 

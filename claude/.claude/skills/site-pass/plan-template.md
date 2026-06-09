@@ -1,8 +1,8 @@
 # Pass <n>: <topic>
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use
-> superpowers:subagent-driven-development (recommended) or
-> superpowers:executing-plans to implement this plan task-by-task.
+> **For agentic workers:** Implement this plan task-by-task in the main loop,
+> verifying each task before the next. Dispatch implementer subagents only for
+> parallel-independent tasks or a worktree-isolated change.
 > Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** One sentence stating what this pass produces.

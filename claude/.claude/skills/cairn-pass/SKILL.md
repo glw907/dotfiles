@@ -44,7 +44,8 @@ re-deriving the design.
    confirm the failing test first, make it green, then clear the full gate (`npm run check`
    0/0, `npm test` exit 0) before the next task. Dispatch the `cairn-implementer` agent only
    for tasks independent enough to run in parallel, or for a high-blast-radius change that
-   wants worktree isolation (Sonnet by default; pass `model: opus` for judgment-heavy work).
+   wants worktree isolation (it inherits the main-loop model; pass `model: sonnet` to downshift a mechanical,
+   well-specified fan-out).
    When most of a plan's tasks are independent, suggest orchestrating them with the
    Workflow tool and let the user opt in.
 
@@ -88,9 +89,8 @@ before committing. Match the subagent to what the plan touched:
 For any plan touching the `/admin` surface, run the live admin smoke against a
 real Worker (`wrangler dev`). Under the rebuilt self-owned auth, mint a session
 by inserting a D1 session row directly (no better-auth cookie, no email loop);
-the final magic-link click in a browser stays a user step. Follow the smoke doc
-in `cairn-cms/docs/` once Plan 01 rewrites it for the new auth. Record results as
-evidence. Skip for plans that do not touch `/admin`.
+the final magic-link click in a browser stays a user step. Follow
+`cairn-cms/docs/admin-smoke-test.md`. Record results as evidence. Skip for plans that do not touch `/admin`.
 
 ### 5. Documentation
 

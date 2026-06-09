@@ -65,6 +65,7 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 - **Account**: Fastmail via JMAP (primary), Gmail via IMAP (v1 target)
 - **JMAP auth**: `$FASTMAIL_API_TOKEN` (in `~/.local/secrets`)
 - **Binary**: `~/.local/bin/poplar`, installed via `make install`
+- **API reference**: `~/.claude/instructions/fastmail-api.md` (JMAP endpoints, capabilities, examples)
 
 ## Neovim
 

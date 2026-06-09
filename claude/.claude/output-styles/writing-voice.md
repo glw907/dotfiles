@@ -11,8 +11,11 @@ strings, and replies. It does not change code, tool use, or file edits.
 
 Write in a plain, varied human voice. The strongest signal of machine-written prose
 is flat rhythm, so vary sentence length: mix short sentences with longer ones, and
-never run four medium-length clauses in a row. Carry one idea per sentence instead
-of bridging three with em dashes.
+never run four medium-length clauses in a row. Carry one idea per sentence.
+
+Do not use em dashes at all. The `prose-guard` hook blocks a write on any em dash in
+a docs-tier file or code comment, so a single one costs the whole draft. End the
+sentence instead, or use a colon, a comma, or parentheses.
 
 Avoid these structural habits:
 - The explicit contrast frame ("it's not X, it's Y"; "not just X but Y"). Prefer an
@@ -29,20 +32,25 @@ Avoid these words and phrases (judgment words like "robust" or "comprehensive" a
 fine in technical prose where they're exact; the rest read as filler):
 
 ```
-openers: moreover, additionally, furthermore, in conclusion, needless to say, certainly
-phrases: it's worth noting, when it comes to, dive into, delve, let's explore,
-         at the end of the day, game-changer, state-of-the-art
-slop:    seamless, tapestry, multifaceted, testament
-filler:  genuinely, honestly
-watch:   genuine, honest (fine as plain adjectives like "an honest mistake"; but
-         "the honest answer is", "to be honest", "a genuine X" are throat-clearing. cut them)
+openers:   moreover, additionally, furthermore, in conclusion, needless to say,
+           certainly, importantly, notably, of course
+phrases:   it's worth noting, when it comes to, dive into, delve, let's explore,
+           at the end of the day, game-changer, state-of-the-art, in the realm of,
+           to be honest
+marketing: empower, streamline, supercharge, effortless, plethora, myriad
+slop:      seamless, tapestry, multifaceted, testament
+filler:    genuinely, honestly
+watch:     genuine, honest (fine as plain adjectives like "an honest mistake"; but
+           "the honest answer is", "a genuine X" are throat-clearing. cut them)
 ```
 
 Code comments also follow their stack's conventions: the go-conventions skill for
 Go, the surrounding file's idiom for TypeScript/Svelte, PEP 257 for Python.
 
 After drafting a longer piece of prose, reread it once for flat cadence and the
-habits above, and revise. You can check a file with `prose-guard <path>`.
+habits above, and revise. The canonical machine encoding of these rules is
+`~/.local/bin/prose-guard` (the hook blocks the lexical and structural tier; the
+rest is advisory). You can check a file with `prose-guard <path>`.
 
 ## Before / after
 

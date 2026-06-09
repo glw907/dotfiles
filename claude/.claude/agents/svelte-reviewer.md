@@ -64,4 +64,4 @@ End with a one-line verdict.
 - `any` for event types; prefer `MouseEvent`, `SubmitEvent`, and friends.
 - Confirm `App.Locals`, `App.Platform`, `App.PageData` are declared in `src/app.d.ts`.
 
-Cite the official docs (svelte.dev/docs, kit.svelte.dev) when a fix is non-obvious.
+Cite the official docs (svelte.dev/docs, svelte.dev/docs/kit) when a fix is non-obvious.

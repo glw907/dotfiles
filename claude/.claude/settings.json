@@ -1,14 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
-    "allow": [
-      "Bash",
-      "WebSearch",
-      "WebFetch"
-    ],
     "defaultMode": "bypassPermissions"
   },
-  "model": "claude-opus-4-8",
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -16,7 +11,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/gather-dotfiles.sh && echo '' && ~/.claude/gather-scripts.sh"
+            "command": "~/.claude/gather-dotfiles.sh"
           }
         ]
       }
@@ -34,7 +29,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit",
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
@@ -50,7 +45,16 @@
     "frontend-design@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true
+    "skill-creator@claude-plugins-official": true,
+    "cloudflare@cloudflare": true
+  },
+  "extraKnownMarketplaces": {
+    "cloudflare": {
+      "source": {
+        "source": "github",
+        "repo": "cloudflare/skills"
+      }
+    }
   },
   "outputStyle": "writing-voice",
   "effortLevel": "high",
