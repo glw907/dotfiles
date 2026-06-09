@@ -7,11 +7,10 @@ the reader uses it.
 
 Geoff picked this direction (2026-06-09, option B of the register election) over the
 settled-fact register the early cairn docs drifted into. The exemplars below are the
-empirical baseline, drawn verbatim from the SvelteKit and Svelte documentation
-(sveltejs/kit and sveltejs/svelte, MIT). The lifecycle: as new cairn docs are drafted in
-this register and Geoff edits them, his edited passages replace the upstream ones, and the
-corpus gets rebuilt on those. The quotes are lightly reflowed (one bullet list joined into
-prose) but otherwise as published.
+empirical baseline, drawn from the SvelteKit and Svelte documentation (sveltejs/kit and
+sveltejs/svelte, MIT). As new cairn docs are drafted in this register and Geoff edits them,
+his edited passages replace the upstream ones, and the corpus rebuilds on those. Quotes are
+lightly reflowed (one bullet list joined into prose) but otherwise as published.
 
 One carve-out: upstream uses em dashes freely, and cairn docs stay under the docs-tier ban
 (the authorship-plausibility rule). Imitate the voice, not the punctuation.
@@ -38,11 +37,11 @@ From the Svelte runes intro. Definition with a wink, then the differences as pla
 
 ```
 Runes are symbols that you use in .svelte and .svelte.js/.svelte.ts files to control the
-Svelte compiler. If you think of Svelte as a language, runes are part of the syntax --
+Svelte compiler. If you think of Svelte as a language, runes are part of the syntax —
 they are keywords.
 
 They differ from normal JavaScript functions in important ways, however: You don't need
-to import them -- they are part of the language. They're not values -- you can't assign
+to import them — they are part of the language. They're not values — you can't assign
 them to a variable or pass them as arguments to a function. Just like JavaScript
 keywords, they are only valid in certain positions (the compiler will help you if you
 put them in the wrong place).
@@ -51,7 +50,7 @@ put them in the wrong place).
 From the form-actions page. Example-first, then the consequence narrated as a scenario:
 
 ```
-To invoke this action from the /login page, just add a <form> -- no JavaScript needed.
+To invoke this action from the /login page, just add a <form> — no JavaScript needed.
 If someone were to click the button, the browser would send the form data via POST
 request to the server, running the default action.
 
@@ -74,8 +73,8 @@ From the hooks page. A mechanism explained in flowing prose with the practical p
 parenthetical:
 
 ```
-This function runs every time the SvelteKit server receives a request -- whether that
-happens while the app is running, or during prerendering -- and determines the response.
+This function runs every time the SvelteKit server receives a request — whether that
+happens while the app is running, or during prerendering — and determines the response.
 It receives an event object representing the request and a function called resolve,
 which renders the route and generates a Response. This allows you to modify response
 headers or bodies, or bypass SvelteKit entirely (for implementing routes
