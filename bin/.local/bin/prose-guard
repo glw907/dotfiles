@@ -72,9 +72,10 @@ ADVISORY_PHRASES = [
 ]
 ADVISORY_WORDS = ["leverage", "unlock", "elevate", "foster", "boost",
                   "vital", "crucial", "essential", "dynamic", "journey", "passion"]
-# Fable-era tells (2026-06-09): habits observed in Fable 5 drafts. Advisory until the
-# calibration pass vets any of them for the blocking tier. The "worth ..." entries are
-# near-dodges of the banned "it's worth noting".
+# Fable-era tells (2026-06-09): habits observed in Fable 5 drafts. These are dosage
+# signals, not prohibitions: a single instance placed well can stand, and the tell is
+# the habit. They stay advisory; promotion to blocking takes Geoff's explicit call.
+# The "worth ..." entries are near-dodges of the banned "it's worth noting".
 FABLE_PHRASES = [
     "worth noticing", "worth a glance", "worth taking seriously",
     "high-leverage", "highest-leverage",
@@ -83,7 +84,7 @@ FABLE_PHRASES = [
 FABLE_PATTERNS = [
     (re.compile(r"(?i)\bthe (honest|real|true) \w+ is\b"),
      "definitional pivot: the honest/real X is",
-     "Dramatized pivot that stages the point. State it plainly instead."),
+     "Staged pivot. Fine once, placed well; as a habit it reads as AI."),
 ]
 PASSIVE_AGENT = re.compile(
     r"(?i)\b(?:is|are|was|were|been|being|be)\s+"
@@ -244,7 +245,7 @@ def scan_advisory(text, tier):
         for phrase in FABLE_PHRASES:
             if phrase in low:
                 issues.append((f"advisory: fable tell: {phrase}", line,
-                               "A Fable-draft habit. Reword plainly."))
+                               "A Fable-draft habit. Fine once, placed well; a tell as a default."))
         for rx, kind, hint in FABLE_PATTERNS:
             if rx.search(line):
                 issues.append((f"advisory: fable tell: {kind}", line, hint))

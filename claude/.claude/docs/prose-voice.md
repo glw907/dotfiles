@@ -68,8 +68,15 @@ Shape-level tells read as AI even when every sentence is clean.
 ## What blocks versus what advises
 
 The hook blocks a write on the lexical and structural tells. The softer tells surface only in the
-`prose-guard` sweep, so they guide a rewrite without stopping the file. Active voice is the standard,
-which is why passive phrasing advises rather than blocks. Keep passive only where it truly fits.
+`prose-guard` sweep and the post-hook feedback, so they guide a rewrite without stopping the file.
+Active voice is the standard, which is why passive phrasing advises rather than blocks. Keep passive
+only where it truly fits.
+
+Advisory findings are dosage signals, not prohibitions. Most of the flagged constructions are
+legitimate in a single well-placed instance; the tell is reaching for the same move by reflex. Read
+a cluster of advisory hits as "this draft leans on a crutch" and vary the writing, rather than
+mechanically purging every hit. Promotion of any advisory tell to the blocking tier is Geoff's call,
+never a default.
 
 | Layer | Examples | Enforcement |
 |---|---|---|
