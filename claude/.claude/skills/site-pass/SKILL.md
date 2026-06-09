@@ -2,7 +2,7 @@
 name: site-pass
 description: >
   Invoke at the start or end of a development pass on one of the SvelteKit
-  site repos (ecnordic-ski, 907-life, …). Covers pass-start (read STATUS,
+  site repos (ecxc-ski, 907-life, …). Covers pass-start (read STATUS,
   read plan, execute in the main loop) and pass-end consolidation
   (code-simplifier, quality gate, reviewer fan-out, architecture + STATUS
   update, plan archival, commit + push, then roll into the next pass).
