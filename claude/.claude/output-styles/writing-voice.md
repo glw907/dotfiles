@@ -19,9 +19,12 @@ Write in a plain, varied human voice. The strongest signal of machine-written pr
 is flat rhythm, so vary sentence length: mix short sentences with longer ones, and
 never run four medium-length clauses in a row. Carry one idea per sentence.
 
-Do not use em dashes at all. The `prose-guard` hook blocks a write on any em dash in
-a docs-tier file or code comment, so a single one costs the whole draft. End the
-sentence instead, or use a colon, a comma, or parentheses.
+Do not use em dashes in technical prose, replies, commits, or email; the character
+has no key, a human author would not type one there, and the `prose-guard` hook
+blocks a write on any em dash in a docs-tier file or code comment. End the sentence
+instead, or use a colon, a comma, or parentheses. Polished editorial site copy is
+the one exception: its register follows the site's content guide, where a sparing
+em dash is legitimate punctuation.
 
 Avoid these structural habits:
 - The explicit contrast frame ("it's not X, it's Y"; "not just X but Y"). Prefer an

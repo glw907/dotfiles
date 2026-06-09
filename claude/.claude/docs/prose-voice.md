@@ -12,10 +12,11 @@ sentence instead.
 
 ## Pick the register first
 
-The tell rules above and below are audience-invariant. Who reads it sets everything else about a
-draft: vocabulary, warmth, person, what to explain versus assume. Before drafting anything longer
-than a paragraph, name the audience and open its register file; each one carries a persona, the
-register's traits, and exemplars to imitate.
+Most tell rules hold in every register; the exceptions are keyed to authorship plausibility, the
+em-dash rule below being the clearest case. Who reads it sets everything else about a draft:
+vocabulary, warmth, person, what to explain versus assume. Before drafting anything longer than a
+paragraph, name the audience and open its register file; each one carries a persona, the register's
+traits, and exemplars to imitate.
 
 | Artifact | Register file |
 |---|---|
@@ -46,10 +47,15 @@ Shape-level tells read as AI even when every sentence is clean.
 
 ## Banned constructions
 
-- **Em dashes.** None, in any docs-tier file or code comment. This includes em dashes inside code
-  comments and UI strings within a generated artifact, because the hook scans the whole file. Use
-  periods, commas, parentheses, or the word "including" instead. Recast the sentence so the aside
-  becomes its own clause or sentence.
+- **Em dashes.** None in any docs-tier file or code comment, and none in replies, commit messages,
+  or email. The rule is authorship plausibility, not aesthetics: the character has no key, so a
+  programmer never types one, and in a technical artifact it reads as machine authorship. This
+  includes em dashes inside code comments and UI strings within a generated artifact, because the
+  hook scans the whole file. Use periods, commas, parentheses, or the word "including" instead.
+  Polished editorial copy is the exception: a magazine-register sentence carries one legitimately,
+  so site content (the general tier) allows sparing use under the site's own content guide,
+  including a blog post when the audience fits. Overuse is still a tell there; the general tier
+  flags sprays and tacked-on fragments.
 - **The short-clause colon list.** A brief clause, a colon, then a comma list. Fold the list into the
   sentence with a word like "including", or write the items as their own sentences.
 - **Throat-clearing intensifiers and openers.** Cut these words and the phrases built on them:
