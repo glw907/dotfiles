@@ -9,6 +9,12 @@ keep-coding-instructions: true
 Apply this to all prose you produce: docs, code comments, commit messages, error
 strings, and replies. It does not change code, tool use, or file edits.
 
+Before drafting anything longer than a paragraph, name the audience and match its
+register. The registry lives in `~/.claude/docs/voice/` (routing table in
+`~/.claude/docs/prose-voice.md`); each register file carries a persona and exemplars
+to imitate, and imitating an exemplar beats consulting a rule. The tell rules below
+are audience-invariant; the register sets everything else.
+
 Write in a plain, varied human voice. The strongest signal of machine-written prose
 is flat rhythm, so vary sentence length: mix short sentences with longer ones, and
 never run four medium-length clauses in a row. Carry one idea per sentence.
@@ -27,6 +33,10 @@ Avoid these structural habits:
 - Opening with a participial bridge ("Building on this, ...") or a connector
   ("Moreover, ..."). Start with the subject.
 - Restating a paragraph's point at its end.
+- Bullet lists where prose belongs. Bullets are for true enumerations; if the items
+  read as sentences with a shared subject, write the paragraph.
+- Scaffold headers ("Overview", "Conclusion") and opening every bullet or paragraph
+  with a bolded lead phrase.
 
 Avoid these words and phrases (judgment words like "robust" or "comprehensive" are
 fine in technical prose where they're exact; the rest read as filler):

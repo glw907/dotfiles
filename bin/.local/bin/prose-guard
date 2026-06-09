@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """prose-guard: flag AI-flavored-writing tells in docs, code comments, and content.
 
-Two modes:
-  prose-guard --hook    PreToolUse guard. Reads the tool-call JSON on stdin,
-                        classifies the target file, scans the content being
-                        written, and on a hit prints a JSON deny decision and
-                        exits 0. Clean files print nothing. Any internal error
-                        also exits 0: a hook bug must never block real work.
-  prose-guard PATHS...  Sweep mode. Scans whole files (every layer, including
-  prose-guard --all     statistics), prints a grouped report, exits 1 on a hit.
+Three modes:
+  prose-guard --hook       PreToolUse guard. Reads the tool-call JSON on stdin,
+                           classifies the target file, scans the content being
+                           written, and on a hit prints a JSON deny decision and
+                           exits 0. Clean files print nothing. Any internal error
+                           also exits 0: a hook bug must never block real work.
+  prose-guard --post-hook  PostToolUse feedback. Reads the tool-call JSON on
+                           stdin, re-reads the just-written file from disk, runs
+                           the advisory layers only, and prints the findings as
+                           additionalContext. Never blocks; fails open.
+  prose-guard PATHS...     Sweep mode. Scans whole files (every layer, including
+  prose-guard --all        statistics), prints a grouped report, exits 1 on a hit.
 
 Three tiers, chosen by path: general (marketing), docs (technical), comments
 (code, Pygments comment text only). The hook blocks on lexical + structural
@@ -68,6 +72,13 @@ ADVISORY_PHRASES = [
 ]
 ADVISORY_WORDS = ["leverage", "unlock", "elevate", "foster", "boost",
                   "vital", "crucial", "essential", "dynamic", "journey", "passion"]
+# Fable-era tells (2026-06-09): habits observed in Fable 5 drafts. Advisory until the
+# calibration pass vets any of them for the blocking tier. The "worth ..." entries are
+# near-dodges of the banned "it's worth noting".
+FABLE_PHRASES = [
+    "worth noticing", "worth a glance", "worth taking seriously",
+    "high-leverage", "highest-leverage",
+]
 PASSIVE_AGENT = re.compile(
     r"(?i)\b(?:is|are|was|were|been|being|be)\s+"
     r"(?:\w+ed|\w+en|built|sent|made|kept|held|run|read|set|done|found|paid|told|drawn|known)"
@@ -224,6 +235,10 @@ def scan_advisory(text, tier):
         for word in ADVISORY_WORDS:
             if re.search(rf"\b{word}\w*\b", low):
                 issues.append((f"advisory: soft tell: {word}", line, "Consider a plainer word."))
+        for phrase in FABLE_PHRASES:
+            if phrase in low:
+                issues.append((f"advisory: fable tell: {phrase}", line,
+                               "A Fable-draft habit. Reword plainly."))
         for opener in ADVISORY_OPENERS:
             for sent in SENTENCE_SPLIT.split(line):
                 head = re.sub(r"^[\s\-*>#]+", "", sent).lower()
@@ -358,6 +373,31 @@ def main_hook():
     return 0
 
 
+def main_post_hook():
+    """Advisory feedback after a write: cadence and soft tells, never a block."""
+    data = json.loads(sys.stdin.read())
+    path = data.get("tool_input", {}).get("file_path", "")
+    tier = classify(path)
+    if tier is None:
+        return 0
+    try:
+        with open(path, encoding="utf-8") as fh:
+            raw = fh.read()
+    except (OSError, UnicodeDecodeError):
+        return 0
+    text = extract_comments(path, raw) if tier == "comments" else raw
+    issues = scan_advisory(text, tier) + analyze_document(text, tier)
+    if not issues:
+        return 0
+    note = ("\nAdvisory only; nothing is blocked. Revise now if these sit in prose you "
+            "just wrote; leave pre-existing body text alone.")
+    sys.stdout.write(json.dumps({"hookSpecificOutput": {
+        "hookEventName": "PostToolUse",
+        "additionalContext": report(issues, path, tier).rstrip() + note,
+    }}))
+    return 0
+
+
 SKIP_DIRS = {".git", "node_modules", "dist", "build", ".svelte-kit", ".wrangler", "__pycache__", ".venv"}
 
 
@@ -393,11 +433,13 @@ def main():
     args = sys.argv[1:]
     if args and args[0] == "--hook":
         return main_hook()
+    if args and args[0] == "--post-hook":
+        return main_post_hook()
     return main_sweep(args)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "--hook":
+    if len(sys.argv) > 1 and sys.argv[1] in ("--hook", "--post-hook"):
         try:
             sys.exit(main())
         except Exception:

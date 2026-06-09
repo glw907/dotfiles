@@ -2,13 +2,47 @@
 
 Read this before writing a doc, plan, spec, or code comment. It is the human-readable companion to
 the `prose-guard` PreToolUse hook (`~/.local/bin/prose-guard`), which enforces a subset of these at
-write time, and to the always-on `writing-voice` output style. The hook blocks the whole file on a
-trip, so a violation found after the fact means regenerating the entire artifact. Draft clean on the
-first pass.
+write time, and to the always-on `writing-voice` output style. The hook denies the write on a trip;
+the cost is rewording the offending sentence and retrying, so draft clean and the tax stays near
+zero.
 
 The bar is **human cadence**, not a passing sweep. A mechanical swap (an em dash for a colon, a
 banned opener reworded) can pass the regex while still reading as machine-written. Rewrite the
 sentence instead.
+
+## Pick the register first
+
+The tell rules above and below are audience-invariant. Who reads it sets everything else about a
+draft: vocabulary, warmth, person, what to explain versus assume. Before drafting anything longer
+than a paragraph, name the audience and open its register file; each one carries a persona, the
+register's traits, and exemplars to imitate.
+
+| Artifact | Register file |
+|---|---|
+| Site content (pages, posts, form copy) | the site repo's `docs/content-guide.md`, via the content-draft skill |
+| Developer docs, README, design doc in a Go repo | `~/.claude/docs/voice/technical-doc-go.md` |
+| Developer docs, README, design doc in a SvelteKit/web repo | `~/.claude/docs/voice/technical-doc-web.md` |
+| CLAUDE.md, skills, agent definitions, hook text | `~/.claude/docs/voice/agent-facing.md` |
+| Commit messages and PR bodies | `~/.claude/docs/voice/commit-and-pr.md` |
+| Code comments | the stack's own rules (go-conventions, file idiom for TS/Svelte, PEP 257) |
+
+The dialect follows the repo's stack; a project CLAUDE.md may override with an explicit register
+line. Exemplars beat rules: when a sentence feels off, reread the register's exemplars and imitate,
+rather than consulting more rules.
+
+## Document shape
+
+Shape-level tells read as AI even when every sentence is clean.
+
+- Paragraphs over bullets. A bullet list is for true enumerations (options, steps, fields), not
+  for prose that happens to have three points. If the items read as sentences with a shared
+  subject, write the paragraph.
+- No scaffold headers. "Overview", "Introduction", "Conclusion", and "Summary" sections are
+  filler in anything shorter than a book chapter. Headers exist for a reader who navigates by
+  them; a doc a person reads top to bottom usually needs few or none.
+- Do not open every bullet or paragraph with a bolded lead phrase. Used sparingly it is signpost;
+  used by reflex it is the AI list default, and the guard blocks the worst form.
+- One register per artifact. Do not drift from runbook to essay mid-document.
 
 ## Banned constructions
 
@@ -57,6 +91,10 @@ which is why passive phrasing advises rather than blocks. Keep passive only wher
 - `~/.local/bin/prose-guard`: the machine encoding (lexical, structural, advisory, and statistics
   layers), source in `~/.dotfiles`. Tiers differ: the docs and comments tiers treat any em dash as a
   tell; the general content tier keeps some nuance. Key-value definition lists are exempt from the
-  bold-header rule. The advisory layer surfaces in the sweep only and never blocks a write.
+  bold-header rule. The advisory layer surfaces in the sweep and in the PostToolUse `--post-hook`
+  feedback, and never blocks a write. Ban lists are a per-model patch layer; the `FABLE_PHRASES`
+  section holds Fable-era candidates pending calibration.
+- `~/.claude/docs/voice/`: the register files (persona + traits + exemplars per audience).
+  Registers are model-stable, so lean on them harder than on the ban lists.
 - `writing-voice` output style: the always-on prose standard for replies.
-- This doc: the readable list to consult before writing.
+- This doc: the readable list, the register routing table, and the shape rules.

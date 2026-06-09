@@ -406,3 +406,55 @@ def test_new_advisory_words_do_not_block(word):
 def test_new_advisory_words_surface_in_sweep(word):
     issues = pg.scan_advisory(f"This is a {word} part of training.", "general")
     assert any(word in k for k in _kinds(issues))
+
+
+# fable-era advisory tells
+
+
+@pytest.mark.parametrize("phrase", ["worth noticing", "highest-leverage"])
+def test_fable_phrases_advisory_only(phrase):
+    text = f"This change is {phrase} for the design.\n"
+    assert not pg.scan(text, "docs")
+    assert any(phrase in k for k in _kinds(pg.scan_advisory(text, "docs")))
+
+
+# post-hook (PostToolUse advisory feedback)
+
+
+def _run_post_hook(monkeypatch, payload):
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
+    out = io.StringIO()
+    monkeypatch.setattr("sys.stdout", out)
+    code = pg.main_post_hook()
+    return code, out.getvalue()
+
+
+def test_post_hook_reports_advisory(tmp_path, monkeypatch):
+    doc = tmp_path / "notes.md"
+    doc.write_text("This allows you to do the thing.\n")
+    code, out = _run_post_hook(
+        monkeypatch, {"tool_name": "Write", "tool_input": {"file_path": str(doc)}})
+    assert code == 0
+    data = json.loads(out)
+    assert data["hookSpecificOutput"]["hookEventName"] == "PostToolUse"
+    assert "passive phrasing" in data["hookSpecificOutput"]["additionalContext"]
+
+
+def test_post_hook_silent_on_clean_file(tmp_path, monkeypatch):
+    doc = tmp_path / "clean.md"
+    doc.write_text("The cache buffers reads. Latency drops.\n")
+    code, out = _run_post_hook(
+        monkeypatch, {"tool_name": "Write", "tool_input": {"file_path": str(doc)}})
+    assert code == 0 and out == ""
+
+
+def test_post_hook_skips_non_prose(monkeypatch):
+    code, out = _run_post_hook(
+        monkeypatch, {"tool_name": "Write", "tool_input": {"file_path": "x.json"}})
+    assert code == 0 and out == ""
+
+
+def test_post_hook_survives_missing_file(monkeypatch):
+    code, out = _run_post_hook(
+        monkeypatch, {"tool_name": "Write", "tool_input": {"file_path": "/nope/gone.md"}})
+    assert code == 0 and out == ""

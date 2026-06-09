@@ -94,6 +94,12 @@ A deliberate context clear is now the exception, reserved for an initiative whos
 The `writing-voice` output style is always on (set in settings.json) and carries the
 full prose standard: plain voice, varied sentence length, no AI-writing tells.
 
+**Audience first.** Every piece of prose has a register. Before drafting, name the
+audience and open its register file under `~/.claude/docs/voice/` (routing table in
+`prose-voice.md`): site readers use the site's own content guide, Go and web developer
+docs each have a dialect, agent-facing text and commit messages have their own files.
+Imitate the register's exemplars; the tell rules are the same in every register.
+
 **Pre-flight, not cleanup.** Before composing any doc, plan, spec, ADR, or longer
 commit body, read `~/.claude/docs/prose-voice.md` first. It holds the full banned-
 construction list and the first-draft rule. The `prose-guard` hook
