@@ -28,7 +28,7 @@ Do not ask for review, confirmation, or approval until the task is fully complet
 ## Dotfiles Management
 
 - **Location**: `~/.dotfiles` (git: github.com/glw907/workstation), managed via GNU Stow
-- **Stow packages**: `bash`, `bin`, `claude`, `git`, `kitty`, `applications`, `contacts`
+- **Stow packages**: `bash`, `bin`, `claude`, `git`, `kitty`, `contacts`
 - **Sync script**: `~/.dotfiles/sync-dotfiles.sh` -- checks stow status, git drift
 - Adding new tracked script: copy to `~/.dotfiles/bin/.local/bin/`, then `cd ~/.dotfiles && stow -R bin`
 

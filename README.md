@@ -29,7 +29,6 @@ Personal dotfiles and configuration reference -- Linux Mint 22 (Cinnamon), manag
 | `beautiful-aerc` | `~/.config/aerc/`, `~/.config/nvim-mail/`, `~/.local/bin/` | aerc config, theme, filters, compose editor (symlink to `~/Projects/beautiful-aerc`) |
 | `contacts` | `~/.config/vdirsyncer/`, `~/.config/khard/`, systemd units | CardDAV contact sync with Fastmail |
 | `kitty` | `~/.config/kitty/` | Terminal config (Monaspace Neon, Nord colors, powerline tabs) |
-| `applications` | `~/.local/share/applications/` | Eudaimonia desktop launcher |
 | `android` | *(docs only)* | SDK setup guide -- SDK itself lives in `~/Android/` |
 | `themes` | `~/.themes/` | Nord GTK theme installer |
 | `wallpapers` | `~/Pictures/Wallpapers/` | `nord-gradient.png`, `nord-minimal.png` |
@@ -88,8 +87,6 @@ Full wiring details: [docs/email.md](docs/email.md) | Keybinding cheat sheet: [a
 - Font: Monaspace Neon 11pt, JetBrainsMono Nerd Font for symbols
 - Colors: Nord palette
 - Config: `kitty` stow package
-
-**Eudaimonia** -- daily practice session launcher (`.desktop` file in `applications` package, runs a kitty session from `~/Projects/eudaimonia/`)
 
 ---
 

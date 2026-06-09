@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Eudaimonia
-Comment=Daily practice session — health, training, philosophy
-Exec=/home/glw907/.local/kitty.app/bin/kitty --class eudaimonia --title Eudaimonia --config /home/glw907/Projects/eudaimonia/scripts/kitty.conf
-StartupWMClass=eudaimonia
-Icon=/home/glw907/Projects/eudaimonia/scripts/eudaimonia.svg
-Type=Application
-Categories=Utility;
-StartupNotify=true
