@@ -15,7 +15,8 @@ description: >
 
 The cairn-cms library is being rebuilt test-first as a numbered plan series, 00
 (foundation) through 08 (scaffolder). The canonical source of truth is the
-functional spec, which supersedes the older `docs/PLAN.md` and `docs/ARCHITECTURE.md`.
+functional spec, which supersedes the older plan and architecture writeups now kept under
+`docs/internal/history/`.
 Each plan is written just-in-time after the prior one lands, under
 `cairn-cms/docs/superpowers/plans/`.
 
@@ -90,7 +91,7 @@ For any plan touching the `/admin` surface, run the live admin smoke against a
 real Worker (`wrangler dev`). Under the rebuilt self-owned auth, mint a session
 by inserting a D1 session row directly (no better-auth cookie, no email loop);
 the final magic-link click in a browser stays a user step. Follow
-`cairn-cms/docs/admin-smoke-test.md`. Record results as evidence. Skip for plans that do not touch `/admin`.
+`cairn-cms/docs/internal/admin-smoke-test.md`. Record results as evidence. Skip for plans that do not touch `/admin`.
 
 ### 5. Documentation
 
