@@ -30,19 +30,23 @@ updates at pass-end. Honor `cairn-cms`'s own `CLAUDE.md` and skills.
 
 ## Starting a plan
 
-This is the entry point for a fresh session, including one resuming after a deliberate
-context clear. STATUS.md's "immediate next action" line names the plan to execute and the
-method; trust it and the plan file rather than re-deriving the design.
+This is the entry point at plan start, whether continuing in the session that wrote the
+plan or resuming cold after a clear or a crash. STATUS.md's "immediate next action" line
+names the plan to execute and the method; trust it and the plan file rather than
+re-deriving the design.
 
 1. **Read `cairn-cms/docs/STATUS.md`** for the current state and open decisions, the
    **functional spec** (sections relevant to the plan) for the locked decisions and
    architecture, and **the plan file in full** for the task-by-task steps and exit criteria.
 2. Confirm you are in a feature worktree off `main`, not the `main` checkout itself.
    STATUS.md lists the active worktrees.
-3. Execute task-by-task with `superpowers:subagent-driven-development` (or
-   `superpowers:executing-plans`). Dispatch the `cairn-implementer` agent per task
-   (Sonnet by default; pass `model: opus` for judgment-heavy tasks). The suite is the
-   acceptance contract: write or confirm the failing test first, then make it green.
+3. Execute task-by-task in the main loop. The suite is the acceptance contract: write or
+   confirm the failing test first, make it green, then clear the full gate (`npm run check`
+   0/0, `npm test` exit 0) before the next task. Dispatch the `cairn-implementer` agent only
+   for tasks independent enough to run in parallel, or for a high-blast-radius change that
+   wants worktree isolation (Sonnet by default; pass `model: opus` for judgment-heavy work).
+   When most of a plan's tasks are independent, suggest orchestrating them with the
+   Workflow tool and let the user opt in.
 
 > **Legacy discipline.** The frozen `legacy/` build only ever got smoke tests, not real
 > use, so it is an accelerator and a behavioral reference, not a proven artifact to
@@ -160,34 +164,34 @@ design-and-approval gate: never auto-write a plan without the user's calls on th
 open decisions. The plan stays revisable next session. Skip only when the next pass's
 direction is unsettled or the user wants to stop here.
 
-### 9. Hand off for a fresh-session execution
+### 9. Pre-bake, then continue in this session
 
-Geoff executes a plan in a fresh session, so the writing session's last job is to make
-resuming frictionless. Do this after the plan is written; do **not** run the
-`superpowers:writing-plans` "which execution method?" question (subagent-driven is the
-default and gets baked into the resume instructions).
+Plan and execution share the session by default; a plan written here gets executed here. The
+pre-bake still happens first, as insurance against a crashed or interrupted session rather
+than as a handoff. Do **not** run the `superpowers:writing-plans` "which execution method?"
+question (main-loop execution is the default).
 
-- **Pre-bake the handoff while context is warm.** Commit the plan (push if the user wants
-  it pushed). Update STATUS.md so its **immediate next action** line names the new plan, its
-  path, and the method (`subagent-driven-development` + `cairn-implementer` per task, on a
-  worktree off `main`). Refresh the relevant `cairn-*` memory so a cold session recalls the
-  initiative. Leave the tree clean. Anything load-bearing must live in the plan, the spec,
-  STATUS.md, or memory, never only in the conversation.
-- **Then recommend clearing context** and give the exact resume prompt to paste in the fresh
-  session, including the launch directory (inside `cairn-cms`, so its hooks and memory load).
-  Example: "Execute the component grammar plan (`docs/superpowers/plans/<file>.md`),
-  subagent-driven."
+- **Pre-bake the durable artifacts.** Commit the plan (push if the user wants it pushed).
+  Update STATUS.md so its **immediate next action** line names the new plan, its path, and
+  the method (main-loop execution, test-first, full gate per task, on a worktree off `main`).
+  Refresh the relevant `cairn-*` memory so a cold session recalls the initiative. Leave the
+  tree clean. Anything load-bearing must live in the plan, the spec, STATUS.md, or memory,
+  never only in the conversation.
+- **Then proceed straight into "Starting a plan" above**, in this same session.
 
-See the `clear-context-before-implementing-plans` memory. Skip the clear only for a trivial
-one- or two-task plan, where a fresh session's re-read cost outweighs the benefit.
+Recommend a context clear only when the session that produced the plan ran long and noisy
+(a sprawling brainstorm, several dead ends). In that case give the exact resume prompt and
+the launch directory (inside `cairn-cms`, so its hooks and memory load). Example: "Execute
+the component grammar plan (`docs/superpowers/plans/<file>.md`)." See the
+`clear-context-before-implementing-plans` memory for this default's history.
 
 ## Execution discipline (lessons from Plan 07)
 
-- **One implementer per task.** Dispatch a single `cairn-implementer` per task in
-  subagent-driven-development, wait for its result, and verify its commit (git log and status)
-  before dispatching the next. On an API overload or 5xx, wait and retry once deliberately; never
-  fire a second dispatch while one may still be in flight, because a cleared overload fires every
-  queued retry at once. See the `plan-execution-dispatch-discipline` memory.
+- **One implementer per dispatch, verified.** When dispatching `cairn-implementer` (parallel
+  independent tasks, or a worktree-isolated change), wait for each result and verify its commit
+  (git log and status) before depending on it. On an API overload or 5xx, wait and retry once
+  deliberately; never fire a second dispatch while one may still be in flight, because a cleared
+  overload fires every queued retry at once. See the `plan-execution-dispatch-discipline` memory.
 - **Verify a plan's locked build assumptions.** When a plan locks a packaging, build, or
   module-resolution mechanism (for example `publishConfig.exports`, an export condition, or a
   source-to-`dist` swap), confirm it against the real toolchain at the first task that touches it
@@ -197,9 +201,11 @@ one- or two-task plan, where a fresh session's re-read cost outweighs the benefi
   and structural patterns on the text being written. Anaphora and burstiness are advisory
   sweep-only and scan the whole file, so do not gate commits or spend effort on them, especially
   when they sit in a doc's pre-existing body. See the `prose-guard-tiers` memory.
-- **Consider the Workflow tool.** For a numbered plan with many tasks, orchestrating the
-  task-then-verify loop through `Workflow` (sequential implementers with built-in verification)
-  cuts the per-task coordination round-trips.
+- **Suggest the Workflow tool at the right moments.** It runs only on the user's explicit
+  opt-in ("use a workflow"), so name the moment when it would pay off, including the review
+  gate of a large pass (an adversarial find-and-verify sweep catches more than the flat
+  reviewer fan-out), a plan whose tasks are mostly independent, and a repo-wide audit or
+  migration. One sentence naming the shape and rough scale is enough.
 
 ## When NOT to use
 

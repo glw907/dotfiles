@@ -1,6 +1,6 @@
 ---
 name: cairn-implementer
-description: Implements a single task from a cairn-cms rebuild plan, test-first, and clears the full project gate before reporting done. Dispatch one per task in subagent-driven-development; pass model:opus for judgment-heavy tasks (the Sonnet default fits mechanical, well-specified work).
+description: Implements a single task from a cairn-cms rebuild plan, test-first, and clears the full project gate before reporting done. The main loop executes sequential plan tasks itself; dispatch this agent for tasks independent enough to run in parallel, or for a high-blast-radius change that wants worktree isolation. Pass model:opus for judgment-heavy tasks (the Sonnet default fits mechanical, well-specified work).
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: claude-sonnet-4-6
 memory: project

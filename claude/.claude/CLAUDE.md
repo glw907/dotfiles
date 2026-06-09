@@ -76,16 +76,17 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
 
-## Plan execution: clear context first
+## Multi-agent workflows: suggest, never launch unprompted
 
-I execute an implementation plan in a fresh session, separate from the one that wrote it. A plan is written to be run with zero prior context, so the brainstorming and research that produced it are noise during execution, and a clean session gives the implementer full attention and a lean cache.
+The Workflow tool orchestrates fleets of subagents deterministically, and it runs only on my explicit opt-in. When a task would clearly benefit, suggest it rather than staying silent. Name what the workflow would do and the rough scale, and note that "use a workflow" is the opt-in phrase. Qualifying moments include the review gate of a large pass (an adversarial find-and-verify sweep catches more than a flat reviewer fan-out), a repo-wide audit or migration, a plan whose tasks are mostly independent, and deep multi-source research. The suggestion costs one sentence; skip it for small or already-verified work.
 
-So after authoring a plan, do NOT run the `superpowers:writing-plans` "which execution method?" handoff question. Instead:
-1. Pre-bake the handoff while context is warm: commit the plan, update the project's status/tracking doc to flag the plan as the immediate next action (with the method baked in), refresh any relevant memory, and leave the tree clean. Anything load-bearing must live in the plan, spec, status doc, or memory, never only in the conversation.
-2. Recommend clearing context, and give the exact prompt to paste in the fresh session to begin, including which directory to launch in.
-3. Default the execution method to `superpowers:subagent-driven-development` (one implementer subagent per task); bake it into the resume instructions rather than asking which to use.
+## Plan execution: same session by default
 
-Skip the clear only for a trivial one- or two-task plan, where a fresh session's re-read cost outweighs the benefit. This is the pre-bake half of the autonomy-and-handoff practice.
+Plan and execute in one session. Fable 5's long context plus automatic summarization removed the old reason to hand off, so the brainstorming that produced a plan no longer crowds out the execution. Run the plan's tasks in the main loop, test-first, with the full quality gate after each task. Dispatch an implementer subagent only when tasks are independent enough to run in parallel, or when a high-blast-radius change wants worktree isolation.
+
+After authoring a plan, still pre-bake the durable artifacts before executing. Commit the plan, point the project's status doc at it as the immediate next action, and refresh any relevant memory. This is insurance for a crashed or interrupted session, not a handoff. Anything load-bearing must live in the plan, spec, status doc, or memory, never only in the conversation. Do not run the `superpowers:writing-plans` "which execution method?" handoff question; main-loop execution is the default.
+
+A deliberate context clear is now the exception, reserved for an initiative whose brainstorm ran long and noisy. When clearing, give the exact prompt to paste in the fresh session, including which directory to launch in. This remains the pre-bake half of the autonomy-and-handoff practice.
 
 ## Writing voice
 
