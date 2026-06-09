@@ -26,6 +26,12 @@ marketing.
 
 ## Exemplars
 
+**Provisional.** These passages are Opus rough drafts that Geoff only lightly edited, not
+prose he holds up as a target. They show the dialect's mechanics (the "so" clause, the
+rejected alternative) but the register's true voice is unsettled pending his calibration
+pick. Replace them with passages he has actually edited or approved as docs passes produce
+them.
+
 From the architecture explanation. A complete argument in three sentences, opening with a
 blunt thesis and closing with a concrete inventory:
 
