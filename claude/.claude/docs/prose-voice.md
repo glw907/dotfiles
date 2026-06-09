@@ -18,6 +18,14 @@ vocabulary, warmth, person, what to explain versus assume. Before drafting anyth
 paragraph, name the audience and open its register file; each one carries a persona, the register's
 traits, and exemplars to imitate.
 
+A tell is usually a register misapplied, not bad writing in isolation. A model falls back on the
+registers its training rewarded hardest (polished professional copy, the essayist's staged turn)
+wherever nothing stronger sits in context, and copy-editor prose is right for a brochure and wrong
+for a code comment, an open-source README, or a coaching article for high-school kids. The register
+file's job is to be the stronger attractor. The corollary is that tell lists are per-model
+observations, re-derived from each model's actual drafts and pruned when entries stop firing, never
+inherited as standing battles from the last model.
+
 | Artifact | Register file |
 |---|---|
 | Site content (pages, posts, form copy) | the site repo's `docs/content-guide.md`, via the content-draft skill |
