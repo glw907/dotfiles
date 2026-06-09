@@ -37,6 +37,9 @@ Avoid these structural habits:
   read as sentences with a shared subject, write the paragraph.
 - Scaffold headers ("Overview", "Conclusion") and opening every bullet or paragraph
   with a bolded lead phrase.
+- The definitional pivot ("the honest test is...", "the real question is...") that
+  stages a point instead of stating it, often trailed by an appositive that paints
+  the scene. Say the point plainly.
 
 Avoid these words and phrases (judgment words like "robust" or "comprehensive" are
 fine in technical prose where they're exact; the rest read as filler):

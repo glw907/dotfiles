@@ -79,6 +79,12 @@ FABLE_PHRASES = [
     "worth noticing", "worth a glance", "worth taking seriously",
     "high-leverage", "highest-leverage",
 ]
+# (regex, kind, hint) advisory patterns for Fable habits with more shape than a substring.
+FABLE_PATTERNS = [
+    (re.compile(r"(?i)\bthe (honest|real|true) \w+ is\b"),
+     "definitional pivot: the honest/real X is",
+     "Dramatized pivot that stages the point. State it plainly instead."),
+]
 PASSIVE_AGENT = re.compile(
     r"(?i)\b(?:is|are|was|were|been|being|be)\s+"
     r"(?:\w+ed|\w+en|built|sent|made|kept|held|run|read|set|done|found|paid|told|drawn|known)"
@@ -239,6 +245,9 @@ def scan_advisory(text, tier):
             if phrase in low:
                 issues.append((f"advisory: fable tell: {phrase}", line,
                                "A Fable-draft habit. Reword plainly."))
+        for rx, kind, hint in FABLE_PATTERNS:
+            if rx.search(line):
+                issues.append((f"advisory: fable tell: {kind}", line, hint))
         for opener in ADVISORY_OPENERS:
             for sent in SENTENCE_SPLIT.split(line):
                 head = re.sub(r"^[\s\-*>#]+", "", sent).lower()

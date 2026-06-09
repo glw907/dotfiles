@@ -418,6 +418,12 @@ def test_fable_phrases_advisory_only(phrase):
     assert any(phrase in k for k in _kinds(pg.scan_advisory(text, "docs")))
 
 
+def test_fable_definitional_pivot_advisory():
+    text = "The honest test is the unattended one, a long doc drafted mid-pass.\n"
+    assert not pg.scan(text, "docs")
+    assert any("definitional pivot" in k for k in _kinds(pg.scan_advisory(text, "docs")))
+
+
 # post-hook (PostToolUse advisory feedback)
 
 
