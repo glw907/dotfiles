@@ -24,10 +24,12 @@ rules, budgets, and recipes the draft was written against).
    It reports burstiness, banned words, structural tells, and the advisory sweep. Inputs, never
    the verdict.
 
-3. **Check the four hard gates:** a banned word or phrase, an unverified or fabricated claim
-   (check stated facts against the brief where one exists), a safety or standard-of-care promise,
-   a cost misstatement. Any hit blocks publish. An `[ASK]` marker is a tracked gap, not a gate
-   hit; list the markers so none ships unnoticed.
+3. **Check the four hard gates:** a banned word or phrase, an unverified or false claim
+   (check stated facts against the brief where one exists, and check implications too: read as
+   the most knowledgeable, least charitable reader and flag any frame that asserts a falsehood
+   no single sentence states), a safety or standard-of-care promise, a cost misstatement. Any
+   hit blocks publish. An `[ASK]` marker is a tracked gap, not a gate hit; list the markers so
+   none ships unnoticed.
 
 4. **Check the site guide's load-bearing rules and budgets:** facts said once, people doing
    things, containers within budget, no tagline endings.

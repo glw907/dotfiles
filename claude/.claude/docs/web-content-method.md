@@ -30,10 +30,13 @@ the deterministic `prose-guard`.
    or two per page. Containers keep their budgets. Writing *about* the subject instead of *to*
    a reader is the failure mode; even coverage of a fact sheet reads as marketing copy whatever
    the sentences do.
-5. Humanize pass, run as an independent critic. Dispatch a fresh subagent that sees only the
-   draft, the site's voice calibration set (negative and positive examples; ECXC's is
-   `docs/voice-calibration.md`), and the nearest corpus entries. It lists the sentences that
-   match a negative example or could appear on any organization's site; rewrite only those.
+5. Humanize and skeptic pass, run as an independent critic. Dispatch a fresh subagent that sees
+   only the draft, the brief, the site's voice calibration set (negative and positive examples;
+   ECXC's is `docs/voice-calibration.md`), and the nearest corpus entries. Two hunts. Style: the
+   sentences that match a negative example or could appear on any organization's site. Logic:
+   read as the most knowledgeable, least charitable reader the piece will ever get and flag any
+   claim or implication that reader knows to be false, plus any frame whose reasoning does not
+   follow. Rewrite only what it flags.
    Self-critique inside the drafting context is the weak form, the same reason reviews run
    fresh. Without a calibration doc, do the hunt inline as a second read with that single job.
    Then run the section-6 self-check plus the brief checks: facts landed once, every `[ASK]`
@@ -113,7 +116,8 @@ Audience-first, with hard gates that override the score.
 
 Hard gates. Any hit blocks publish, whatever the score:
 - A banned word or phrase from the catalog (also caught by `prose-guard`).
-- An unverified factual claim or fabricated social proof.
+- An unverified or false factual claim, a false implication carried by the framing (true
+  sentences can still assert a falsehood together), or fabricated social proof.
 - A safety or standard-of-care promise that carries legal risk.
 - A cost misstatement, for sites where cost is a fact (training is free; donations optional).
 
