@@ -40,7 +40,9 @@ nearest the piece. Then work the steps in order.
    matched pattern named. Logic: read the draft as the most knowledgeable, least charitable
    reader it will ever get (for a sports program: a rival club's coach, a parent who knows the
    local scene) and flag any claim or implication that reader knows to be false, and any frame
-   whose reasoning does not follow. Rewrite only what it flags. If the site has no calibration
+   whose reasoning does not follow. The critic verifies externally checkable third-party claims
+   online against primary, careful sources (an org's FAQ or legal page over its marketing copy),
+   never from model memory, even when the user supplied the fact; the source's wording wins. Rewrite only what it flags. If the site has no calibration
    doc, run both hunts inline as a second read.
 
 4. **Self-check.** Run the method's self-check, plus the brief checks: every brief fact landed

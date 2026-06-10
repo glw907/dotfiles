@@ -36,7 +36,10 @@ the deterministic `prose-guard`.
    sentences that match a negative example or could appear on any organization's site. Logic:
    read as the most knowledgeable, least charitable reader the piece will ever get and flag any
    claim or implication that reader knows to be false, plus any frame whose reasoning does not
-   follow. Rewrite only what it flags.
+   follow. Externally checkable third-party claims get verified online against a primary,
+   careful source (an org's FAQ or legal page over its marketing copy), never from model memory,
+   even when the user supplied the fact; the source's wording wins. Rewrite only what the critic
+   flags.
    Self-critique inside the drafting context is the weak form, the same reason reviews run
    fresh. Without a calibration doc, do the hunt inline as a second read with that single job.
    Then run the section-6 self-check plus the brief checks: facts landed once, every `[ASK]`
