@@ -44,9 +44,16 @@ Draft-off, optional, for a high-stakes page on request: generate two or three ca
 deliberately different stances (FAQ-flat, trailhead-spoken, letter-home), judge each against the
 site's corpus exemplars, and splice the strongest sections into the offered draft.
 
-The learning loop closes through the site's corpus doc: after the user ships an edit, harvest the
-diff (the corpus carries the procedure), so their strongest passages become first-party exemplars
-and their repeated fixes become load-bearing rules.
+The learning loop runs on the user's feedback, routed the moment it arrives. The strongest
+channel is the rewrite delta: the user replies to a drafted passage with their own improved
+version; diff the two sentence by sentence, record the pair in the site's calibration set
+(theirs positive, the draft negative) and their version in the site corpus's first-party gold,
+state the one generalization the delta teaches, and encode it in the site guide. Inline flags
+and praise go to the calibration set with the pattern named; shipped edits get harvested in
+batch (the corpus carries the procedure); and any change to the system itself gets
+regression-checked against the calibration set before it is trusted. First-party gold outranks
+the third-party corpus, which outranks the guide's recipes. The site guide carries the full
+routing (for ECXC: `docs/content-guide.md`, "How the system learns").
 
 ## 2. The exemplar library
 
