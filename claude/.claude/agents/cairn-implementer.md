@@ -1,7 +1,8 @@
 ---
 name: cairn-implementer
-description: Implements a single task from a cairn-cms plan, test-first, and clears the full project gate before reporting done. The main loop executes sequential plan tasks itself; dispatch this agent for tasks independent enough to run in parallel, or for a high-blast-radius change that wants worktree isolation. It inherits the main-loop model; pass model:sonnet to downshift a mechanical, well-specified fan-out.
+description: Implements a single task from a cairn-cms plan, test-first, and clears the full project gate before reporting done. The default executor for plan tasks; the main loop orchestrates, reviews each diff, and verifies the gate between dispatches. Pinned to Sonnet for token economy; pass model:opus or model:fable to upshift a task with novel correctness-critical logic the plan does not fully specify.
 tools: Read, Write, Edit, Bash, Grep, Glob
+model: sonnet
 memory: project
 color: blue
 ---

@@ -41,12 +41,13 @@ re-deriving the design.
    architecture, and **the plan file in full** for the task-by-task steps and exit criteria.
 2. Confirm you are in a feature worktree off `main`, not the `main` checkout itself.
    STATUS.md lists the active worktrees.
-3. Execute task-by-task in the main loop. The suite is the acceptance contract: write or
-   confirm the failing test first, make it green, then clear the full gate (`npm run check`
-   0/0, `npm test` exit 0) before the next task. Dispatch the `cairn-implementer` agent only
-   for tasks independent enough to run in parallel, or for a high-blast-radius change that
-   wants worktree isolation (it inherits the main-loop model; pass `model: sonnet` to downshift a mechanical,
-   well-specified fan-out).
+3. Execute task-by-task by dispatching each well-specified task to `cairn-implementer`
+   (pinned Sonnet for token economy). The suite is the acceptance contract: the implementer
+   writes or confirms the failing test first, makes it green, and clears the full gate
+   (`npm run check` 0/0, `npm test` exit 0); the main loop reviews the diff and verifies the
+   gate result before the next dispatch. Implement inline, or upshift the dispatch
+   (`model: opus` / `model: fable`), only for novel correctness-critical logic the plan does
+   not fully specify.
    When most of a plan's tasks are independent, suggest orchestrating them with the
    Workflow tool and let the user opt in.
 

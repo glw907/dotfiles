@@ -3,7 +3,7 @@ name: site-pass
 description: >
   Invoke at the start or end of a development pass on one of the SvelteKit
   site repos (ecxc-ski, 907-life, …). Covers pass-start (read STATUS,
-  read plan, execute in the main loop) and pass-end consolidation
+  read plan, dispatch Sonnet implementers per task) and pass-end consolidation
   (code-simplifier, quality gate, reviewer fan-out, architecture + STATUS
   update, plan archival, commit + push, then roll into the next pass).
   Trigger on "continue development", "next pass", "finish pass", "ship pass",
@@ -40,14 +40,14 @@ case give the exact resume prompt and the launch directory).
    `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` (see `plan-template.md`),
    then pre-bake before executing: commit the plan and point STATUS.md's
    starter prompt at it. Then execute here, in this same session.
-3. Execute the plan task-by-task in the main loop: confirm or write the
-   failing check first, make it green, and verify before the next task.
-4. Dispatch the `site-implementer` agent only for tasks independent enough
-   to run in parallel, or for a high-blast-radius change that wants worktree
-   isolation. It inherits the main-loop model; pass `model: sonnet` to
-   downshift a mechanical, well-specified fan-out. When most of a plan's
-   tasks are independent, suggest orchestrating them with the Workflow tool
-   and let the user opt in.
+3. Execute the plan task-by-task by dispatching each well-specified task to
+   `site-implementer` (pinned Sonnet for token economy): the implementer
+   makes the failing check green and clears the repo gate; the main loop
+   reviews the diff and verifies before the next dispatch.
+4. Implement a task inline, or upshift the dispatch (`model: opus` /
+   `model: fable`), only for novel correctness-critical logic the plan does
+   not fully specify. When most of a plan's tasks are independent, suggest
+   orchestrating them with the Workflow tool and let the user opt in.
 
 ## Ending a pass: the consolidation ritual
 

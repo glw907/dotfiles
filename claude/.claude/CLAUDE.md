@@ -77,15 +77,19 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
 
+## Model economy
+
+The frontier main model is expensive; spend it where it makes a substantial difference and default to cheaper models everywhere else. The main loop keeps the thinking work: brainstorming, specs, plans, research synthesis, review-finding triage, post-mortems, and final user-facing prose. Well-specified implementation goes to Sonnet-pinned implementer agents, with the main loop reviewing diffs and verifying gates between dispatches. Reviewer agents keep their deliberate Opus pins (model diversity at the review gate is a design choice, and they run once per pass). Upshift a single dispatch (`model: opus` or `model: fable`) only for novel correctness-critical logic the plan does not fully specify.
+
 ## Multi-agent workflows: suggest, never launch unprompted
 
 The Workflow tool orchestrates fleets of subagents deterministically, and it runs only on my explicit opt-in. When a task would clearly benefit, suggest it rather than staying silent. Name what the workflow would do and the rough scale, and note that "use a workflow" is the opt-in phrase. Qualifying moments include the review gate of a large pass (an adversarial find-and-verify sweep catches more than a flat reviewer fan-out), a repo-wide audit or migration, a plan whose tasks are mostly independent, and deep multi-source research. The suggestion costs one sentence; skip it for small or already-verified work.
 
 ## Plan execution: same session by default
 
-Plan and execute in one session. Fable 5's long context plus automatic summarization removed the old reason to hand off, so the brainstorming that produced a plan no longer crowds out the execution. Run the plan's tasks in the main loop, test-first, with the full quality gate after each task. Dispatch an implementer subagent only when tasks are independent enough to run in parallel, or when a high-blast-radius change wants worktree isolation.
+Plan and execute in one session. Fable 5's long context plus automatic summarization removed the old reason to hand off, so the brainstorming that produced a plan no longer crowds out the execution. Execution is orchestrate-and-verify: dispatch each well-specified plan task to the repo's implementer agent (pinned Sonnet), review its diff, and confirm the full quality gate before the next dispatch. Implement a task in the main loop, or upshift the dispatch model, only when it carries novel correctness-critical logic the plan does not fully specify.
 
-After authoring a plan, still pre-bake the durable artifacts before executing. Commit the plan, point the project's status doc at it as the immediate next action, and refresh any relevant memory. This is insurance for a crashed or interrupted session, not a handoff. Anything load-bearing must live in the plan, spec, status doc, or memory, never only in the conversation. Do not run the `superpowers:writing-plans` "which execution method?" handoff question; main-loop execution is the default.
+After authoring a plan, still pre-bake the durable artifacts before executing. Commit the plan, point the project's status doc at it as the immediate next action, and refresh any relevant memory. This is insurance for a crashed or interrupted session, not a handoff. Anything load-bearing must live in the plan, spec, status doc, or memory, never only in the conversation. Do not run the `superpowers:writing-plans` "which execution method?" handoff question; same-session orchestrate-and-verify is the default.
 
 A deliberate context clear is now the exception, reserved for an initiative whose brainstorm ran long and noisy. When clearing, give the exact prompt to paste in the fresh session, including which directory to launch in. This remains the pre-bake half of the autonomy-and-handoff practice.
 
