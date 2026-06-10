@@ -23,10 +23,17 @@ the deterministic `prose-guard`.
    the container budgets, and a recipe per content type, each recipe with a real exemplar. The
    site's voice corpus carries the wider exemplar library. Exemplars are the primary style
    control; the banned list is a backstop.
-4. Draft recipe by recipe from the brief. Each container gets its recipe's shape and budget.
-   Vary the shapes deliberately; uniformity is the deepest tell.
-5. Self-check. Run the self-check in section 6 below, plus three brief checks: every brief fact
-   landed exactly once, every `[ASK]` survived visibly, no container over budget.
+4. Draft each section as a reply. Pick the section's imagined reader and their question from the
+   brief, and answer them in conversation order, pulling facts from the brief as the answer
+   needs them. Spend words unevenly: more where the worry is, less where it is not, and a brief
+   fact that serves no question stays in the brief. Small opinions and hedges are allowed, one
+   or two per page. Containers keep their budgets. Writing *about* the subject instead of *to*
+   a reader is the failure mode; even coverage of a fact sheet reads as marketing copy whatever
+   the sentences do.
+5. Humanize pass, as a second read with a different job. Hunt specifically for the sentence
+   that could appear on any organization's site, the evenly weighted list, the pair of
+   same-shaped sentences, the clever compression. Rewrite only those. Then run the section-6
+   self-check plus the brief checks: facts landed once, every `[ASK]` visible, budgets held.
 6. Offer the gate check. Offer to run `content-review` before saving or committing.
 
 Draft-off, optional, for a high-stakes page on request: generate two or three candidates from
