@@ -29,10 +29,18 @@ nearest the piece. Then work the steps in order.
    a place, date, cost, or quote. Vary the shapes: sentence counts, bullet architectures,
    paragraph sizes.
 
-3. **Self-check.** Run the method's self-check, plus the brief checks: every brief fact landed
+3. **Independent humanize critic.** Dispatch a fresh subagent (general-purpose; it must not see
+   the drafting conversation) with: the draft, the site's voice calibration set
+   (`docs/voice-calibration.md`, negative and positive examples) if one exists, and the corpus
+   entries nearest the piece. Its one job: list the sentences that pattern-match a negative
+   example or could appear on any organization's site, each with the matched pattern named.
+   Rewrite only what it flags. If the site has no calibration doc, run the hunt inline as a
+   second read with that same single job.
+
+4. **Self-check.** Run the method's self-check, plus the brief checks: every brief fact landed
    exactly once, every `[ASK]` survived visibly, no container over its budget.
 
-4. **Offer the gate check.** Offer to run the content-review skill before saving or committing.
+5. **Offer the gate check.** Offer to run the content-review skill before saving or committing.
 
 ## Hard rules
 

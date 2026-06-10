@@ -30,10 +30,14 @@ the deterministic `prose-guard`.
    or two per page. Containers keep their budgets. Writing *about* the subject instead of *to*
    a reader is the failure mode; even coverage of a fact sheet reads as marketing copy whatever
    the sentences do.
-5. Humanize pass, as a second read with a different job. Hunt specifically for the sentence
-   that could appear on any organization's site, the evenly weighted list, the pair of
-   same-shaped sentences, the clever compression. Rewrite only those. Then run the section-6
-   self-check plus the brief checks: facts landed once, every `[ASK]` visible, budgets held.
+5. Humanize pass, run as an independent critic. Dispatch a fresh subagent that sees only the
+   draft, the site's voice calibration set (negative and positive examples; ECXC's is
+   `docs/voice-calibration.md`), and the nearest corpus entries. It lists the sentences that
+   match a negative example or could appear on any organization's site; rewrite only those.
+   Self-critique inside the drafting context is the weak form, the same reason reviews run
+   fresh. Without a calibration doc, do the hunt inline as a second read with that single job.
+   Then run the section-6 self-check plus the brief checks: facts landed once, every `[ASK]`
+   visible, budgets held.
 6. Offer the gate check. Offer to run `content-review` before saving or committing.
 
 Draft-off, optional, for a high-stakes page on request: generate two or three candidates from
