@@ -9,21 +9,33 @@ audience. The substance levers (audience, concreteness, exemplars, an independen
 do the real work. The avoidance levers (the banned list, burstiness) are backstops, best left to
 the deterministic `prose-guard`.
 
-## 1. The audience-first drafting method
+## 1. The brief-first drafting method
 
-1. Audience and purpose brief, first. Before any prose, state who the piece serves, what they
-   already know, what they need or worry about, where and how they will read it, and the one action
-   or takeaway it must land. If any of these is unknown, ask. Nothing gets drafted before the brief.
-2. Gather the concrete facts. Pull the real specifics from the site's canonical facts: places,
-   dates, schedule, gear, cost, sign-up. Drafting on abstractions is the failure mode this prevents.
-3. Load the register and its exemplars. Read the site `content-guide.md` for the voice and the
-   facts, and read the exemplar pairs below. The exemplars are the primary style control. Match them.
-4. Outline, then critique the outline. Sketch the headings and the one or two sentences each section
-   must carry. Check the outline against the brief before writing prose.
-5. Draft. Write audience-first and concrete, matching the exemplars, with varied sentence and
-   paragraph length.
-6. Self-check. Run the self-check in section 6 below.
-7. Offer the score. Offer to run `content-review` before saving or committing.
+1. Build the brief, first, as a durable file at the site's `docs/content-briefs/<piece>.md`. It
+   holds four things and no prose: the verifiable facts (every place, time, date, name, cost, and
+   rule the piece will state), the audience questions the piece must answer, the one next step,
+   and the container plan (which UI containers the prose renders into). A redraft starts from the
+   brief, not from the old prose.
+2. Mark gaps as `[ASK: question]` in the brief and carry them into the draft verbatim. Never pad
+   around a missing fact; a visible question is cheaper to fix than a paragraph of filler, and
+   fact-starved abstraction is where slop enters. Drafting never blocks on the user.
+3. Load the site's generative guide. The site `content-guide.md` carries the load-bearing rules,
+   the container budgets, and a recipe per content type, each recipe with a real exemplar. The
+   site's voice corpus carries the wider exemplar library. Exemplars are the primary style
+   control; the banned list is a backstop.
+4. Draft recipe by recipe from the brief. Each container gets its recipe's shape and budget.
+   Vary the shapes deliberately; uniformity is the deepest tell.
+5. Self-check. Run the self-check in section 6 below, plus three brief checks: every brief fact
+   landed exactly once, every `[ASK]` survived visibly, no container over budget.
+6. Offer the gate check. Offer to run `content-review` before saving or committing.
+
+Draft-off, optional, for a high-stakes page on request: generate two or three candidates from
+deliberately different stances (FAQ-flat, trailhead-spoken, letter-home), judge each against the
+site's corpus exemplars, and splice the strongest sections into the offered draft.
+
+The learning loop closes through the site's corpus doc: after the user ships an edit, harvest the
+diff (the corpus carries the procedure), so their strongest passages become first-party exemplars
+and their repeated fixes become load-bearing rules.
 
 ## 2. The exemplar library
 
@@ -102,7 +114,9 @@ Scored dimensions. Each scores 0 to 5, weighted, then normalized to 100:
 The weights sum to twelve sub-scores. Maximum raw score is sixty. Normalized score is the raw score
 times 100 divided by 60.
 
-The band is the verdict; the number is a secondary signal:
+Scoring is on-request only. A review's default output is the hard-gate status plus a findings
+list ordered by edit cost; the band and number appear only when the user asks for a score. When
+scored, the band is the verdict and the number a secondary signal:
 - Publish at 80 or above, with no hard-gate hit.
 - Hold from 60 to 79. One revision pass, then re-score.
 - Redraft below 60. Return to the brief.
