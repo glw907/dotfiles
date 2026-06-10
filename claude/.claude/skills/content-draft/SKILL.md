@@ -22,6 +22,9 @@ nearest the piece. Then work the steps in order.
    piece will state), the audience questions the piece must answer, the one next step, and the
    container plan (which UI containers the prose renders into, from the site's directive
    vocabulary). Mark every unknown as `[ASK: question]`. Do not draft before the brief exists.
+   Facts have provenance: a fact extracted from a previous AI draft is inherited, not verified,
+   and inherited inventions survive rewrites. When the source is an AI-drafted page, mark any
+   mechanism or claim that did not come from the user as `[ASK]` until they confirm it.
 
 2. **Draft recipe by recipe.** Each container in the plan gets its recipe's shape and its budget
    from the guide. Imitate the recipe exemplars' stance and density, never their wording. Carry
