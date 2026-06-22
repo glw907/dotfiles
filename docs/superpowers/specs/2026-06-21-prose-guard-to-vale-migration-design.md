@@ -29,9 +29,10 @@ their prose guidance and hand their machine-checkable lists to Vale.
 These are settled and are not open for re-litigation during planning:
 
 1. **Workstation-wide.** Vale becomes the standard everywhere, not just in one repo.
-2. **Style name is `Geoff`.** Vale styles are named after their owner (`Microsoft`, `Google`,
-   `RedHat`). This is a one-owner house style, so it carries the owner's name. Every alert reads
-   `Geoff.EmDash`, `Geoff.ContrastFrame`, and so on.
+2. **Style name is `glw907`.** Vale styles are named after their owner (`Microsoft`, `Google`,
+   `RedHat`). This is a one-owner house style, so it carries the owner's handle, matching the
+   `@glw907` npm scope and the GitHub account. Every alert reads `glw907.EmDash`,
+   `glw907.ContrastFrame`, and so on.
 3. **The two statistical checks are dropped.** Anaphora (three or more sentences opening with the
    same word) and low burstiness (sentence-length variance) need whole-document counting that
    Vale's scope-based engine cannot express. They were advisory-only and were the source of the
@@ -50,7 +51,7 @@ A new `vale` stow package in `~/.dotfiles`, alongside `bash`, `bin`, and `claude
 
 ```
 ~/.dotfiles/vale/.config/vale/.vale.ini            -> ~/.config/vale/.vale.ini
-~/.dotfiles/vale/.config/vale/styles/Geoff/*.yml   -> the ported rules
+~/.dotfiles/vale/.config/vale/styles/glw907/*.yml  -> the ported rules
 ```
 
 `.bashrc` gains `export VALE_CONFIG_PATH="$HOME/.config/vale/.vale.ini"` so any directory inherits
@@ -62,7 +63,7 @@ Vale itself is a pinned release binary in `~/.local/bin`, provisioned by a new
 `~/.dotfiles/scripts/install-vale.sh` so a fresh machine is reproducible. The binary is not a
 tracked dotfile; the install script and a pinned version are.
 
-### The `Geoff` style: rule port
+### The `glw907` style: rule port
 
 Each `prose-guard` construct maps to a Vale rule file with a severity. The tables below are the
 full inventory mined from `prose-guard` and `test_prose_guard.py`. Word lists are shown in code
@@ -72,39 +73,39 @@ spans so this document does not trip the rules it describes.
 
 | Rule file | Source list | Notes |
 | --- | --- | --- |
-| `Geoff/EmDash` | the em dash character | en dash for ranges is allowed |
-| `Geoff/BannedPhrases` | `BANNED_PHRASES` (15) | `it's worth noting`, `delve`, `dive into`, and the rest |
-| `Geoff/Openers` | `BANNED_OPENERS` (7) | scope: sentence start; `moreover`, `additionally`, `furthermore`, and the rest |
-| `Geoff/Filler` | `FILLER_WORDS` (2) | `genuinely`, `honestly` |
-| `Geoff/Marketing` | `MARKETING_WORDS` (9) | all tiers; `empower`, `streamline`, `supercharge`, and the rest |
-| `Geoff/Slop` | `SLOP_WORDS` (4) | docs and general tiers; `tapestry`, `multifaceted`, `testament`, `seamless` |
-| `Geoff/Judgment` | `JUDGMENT_WORDS` (20) | general tier only; `robust`, `leverage`, `comprehensive`, and the rest |
+| `glw907/EmDash` | the em dash character | en dash for ranges is allowed |
+| `glw907/BannedPhrases` | `BANNED_PHRASES` (15) | `it's worth noting`, `delve`, `dive into`, and the rest |
+| `glw907/Openers` | `BANNED_OPENERS` (7) | scope: sentence start; `moreover`, `additionally`, `furthermore`, and the rest |
+| `glw907/Filler` | `FILLER_WORDS` (2) | `genuinely`, `honestly` |
+| `glw907/Marketing` | `MARKETING_WORDS` (9) | all tiers; `empower`, `streamline`, `supercharge`, and the rest |
+| `glw907/Slop` | `SLOP_WORDS` (4) | docs and general tiers; `tapestry`, `multifaceted`, `testament`, `seamless` |
+| `glw907/Judgment` | `JUDGMENT_WORDS` (20) | general tier only; `robust`, `leverage`, `comprehensive`, and the rest |
 
 **Structural, error severity (blocking):** all six `STRUCTURAL` regexes port as `existence` rules
 with the same patterns and scopes.
 
 | Rule file | prose-guard kind |
 | --- | --- |
-| `Geoff/ContrastFrame` | negative antithesis (`it's not X, it's Y`) |
-| `Geoff/NotJustBut` | the `not just X but Y` escalation |
-| `Geoff/SetupColon` | the setup-colon payoff (`The point:` ...) |
-| `Geoff/CopulaDodge` | `serves as a` / `stands as a` |
-| `Geoff/ParticipialOpener` | participial wind-up at line start |
-| `Geoff/BoldHeaderBullet` | the `**Bolded**:` fake-heading bullet |
+| `glw907/ContrastFrame` | negative antithesis (`it's not X, it's Y`) |
+| `glw907/NotJustBut` | the `not just X but Y` escalation |
+| `glw907/SetupColon` | the setup-colon payoff (`The point:` ...) |
+| `glw907/CopulaDodge` | `serves as a` / `stands as a` |
+| `glw907/ParticipialOpener` | participial wind-up at line start |
+| `glw907/BoldHeaderBullet` | the `**Bolded**:` fake-heading bullet |
 
 **Advisory, suggestion or warning severity (never blocks):**
 
 | Rule file | Source |
 | --- | --- |
-| `Geoff/AdvisoryOpeners` | `ADVISORY_OPENERS` (7) |
-| `Geoff/AdvisoryPhrases` | `ADVISORY_PHRASES` (6) |
-| `Geoff/AdvisoryWords` | `ADVISORY_WORDS` (11) |
-| `Geoff/FablePhrases` | `FABLE_PHRASES` (5) |
-| `Geoff/DefinitionalPivot` | `FABLE_PATTERNS` (the `the honest/real/true X is` regex) |
-| `Geoff/PassiveAgent` | `PASSIVE_AGENT` (passive with a named agent) |
-| `Geoff/Tricolon` | `ADJ_TRICOLON` (kept advisory; noisy, so suggestion not warning) |
-| `Geoff/SpacedHyphen` | `SPACED_HYPHEN` |
-| `Geoff/Emoji` | `EMOJI` |
+| `glw907/AdvisoryOpeners` | `ADVISORY_OPENERS` (7) |
+| `glw907/AdvisoryPhrases` | `ADVISORY_PHRASES` (6) |
+| `glw907/AdvisoryWords` | `ADVISORY_WORDS` (11) |
+| `glw907/FablePhrases` | `FABLE_PHRASES` (5) |
+| `glw907/DefinitionalPivot` | `FABLE_PATTERNS` (the `the honest/real/true X is` regex) |
+| `glw907/PassiveAgent` | `PASSIVE_AGENT` (passive with a named agent) |
+| `glw907/Tricolon` | `ADJ_TRICOLON` (kept advisory; noisy, so suggestion not warning) |
+| `glw907/SpacedHyphen` | `SPACED_HYPHEN` |
+| `glw907/Emoji` | `EMOJI` |
 
 **Dropped (no Vale equivalent):** anaphora, low burstiness. These are the only two losses.
 
@@ -114,8 +115,8 @@ with the same patterns and scopes.
 `docs` for any other `.md`, and `comments` for a code file. Vale expresses this in `.vale.ini`
 sections by glob:
 
-- `[*.md]` runs the docs severities (`Geoff/Slop` on, `Geoff/Judgment` off).
-- `[{**/src/content/**,**/content/**}/*.md]` runs the general tier, which adds `Geoff/Judgment`.
+- `[*.md]` runs the docs severities (`glw907/Slop` on, `glw907/Judgment` off).
+- `[{**/src/content/**,**/content/**}/*.md]` runs the general tier, which adds `glw907/Judgment`.
 - Code extensions map to formats so Vale lints comment text only, matching the `comments` tier.
 
 Vale handles Markdown scoping natively, skipping fenced and inline code by scope rather than by the
@@ -123,6 +124,40 @@ hand-rolled stripping in `prose-guard`. Frontmatter is excluded so field
 values are not scanned. Vale's comment-only linting covers the common languages; where its language
 set is narrower than `prose-guard`'s `CODE_EXTS`, that gap is documented in the style README rather
 than hidden.
+
+### Style composition and per-domain scoping
+
+`glw907` is the one universal voice style. The tells it bans are domain-invariant, so a single rule
+collection covers Go comments, Svelte component comments, SvelteKit docs, commit messages, and email
+alike. Domain differences are expressed two ways, and neither one forks the rule collection.
+
+First, `.vale.ini` scoping decides which universal rules apply and at what severity per file type.
+The editorial em-dash exception is the worked example. An em dash is a tell in technical docs and
+code comments, but a site's polished content allows it sparingly, so the same `glw907.EmDash` rule
+switches off in the content scope rather than getting duplicated into a second style:
+
+```ini
+BasedOnStyles = glw907
+
+[*.md]
+glw907.Judgment = NO          # docs tier: judgment words allowed
+
+[**/src/content/**/*.md]
+glw907.Judgment = error       # editorial/general tier: stricter
+glw907.EmDash = NO            # the em dash is legitimate in polished content
+```
+
+Second, a domain that needs rules of its own gets a small additive style layered on top, built only
+when the need is real rather than preemptively. A SvelteKit project might add a terminology rule,
+and cairn might carry a vocabulary of accepted product nouns so they are never flagged:
+
+```ini
+BasedOnStyles = glw907, Cairn    # universal voice plus cairn's own terms
+```
+
+The domain-appropriate exemplars and personas stay in the judgment layer, the six register files,
+which Vale does not touch. So `glw907` stays universal, a per-domain name appears only for an
+additive overlay, and the standard does not fragment into parallel copies that drift.
 
 ### The Vale-backed hook
 
@@ -145,8 +180,8 @@ versus an Edit, so the two hooks behave identically on which bytes get checked.
 ### cairn-cms CI gate
 
 cairn-cms gets its own `.vale.ini` scoped to the published docs (`docs/reference/`, `docs/guides/`,
-`docs/explanation/`, `docs/tutorial/`, and the root `*.md`). It vendors a snapshot of the `Geoff`
-style under `.vale/styles/Geoff/` so CI is self-contained, matching how this repo already pins its
+`docs/explanation/`, `docs/tutorial/`, and the root `*.md`). It vendors a snapshot of the `glw907`
+style under `.vale/styles/glw907/` so CI is self-contained, matching how this repo already pins its
 toolchain with a committed lockfile. A `check:vale` npm script runs `vale --minAlertLevel=error`
 over the doc set, and a CI step in `.github/workflows/test.yml` runs it on a pinned Vale install.
 
@@ -159,7 +194,7 @@ drift, so the snapshot does not silently diverge.
 
 Order matters so there is never an enforcement gap.
 
-1. Install Vale, build the `Geoff` style, write the global config, and get the fixtures passing.
+1. Install Vale, build the `glw907` style, write the global config, and get the fixtures passing.
 2. Land the `vale-hook` wrapper and flip `settings.json`. Prove a dirty draft is still blocked and
    a clean one passes.
 3. Repoint the docs: `CLAUDE.md`, the `writing-voice` output style, `prose-voice.md`, and the six
