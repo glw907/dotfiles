@@ -1,0 +1,6 @@
+extends: existence
+message: "Em dash is a tell. End the sentence, or use a colon, a comma, or parentheses."
+level: error
+nonword: true
+tokens:
+  - '—'
