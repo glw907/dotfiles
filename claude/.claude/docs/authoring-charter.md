@@ -89,6 +89,8 @@ own developer docs and code comments, and the two never merge.
   in `~/.claude/docs/voice/`.
 - Comment voice references are `~/.claude/docs/go-comment-voice.md` and
   `~/.claude/docs/voice/ts-svelte-comments.md`, with a Python companion to follow.
-- Go comments are the proven instance today (the `go-conventions` skill, golangci-lint, and the
-  `/simplify` voice lens). The prose audiences and the other three comment languages are in build.
+- The Vale foundation is built: the pinned binary, the split `glw907` overlay, the vendored Google
+  and Microsoft baselines, the global config, and the fixture suite including a comment-scope proof.
+  Go comments are the proven judgment instance (the `go-conventions` skill, golangci-lint, the
+  `/simplify` voice lens). The four comment arms and the prose arm are the next plans.
 - `prose-guard` is being retired in full; Vale takes over the feedback layer.
