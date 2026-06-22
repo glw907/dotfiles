@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Stand up the shared Vale layer the whole authoring system rests on: Vale pinned to 3.15.1, the `glw907` overlay split into always-on universal tells plus a separately-toggleable audience-conditional set, the Google and Microsoft baselines vendored, a global config, and a fixture suite that proves both prose linting and comment-scoped linting.
+**Goal:** Stand up the shared Vale layer the whole authoring system rests on: Vale pinned to 3.15.1, the `glw907` overlay split into always-on universal tells plus a separately toggleable audience-conditional set, the Google and Microsoft baselines vendored, a global config, and a fixture suite that proves both prose linting and comment-scoped linting.
 
 **Architecture:** Vale runs from a pinned binary in `~/.local/bin`. Styles live under a stowed `~/.config/vale/styles` tree: the private `glw907` style (hand-written rules) plus the `Google` and `Microsoft` packages fetched by `vale sync`. A stowed global `~/.config/vale/.vale.ini` provides the `StylesPath` and the workstation's own audience map; project repos carry their own in-tree `.vale.ini` later. Comment-scoped linting uses Vale's Code format support: a `[formats]` association maps a source extension to Markdown so Vale extracts only the comment text and lints that. The fixture runner asserts each `*.bad.*` raises its named rule and each `*.good.*` is clean.
 

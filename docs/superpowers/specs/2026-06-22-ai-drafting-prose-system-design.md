@@ -171,7 +171,7 @@ named-style-guide conformance, so the voice eval is build-your-own.
 ## Sequence
 
 1. Foundation: install Vale `3.15.1`, build the `glw907` overlay (universal tells plus the
-   audience-conditional rules as separately-toggleable), vendor the baselines, write the global config,
+   audience-conditional rules as separately toggleable), vendor the baselines, write the global config,
    and pass the fixtures.
 2. Restructure the feedforward: the `writing-voice` Skill (registers as on-demand references, leading
    on positive exemplars), the lean output style, the CLAUDE.md routing table.

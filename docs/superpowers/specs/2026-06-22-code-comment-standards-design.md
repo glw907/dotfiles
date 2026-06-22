@@ -102,7 +102,7 @@ house style, so this is the intended split rather than a workaround.
 Layer 2 is partial, with a known dead zone. Svelte is not a first-class Vale format. With
 `[formats] svelte = html`, Vale sees the `@component` HTML comment and the markup, and it does not see
 the `//` and `/** */` comments inside `<script>`, which it skips as code. So Vale covers the
-`@component` block and concedes the script-block comments. See the dedicated decision below.
+`@component` block and concedes the script-block comments. See the decision below.
 
 Layer 3: the Svelte tell catalogue (S1 through S10, appendix), carried by a `svelte-conventions`
 skill, sharing the `ts-svelte-comments` register. The S-tells specialize the Go tells they extend (S2
