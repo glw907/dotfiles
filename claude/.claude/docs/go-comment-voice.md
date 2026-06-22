@@ -7,6 +7,13 @@ The threat model is contributor recruitment. Readers who recognize AI-generated 
 disengage. This guide names the tells, provides mechanical avoidance rules, and
 picks a voice. Apply it at write-time; `/simplify` catches drift.
 
+Vale now lints `.go` comment prose in repos that adopt the authoring charter, poplar
+first, through the vendored `glw907` overlay. It is the deterministic net for the em dash
+and the banned lexicon inside comments, alongside `scripts/voice-check.sh`. This lens keeps
+the semantic tells Vale cannot see, including the paraphrase test, a doc on a self-evident
+symbol, and uniform comment rhythm. When a finding is a plain lexical hit, expect Vale or
+the voice-check script to have caught it already, so spend this lens on the judgment calls.
+
 ---
 
 ## §0. Comment-or-not (write-time gate)
