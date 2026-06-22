@@ -2,7 +2,7 @@
 # install-vale.sh: install a pinned Vale release binary into ~/.local/bin.
 set -euo pipefail
 
-VALE_VERSION="3.9.1"   # pin; bump deliberately
+VALE_VERSION="3.15.1"   # pin; bump deliberately
 ARCH="$(uname -m)"
 case "$ARCH" in
   x86_64) VALE_ARCH="64-bit" ;;
