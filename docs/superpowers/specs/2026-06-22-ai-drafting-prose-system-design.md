@@ -28,9 +28,13 @@ linter rules so they cannot drift.
 1. **Audience-based.** Style and structure fit the reader. Rules are not global. They split into
    universal tells (machine artifacts, bad in every register) and audience-conditional style choices
    (the em dash, contractions, reading grade, warmth), which each register sets for itself.
-2. **No audience, no system.** A repo must declare its audience map, carry a content-guide spec, and
-   hold its own Vale config before the system applies. It fails closed rather than defaulting to a
-   generic register, because a generic default is the audience-blind behavior this removes.
+2. **No audience, no system.** Every artifact Claude drafts has an audience, code as much as prose,
+   and each audience carries a style guide, its Claude infra, and its linting. A project declares its
+   audience map, carries a content-guide where it serves a content audience, and holds its own Vale
+   config before the system applies. It fails closed rather than defaulting to a generic register,
+   because a generic default is the audience-blind behavior this removes. The workstation charter at
+   `~/.claude/docs/authoring-charter.md` states this principle for any project to point at, and this
+   spec is its prose arm.
 3. **Feedforward first.** Draft clean the first time from a lean rule-card and register exemplars;
    let the linter catch the residue. A clean linter run is necessary, never sufficient, since the
    linter cannot judge voice.
@@ -63,8 +67,9 @@ Each Claude Code primitive carries exactly one job, chosen so no rule is stated 
    `BasedOnStyles = Vale, Microsoft, glw907` for end-user product copy. House deviations ride in the
    `glw907` style and a `Vocab` (`accept.txt`/`reject.txt`), documenting only what departs from the
    baseline, the way Google's own precedence model and Red Hat's "overrides or supplements" prescribe.
-5. **Enforcement: a Vale PostToolUse feedback hook.** Runs Vale on the saved file on `Write|Edit`,
-   scopes the findings it acts on to the lines just written, and returns them as `additionalContext`
+5. **Enforcement: a Vale PostToolUse feedback hook.** Runs Vale on a saved prose file (markdown docs
+   and site content) on `Write|Edit`, never on code comments (the comment arm owns those, see
+   below), scopes the findings it acts on to the lines just written, and returns them as `additionalContext`
    phrased as facts, never commands, under the 10,000-character cap. Error-tier findings drive a fix
    (exit 2, the only channel Claude reads back); warnings ride along as advisory. It fails open. CI
    runs the same Vale config so artifacts the local hook never touched are still gated. A PreToolUse
@@ -86,6 +91,15 @@ exemplars, and the strongest tone levers (examples plus persona) are now in cont
 reader. On save, the Vale hook checks the file against that audience's vendored baseline plus the
 house layer and feeds findings back as facts. For a substantial artifact, the reviewer subagent gives
 the fresh-context second opinion. CI re-runs Vale on anything the local hook missed.
+
+### Code comments: their own arm
+
+Code comments are an audience under the charter, with the same three layers: a structure linter
+native to the language, Vale on the comment prose, and a per-language Claude tell catalogue. The full
+design across Go, TypeScript, Svelte, and Python lives in the companion spec,
+`2026-06-22-code-comment-standards-design.md`. Two facts touch this hook: comment prose is out of its
+scope, because the comment arm runs its own Vale config against the comment scopes, and the em-dash
+ban reaches code comments through that arm rather than through this prose hook.
 
 ## The audience model and the em-dash matrix
 
@@ -178,8 +192,11 @@ named-style-guide conformance, so the voice eval is build-your-own.
 - **Single-source generation.** Auto-distilling one house-style source into both the Vale config and
   the rule-card is a validated direction for code linters, not a turnkey prose tool. Start with a
   hand-maintained single source and a regenerate discipline; automate later if it earns it.
-- **Comment-language coverage.** Vale lints comment text for 24 languages; where its set is narrower
-  than prose-guard's, document the gap in the style README.
+- **Comment voice, the residual gap.** The comment arm gives comments a deterministic lexical check:
+  the native linter for structure, and Vale on the comment scopes for the em dash and the lexicon, on
+  `.go`, `.ts`, and `.py`. The one hole is the Svelte `<script>` block, which Vale cannot reach; a
+  tiny extractor covers it (see the comment spec). Voice judgment past the lexicon stays with the
+  register and the reviewer.
 - **Changed-line scoping accuracy.** Locating the edited text in the saved file can be ambiguous (a
   repeated string, a `replace_all`); the hook handles multiple matches and falls back to whole-file
   scoping, erring toward surfacing rather than missing.
