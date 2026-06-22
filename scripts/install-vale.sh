@@ -19,3 +19,9 @@ curl -fsSL "$URL" -o "$TMP/vale.tar.gz"
 tar -xzf "$TMP/vale.tar.gz" -C "$TMP" vale
 install -m 0755 "$TMP/vale" "$HOME/.local/bin/vale"
 echo "Installed: $("$HOME/.local/bin/vale" --version)"
+
+# Fetch the pinned baseline packages into the stowed StylesPath.
+if command -v vale >/dev/null 2>&1; then
+  echo "Syncing Vale packages ..."
+  ( cd "$HOME/.config/vale" && vale sync )
+fi

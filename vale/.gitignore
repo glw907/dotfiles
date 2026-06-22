@@ -1,0 +1,4 @@
+# vale sync fetches these; the pin lives in install-vale.sh and the .vale.ini Packages line.
+.config/vale/styles/Google/
+.config/vale/styles/Microsoft/
+.config/vale/styles/.vale-config/
