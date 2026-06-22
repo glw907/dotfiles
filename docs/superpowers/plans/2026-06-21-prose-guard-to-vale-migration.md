@@ -668,17 +668,25 @@ git commit -m "Document the glw907 style coverage and dropped checks"
 ### Task 7: Write the global .vale.ini with tier scoping and stow the package
 
 **Files:**
-- Create: `~/.dotfiles/vale/.config/vale/.vale.ini`
-- Modify: `~/.dotfiles/bash/.bashrc` (add the `VALE_CONFIG_PATH` export; confirm the real filename under `bash/` first)
+- Create: `~/.dotfiles/vale/.vale.ini` (stows to `~/.vale.ini`)
 - Modify: `~/.dotfiles/README.md` (add `vale` to the stow-packages list)
+
+**Phase 0 finding (config precedence), applied here:** `VALE_CONFIG_PATH` overrides any in-tree
+`.vale.ini`, so it cannot be the global mechanism (it would clobber a repo's own config, including
+cairn-cms's docs gate). Vale does fall back to `~/.vale.ini` when no in-tree config is found, and an
+in-tree `.vale.ini` wins by directory walk when the env var is unset. So the global default lives at
+`~/.vale.ini` with NO env var. A repo with its own `.vale.ini` wins naturally; an arbitrary
+directory and the hook's `/tmp` temp files fall back to the global standard. `StylesPath` in
+`~/.vale.ini` is resolved relative to the config file (the home dir), confirmed in the probe.
 
 - [ ] **Step 1: Write the global config**
 
-Encodes the three tiers from the spec. `Slop` runs in docs and general; `Judgment` runs in general (content) only. Apply the Task 1 Step 5 precedence finding: if `VALE_CONFIG_PATH` overrides an in-tree config, this file stays minimal and per-repo configs set their own `StylesPath`; if the in-tree config wins (the documented behavior), this is the global fallback below.
+Encodes the three tiers from the spec. `Slop` runs in docs and general; `Judgment` runs in general
+(content) only.
 
 ```ini
-# ~/.config/vale/.vale.ini — workstation-global writing-voice standard
-StylesPath = styles
+# ~/.vale.ini — workstation-global writing-voice standard
+StylesPath = .config/vale/styles
 MinAlertLevel = suggestion
 
 [*.md]
@@ -695,19 +703,17 @@ glw907.Slop = NO
 glw907.Judgment = NO
 ```
 
-- [ ] **Step 2: Add the bashrc export**
+- [ ] **Step 2: No env var needed**
 
-Append to the tracked bashrc (confirm the path, likely `~/.dotfiles/bash/.bashrc`):
-
-```bash
-export VALE_CONFIG_PATH="$HOME/.config/vale/.vale.ini"
-```
+The global default works through Vale's `~/.vale.ini` home fallback, so there is no `.bashrc`
+change. Leaving `VALE_CONFIG_PATH` unset is required, not optional: setting it would override every
+repo's in-tree config.
 
 - [ ] **Step 3: Stow the package and confirm the symlinks**
 
 Run:
 ```bash
-cd ~/.dotfiles && stow -R vale && ls -l ~/.config/vale/.vale.ini ~/.config/vale/styles/glw907/EmDash.yml
+cd ~/.dotfiles && stow -R vale && ls -l ~/.vale.ini ~/.config/vale/styles/glw907/EmDash.yml
 ```
 Expected: both paths are symlinks into `~/.dotfiles/vale/...`.
 
@@ -716,15 +722,16 @@ Expected: both paths are symlinks into `~/.dotfiles/vale/...`.
 Run:
 ```bash
 cd /tmp && printf 'Moreover, an em dash — here.\n' > /tmp/voice-check.md
-VALE_CONFIG_PATH="$HOME/.config/vale/.vale.ini" vale /tmp/voice-check.md; rm /tmp/voice-check.md
+vale /tmp/voice-check.md; rm /tmp/voice-check.md
 ```
-Expected: `glw907.Openers` and `glw907.EmDash` both alert at error level.
+Expected: `glw907.Openers` and `glw907.EmDash` both alert at error level, picked up from `~/.vale.ini`
+with no env var set.
 
 - [ ] **Step 5: Commit**
 
 ```bash
 cd ~/.dotfiles
-git add vale/.config/vale/.vale.ini bash/.bashrc README.md
+git add vale/.vale.ini README.md
 git commit -m "Add the global Vale config and stow the vale package"
 ```
 
