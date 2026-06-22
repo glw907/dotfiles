@@ -27,5 +27,17 @@ for good in fixtures/*.good.*; do
   fi
 done
 
+# Comment scope: the rule fires on comment text and ignores code tokens. The
+# comment (line 3) carries Slop tokens; the code line (line 4) carries a Judgment
+# token as the func name, so a leak would raise on x.go:4.
+cs="fixtures/comment-scope/x.go"
+cs_out="$(vale --config=comment-scope.vale.ini --output=line "$cs")"
+if ! grep -q 'glw907.Slop' <<<"$cs_out"; then
+  echo "FAIL: $cs did not raise glw907.Slop on its comment"; fail=1
+fi
+if grep -q 'x.go:4:' <<<"$cs_out"; then
+  echo "FAIL: $cs raised on the code line, comment scope leaked"; fail=1
+fi
+
 [ "$fail" -eq 0 ] && echo "fixtures: OK" || echo "fixtures: FAILED"
 exit "$fail"
