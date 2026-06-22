@@ -89,8 +89,12 @@ own developer docs and code comments, and the two never merge.
   in `~/.claude/docs/voice/`.
 - Comment voice references are `~/.claude/docs/go-comment-voice.md` and
   `~/.claude/docs/voice/ts-svelte-comments.md`, with a Python companion to follow.
-- The Vale foundation is built: the pinned binary, the split `glw907` overlay, the vendored Google
-  and Microsoft baselines, the global config, and the fixture suite including a comment-scope proof.
-  Go comments are the proven judgment instance (the `go-conventions` skill, golangci-lint, the
-  `/simplify` voice lens). The four comment arms and the prose arm are the next plans.
+- The Vale foundation is built and the Go comment arm is live. The pinned binary, the split
+  `glw907` overlay, the vendored Google and Microsoft baselines, the global config, and the fixture
+  suite came first. poplar is the first consumer adopter, with an in-tree `.vale.ini` that lints its
+  `.go` comment prose through a committed `glw907` copy, proven against its real code, and
+  `scripts/glw907-vendor.sh` vendors that copy and checks it for drift. Go now carries all three
+  layers, golangci-lint for structure, Vale on `.go` comments for the lexicon, and the
+  `go-conventions` skill plus the `/simplify` voice lens for the semantic tells. TypeScript, Svelte,
+  Python, and the prose arm are the next plans.
 - `prose-guard` is being retired in full; Vale takes over the feedback layer.
