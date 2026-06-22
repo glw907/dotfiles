@@ -18,13 +18,23 @@ mode="${2:-check}"
 [ -n "$repo" ] || { usage; exit 2; }
 [ -d "$canon" ] || { echo "canonical style missing: $canon" >&2; exit 2; }
 
+repo="${repo%/}"
 dest="$repo/.vale/styles/glw907"
 
 case "$mode" in
   --sync)
-    mkdir -p "$repo/.vale/styles"
-    rm -rf "$dest"
-    cp -r "$canon" "$dest"
+    if ! mkdir -p "$repo/.vale/styles"; then
+      echo "sync failed: could not create $repo/.vale/styles" >&2
+      exit 1
+    fi
+    if ! rm -rf "$dest"; then
+      echo "sync failed: could not remove existing $dest" >&2
+      exit 1
+    fi
+    if ! cp -r "$canon" "$dest"; then
+      echo "sync failed: could not write $dest" >&2
+      exit 1
+    fi
     echo "vendored glw907 -> $dest"
     ;;
   check)
@@ -32,11 +42,13 @@ case "$mode" in
       echo "DRIFT: no vendored glw907 at $dest; run with --sync" >&2
       exit 1
     fi
-    if diff -r "$canon" "$dest" >/dev/null; then
+    out="$(diff -r "$canon" "$dest")"
+    rc=$?
+    if [ "$rc" -eq 0 ]; then
       echo "glw907 vendored copy is in sync"
     else
       echo "DRIFT: $dest differs from $canon; run with --sync" >&2
-      diff -r "$canon" "$dest" >&2
+      printf '%s\n' "$out" >&2
       exit 1
     fi
     ;;
