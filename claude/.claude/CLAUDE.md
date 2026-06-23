@@ -95,31 +95,37 @@ A deliberate context clear is now the exception, reserved for an initiative whos
 
 ## Writing voice
 
-The `writing-voice` output style is always on (set in settings.json) and carries the
-audience-invariant voice: plain voice, varied sentence length, the universal tells. The
-`writing-voice` skill is the on-demand router: it maps each audience to its register and
-states the shape rules and the em-dash matrix.
+Claude writes to a published external standard per audience, not a house voice. The
+`writing-voice` output style is always on (set in settings.json) and carries the
+audience-invariant core: plain voice, varied sentence length, the universal AI-writing
+tells. The `writing-voice` skill is the on-demand router: it maps each audience to its
+external standard and states the shape rules. The authoring charter
+(`~/.claude/docs/authoring-charter.md`) is the umbrella over all of it.
 
-**Audience first.** Every piece of prose has a register. Before drafting, name the
-audience and load its register through the `writing-voice` skill: site readers use the
-site's own content guide, Go and web developer docs each have a dialect, end-user and
-editor copy has its own register, and agent-facing text and commit messages have theirs.
-Imitate the register's exemplars.
+**Audience first.** Every piece of prose has a standard. Before drafting, name the
+audience and load its standard through the `writing-voice` skill: developer docs follow
+the Google style guide, editor copy the Microsoft guide, agent-facing files Anthropic's
+Claude Code best practices, commits Conventional Commits, and code comments their
+language standard (Go Doc Comments, TSDoc, PEP 257). Site content is the one personal
+voice and lives in the site repo with its own content guide. Imitate the standard's
+canonical exemplars.
 
-**Draft clean; Vale catches the residue.** The per-repo Vale config (the `glw907`
-overlay on the Google or Microsoft baseline) is the deterministic net on docs prose and
-code comments, and the `vale-hook` feeds its findings back as advisory context on save. A
-clean Vale run is necessary, never sufficient, since it cannot judge voice. Draft clean
-the first time from the register, and treat the hook feedback as a revision trigger for
-prose you just wrote.
+**Draft clean; the linter catches the residue.** Vale runs the Google package on
+developer docs and the Microsoft package on editor copy, the deterministic net on docs
+prose, and the `vale-hook` feeds its findings back as advisory context on save. The
+native comment linters cover code comments (gofmt and go vet, ESLint jsdoc and tsdoc,
+ruff `D`). A clean linter run is necessary, never sufficient, since it cannot judge
+voice. Draft clean the first time from the standard's exemplars, and treat the hook
+feedback as a revision trigger for prose you just wrote.
 
-The highest-frequency tells, inline so they are unmissable without opening the register:
+The highest-frequency tells, inline so they are unmissable without opening the standard:
 - One idea per sentence. Do not bridge two or three clauses into one.
 - No "not X but Y" contrast frame. No reflexive three-item lists. No setup-colon payoff.
 - No participial or connector openers ("Building on this", "Moreover", "Additionally").
-- Em dashes are audience-conditional: discouraged in replies, commits, agent files, and
-  editor copy, banned in code comments, allowed in developer and planning docs and (sparing)
-  in site content.
+- The em dash is banned in code comments (a keyboard, grep, and monospace hygiene rule the linter
+  enforces). Developer docs follow Google, which recommends it with no spaces; editor copy follows
+  Microsoft; replies and commits go without. Overuse is a tell anywhere.
 
-Code comments also follow their stack's conventions (go-conventions for Go, file idiom
-for TS/Svelte, PEP 257 for Python).
+Code comments follow their stack's external standard: go-conventions for Go (Go Doc
+Comments), ts-conventions and svelte-conventions for TS/Svelte (TSDoc), python-conventions
+for Python (PEP 257).

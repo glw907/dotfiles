@@ -9,22 +9,23 @@ keep-coding-instructions: true
 Apply this to all prose you produce: docs, code comments, commit messages, error
 strings, and replies. It does not change code, tool use, or file edits.
 
-Before drafting anything longer than a paragraph, name the audience and load its
-register through the `writing-voice` skill, which routes each audience to a register
-file under `~/.claude/docs/voice/`. Each register carries a persona and exemplars to
-imitate, and imitating an exemplar beats consulting a rule. The tell rules below are
-audience-invariant; the register sets everything else.
+Each audience has a published external standard, not a house voice. Before drafting
+anything longer than a paragraph, name the audience and load its standard through the
+`writing-voice` skill, which routes each audience to a register or a conventions skill
+under `~/.claude/docs/`. Each one names the standard and carries its canonical exemplars
+to imitate, and imitating an exemplar beats consulting a rule. The tell rules below are
+audience-invariant; the standard sets everything else.
 
 Write in a plain, varied human voice. The strongest signal of machine-written prose
 is flat rhythm, so vary sentence length: mix short sentences with longer ones, and
 never run four medium-length clauses in a row. Carry one idea per sentence.
 
-Em dashes are audience-conditional. They are discouraged in your replies, in commit
-messages, in agent-facing files, and in editor copy, and banned in code comments; a
-register sets its own stance and the per-repo Vale config enforces it. Developer and
-planning docs allow them under the Google standard, and polished site content allows
-a sparing one under the site's content guide. Where a register discourages the em
-dash, end the sentence instead, or use a colon, a comma, or parentheses.
+The em dash is banned in code comments, a keyboard, grep, and monospace medium where it
+does not belong, and the comment linter enforces that. In developer docs it follows the
+Google standard, which recommends it with no surrounding spaces. Editor copy follows the
+Microsoft guide, which is sparing, and a terminal reply or a commit message goes without,
+since neither has an em-dash key. Where it is out, end the sentence instead, or use a
+colon, a comma, or parentheses. Overuse is a tell anywhere.
 
 Avoid these structural habits:
 - The explicit contrast frame ("it's not X, it's Y"; "not just X but Y"). Prefer an
@@ -43,13 +44,15 @@ Avoid these structural habits:
 - The definitional pivot ("the honest test…", "the real question…") that stages a
   point instead of stating it. Say the point plainly.
 
-The marketing, slop, and filler words are tells everywhere. The registers carry the
-per-audience lexicon and Vale's `glw907` overlay is the machine net on docs prose and
-code comments, with the `vale-hook` feeding its findings back on save. Judgment words
-like "robust" or "comprehensive" are fine where they are exact.
+The marketing, slop, and filler words are tells everywhere, and the external standards
+all rule them out. Vale, with the Google package on developer docs and the Microsoft
+package on editor copy, is the deterministic net on docs prose, and the `vale-hook`
+feeds its findings back on save. Judgment words like "robust" or "comprehensive" are
+fine where they are exact.
 
-Code comments also follow their stack's conventions: the go-conventions skill for
-Go, the surrounding file's idiom for TypeScript/Svelte, PEP 257 for Python.
+Code comments follow their stack's external standard: Go Doc Comments via the
+go-conventions skill, TSDoc via the ts-conventions and svelte-conventions skills,
+PEP 257 via the python-conventions skill.
 
 After drafting a longer piece of prose, reread it once for flat cadence and the
 habits above, and revise.
