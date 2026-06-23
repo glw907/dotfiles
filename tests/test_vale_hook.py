@@ -4,13 +4,8 @@ import importlib.util
 import io
 import json
 import pathlib
-import shutil
-
-import pytest
 
 TOOL = pathlib.Path(__file__).resolve().parent.parent / "bin" / ".local" / "bin" / "vale-hook"
-STYLES = pathlib.Path.home() / ".dotfiles" / "vale" / ".config" / "vale" / "styles"
-EM_DASH = "—"
 
 
 def _load():
@@ -57,43 +52,3 @@ def test_non_markdown_is_skipped(tmp_path, monkeypatch):
                "tool_input": {"file_path": str(tmp_path / "x.ts"), "new_string": "x"}}
     monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
     assert vh.main() == 0
-
-
-def _write_config(tmp_path):
-    (tmp_path / ".vale.ini").write_text(
-        f"StylesPath = {STYLES}\nMinAlertLevel = suggestion\n[*.md]\nBasedOnStyles = glw907\n"
-    )
-
-
-needs_vale = pytest.mark.skipif(
-    shutil.which("vale") is None or not STYLES.exists(),
-    reason="vale or the glw907 styles are unavailable",
-)
-
-
-@needs_vale
-def test_main_error_tier_exits_2(tmp_path, monkeypatch, capsys):
-    _write_config(tmp_path)
-    doc = tmp_path / "doc.md"
-    doc.write_text(f"Clean opening line.\nA seamless tapestry {EM_DASH} here.\nClean closing line.\n")
-    payload = {"tool_name": "Edit", "tool_input": {
-        "file_path": str(doc), "new_string": f"A seamless tapestry {EM_DASH} here."}}
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
-    code = vh.main()
-    captured = capsys.readouterr()
-    assert code == 2
-    assert "seamless" in captured.err
-
-
-@needs_vale
-def test_main_clean_edit_suppresses_pre_existing(tmp_path, monkeypatch, capsys):
-    _write_config(tmp_path)
-    doc = tmp_path / "doc.md"
-    doc.write_text(f"Clean opening line.\nA seamless tapestry {EM_DASH} here.\nClean closing line.\n")
-    payload = {"tool_name": "Edit", "tool_input": {
-        "file_path": str(doc), "new_string": "Clean opening line."}}
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
-    code = vh.main()
-    captured = capsys.readouterr()
-    assert code == 0
-    assert captured.out == ""

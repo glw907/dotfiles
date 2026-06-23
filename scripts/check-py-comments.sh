@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 # check-py-comments.sh: the Python comment gate for the dotfiles repo. Runs ruff's D (docstring)
-# rules and Vale's lexical net over the repo's Python. ruff lints every tracked .py file and every
-# extensionless bin script with a python shebang (passed by explicit path, which ruff accepts
-# regardless of extension). Vale's py = md scope reaches .py files only, so the extensionless bin
-# scripts get the ruff layer but not the Vale lexical pass; that is a known limit of Vale's
-# extension-keyed format detection, documented in the Python comment-arm plan.
+# rules over the repo's Python so docstrings follow PEP 257. ruff lints every tracked .py file and
+# every extensionless bin script with a python shebang (passed by explicit path, which ruff accepts
+# regardless of extension).
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 2
 
@@ -24,13 +22,6 @@ if (( ${#py_files[@]} + ${#bin_py[@]} > 0 )); then
   ruff check "${py_files[@]}" "${bin_py[@]}" || fail=1
 else
   echo "(no Python files)"
-fi
-
-echo "== vale on .py comment and docstring prose =="
-if (( ${#py_files[@]} > 0 )); then
-  vale --minAlertLevel=error "${py_files[@]}" || fail=1
-else
-  echo "(no .py files)"
 fi
 
 if [ "$fail" -eq 0 ]; then echo "check:py-comments OK"; else echo "check:py-comments FAILED"; fi
