@@ -109,13 +109,13 @@ the real failure mode, flagged everywhere as advisory.
 
 | Audience / register | Em dash | Note |
 | --- | --- | --- |
-| Developer docs, and internal planning docs (specs, plans, STATUS, post-mortems) | allowed | held to the Google standard |
+| Developer docs, and internal planning docs (specs, plans, STATUS, post-mortems) | allowed | planning docs are throwaway, so optimize for effective output and do not gate; long-term developer docs follow the Google standard |
 | Polished or literary site content | allowed, sparing | the magazine register |
 | Editor / admin product copy | discouraged (default) | plain, warm, short-sentence |
 | ECXC coach voice and similar informal content | per the site content-guide | ECXC already bounds it: spaced, one per paragraph, true interruption only |
 | Agent-facing docs and commit messages | discouraged | terse registers |
-| Code comments | open (Geoff's call) | the old "no em-dash key" rationale lived here |
-| Claude's replies to Geoff | open (Geoff's call) | affects daily behavior |
+| Code comments | banned | resolved 2026-06-22: the comment arm ships it banned (Vale glw907.EmDash on .go, .ts, .py plus the Svelte extractor) |
+| Claude's replies to Geoff | discouraged | resolved 2026-06-22: authorship plausibility, a terminal reply has no em-dash key |
 
 A site's own content-guide is the authority for its content; the workstation matrix governs only the
 workstation registers. Overuse is flagged everywhere via a density check, not a per-instance rule.
@@ -184,9 +184,10 @@ named-style-guide conformance, so the voice eval is build-your-own.
 
 ## Risks and open items
 
-- **Two open matrix rows.** The em-dash stance for code comments and for Claude's replies to Geoff are
-  his calls, pending. They affect daily behavior, so the new hook ships with the prior behavior until
-  he rules.
+- **The two open matrix rows are resolved (2026-06-22).** Code comments stay banned (the comment arm
+  ships it). Replies to Geoff stay discouraged on authorship plausibility. Planning and throwaway docs
+  are not gated on the em dash, and long-term developer docs follow the Google standard. The cutover
+  (plan 07) carries these settings.
 - **PreToolUse blocker.** Deferred by default. Revisit only if a zero-tolerance tell repeatedly slips
   past the PostToolUse feedback.
 - **Single-source generation.** Auto-distilling one house-style source into both the Vale config and
