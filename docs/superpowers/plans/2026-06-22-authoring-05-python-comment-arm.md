@@ -287,12 +287,14 @@ Expected: the `ruff` block runs over `tests/test_prose_guard.py` and `bin/.local
 ```bash
 cd ~/.dotfiles
 emdash="$(printf '\xe2\x80\x94')"
-printf 'def helper(x: int) -> int:\n    """returns x doubled %s for callers."""\n    return x * 2\n' "$emdash" > tests/zz_planted.py
+printf 'def helper(x: int) -> int:\n    """Double x %s for callers."""\n    return x * 2\n' "$emdash" > tests/zz_planted.py
+git add tests/zz_planted.py   # the runner lints tracked files; stage so git ls-files finds it
 bash scripts/check-py-comments.sh; echo "exit: $?"
+git restore --staged tests/zz_planted.py
 rm -f tests/zz_planted.py
 ```
 
-Expected: the runner FAILS (exit `1`). Vale flags the em dash in the docstring; `ruff` flags `D401` (the docstring opens with "returns"). The `tests/**` `per-file-ignores` silences `ruff`'s `D` on this path, so the failure here is the Vale em-dash error, which proves the Vale arm of the runner gates. Remove the planted file; the runner returns to green.
+Expected: the runner FAILS (exit `1`). The runner discovers Python through `git ls-files`, so the planted file is staged first to put it in front of the gate. Vale flags the em dash in the docstring. The `tests/**` `per-file-ignores` silences `ruff`'s `D` on this path, so the gate fails through the Vale arm. The cleanup unstages and removes the file, and the runner returns to green. Staging a throwaway file is the proof's own scaffolding; the runner is right to lint tracked files only, since a gate should not flag a stray scratch file in the working tree.
 
 - [ ] **Step 5: Commit**
 
