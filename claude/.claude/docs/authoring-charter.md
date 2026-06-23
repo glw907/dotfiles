@@ -100,5 +100,11 @@ own developer docs and code comments, and the two never merge.
   skill plus the register for the semantic tells. cairn carries the Svelte arm through
   `scripts/check-svelte-comments.mjs`, the extractor that lints the `@component` block and the
   script-block comments through `glw907` and enforces the one-`@component` rule, with the
-  `svelte-conventions` skill and the S catalogue for the semantic tells. The dotfiles repo carries the Python arm itself: a root `ruff.toml` running the `D` docstring rules under the google convention (presence ignored, correctness enforced), a `[*.py]` Vale section linting comment and docstring prose through `glw907`, a `scripts/check-py-comments.sh` runner over the repo's Python including the extensionless bin scripts, and the `python-conventions` skill with the `python-comments` register for the semantic tells. The prose arm is the next plan.
+  `svelte-conventions` skill and the S catalogue for the semantic tells. The dotfiles repo carries the Python arm itself: a root `ruff.toml` running the `D` docstring rules under the google convention (presence ignored, correctness enforced), a `[*.py]` Vale section linting comment and docstring prose through `glw907`, a `scripts/check-py-comments.sh` runner over the repo's Python including the extensionless bin scripts, and the `python-conventions` skill with the `python-comments` register for the semantic tells. The prose arm's components are built and unwired: the editor register joins the existing
+registers, the Vale `vale-hook` lints a saved Markdown file and scopes findings to the changed
+lines (exit 2 on an error-tier finding, advisory `additionalContext` otherwise, fail open), a
+Microsoft fixture guards the end-user baseline, and the `prose-voice-reviewer` subagent gives the
+read-only second opinion. The cutover is the next plan: wire the hook in `settings.json`, rewrite
+the always-on output style and the global CLAUDE.md, build the `writing-voice` Skill router, retire
+`prose-guard`, and repoint `prose-voice.md`.
 - `prose-guard` is being retired in full; Vale takes over the feedback layer.
