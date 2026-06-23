@@ -49,7 +49,7 @@ goes in the slots.
 | End-user, editor product copy | a non-technical editor | Microsoft writing style | the editor register | Vale (Microsoft + glw907) + Readability |
 | Go comments | a Go coder | Effective Go, godoc | `go-conventions` skill, `go-comment-voice.md` | golangci-lint + Vale on `.go` |
 | TypeScript comments | a TS coder | TSDoc | `ts-conventions` skill, `ts-svelte-comments` register | eslint jsdoc/tsdoc + Vale on `.ts` |
-| Svelte comments | a coder reading a component | `@component` + TSDoc | `svelte-conventions` skill, `ts-svelte-comments` register | eslint-svelte + a custom `@component` rule + Vale on the `@component` block |
+| Svelte comments | a coder reading a component | `@component` + TSDoc | `svelte-conventions` skill, `ts-svelte-comments` register | the check-svelte-comments extractor (Vale on @component + script comments) + Vale on .ts |
 | Python comments | a Python coder | PEP 257, Google sections | `python-conventions` skill, `python-comments` register | ruff `D` rules + Vale on `.py` |
 | Site content | the site's own reader | the site's `content-guide.md` | `content-draft` / `content-review` skills | Vale against the site guide |
 | Agent-facing docs, commits, replies, email | an agent, the author | the workstation registers | `agent-facing` / `commit-and-pr` registers, the output style | Vale on the saved file |
@@ -89,14 +89,17 @@ own developer docs and code comments, and the two never merge.
   in `~/.claude/docs/voice/`.
 - Comment voice references are `~/.claude/docs/go-comment-voice.md` and
   `~/.claude/docs/voice/ts-svelte-comments.md`, with a Python companion to follow.
-- The Vale foundation is built and the Go and TypeScript comment arms are live. The pinned binary,
-  the split `glw907` overlay, the vendored Google and Microsoft baselines, the global config, and
-  the fixture suite came first. poplar carries the Go arm; cairn is the first TypeScript adopter,
-  with an in-tree `.vale.ini` linting `.ts` comment prose through a committed `glw907` copy, an
-  `eslint.config.js` enforcing TSDoc structure on `src/lib`, and a `check:comments` CI gate.
+- The Vale foundation is built and the Go, TypeScript, and Svelte comment arms are live. The pinned
+  binary, the split `glw907` overlay, the vendored Google and Microsoft baselines, the global
+  config, and the fixture suite came first. poplar carries the Go arm; cairn is the first TypeScript
+  adopter, with an in-tree `.vale.ini` linting `.ts` comment prose through a committed `glw907`
+  copy, an `eslint.config.js` enforcing TSDoc structure on `src/lib`, and a `check:comments` CI gate.
   `scripts/glw907-vendor.sh` vendors and drift-checks each repo's overlay copy. Go and TypeScript
   each carry all three layers, the language linter for structure (golangci-lint, eslint
   jsdoc/tsdoc), Vale on the comments for the lexicon, and the `go-conventions` or `ts-conventions`
-  skill plus the register for the semantic tells. Svelte, Python, and the prose arm are the next
-  plans.
+  skill plus the register for the semantic tells. cairn carries the Svelte arm through
+  `scripts/check-svelte-comments.mjs`, the extractor that lints the `@component` block and the
+  script-block comments through `glw907` and enforces the one-`@component` rule, with the
+  `svelte-conventions` skill and the S catalogue for the semantic tells. Python and the prose arm
+  are the next plans.
 - `prose-guard` is being retired in full; Vale takes over the feedback layer.
