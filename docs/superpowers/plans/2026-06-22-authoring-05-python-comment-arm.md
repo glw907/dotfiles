@@ -163,13 +163,15 @@ BasedOnStyles = glw907
 glw907.Judgment = suggestion
 ```
 
-- [ ] **Step 2: Confirm the config parses**
+- [ ] **Step 2: Confirm the config parses and the section resolved**
 
 ```bash
-cd ~/.dotfiles && vale ls-config | grep -E 'StylesPath' && echo PARSED
+cd ~/.dotfiles
+vale ls-config >/dev/null 2>&1 && echo PARSED || echo FAIL
+vale ls-config | grep -q '"\*\.py"' && echo "PY SECTION OK" || echo "PY SECTION MISSING"
 ```
 
-Expected: the resolved `StylesPath` ends in `vale/.config/vale/styles` and prints `PARSED`. A parse error means the new section is malformed.
+Expected: `PARSED` (the config parses; `vale ls-config` exits non-zero on a malformed config) and `PY SECTION OK` (the `[*.py]` glob bound, which appears as a `"*.py"` key under `SBaseStyles`). Vale 3.15.1's `ls-config` JSON carries no literal `StylesPath` key, since the resolved style path lives under a `Paths` array; the section binding is the reliable signal that the new section took effect.
 
 - [ ] **Step 3: Prove the scope fires on a comment and a docstring, not on code**
 
