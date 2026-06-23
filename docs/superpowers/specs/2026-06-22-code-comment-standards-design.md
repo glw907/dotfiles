@@ -1,6 +1,7 @@
 # Code-comment standards: per-language, three layers
 
-Status: design drafted 2026-06-22, pending review.
+Status: SUPERSEDED 2026-06-22 by `2026-06-22-authoring-standards-design.md` (the external-standards
+redesign). Kept as history; it describes the earlier per-language tell-catalogue design.
 Owner: Geoff.
 Scope: workstation-wide. This is one arm of the authoring charter
 (`~/.claude/docs/authoring-charter.md`), the code-comment audiences. The prose and content audiences

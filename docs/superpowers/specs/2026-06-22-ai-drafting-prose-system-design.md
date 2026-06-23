@@ -1,7 +1,8 @@
 # The AI-drafting prose system: audience-based guidance with a Vale honesty check
 
-Status: design drafted 2026-06-22, pending review. Supersedes the removed
-`2026-06-21-prose-guard-to-vale-migration` spec and plan.
+Status: SUPERSEDED 2026-06-22 by `2026-06-22-authoring-standards-design.md` (the external-standards
+redesign). Kept as history; it describes the earlier personal-voice design. It in turn superseded the
+removed `2026-06-21-prose-guard-to-vale-migration` spec and plan.
 Owner: Geoff.
 Scope: workstation-wide. This is **Claude's prose-drafting discipline**, not a product feature.
 
