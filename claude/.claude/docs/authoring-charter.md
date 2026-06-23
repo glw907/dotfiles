@@ -89,12 +89,14 @@ own developer docs and code comments, and the two never merge.
   in `~/.claude/docs/voice/`.
 - Comment voice references are `~/.claude/docs/go-comment-voice.md` and
   `~/.claude/docs/voice/ts-svelte-comments.md`, with a Python companion to follow.
-- The Vale foundation is built and the Go comment arm is live. The pinned binary, the split
-  `glw907` overlay, the vendored Google and Microsoft baselines, the global config, and the fixture
-  suite came first. poplar is the first consumer adopter, with an in-tree `.vale.ini` that lints its
-  `.go` comment prose through a committed `glw907` copy, proven against its real code, and
-  `scripts/glw907-vendor.sh` vendors that copy and checks it for drift. Go now carries all three
-  layers, golangci-lint for structure, Vale on `.go` comments for the lexicon, and the
-  `go-conventions` skill plus the `/simplify` voice lens for the semantic tells. TypeScript, Svelte,
-  Python, and the prose arm are the next plans.
+- The Vale foundation is built and the Go and TypeScript comment arms are live. The pinned binary,
+  the split `glw907` overlay, the vendored Google and Microsoft baselines, the global config, and
+  the fixture suite came first. poplar carries the Go arm; cairn is the first TypeScript adopter,
+  with an in-tree `.vale.ini` linting `.ts` comment prose through a committed `glw907` copy, an
+  `eslint.config.js` enforcing TSDoc structure on `src/lib`, and a `check:comments` CI gate.
+  `scripts/glw907-vendor.sh` vendors and drift-checks each repo's overlay copy. Go and TypeScript
+  each carry all three layers, the language linter for structure (golangci-lint, eslint
+  jsdoc/tsdoc), Vale on the comments for the lexicon, and the `go-conventions` or `ts-conventions`
+  skill plus the register for the semantic tells. Svelte, Python, and the prose arm are the next
+  plans.
 - `prose-guard` is being retired in full; Vale takes over the feedback layer.
