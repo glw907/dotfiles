@@ -153,6 +153,13 @@ TS7 (paraphrase) outranks a structural tell on the same line.
 | TS14 | em dash and multi-clause comment rhythm | no em dash; one thought per comment |
 | TS15 | invented label-colon paragraphs in TSDoc | use `@remarks`, `@throws`, `@defaultValue`, not `Note:` blocks |
 
+Calibration for a coverage-gated repo. Where a repo enforces export-doc coverage, the presence tells
+TS4 and TS5 apply to internal symbols only. cairn's `check:reference` and its `jsdoc/require-jsdoc`
+(publicOnly) want every exported symbol to keep a doc, so a minimal one-line doc on an export is the
+house default there, not a tell. Flag a reflexive doc on an internal helper; leave the export's
+one-liner. The cairn comment-lens trial confirmed this: the lens over-flagged `EntryIdentity`,
+`createSession`, and `findEditor` until the rule was scoped to internals.
+
 ## Tooling and the division of labor
 
 Three layers, three jobs:
