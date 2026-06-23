@@ -104,10 +104,14 @@ sentence of prose. The heavy jsdoc doc-shape rules go on `**/*.ts`, where they f
 `.svelte`. JSDoc rules under-fire inside `.svelte` when types stay in the signature, which is the
 house style, so this is the intended split rather than a workaround.
 
-Layer 2 is partial, with a known dead zone. Svelte is not a first-class Vale format. With
-`[formats] svelte = html`, Vale sees the `@component` HTML comment and the markup, and it does not see
-the `//` and `/** */` comments inside `<script>`, which it skips as code. So Vale covers the
-`@component` block and concedes the script-block comments. See the decision below.
+Layer 2 is an extractor, not a Vale format mapping. The cairn pilot disproved the `[formats] svelte =
+html` plan: Vale's `html` format does not scan `<!-- -->` comments at all (a planted slop word inside an
+HTML comment fired nothing), so it misses the `@component` block, and it does scan the visible markup
+text, so it leaks into the component's editor-facing product copy that `check:prose` already owns (it
+flagged a real `<option>—</option>` UI em dash). Both behaviors are wrong for the comment arm. The fix
+is a single extractor in the shape of `check-admin-prose.mjs`: pull the `@component` HTML comment and the
+`//` and `/** */` script-block comments, write them to a temp Markdown buffer, and run Vale `glw907` over
+that. One mechanism covers both comment homes, concedes nothing, and never touches product copy.
 
 Layer 3: the Svelte tell catalogue (S1 through S10, appendix), carried by a `svelte-conventions`
 skill, sharing the `ts-svelte-comments` register. The S-tells specialize the Go tells they extend (S2
@@ -160,15 +164,17 @@ across three layers with roughly fifty tells and four skills does not fold clean
 also has to hold the prose and content audiences. The two specs share Vale and the charter's
 feedforward-plus-feedback model, and they cover different files.
 
-## The Svelte script-comment dead zone
+## The Svelte comment extractor
 
-Vale cannot reach `//` and `/** */` comments inside a `.svelte` `<script>` block, so the em-dash ban
-and the lexicon have no deterministic net there. Three options were considered. A custom ESLint rule
-is the heaviest. Conceding the surface entirely to Claude judgment is the lightest and loses the
-deterministic guarantee. The chosen path is a tiny extractor that reuses the shape of the existing
-`scripts/check-admin-prose.mjs`: pull the script-block comment regions and run the lexicon over them.
-It is small, it matches a pattern already in the repo, and it keeps the em-dash guarantee uniform
-across all four languages.
+Vale's `.svelte` handling reaches neither comment home cleanly: the `html` format skips `<!-- -->`,
+so it misses `@component`, and the `//` and `/** */` comments live inside `<script>`, which it skips
+as code. The cairn pilot settled the design: one extractor in the shape of the existing
+`scripts/check-admin-prose.mjs` pulls both regions, the `@component` HTML comment and the script-block
+comments, into a temp Markdown buffer, then runs Vale `glw907` over that. A custom ESLint rule is the
+heaviest option and conceding the surface to Claude judgment loses the deterministic guarantee, so the
+extractor is the chosen path. It is small, it matches a pattern already in the repo, it keeps the
+em-dash and lexicon net uniform across all four languages, and it never scans the component's product
+copy, which is `check:prose`'s job.
 
 ## The cairn boundary
 
