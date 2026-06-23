@@ -1,0 +1,17 @@
+# Docstring linting for the workstation's Python scripts (the charter's Python comment arm).
+# PEP 257 baseline, Google-style sections used sparingly, terse one-liners the default. Only the
+# D (pydocstyle) rules run here; this is the comment arm, not a full lint config. ruff enforces
+# docstring CORRECTNESS, never PRESENCE: the whole D100-D107 missing-docstring family is ignored,
+# because ruff has no warn tier and the charter holds presence as Claude's write-time gate, not a
+# hard block. Forcing a docstring on every public symbol manufactures the reflexive docstrings
+# T-P1 and T-P2 exist to remove.
+[lint]
+select = ["D"]
+ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107"]
+extend-select = ["D401"]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.per-file-ignores]
+"tests/**" = ["D"]
