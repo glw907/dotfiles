@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+"""Vale PostToolUse feedback hook for Claude-drafted prose.
+
+Run Vale on a saved Markdown file after a Write or Edit, scope the findings to the
+lines that just changed, and report them to Claude. An error-tier finding exits 2
+with the finding on stderr, the channel Claude reads back, so Claude can self-correct.
+Warnings and suggestions ride along as advisory additionalContext. The hook never
+blocks a write (the tool has already run) and fails open: any internal problem, a
+missing Vale, or a file under no .vale.ini exits 0 in silence.
+
+Not wired into settings.json yet; prose-guard stays the active hook until the cutover
+plan. Invoke by piping the PostToolUse JSON on stdin.
+"""
+import json
+import os
+import subprocess
+import sys
+
+CHAR_CAP = 9000  # stay under Claude Code's 10,000-character additionalContext cap
+
+
+def new_text(tool_name, tool_input):
+    """Return the text a Write or Edit just introduced, for changed-line scoping."""
+    if tool_name == "Write":
+        return tool_input.get("content", "")
+    if tool_name == "Edit":
+        return tool_input.get("new_string", "")
+    if tool_name == "MultiEdit":
+        return "\n".join(e.get("new_string", "") for e in tool_input.get("edits", []))
+    return ""
+
+
+def changed_span(saved, inserted):
+    """Return the 1-based line numbers inserted occupies in saved.
+
+    Fall back to every line when inserted is empty, absent, or repeats past a small
+    cap (a replace_all), so the hook surfaces a finding rather than missing one.
+    """
+    whole = set(range(1, saved.count("\n") + 2))
+    if not inserted:
+        return whole
+    span = set()
+    start = 0
+    hits = 0
+    while True:
+        idx = saved.find(inserted, start)
+        if idx == -1:
+            break
+        hits += 1
+        if hits > 5:
+            return whole
+        first = saved.count("\n", 0, idx) + 1
+        span.update(range(first, first + inserted.count("\n") + 1))
+        start = idx + max(1, len(inserted))
+    return span or whole
+
+
+def config_root(start_dir):
+    """Return the nearest ancestor directory holding a .vale.ini, or None."""
+    current = os.path.abspath(start_dir)
+    while True:
+        if os.path.exists(os.path.join(current, ".vale.ini")):
+            return current
+        parent = os.path.dirname(current)
+        if parent == current:
+            return None
+        current = parent
+
+
+def run_vale(root, rel_path):
+    """Return Vale's parsed JSON for rel_path linted from root, or None on failure.
+
+    Vale matches a section glob against the path as given relative to the working
+    directory, so the file is linted from its config root by its relative path. Vale
+    exits non-zero when it finds something and still writes its JSON to stdout, so the
+    exit code is ignored.
+    """
+    try:
+        proc = subprocess.run(
+            ["vale", "--output=JSON", rel_path],
+            cwd=root, capture_output=True, text=True, check=False,
+        )
+    except (OSError, ValueError):
+        return None
+    try:
+        return json.loads(proc.stdout or "{}")
+    except json.JSONDecodeError:
+        return None
+
+
+def kept_findings(report, span):
+    """Return the findings whose line falls in span."""
+    return [item for items in report.values() for item in items if item.get("Line") in span]
+
+
+def _format(findings, path):
+    """Return a factual, line-listed report of findings, capped for the hook."""
+    rows = [
+        f'  {path}:{f.get("Line")} {f.get("Check")} ({f.get("Severity")}): {f.get("Message")}'
+        for f in findings
+    ]
+    return "\n".join(rows)[:CHAR_CAP]
+
+
+def main():
+    """Read the PostToolUse payload, lint the changed lines, report the findings."""
+    try:
+        data = json.loads(sys.stdin.read())
+    except (json.JSONDecodeError, ValueError):
+        return 0
+    tool_input = data.get("tool_input", {})
+    path = tool_input.get("file_path", "")
+    if not path.endswith(".md"):
+        return 0  # prose hook: Markdown only; code comments are the comment arm's
+    try:
+        with open(path, encoding="utf-8") as handle:
+            saved = handle.read()
+    except (OSError, UnicodeDecodeError):
+        return 0
+    root = config_root(os.path.dirname(path))
+    if root is None:
+        return 0  # no .vale.ini up the tree: no declared audience, nothing to say
+    report = run_vale(root, os.path.relpath(os.path.abspath(path), root))
+    if report is None:
+        return 0  # Vale missing or its output unreadable: fail open
+    findings = kept_findings(report, changed_span(saved, new_text(data.get("tool_name", ""), tool_input)))
+    if not findings:
+        return 0
+    body = _format(findings, path)
+    if any(f.get("Severity") == "error" for f in findings):
+        sys.stderr.write(
+            f"Vale found {len(findings)} issue(s) on the lines just edited in {path}.\n"
+            f"{body}\n"
+            "These are facts from the Vale check on the changed lines; pre-existing text "
+            "was not scanned.\n"
+        )
+        return 2
+    note = (
+        f"Vale advisory: {len(findings)} style finding(s) on the lines just edited in {path}. "
+        "Nothing is blocked; revise if these sit in prose just written.\n"
+    )
+    sys.stdout.write(json.dumps({"hookSpecificOutput": {
+        "hookEventName": "PostToolUse",
+        "additionalContext": note + body,
+    }}))
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except Exception:  # noqa: BLE001 - fail open: a hook crash must never disrupt the session
+        sys.exit(0)
