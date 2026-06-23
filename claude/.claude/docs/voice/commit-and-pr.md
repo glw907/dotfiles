@@ -1,77 +1,104 @@
 # Register: commit messages and PR bodies
 
 The reader is a future developer skimming `git log` for what changed and why, often years
-later and mid-debugging. Write as the same maintainer as the doc registers, at telegram
-length.
+later and mid-debugging. Applies to every commit message and PR body.
 
-## Traits
+The standard is **Conventional Commits 1.0.0** (https://www.conventionalcommits.org/) layered
+on the **git-commit canon** (Tim Pope's note and the Pro Git guidance: a concise imperative
+subject, a blank line, then a body that explains why). The optional linter is **commitlint**.
+The exemplar corpus is the convention's own published examples and the canonical git
+commit-message guidance. This register is the commit arm of the authoring charter
+(`~/.claude/docs/authoring-charter.md`).
 
-- Imperative subject naming the change. The body is one to four plain declarative
-  sentences.
-- The body separates what changed from why it was needed; the why is a prior observed fact
-  or fragility, never a narrative of the session that produced the commit.
-- Scope fences where they help the skimmer: "no behavior change", "visual-only".
-- The vocabulary is the repo's own (passes, STATUS, gates), not generic engineering filler.
-- No adjectives, no process narration, no restating the diff line by line.
+## What the standard asks for
+
+- Structure the subject as `type(scope): description`. The type is one of `feat`, `fix`,
+  `docs`, `refactor`, `test`, `build`, `ci`, `perf`, `chore`, or `style`. The scope is optional
+  and names the affected area. The description is imperative and lowercase, with no trailing
+  period.
+- Keep the subject short, the canonical target being 50 characters or fewer.
+- `feat` is a new feature; `fix` is a bug fix. Other types do not affect the version.
+- Separate the subject from the body with a blank line. Wrap the body at about 72 characters.
+- The body explains what changed and why, not how. The diff already shows how. State the
+  motivating fact or fragility, not a narrative of the session.
+- Mark a breaking change with a `!` after the type or scope, or a `BREAKING CHANGE:` footer, or
+  both. The footer describes what breaks and what a consumer must do.
+- Footers hold trailers (the co-author trailer, an issue reference) after a blank line, one per
+  line.
 
 ## Exemplars
 
-A what paragraph and a why paragraph, the motivating failure stated as observed fact
-(poplar):
+Each message is a Conventional Commits message in the git canon. The one-line note says which
+part of the standard it shows.
+
+A feature with a scope, body explaining the why (the standard's `feat` with a motivating
+reason):
 
 ```
-Archive dogfood track; route all passes to the rebuild
+feat(auth): add rate limit to the magic-link endpoint
 
-The dogfood poplar client is finished. Archive it at tag poplar-legacy and branch
-legacy, kept as reference and a Go-idiom source for the greenfield rebuild. Make the
-rebuild the sole active track.
-
-Two parallel trackers in one repo made a fresh context misroute 'continue' to the
-retired dogfood work after every context clear. Flip the always-loaded routing rule, the
-dogfood STATUS, the poplar-pass skill, and the CLAUDE.md banner so 'continue' and 'next
-pass' unambiguously mean the rebuild.
+Cap link requests at five per email per hour. Without a cap, a single
+address could be used to flood a mailbox or to probe for valid accounts,
+since the endpoint answered the same way for any address.
 ```
 
-One sentence of what, one of scope (cairn-cms):
+A bug fix, the observed failure stated as fact (the standard's `fix` with the prior
+fragility):
 
 ```
-Polish the login confirmation: shared brand snippet and inset help note
+fix(parser): handle a trailing comma in the date list
 
-Reuse one brand() snippet across the form and confirmation states, and rework the
-confirmation into a soft success tile with an InfoIcon inset note and a plain 'use a
-different email' link. Visual-only refinement of the 0.37.0 branded confirmation; no
-behavior change.
+The list parser dropped the final entry whenever the input ended with a
+comma, because the split produced an empty trailing field it then failed
+to skip. Skip empty fields before parsing.
 ```
 
-A pure why bracketed by two concrete whats (poplar):
+A docs-only change, no version effect (the `docs` type for documentation work):
 
 ```
-Rebuild: codify pass-end ritual as a standing STATUS default
+docs(readme): document the --max-instances flag
 
-Add a Pass-end ritual section to the rebuild STATUS, with updating the STATUS as its
-first and non-optional step. Previously the ritual lived only inside each pass's starter
-prompt, so it depended on that prompt restating it. Point the Pass 5 starter and the
-always-loaded routing rule at the new section.
+Add the flag, its default of 100, and the queueing behavior past the
+limit to the configuration table. The flag shipped two releases ago but
+was never written up.
 ```
 
-Invariant preserved, direction of travel, and the migration path, in two sentences
-(poplar):
+A refactor that preserves behavior, scope fenced (the `refactor` type, behavior invariant
+stated):
 
 ```
-catkin: drop auto-Reflow from WithWidth
+refactor(render): extract the frontmatter split into one helper
 
-Source stays pristine; wrap moves to render time in subsequent tasks. Reflowed() remains
-for callers that want the legacy wrap-into-source behaviour.
+Move the duplicated split-and-parse logic from three call sites into
+parseFrontmatter. No behavior change; the helper returns the same shape
+the inline code did.
+```
+
+A breaking change with the `!` marker and the footer (the standard's breaking-change form,
+with a co-author trailer in the footer slot):
+
+```
+feat(config)!: require an explicit publish branch
+
+The config no longer defaults the publish branch to main. A site must
+set publishBranch, so a misconfigured deploy fails at build time instead
+of writing to the wrong branch silently.
+
+BREAKING CHANGE: publishBranch is now required in cairn.config. Add it
+to your config before upgrading; there is no default.
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ## Off-voice contrast
 
-The same content in the register this file exists to prevent:
+The same change in the register this file exists to prevent (no type prefix, past tense,
+process narration, the diff restated):
 
 ```
-Refactored the login confirmation flow for better maintainability
+Refactored the rendering code for better maintainability
 
-In this commit, I noticed that the brand markup was duplicated, so I went ahead and
-extracted it into a reusable snippet. I also took the opportunity to improve the
-confirmation UI, which now looks much cleaner. This should make future changes easier!
+In this commit, I noticed that the frontmatter splitting logic was
+duplicated, so I went ahead and extracted it into a reusable helper. I
+also cleaned things up a bit. This should make future changes easier!
 ```

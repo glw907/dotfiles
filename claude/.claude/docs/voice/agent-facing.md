@@ -1,87 +1,93 @@
 # Register: agent-facing instructions
 
 The reader is Claude or another model: a CLAUDE.md, a skill, an agent definition, a hook
-message. The persona is an operator writing a runbook for another operator. Every sentence
-is a rule, the mechanism that makes the rule necessary, or a mechanical test for applying
-it. There is no audience management at all. No encouragement, no hedging, no transitions,
-no warmth.
+message. Applies to every file whose audience is a model executing a task, not a human reading
+prose.
 
-Defaults and negations are stated explicitly ("Silence is the default", "NOT the gate")
-because the reader will otherwise take the cheap path. Evidence appears only when it raises
-a rule's authority, like a named shipped bug or a known trap.
+The standard is **Anthropic's Claude Code and prompt-engineering best practices**
+(https://docs.anthropic.com/en/docs/claude-code/ and
+https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview). There is no
+deterministic linter; the standard is guidance plus Anthropic's own published examples. This
+register is the agent-facing arm of the authoring charter
+(`~/.claude/docs/authoring-charter.md`).
 
-## Traits
+## What the standard asks for
 
-- Rule first, reason in the same sentence or the next one. Never reason-then-rule.
-- Convert judgment calls into mechanical tests the reader can execute.
-- Name the trap and its mechanism, then the required behavior.
-- State what done means in numbers and exit codes, not adjectives.
-- Load-bearing rules carry their evidence: the bug that happens when the rule is broken.
-- Cut anything a competent agent would do anyway. Length is a cost; every retained sentence
-  must change behavior.
+- Be clear and direct. State the instruction explicitly. A model follows a precise directive
+  far better than an implied one, so spell out what to do rather than hinting at it.
+- Give the reason with the rule. Anthropic's guidance is that explaining why a constraint
+  matters makes a model apply it more reliably and generalize it to new cases.
+- State what done looks like in concrete, checkable terms: exit codes, counts, the exact
+  command to run, the artifact to produce. Avoid adjectives like "thorough" or "robust".
+- Make the rule testable. Convert a judgment call into a mechanical check the model can run.
+- Use examples. Anthropic's strongest single lever is a worked example of the wanted behavior;
+  show the shape of a correct result, and where it helps, a contrasting wrong one.
+- Name the trap and its mechanism. A known failure mode, stated with the bug it causes, is more
+  durable than a vague caution.
+- Keep it short. Every retained sentence must change behavior; cut anything a competent agent
+  would do anyway. Length dilutes the instructions that matter.
 
 ## Exemplars
 
-From the cairn-implementer agent, the verification contract. Negates the likely shortcut,
-gives the failure mechanism, ends with the required behavior:
+Each passage is written as agent-facing instruction in the Claude Code best-practice style. The
+one-line note says which practice it shows.
+
+A verification contract: states the done condition in exit-code terms and names the likely
+shortcut to forbid (be explicit; define done concretely):
 
 ```
-A passing targeted test is NOT the gate. A browser component test can pass while
-svelte-check fails (esbuild does not type-check) and while the full run exits non-zero
-on an unhandled rejection. Before you report DONE, all three of these must hold, and you
-must paste the evidence. If you cannot satisfy all three, you are not done. Report
-BLOCKED with the exact failing output rather than committing a red gate.
+A passing targeted test is not the gate. The browser test can pass while type-checking fails,
+because esbuild does not type-check, and the full run can still exit non-zero on an unhandled
+rejection. Before you report done, all three must hold: the targeted test passes, the
+type-check is clean, and the full suite exits 0. Paste the evidence. If you cannot satisfy all
+three, report blocked with the failing output rather than committing a red gate.
 ```
 
-From the go-conventions skill, the comment gate. A judgment call converted into a
-mechanical test, with the default named:
+A judgment call turned into a mechanical test, with the default named (make the rule testable;
+state the reason):
 
 ```
-Mechanical test: if the comment paraphrases the next <=5 lines, delete it. The
-paraphrase test is the primary check, and the single most effective filter against
-AI-shaped in-function comments. Godoc on unexported symbols is opt-in, not opt-out:
-comment only when name + signature leaves something a competent Go reader wouldn't
-immediately know. Silence is the default.
+Mechanical test: if a comment paraphrases the next five lines or fewer, delete it. The code
+already states what it does, so a paraphrase comment adds nothing and ages badly. Comment only
+when the name and signature leave something a competent reader would not already know. Silence
+is the default.
 ```
 
-From the go-conventions skill, defensive checks. Two-word imperatives, then a decision
-procedure that resolves every ambiguous case:
+An example-driven instruction: shows the wanted shape directly (use examples to set the
+format):
 
 ```
-Trust internal callers. Validate at boundaries (user input, config load, external APIs).
-Boundary test: if the zero value can occur through the package's own API (constructor
-accepts nil, optional field), the check stays. If only constructed-and-handed-off code
-reaches it, it's T22.
+Write the commit subject in the imperative mood, under 50 characters, with no trailing period.
+For example: "Add retry to the upload handler" or "Fix off-by-one in the date parser". Do not
+write "Added retry..." or "This commit fixes...".
 ```
 
-From the cairn admin design system, a load-bearing rule. Rule, mechanism, fix, then the
-shipped bugs that prove it:
+A load-bearing rule that carries its evidence, the mechanism then the fix (name the trap and
+its mechanism):
 
 ```
-data-theme goes on a bare wrapper, never on an element that also carries styled classes.
-Every scoped rule is a descendant selector, so a class on the theme element itself never
-matches. Put data-theme on an outer div and the styled layout one level in. This broke
-the drawer (it stayed display:block) and both auth pages (they would not center); both
-were real shipped bugs.
+Put the theme attribute on a bare wrapper, never on an element that also has styled classes.
+Every scoped rule is a descendant selector, so a class on the themed element itself never
+matches. Wrap the styled layout one level in. Skipping this broke the drawer and both auth
+pages in shipped builds.
 ```
 
-From the cairn CLAUDE.md, the logging rule. Rule, timing, and the architectural reason the
-rule is cheap to follow, in two sentences:
+A rule with its reason in the same breath, no hedging (be clear and direct; give the why):
 
 ```
-When a pass adds a diagnosable code path, give it an event in the vocabulary rather than
-a bare console call, and update the reference table in the same pass. The logger is
-internal (exported from no package subpath), so its API is free to grow; the event names
-are the public-observable contract.
+When a pass adds a diagnosable code path, give it a named log event rather than a bare console
+call, and update the reference table in the same pass. The logger is internal and its API is
+free to grow, but the event names are the public contract, so they must stay in sync with the
+docs.
 ```
 
 ## Off-voice contrast
 
-The same content in the register this file exists to prevent:
+The same content in the register this file exists to prevent (hedging, warmth, process
+narration, no concrete done condition):
 
 ```
-It's important to remember that testing is a crucial part of the workflow! Before
-reporting that you're done, you'll want to make sure all the various checks pass.
-Generally speaking, it's a good idea to run the full suite, as this helps ensure
-everything works as expected.
+It's important to remember that testing is a crucial part of the workflow! Before reporting
+that you're done, you'll want to make sure all the various checks pass. Generally speaking,
+it's a good idea to run the full suite, as this helps ensure everything works as expected.
 ```
