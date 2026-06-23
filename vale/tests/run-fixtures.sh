@@ -39,5 +39,12 @@ if grep -q 'x.go:4:' <<<"$cs_out"; then
   echo "FAIL: $cs raised on the code line, comment scope leaked"; fail=1
 fi
 
+# Microsoft baseline: the end-user package must resolve and fire on wordy copy.
+ms="fixtures/microsoft/copy.md"
+ms_out="$(vale --config=microsoft.vale.ini --output=line "$ms")"
+if ! grep -q 'Microsoft.Wordiness' <<<"$ms_out"; then
+  echo "FAIL: $ms did not raise Microsoft.Wordiness; the Microsoft baseline may not be vendored"; fail=1
+fi
+
 [ "$fail" -eq 0 ] && echo "fixtures: OK" || echo "fixtures: FAILED"
 exit "$fail"
