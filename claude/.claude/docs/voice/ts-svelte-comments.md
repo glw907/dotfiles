@@ -29,8 +29,8 @@ to MDN or the spec, second person where it helps ("Make sure you're not catching
 thrown error"). Internal helpers get a one-line summary, no period, params typed but not
 described. Inline asides are lowercase fragments or plain sentences in first-person
 plural, candid about hacks and uncertainty. Upstream occasionally drops an em dash in an
-inline comment; cairn does not (the hook blocks it), so imitate the function, not the
-punctuation.
+inline comment; cairn does not (Vale blocks it on `.ts` comments), so imitate the function,
+not the punctuation.
 
 ## Exemplars
 
@@ -161,4 +161,73 @@ for (const item of items) {
     count++;
   }
 }
+```
+
+## The TS tell catalogue (TS1 through TS15)
+
+The numbered tells the `ts-conventions` skill cites. Each is an AI-shaped habit with its
+mechanical fix; the worked examples below cover the tells the exemplars above do not already
+show.
+
+| id | name | rule |
+|---|---|---|
+| TS1 | `@param {type}` restating the signature | never write a `{type}` in a tag; if the line only names the type, delete it |
+| TS2 | type-narration in prose | state the constraint, not the type the annotation already shows |
+| TS3 | "This function" opener | start with the behavior; vary the opener across a file |
+| TS4 | every export documented reflexively | a self-evident export gets no doc, even when public |
+| TS5 | `/** */` on a trivial internal | internals are opt-in; a one-line private helper gets a `//` at most |
+| TS6 | uniform density across files | density follows complexity, not a fixed shape |
+| TS7 | comment restating the next line | the paraphrase test; delete it |
+| TS8 | section-boundary narration | comment where understanding fails, not where structure changes |
+| TS9 | changelog or task-framing | no `// added for X`, `// fixes #N`; the commit carries it |
+| TS10 | file-header banner repeating the path | a header earns its place only for a cross-cutting invariant |
+| TS11 | over-documenting typed props | a prop doc adds a constraint or fallback, never the type |
+| TS12 | `@component` narrating markup | state behavior and the failure mode, not a template walkthrough |
+| TS13 | suppression without an inline reason | every `@ts-expect-error` carries its why, unless the line above argues it |
+| TS14 | em dash and multi-clause comment rhythm | no em dash; one thought per comment |
+| TS15 | invented label-colon paragraphs in TSDoc | use the real tags, not a `Note:` block |
+
+TS1, type restated from the signature. The annotation already says `string`:
+
+```ts
+// off-voice
+/**
+ * @param name {string} the user's name
+ * @returns {string} the greeting
+ */
+// in-voice: state only the contract the type cannot
+/** Greets the user. Falls back to "friend" when name is empty. */
+```
+
+TS9, the changelog comment. Git carries the task and the fix:
+
+```ts
+// off-voice
+// added 2026-06 to fix the double-submit bug, see #1422
+const token = freshToken();
+// in-voice: the why, if it is not obvious; the issue link only if it argues the code
+const token = freshToken(); // a reused token trips the guard's single-use check
+```
+
+TS13, the bare suppression. The reason rides inline:
+
+```ts
+// off-voice
+// @ts-expect-error
+widget.focus();
+// in-voice
+// @ts-expect-error the focus shim lands after hydration; types catch up next tick
+widget.focus();
+```
+
+TS15, the invented label-colon paragraph. Use the tag the grammar provides:
+
+```ts
+// off-voice
+/** Parses the slug. Note: throws on a trailing slash. */
+// in-voice
+/**
+ * Parses the slug.
+ * @throws {RangeError} when the slug carries a trailing slash.
+ */
 ```
