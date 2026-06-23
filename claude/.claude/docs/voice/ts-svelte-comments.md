@@ -231,3 +231,63 @@ TS15, the invented label-colon paragraph. Use the tag the grammar provides:
  * @throws {RangeError} when the slug carries a trailing slash.
  */
 ```
+
+## The Svelte tell catalogue (S1 through S10)
+
+The numbered tells the `svelte-conventions` skill cites. The S-tells specialize the TS tells for
+Svelte's two comment homes.
+
+| id | name | rule |
+|---|---|---|
+| S1 | `@component` restating every typed prop | `@component` is purpose plus contract plus failure mode; props speak through their JSDoc |
+| S2 | narrating a reactive declaration | the rune declares the dependency; comment only a non-obvious why |
+| S3 | over-commenting markup structure | markup nesting is visible; a template comment earns its place only for a why |
+| S4 | redundant template section banners | delete a `<!-- header -->` banner unless it carries a constraint |
+| S5 | commenting standard rune idioms | never explain what a rune does; comment only an unusual use |
+| S6 | file-header boilerplate | the editor shows the filename; fold real content into `@component` |
+| S7 | prop JSDoc restating the type | the type says the type; the doc adds the why or nothing |
+| S8 | narrating handlers and bindings | the handler name and `bind:` are self-describing |
+| S9 | `untrack`/snapshot under- or over-commented | one line of why is correct here; not zero, not a paragraph |
+| S10 | uniform `@component` shape across the set | vary opener and length with each component's surface |
+
+S1, the prop restated into `@component`. The type already declares it; `@component` carries the
+why, and the prop's own JSDoc carries the constraint:
+
+```svelte
+<!-- off-voice: @component lists each prop and its type -->
+<!--
+@component
+A toolbar. Props: actions (an array of Action), compact (a boolean), onpick (a callback).
+-->
+<!-- in-voice: @component is purpose plus failure mode; props speak through their JSDoc -->
+<!--
+@component
+The editor's formatting toolbar. Renders nothing when actions is empty, which is the
+intended empty state, not a bug.
+-->
+  interface Props {
+    /** Falls back to the compact layout under 480px. */
+    compact?: boolean;
+  }
+```
+
+S2, the reactive declaration narrated. The rune already states the dependency:
+
+```svelte
+<!-- off-voice -->
+// recompute the total when items changes
+let total = $derived(items.reduce((a, b) => a + b.price, 0));
+<!-- in-voice: silence, or a why the rune cannot show -->
+let total = $derived(items.reduce((a, b) => a + b.price, 0));
+```
+
+S4, the template section banner. Delete it unless it carries a constraint:
+
+```svelte
+<!-- off-voice -->
+<!-- Header -->
+<header>...</header>
+<!-- in-voice: a banner only when it warns -->
+<!-- Keep this above the dialog: the focus trap reads the first heading. -->
+<header>...</header>
+```
