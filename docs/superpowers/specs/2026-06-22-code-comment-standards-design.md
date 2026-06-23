@@ -74,8 +74,13 @@ Layer 1, ESLint flat config (ESLint 9+):
 - `eslint-plugin-tsdoc` with `tsdoc/syntax` (error): validates the comment against the TSDoc spec.
 
 Turn off `require-param`, `require-returns`, and the `*-description` rules. They would manufacture the
-exact type-restatement the standard forbids. Biome and oxlint carry no doc-comment content rules, so
-doc linting stays on ESLint.
+exact type-restatement the standard forbids. Turn off `require-throws-type` too: the cairn pilot found
+it wants JSDoc-style `@throws {Type}`, which `tsdoc/syntax` rejects as a malformed inline tag, so the
+two collide and TSDoc wins. The `flat/recommended-typescript-error` base also enforces the canonical
+expanded doc-block shape (`multiline-blocks`, `tag-lines`), the form the SvelteKit source uses; a repo
+whose comments predate the standard conforms them with `eslint --fix`, then hand-fixes the residue
+(scoped package names and brace/angle prose spans go in backticks, a `@param` gets its hyphen). Biome
+and oxlint carry no doc-comment content rules, so doc linting stays on ESLint.
 
 Layer 2: `[formats] ts = md` in `.vale.ini`, then a `BasedOnStyles` line on `*.{ts,tsx}`. Vale scopes
 to comment text on its own. The em dash is the thing it catches that ESLint never will.

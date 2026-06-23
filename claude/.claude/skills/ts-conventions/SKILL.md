@@ -109,10 +109,20 @@ export default [
       'jsdoc/require-returns': 'off',
       'jsdoc/require-param-description': 'off',
       'jsdoc/require-returns-description': 'off',
+      // require-throws-type wants JSDoc-style `@throws {Type}`, which TSDoc rejects as a
+      // malformed inline tag. The charter mandates TSDoc, so @throws stays prose.
+      'jsdoc/require-throws-type': 'off',
     },
   },
 ];
 ```
+
+The base preset enforces the canonical expanded doc-block shape (`jsdoc/multiline-blocks`,
+`jsdoc/tag-lines`), the form the SvelteKit source uses. A repo whose comments predate the
+standard runs `eslint src/lib --fix` once to reformat to it, then hand-fixes the residue Vale
+and `--fix` cannot: scoped package names go in backticks (`` `@codemirror/view` ``, not a bare
+`@codemirror/view` that TSDoc reads as a tag), brace and angle spans in prose go in backticks,
+and a `@param` gets its hyphen. cairn's adoption did exactly this.
 
 The parser is `typescript-eslint`'s with no `project` setting: the jsdoc and tsdoc rules read
 the comment AST, not the type graph, so type-aware linting is not needed and the run stays

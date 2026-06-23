@@ -13,12 +13,12 @@
 - Vale is pinned to `3.15.1`; the binary is `~/.local/bin/vale` and reports that version. The Code-format comment scoping this plan depends on is confirmed present on that build (plan 01 Task 1, plan 02).
 - The canonical `glw907` style lives at `~/.dotfiles/vale/.config/vale/styles/glw907`. Every consumer repo carries a committed copy at `<repo>/.vale/styles/glw907`, never a symlink, vendored by `~/.dotfiles/scripts/glw907-vendor.sh <repo> --sync`.
 - The TypeScript standard is TSDoc, not JSDoc. Document the contract, never the type: no `@param {type}`, no `@returns {type}`, no `@type`. The signature carries the types.
-- ESLint rule tiers, copied verbatim from the comment-standards spec: `jsdoc/no-types` error, `jsdoc/check-tag-names` with `typed: true` error, `tsdoc/syntax` error, `jsdoc/check-param-names` error, `jsdoc/require-jsdoc` with `publicOnly: true` at warn, `jsdoc/informative-docs` at warn. Turn off `require-param`, `require-returns`, and the `*-description` rules; they manufacture the type-restatement the standard forbids.
+- ESLint rule tiers, from the comment-standards spec: `jsdoc/no-types` error, `jsdoc/check-tag-names` with `typed: true` error, `tsdoc/syntax` error, `jsdoc/check-param-names` error, `jsdoc/require-jsdoc` with `publicOnly: true` at warn, `jsdoc/informative-docs` at warn. Turn off `require-param`, `require-returns`, and the `*-description` rules (they manufacture the type-restatement the standard forbids) and `require-throws-type` (it wants JSDoc-style `@throws {Type}`, which TSDoc rejects). The `flat/recommended-typescript-error` base also enforces the canonical expanded doc-block shape (`multiline-blocks`, `tag-lines`); an adopting repo conforms its comments to that with `eslint --fix`.
 - `require-jsdoc` stays at warn, not error: cairn already runs `check:reference`, which fails on an undocumented export, so the ESLint coverage rule must not double-gate the same ground.
 - The em dash stays banned in TypeScript comments. No opt-out section is added for `.ts`; the `glw907.EmDash = NO` toggle exists only for a literary register and never applies to code.
 - The pinned plugin versions are `eslint@^9`, `typescript-eslint@^8`, `eslint-plugin-jsdoc@^63`, `eslint-plugin-tsdoc@^0.5`, added to cairn `devDependencies`. They never ship: cairn's `package.json` `files` allowlist is `["dist","src/lib","CHANGELOG.md"]`, so the root `eslint.config.js`, `.vale.ini`, and `.vale/` are not published.
 - This plan does not touch `prose-guard`. It stays the active hook until the cutover plan (07).
-- dotfiles changes commit to dotfiles `main`, matching plans 01 and 02. cairn changes land on a branch off `main` and merge back when the gate is green; the change is additive config and docs with no library source change. Leave the push to Geoff.
+- dotfiles changes commit to dotfiles `main`, matching plans 01 and 02. cairn changes land on a branch off `main` and merge back when the gate is green. The library source change is comment-only (the doc-comment conformance); svelte-check and the tests confirm no behavior moves. Leave the push to Geoff.
 - Commit footer on both repos: `Co-Authored-By: Claude <noreply@anthropic.com>`.
 
 ## The plan series
@@ -520,17 +520,22 @@ git commit -m "Adopt the Vale TypeScript comment arm: in-tree config and vendore
 ### Task 4: cairn adopts Layer 1, the ESLint jsdoc/tsdoc flat config
 
 cairn has no ESLint today. Add it with the copy-in flat config from the `ts-conventions` skill,
-scoped to `src/lib/**/*.ts`. The error tier (`no-types`, `tsdoc/syntax`, `check-tag-names`,
-`check-param-names`) is clean against real cairn TS, verified while scoping this plan; the proof
-confirms it fires on a planted `{type}` tag and stays clean on real source.
+scoped to `src/lib/**/*.ts`. cairn's comments predate the standard, so the base preset surfaces
+real deviations: the contract-not-type rules (`no-types`, `check-tag-names`, `check-param-names`)
+are already clean, but the canonical block-shape rules (`multiline-blocks`, `tag-lines`) flag
+cairn's compact form pervasively, and `tsdoc/syntax` flags scoped package names and brace/angle
+prose spans. This task adds the config and conforms cairn's comments to the standard: `eslint
+--fix` for the mechanical reformat, then hand-fixes for the residue. After conformance the error
+tier is clean.
 
 **Files:**
 - Create: `~/Projects/cairn-cms/eslint.config.js`
 - Modify: `~/Projects/cairn-cms/package.json` (devDependencies and a `lint` script)
+- Modify: `~/Projects/cairn-cms/src/lib/**/*.ts` (doc-comment conformance; comment text only)
 
 **Interfaces:**
 - Consumes: the exact `eslint.config.js` content from the Task 1 skill.
-- Produces: a `npm run lint` that lints `src/lib` TypeScript through the jsdoc/tsdoc rules, error-clean on real source, and a positive control proving the `{type}` ban fires.
+- Produces: a `npm run lint` that lints `src/lib` TypeScript through the jsdoc/tsdoc rules, error-clean after conformance, and a positive control proving the `{type}` ban fires.
 
 - [ ] **Step 1: Install the pinned devDependencies**
 
@@ -573,6 +578,9 @@ export default [
       'jsdoc/require-returns': 'off',
       'jsdoc/require-param-description': 'off',
       'jsdoc/require-returns-description': 'off',
+      // require-throws-type wants JSDoc-style `@throws {Type}`, which TSDoc rejects as a
+      // malformed inline tag. The charter mandates TSDoc, so @throws stays prose.
+      'jsdoc/require-throws-type': 'off',
     },
   },
 ];
@@ -585,6 +593,38 @@ In `~/Projects/cairn-cms/package.json`, add a `lint` entry to `scripts`:
 ```json
     "lint": "eslint src/lib",
 ```
+
+- [ ] **Step 3b: Conform cairn's comments to the standard**
+
+cairn's comments predate the standard, so the first lint run reports the deviations. Reformat the
+mechanical ones, then hand-fix the residue. The reformat is comment-only, so behavior is unchanged:
+
+```bash
+cd ~/Projects/cairn-cms
+npx --no-install eslint src/lib --fix
+npx --no-install eslint src/lib -f json 2>/dev/null | python3 -c "import json,sys; from collections import Counter; c=Counter(m.get('ruleId') for f in json.load(sys.stdin) for m in f['messages'] if m['severity']==2); print(dict(c) or 'NONE')"
+```
+
+`--fix` clears `jsdoc/multiline-blocks` and `jsdoc/tag-lines` (the compact-to-expanded reformat).
+The residue it cannot fix is hand-work, each a real best-practice fix:
+
+- A scoped package name in prose (`@codemirror/view`, `@octokit/auth-app`, `@cloudflare/workers-types`)
+  reads to TSDoc as a tag. Wrap it in backticks: `` `@codemirror/view` ``.
+- A brace or angle span in prose (`{attrs}`, `{}`, `{ owner, repo }`, `< 128`) reads as an inline
+  tag or HTML. Wrap it in backticks.
+- An arrow `->` carries a `>` TSDoc reads as HTML. Reword (`gives`, `becomes`).
+- A `@param name description` is missing its TSDoc hyphen. Add it: `@param name - description`.
+
+Re-run until the error tier is empty:
+
+```bash
+cd ~/Projects/cairn-cms
+npx --no-install eslint src/lib --quiet && echo "ERROR TIER CLEAN" || echo "RESIDUE REMAINS"
+npm run check 2>&1 | tail -1
+```
+
+Expected: `ERROR TIER CLEAN`, then svelte-check reporting `0 ERRORS 0 WARNINGS` (the reformat is
+comment-only and changes no behavior).
 
 - [ ] **Step 4: Positive control, the config fires on a planted `{type}` tag**
 
@@ -605,25 +645,29 @@ rm -rf src/lib/.eslint-proof
 Expected: ESLint reports `jsdoc/no-types` and `tsdoc/syntax` errors on the file, then
 `NO-TYPES PASS`, `TSDOC PASS`. The proof file is removed.
 
-- [ ] **Step 5: Prove real `src/lib` is error-clean**
+- [ ] **Step 5: Confirm the full gate is green**
 
 ```bash
 cd ~/Projects/cairn-cms
-npm run lint
-echo "exit: $?"
+npm run lint && echo "lint exit 0"
 ```
 
-Expected: ESLint exits 0. `require-jsdoc` and `informative-docs` are at warn, so undocumented
-exports surface as warnings, not failures; the error tier is clean. If an `error`-tier finding
-appears, it is a real `{type}` tag or TSDoc syntax slip to fix in source before continuing.
+Expected: ESLint exits 0. `require-jsdoc` and `informative-docs` are at warn, so an undocumented
+export surfaces as a warning, not a failure; the error tier is clean after Step 3b's conformance.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 6: Commit, infra and conformance separately**
+
+Keep the mechanical reformat in its own commit so the history stays reviewable:
 
 ```bash
 cd ~/Projects/cairn-cms
 git add eslint.config.js package.json package-lock.json
 git commit -m "Add the ESLint jsdoc/tsdoc flat config for src/lib TypeScript comments" \
-  -m "TSDoc structure on the error tier (no-types, tsdoc/syntax, check-tag-names, check-param-names); coverage and paraphrase rules at warn. Error-clean against real src/lib." \
+  -m "TSDoc structure on the error tier (no-types, tsdoc/syntax, check-tag-names, check-param-names); coverage and paraphrase rules at warn. require-throws-type is off: it wants JSDoc-style @throws {Type}, which TSDoc rejects." \
+  -m "Co-Authored-By: Claude <noreply@anthropic.com>"
+git add src/lib
+git commit -m "Conform src/lib doc comments to TSDoc best practice" \
+  -m "Reformat to the canonical expanded block form (eslint --fix), backtick scoped package names and brace/angle prose spans, add the @param hyphen. Comment-only; svelte-check 0/0, Vale 0 errors." \
   -m "Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
@@ -867,12 +911,12 @@ git commit -m "Record the TypeScript comment arm as built in the charter" \
 
 - [ ] **Step 4: Run cairn's full gate on the branch before merging**
 
-The change is additive config and docs with no library source change, but confirm the new gate
-and the existing checks pass together:
+The library source change is the comment-only conformance, so confirm the new gate, the existing
+checks, and the type-check pass together:
 
 ```bash
 cd ~/Projects/cairn-cms
-npm run check:comments && npm run lint
+npm run check:comments && npm run lint && npm run check
 echo "exit: $?"
 ```
 
@@ -903,8 +947,9 @@ Run after the last task.
    updated em-dash line crediting Vale (Task 2).
 3. **Layer 2 holds:** the planted-tell proof fires `EmDash` and `Slop` on the comment line and
    nothing on the code line; real cairn TS carries no em dash in comments (Task 3).
-4. **Layer 1 holds:** ESLint fires `no-types` and `tsdoc/syntax` on a planted `{type}` tag and is
-   error-clean on real `src/lib` (Task 4).
+4. **Layer 1 holds:** ESLint fires `no-types` and `tsdoc/syntax` on a planted `{type}` tag, and
+   after the doc-comment conformance (Step 3b) the error tier is clean on real `src/lib`; the
+   conformance is comment-only and svelte-check stays 0/0 (Task 4).
 5. **Gate wired:** `npm run check:comments` runs ESLint and Vale, is green locally, and CI
    installs the pinned Vale binary before it (Task 5).
 6. **Feedforward usable:** an agent given the skill and register names TS tells by number (Task 6).
