@@ -78,6 +78,16 @@ bar, and that means `npm test` **exits 0**: a passing assertion count is not eno
 since an unhandled rejection can leave every test green while the process exits 1.
 Fix every failure before continuing.
 
+**Prove the consumer build, not only `npm test`.** The package ships TypeScript inside its `.svelte`
+files, so a consumer-bundler incompatibility (a Vite 8 / Rolldown parse failure, an import-resolution
+gap) surfaces only when a consumer builds, never in the library's own `npm test`. The showcase e2e is
+that gate: `npm --prefix examples/showcase run test:e2e` builds the showcase, then runs Playwright. Off
+CI, local Playwright reuses a stale preview server (`reuseExistingServer` is on when `CI` is unset), so a
+local "all green" can pass against a stale build. Before calling a pass releasable, either push the
+branch for a CI `e2e` run or force a from-scratch consumer build: `rm -rf
+examples/showcase/{node_modules,package-lock.json}`, then a fresh install and `npm run build`. This is
+how `0.60.0` shipped a broken consumer build; see the `cairn-0-60-e2e-dist-build-failure` memory.
+
 ### 3. Review gate
 
 Fan out the relevant review subagents in parallel and fold their findings in
