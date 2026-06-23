@@ -122,7 +122,7 @@ Rewrite each conventions skill to "follow [the external standard]; the linter en
 - Delete: `scripts/check-svelte-comments.mjs` (the Svelte extractor; the `<script>` block follows TSDoc through ESLint, the `@component` block follows the Svelte convention)
 - Delete: the vendored `glw907` style copy under `.vale/styles/`
 - Modify: `package.json` `check:comments` (ESLint jsdoc + tsdoc only for comments; Vale runs against the docs, not comments)
-- Modify: the `eslint.config.js` if it references glw907 (it should not; confirm tsdoc stays)
+- Modify: `eslint.config.js`: confirm the tsdoc rule stays, add `eslint-plugin-jsdoc`'s `informative-docs` rule (flags a comment that only restates the name), and add an em-dash-in-comments ban (a small local rule over comment tokens via `no-restricted-syntax` or a tiny custom rule; the one published em-dash plugin is an obscure v1.0.0, so prefer the local rule)
 - Modify: `CLAUDE.md` (the authoring section to the external-standards model)
 
 - [ ] **Step 1: Refactor the config, delete the extractor and the vendored overlay, update CLAUDE.md, run the gate (`npm run check`, `npm run check:comments`), commit.**

@@ -70,9 +70,11 @@ writing is good.
   exemplars show them.
 - The bespoke Svelte comment extractor. The `<script>` block is TypeScript and follows TSDoc; the
   `@component` block follows the Svelte convention.
-- The personal-calibration framing in the docs registers, and the em-dash matrix as a workstation
-  rule. The em dash follows each external standard: Google allows it, and the comment standards do not
-  address it.
+- The personal-calibration framing in the docs registers, and the glw907 rule that treated the em
+  dash as a tell in every register. The em dash now splits by audience: banned in code comments (a
+  keyboard, grep, and monospace hygiene rule the comment standards omit, enforced by the comment
+  linter where it can be), used per Google in developer docs (Google recommends it, with no
+  surrounding spaces), per Microsoft in editor copy, and dropped in replies and commits.
 
 "Write cleanly, avoid the AI tells" survives, but as Claude-best-practice feedforward, not as a house
 linter.
@@ -90,8 +92,11 @@ library is the exemplar corpus, the best in any language.
 
 TypeScript and Svelte comments follow TSDoc, with the Svelte `@component` convention for the component
 block. ESLint with the jsdoc and tsdoc plugins is the linter; well-regarded libraries are the
-exemplars. cairn is the proving ground, and the bar is explicit: cairn's comments should be
-indistinguishable from professional-grade TSDoc in a well-run TypeScript and Svelte codebase.
+exemplars. Two deterministic rules ride on it: `eslint-plugin-jsdoc`'s `informative-docs`, which flags
+a comment that only restates the symbol name (the paraphrase tell), and an em-dash-in-comments ban (a
+small local rule over comment tokens, since the one published plugin is an obscure v1.0.0). cairn is
+the proving ground, and the bar is explicit: cairn's comments should be indistinguishable from
+professional-grade TSDoc in a well-run TypeScript and Svelte codebase.
 
 Python comments follow PEP 257 and PEP 8. ruff's `D` rules are the linter; the standard library is the
 exemplar corpus.
