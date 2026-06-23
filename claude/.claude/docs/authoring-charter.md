@@ -88,8 +88,8 @@ own developer docs and code comments, and the two never merge.
 - Register routing for prose lives in `~/.claude/docs/prose-voice.md`, and the registers themselves
   in `~/.claude/docs/voice/`.
 - Comment voice references are `~/.claude/docs/go-comment-voice.md` and
-  `~/.claude/docs/voice/ts-svelte-comments.md`, with a Python companion to follow.
-- The Vale foundation is built and the Go, TypeScript, and Svelte comment arms are live. The pinned
+  `~/.claude/docs/voice/ts-svelte-comments.md` and `~/.claude/docs/voice/python-comments.md`.
+- The Vale foundation is built and the Go, TypeScript, Svelte, and Python comment arms are live. The pinned
   binary, the split `glw907` overlay, the vendored Google and Microsoft baselines, the global
   config, and the fixture suite came first. poplar carries the Go arm; cairn is the first TypeScript
   adopter, with an in-tree `.vale.ini` linting `.ts` comment prose through a committed `glw907`
@@ -100,6 +100,5 @@ own developer docs and code comments, and the two never merge.
   skill plus the register for the semantic tells. cairn carries the Svelte arm through
   `scripts/check-svelte-comments.mjs`, the extractor that lints the `@component` block and the
   script-block comments through `glw907` and enforces the one-`@component` rule, with the
-  `svelte-conventions` skill and the S catalogue for the semantic tells. Python and the prose arm
-  are the next plans.
+  `svelte-conventions` skill and the S catalogue for the semantic tells. The dotfiles repo carries the Python arm itself: a root `ruff.toml` running the `D` docstring rules under the google convention (presence ignored, correctness enforced), a `[*.py]` Vale section linting comment and docstring prose through `glw907`, a `scripts/check-py-comments.sh` runner over the repo's Python including the extensionless bin scripts, and the `python-conventions` skill with the `python-comments` register for the semantic tells. The prose arm is the next plan.
 - `prose-guard` is being retired in full; Vale takes over the feedback layer.
