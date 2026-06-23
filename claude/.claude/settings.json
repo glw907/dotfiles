@@ -26,26 +26,14 @@
         ]
       }
     ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "prose-guard --hook",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "prose-guard --post-hook",
-            "timeout": 10
+            "command": "vale-hook",
+            "timeout": 15
           }
         ]
       }
