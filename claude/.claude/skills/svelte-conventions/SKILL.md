@@ -5,18 +5,28 @@ description: >
   Use before writing, reviewing, or modifying any `.svelte` `@component` block
   or script-block comment. Covers the write-time comment-or-not gate, the
   two-homes rule (`@component` carries purpose plus contract plus failure
-  mode; props speak through their typed JSDoc), and the S1 through S10
-  AI-tell catalogue. The prose authority is the ts-svelte-comments register.
+  mode; props speak through their typed JSDoc), and the standard's principles
+  and exemplars.
 ---
 
 # Svelte Comment Conventions
 
-The reader is a coder or an agent already looking at the component. This skill is the Svelte arm
-of the authoring charter (`~/.claude/docs/authoring-charter.md`). The deeper prose authority, with
-exemplars from the SvelteKit and cairn source, is the `ts-svelte-comments` register at
-`~/.claude/docs/voice/ts-svelte-comments.md`; load it before writing or reviewing comments. The
-TypeScript tells (TS1 through TS15, the `ts-conventions` skill) apply to the `<script>` block; the
-S-tells below specialize them for Svelte.
+A Svelte component has two comment surfaces, and each follows its own standard. The `<script>`
+block is TypeScript and follows **TSDoc**, the same as `ts-conventions`. The component-level
+documentation follows the **Svelte `@component` convention**
+(https://svelte.dev/docs/svelte/basic-markup#Comments), the `<!-- @component ... -->` block the
+language server surfaces on hover. The exemplar is **well-regarded Svelte and SvelteKit code**;
+read how its components document themselves and match it. This skill is the Svelte arm of the
+authoring charter (`~/.claude/docs/authoring-charter.md`).
+
+## Principles
+
+- **Comment the why, not the what.** The markup, the runes, and the typed props say what. A
+  comment carries a reason, a constraint, or a failure mode they cannot.
+- **Document the contract.** The `@component` block states the component's purpose, what a
+  consumer must pass, and how it fails. A prop's JSDoc states the prop's constraint or fallback.
+- **Do not paraphrase the code.** A comment narrating visible markup, a self-describing handler,
+  or a standard rune should not exist.
 
 ## §0: Comment-or-not (write-time gate)
 
@@ -43,36 +53,25 @@ A component has two comment homes, and they do not overlap. This is the load-bea
 
 State behavior and the failure mode in `@component`, never a template walkthrough.
 
-## §catalogue: the S1 through S10 AI-tell catalogue
+## The `<script>` block
 
-Each tell: id, name, the mechanical avoidance rule. Full prose is in the `ts-svelte-comments`
-register. The S-tells specialize the Go and TS tells they extend; when both apply, cite the most
-specific (S2 over a TS paraphrase tell for a reactive line, S5 over it for a rune, S4 for a
-template banner). Cite as `S<n> at file:line`.
+The `<script lang="ts">` block is TypeScript: its comments follow TSDoc and the `ts-conventions`
+rules in full. Document the contract, never the type; comment the why; do not paraphrase the
+code. The `Props` interface, its members' JSDoc, and any module-level helper all live under that
+standard.
 
-| id | name | rule |
-|---|---|---|
-| S1 | `@component` restating every typed prop | `@component` is purpose plus contract plus failure mode; props speak through their JSDoc |
-| S2 | narrating a reactive declaration | the rune declares the dependency; comment only a non-obvious why |
-| S3 | over-commenting markup structure | markup nesting is visible; a template comment earns its place only for a why |
-| S4 | redundant template section banners | delete a `<!-- header -->` banner unless it carries a constraint |
-| S5 | commenting standard rune idioms | never explain what a rune does; comment only an unusual use |
-| S6 | file-header boilerplate | the editor shows the filename; fold real content into `@component` |
-| S7 | prop JSDoc restating the type | the type says the type; the doc adds the why or nothing |
-| S8 | narrating handlers and bindings | the handler name and `bind:` are self-describing |
-| S9 | `untrack`/snapshot under- or over-commented | one line of why is correct here; not zero, not a paragraph |
-| S10 | uniform `@component` shape across the set | vary opener and length with each component's surface |
+## Linting and the division of labor
 
-## Tooling and the division of labor
-
-- `scripts/check-svelte-comments.mjs` (cairn) is the deterministic net: it extracts the `@component`
-  block and the `<script>`-block comments and runs Vale `glw907` over them, catching the em dash and
-  the banned lexicon, and it enforces the structural rule (at most one `@component`, with prose). It
-  never scans the component's markup text, which is `check:prose`'s product-copy surface.
-- This skill and the register own the semantic S-tells the extractor cannot see: the paraphrase, the
-  prop restated into `@component`, the rune narrated, the uniform shape across the set.
+- The `@component` block and the `<script>` comments are not the component's product copy.
+  Visible markup text (headings, button labels, body copy) is a content surface and belongs to
+  the site's own content tooling, not to this comment standard.
+- ESLint with jsdoc and tsdoc owns the `<script>` block's structure where the repo wires the
+  Svelte parser; until then the `<script>` block follows TSDoc as feedforward, checked by reading
+  it against the exemplars. The `@component` convention has no deterministic linter: enforce one
+  `@component` per file, in prose, by review.
 
 ## Output
 
-When reviewing, cite each finding as `S<n> at file:line` with the avoidance rule. When writing, run
-the §0 gate, then the two-homes rule, then write only what survives.
+When writing, run the §0 gate, then the two-homes rule, then write only what survives. When
+reviewing, cite each finding at `file:line` with the principle it breaks and, where it helps, the
+well-run-component comment it should resemble.

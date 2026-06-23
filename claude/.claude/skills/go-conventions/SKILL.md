@@ -7,39 +7,37 @@ description: >
   project structure (cmd/ + internal/), cobra CLI shape, error
   wrapping, atomic file writes, table-driven tests, Makefile gates,
   naming, modern-stdlib idiom defaults (slices/maps/iter/slog/
-  OnceValue), and the human-voice / AI-tell catalogue. Every Go file,
-  function, test, comment, and error message must conform.
+  OnceValue), and the comment standard (Go Doc Comments, Effective Go).
+  Every Go file, function, test, comment, and error message must conform.
 ---
 
 # Go Conventions
 
-Rules for writing Go utilities on this workstation.
+Rules for writing Go utilities on this workstation. Code follows
+**Effective Go**; comments follow **Go Doc Comments**
+(https://go.dev/doc/comment). The linters are **gofmt** and **go vet**,
+both wired into `make check`. The canonical exemplar is **the Go standard
+library**: read the doc comments next to the code you are writing and
+match their density, shape, and voice. This skill is the Go arm of the
+authoring charter (`~/.claude/docs/authoring-charter.md`).
 
-## Persona
+## Principles
 
-Write as an experienced Go developer would. Concretely:
+Three principles carry every comment decision; the rest of this file
+applies them to Go specifics.
 
-- **Terse where the code is clear, deliberate where it isn't.** Sentence
-  length varies. Identical-shape paragraphs across a file is a tell.
-- **Opinionated.** "Inline this." "This wants a `sync.Once`." Not "you
-  might consider…" or "perhaps we could…".
-- **Idiom-naming.** Reach for stdlib vocabulary by name: goroutine, not
-  thread; channel, not queue; sentinel error, not exception flag.
-- **Anti-defensive.** Trust internal callers. Validate at boundaries.
-  Bare `return err` over reflexive wrapping. No nil checks between two
-  functions in the same package.
-- **Stdlib over clever.** A struct literal beats a builder. `path.Join`
-  beats hand-rolled concatenation. Single-impl interfaces are usually
-  premature.
-- **Pushback shape.** When reviewing, name the idiom or anti-pattern
-  directly. "T10: failed-to chorus" not "consider varying the error
-  messages." Concrete fix, not vague suggestion.
-- **No apologetic framing in code or comments.** Never "this may not
-  handle every case" or "for now". State invariants; flag real gaps
-  with `// TODO:` only when there's a concrete next step.
+- **Comment the why, not the what.** The code already states what it
+  does. A comment earns its place when it carries a reason, a
+  constraint, or a piece of evidence the code cannot.
+- **Document the contract.** A doc comment states what a caller must
+  know: the invariant, the unit, the nil-semantic, the concurrency
+  hazard. Not the implementation.
+- **Do not paraphrase the code.** If removing the comment leaves a
+  competent Go reader no worse off, the comment should not exist. This
+  is the single most effective filter against machine-shaped comments.
 
-The full voice palette and rationale lives in
-`~/.claude/docs/go-comment-voice.md` §4.
+When the shape of a comment is in doubt, open the nearest standard-library
+file and copy how its maintainers handled the same case.
 
 ## Anti-Patterns: Go That Looks Like Python or JavaScript
 
@@ -84,10 +82,9 @@ the specific failure modes to reject:
 ## Modern Stdlib Idioms
 
 The Go we have is 1.21–1.26. Reach for the modern stdlib form by
-default; the pre-1.21 spelling is a tell that the code predates
-the toolchain. Each rule below names the preferred form and the
-one-line reason. Overlap with §7 tells is cross-referenced, not
-duplicated.
+default; the pre-1.21 spelling signals that the code predates the
+toolchain. Each rule below names the preferred form and the one-line
+reason.
 
 ### Sorting
 
@@ -190,10 +187,6 @@ Every `for` loop variable is per-iteration. Delete leftover
 `x := x` shadow lines (workarounds for the pre-1.22
 shared-variable footgun).
 
-> Some of these overlap with §7 tells (e.g., T28 already covers
-> the over-explained `min`/`max` helper case). Don't double-flag;
-> the tell catalogue rules.
-
 ## Project Structure
 
 ```
@@ -287,16 +280,16 @@ Rules:
 - **Lowercase, no trailing period.** The error appears mid-sentence
   in caller logs.
 - **Context-first.** Noun-verb form: `"load config"`, `"create
-  directory"`. Never start with `"failed to"` (T10).
+  directory"`. Never start with `"failed to"`.
 - **`%w` only when callers branch on the sentinel.** Use `%w` if
   any caller calls `errors.Is` / `errors.As` on the result.
   Otherwise `%v` or omit wrapping. Reflexive `%w` exposes the
   underlying error type as part of the package's API surface.
 - **Adjacent error sites diverge in phrasing.** If two error
   returns in one function read identically, vary them: bare
-  noun, context prefix, or operation-name inline (T11).
+  noun, context prefix, or operation-name inline.
 - **No function name in its own errors.** The call stack provides
-  it (T12). State the condition, not the location.
+  it. State the condition, not the location.
 - **Custom error types include location context** (File, Line) when
   the call stack alone isn't sufficient.
 - Library functions return errors. Only `main()` prints them.
@@ -448,16 +441,19 @@ No `nolint` pragmas. Fix the code instead.
 - Boolean fields: positive sense (`Encrypt`, not `NoEncrypt`).
   Use `*bool` for optional overrides.
 
-## Comments and Voice
+## Comments
 
-The full guide is `~/.claude/docs/go-comment-voice.md`; load it
-before writing or reviewing comments. Below is the operative
-summary + the §7 AI-tell catalogue with mechanical avoidance rules.
+Comments follow **Go Doc Comments** (https://go.dev/doc/comment).
+The exemplar is the standard library: when a comment's shape is in
+doubt, read the doc comments next to the same kind of code in the
+stdlib and match them. `go vet` flags malformed doc comments; `gofmt`
+canonicalizes their layout. The subsections below apply the standard's
+principles to the cases that come up most.
 
-### §0: Comment-or-not (write-time gate)
+### Comment-or-not (write-time gate)
 
-Before reaching for the placement rubric below, run the three-
-question gate from `~/.claude/docs/go-comment-voice.md` §0:
+Before reaching for the placement rubric below, run this three-question
+gate:
 
 ```
 (a) Does the function/type name already say this?
@@ -469,13 +465,13 @@ question gate from `~/.claude/docs/go-comment-voice.md` §0:
 Skip rule: if (a) or (b), don't write the comment. Write rule:
 only when (c). **Mechanical test: if the comment paraphrases the
 next ≤5 lines, delete it.** The paraphrase test is the primary
-check, and the single most effective filter against AI-shaped
-in-function comments.
+check, and the single most effective filter against a machine-shaped
+in-function comment.
 
-Godoc on unexported symbols is **opt-in, not opt-out** (Google's
-"unobvious" bar): comment only when name + signature leaves
-something a competent Go reader wouldn't immediately know.
-Silence is the default.
+Doc comments on unexported symbols are opt-in, not opt-out: comment
+only when name and signature leave something a competent Go reader
+would not immediately know. Silence is the default, the same as the
+standard library's own unexported code.
 
 ### Decision rubric
 
@@ -545,181 +541,15 @@ Otherwise no comment. Silence is the default.
    `%v`. `%w` makes the underlying error type part of the
    package's API surface.
 
-### §7: AI-tell catalogue
+### Comment review
 
-Each tell: name, where it appears, the mechanical avoidance rule.
-Full examples (AI-shaped + human counter-example) live in
-`~/.claude/docs/go-comment-voice.md` §7.
-
-**Precedence:** when a finding triggers multiple tells, pick the
-strongest. T1 outranks T2 (restatement is the violation regardless
-of export status). T11 covers within-function adjacent errors;
-T10b covers cross-function chorus in one file. Don't double-flag.
-
-**Comment tells:**
-
-- **T1: WHAT-comment restating the next line.** Comments above
-  obvious code. *Avoid:* if removing the comment leaves a reader
-  no worse off, the comment shouldn't exist.
-- **T2: Godoc on every unexported symbol.** *Avoid:* unexported
-  gets a comment only when name + signature leaves unobvious
-  behavior unexplained.
-- **T3: Uniform comment density across functions of different
-  complexity.** *Avoid:* density follows complexity. A 3-line
-  helper and a 30-line state machine should not have similarly
-  shaped doc comments.
-- **T4: Hedge phrases ("for now", "Note:", unlinked TODO).**
-  *Avoid:* never `// for now`. `// Note:` only when something
-  truly important follows. `// TODO:` requires a concrete next
-  step or issue link.
-- **T5: Task-framing comments ("added for X flow", "used by Y",
-  "fixes #N").** *Avoid:* code is not a changelog. Never reference
-  callers, the current task, or prior bugs in comments.
-- **T6: First-person plural ("we") inside unexported docs.**
-  *Avoid:* third-person declarative. `// we use this to track …`
-  → delete or rewrite.
-- **T7: Every doc comment begins "Foo does X".** *Avoid:* after
-  writing a function doc, look at the three nearest. If all four
-  follow the same subject-verb-object shape, rewrite at least
-  two. Vary between return-clause, predicate, invariant, contract.
-- **T8: Multi-paragraph docstrings on self-describing
-  functions.** *Avoid:* doc length proportional to non-obvious
-  behaviors. Count them; that's the sentence count minus the
-  name-first opener.
-- **T9: Per-case docstrings on every table-test case (extends to
-  test function names).** *Avoid:* `name:` is a noun phrase. No
-  "returns", "should", "when", "given". Test function names follow
-  the same rule: `TestQueueOp_OptimisticFlagApply`, not
-  `TestQueueOp_FlagAppliesOptimistic`. The body is the documentation.
-
-**Error-phrasing tells:**
-
-- **T10: `fmt.Errorf("failed to X: %w", err)` chorus.** *Avoid:*
-  never start an error string with "failed to". Use a bare noun
-  clause or context prefix.
-- **T10b: Cross-function error chorus in one file.** *Avoid:* if
-  N functions in one file all return errors of identical template
-  (e.g., `"migrate vN: %w"` × 5), vary at least every other one
-  using the operation's verb instead of a numeric index.
-- **T11: Adjacent error sites reading identically.** *Avoid:*
-  scan error returns after writing a function. If two read
-  identically, diverge them: bare noun, context prefix,
-  or operation-name inline.
-- **T12: Redundant context (function name in its own error).**
-  *Avoid:* never embed the function name in an error string
-  returned from that function. The call stack provides it.
-- **T13: Bare `%w` wrapping where no caller branches on the
-  sentinel.** *Avoid:* `%w` only if a caller calls `errors.Is` /
-  `errors.As`. Otherwise `%v` or omit wrapping.
-
-**Naming tells:**
-
-- **T14: `GetX` getter prefix.** *Avoid:* the exported first
-  letter signals accessor. `Name()`, not `GetName()`.
-- **T15: Package-doubled types (`mail.MailMessage`,
-  `cache.CacheEntry`).** *Avoid:* type name does not repeat the
-  package. `mail.Message`, `cache.Entry`.
-- **T16: `Manager` / `Helper` / `Util` / `Service` suffixes on
-  single-field types.** *Avoid:* name by what the type *is*, not
-  by the noun-suffix template.
-- **T17: Over-descriptive locals in tight scopes.** *Avoid:*
-  `for i := range items` and `m := items[i]`. Not
-  `messageIndex := range messageList; currentMessage := …`.
-- **T18: Exported names that read like docstrings
-  (`ProcessIncomingMessageWithRetries`).** *Avoid:* exported
-  names are nouns or short verb phrases. Behavior detail goes in
-  the doc comment.
-
-**Structural tells:**
-
-- **T19: Reflexive `doc.go` / `errors.go` / `types.go` skeleton
-  in every package.** *Avoid:* split files only when one became
-  unwieldy. Empty `errors.go` with one error variable is the
-  shape to delete.
-- **T20: Single-impl interfaces with no test fake, no DI seam,
-  no ADR.** *Avoid:* before introducing an interface, name the
-  second impl or test fake. If neither exists, use the concrete
-  type.
-- **T21: `New<X>` constructors that only set fields.** *Avoid:*
-  if `NewFoo` is `return &Foo{a: a, b: b}`, delete it; callers
-  use the literal.
-- **T22: Defensive nil checks between same-package functions.**
-  *Avoid:* trust internal callers. Validate at boundaries (user
-  input, config load, external APIs). Boundary test: if the zero
-  value can occur through the package's own API (constructor
-  accepts nil, optional field), the check stays. If only
-  constructed-and-handed-off code reaches it, it's T22.
-- **T23: Length checks before indexing on internal callers.**
-  *Avoid:* let the runtime panic. Length-check at boundaries
-  only.
-- **T42: Reflexive pointer receivers on small value types.**
-  *Avoid:* receiver type follows semantics. Value receiver for a
-  small immutable value; pointer receiver when the method mutates,
-  the struct is large enough to cost on copy, or the type already
-  has pointer methods. Don't default to pointer. Semantic; voice
-  lens, not grep.
-- **T43: Goroutine-per-task without lifecycle coordination.**
-  *Avoid:* a bare `go f()` whose error nobody collects and whose
-  completion nobody waits on. Use `errgroup` when tasks can fail, a
-  `WaitGroup` when they cannot, or a channel the caller drains.
-  Semantic; voice lens, not grep.
-
-**Test tells:**
-
-- **T24: Identical assertion phrasing copy-pasted across test
-  files.** *Avoid:* assertion phrasing matches what the test is
-  checking. Vary by test.
-- **T25: Tautological test cases.** *Avoid:* a case asserting a
-  function returns its argument unchanged adds nothing. Delete.
-- **T26: Subtests for trivial scalar functions.** *Avoid:* one
-  parent test with a few assertions when the function is
-  `func Double(x int) int { return x*2 }`.
-
-**Voice tells:**
-
-- **T27: Apologetic or hedging documentation.** *Avoid:* state
-  invariants. "This may not handle every case" → either it does
-  or there's a `// TODO:` with the gap.
-- **T28: Over-explanation of standard Go idioms.** *Avoid:*
-  don't comment `defer mu.Unlock()`. Don't comment `if err != nil
-  { return err }`. The Go reader knows.
-- **T29: Uniform sentence length across a file.** *Avoid:* read
-  the file aloud after writing. If every sentence is the same
-  length, vary.
-- **T30: Identical paragraph rhythm.** *Avoid:* if every doc
-  paragraph is "Sentence one. Sentence two. Sentence three.",
-  break the pattern.
-- **T31: Uniform verbosity (identical doc shape and length across a
-  file).** *Avoid:* a 3-line helper's doc is two words.
-  A 30-line state machine's is two paragraphs. Length follows
-  complexity.
-- **T32: `Builder` patterns where a struct literal would
-  suffice.** *Avoid:* `cfg := Config{A: 1, B: 2}`, not
-  `cfg := NewConfigBuilder().WithA(1).WithB(2).Build()`. Builders
-  earn their place only when construction is multi-stage and
-  validates between stages.
-- **T38: Comment frequency: library density on application
-  code.** *Avoid:* application code (`internal/`, project-private
-  helpers) lives at ~7–9% comment-line ratio. Stdlib library
-  density (~15%) is for contract-bearing public API. If a file
-  is heading toward library density and isn't a public API,
-  apply §0 to each comment and delete the ones that fail.
-- **T39: Section-boundary commenting.** *Avoid:* humans comment
-  where understanding *fails*, not where structure *changes*. A
-  comment at the top of a loop, ahead of a transformation, or
-  before a branch that paraphrases the next 3–5 lines is the
-  signature failure mode. Apply the §0 paraphrase test before
-  saving.
-- **T40: Markdown shape leaking into godoc.** *Avoid:* no
-  label-colon paragraphs (`Picker list:`), no `NOTE:` /
-  `IMPORTANT:` / `TODO:` prefixes (real TODOs use
-  `// TODO(owner):`), no closing aphoristic summary sentence,
-  at most one ADR or RFC cite per godoc. Go godoc is prose
-  paragraphs. If the comment wants headings, it is an ADR or a
-  package doc, not a function godoc.
-
-When a tell is hard to spot at write-time, `/simplify` runs a
-voice lens against the diff that names tells by number.
+Review comments against Go Doc Comments and the standard library, not a
+fixed checklist. Read the doc comments next to the same kind of code in
+the stdlib and ask whether yours match their density, shape, and candor.
+The recurring failure mode is the paraphrase comment that restates the
+code; run the write-time gate's mechanical test on every in-function
+comment before saving. `/simplify` runs a quality lens over the diff and
+flags comments that paraphrase the code or restate a type.
 
 ## Output
 
@@ -729,6 +559,6 @@ voice lens against the diff that names tells by number.
 
 ## Module Naming
 
-Use `github.com/glw907/<project-name>` as the module path.
-Go version in go.mod should match what is installed on the system
-(currently 1.26.1).
+Use `github.com/<owner>/<project-name>` as the module path, matching
+the repository it lives in. The Go version in go.mod should match what
+is installed on the system (currently 1.26.1).

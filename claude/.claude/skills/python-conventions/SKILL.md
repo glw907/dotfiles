@@ -5,26 +5,33 @@ description: >
   workstation. Use before writing, reviewing, or modifying any Python
   docstring or inline comment. Covers the write-time comment-or-not gate,
   the PEP 257 docstring shape (state intent, never the type the hint
-  carries), the copy-in ruff D config, and the T-P1 through T-P13 AI-tell
-  catalogue. The prose authority is the python-comments register.
+  carries), the copy-in ruff D config, and the standard's principles and
+  exemplars.
 ---
 
 # Python Comment Conventions
 
-The reader is a Python coder or an agent already looking at the code. A comment carries what the
-code cannot: a why, a constraint, a piece of evidence. The type hint already states the type, so a
-docstring that restates it is noise. This skill is the Python arm of the authoring charter
-(`~/.claude/docs/authoring-charter.md`). The deeper prose authority, with exemplars, is the
-`python-comments` register at `~/.claude/docs/voice/python-comments.md`; load it before writing or
-reviewing comments.
+Docstrings follow **PEP 257** and comments follow **PEP 8**. The reader is a Python coder or an
+agent already looking at the code. A comment carries what the code cannot: a why, a constraint, a
+piece of evidence. The type hint already states the type, so a docstring that restates it is
+noise. The linter is **ruff's `D` rules** (pydocstyle); the exemplar is **the Python standard
+library**: a one-line docstring or none, a `#` comment only where the why is non-obvious, type
+hints carrying the types. This skill is the Python arm of the authoring charter
+(`~/.claude/docs/authoring-charter.md`).
 
-## Persona
+## Principles
 
-You write Python the way the standard library and a well-run CLI do: a terse one-line docstring or
-none, a `#` comment only where the why is non-obvious, type hints carrying the types. The
-workstation's Python is small scripts in `~/.local/bin`, not a documented library, so a one-line
-docstring is the common case and a missing one is fine. An `Args:` or `Returns:` block is reserved
-for a contract the signature and the hints leave unobvious. Imperative mood, period-terminated.
+- **Comment the why, not the what.** The code and the hints say what. A comment earns its place
+  when it carries a reason, a constraint, or a piece of evidence the code cannot.
+- **Document the contract.** A docstring states intent and what a caller must know: the unit, the
+  bound, the None-semantic. Never the type the hint declares.
+- **Do not paraphrase the code.** If the docstring is the signature in English, or a `#` comment
+  restates the next line, delete it.
+
+The workstation's Python is small scripts in `~/.local/bin`, not a documented library, so a
+one-line docstring is the common case and a missing one is fine. An `Args:` or `Returns:` block
+is reserved for a contract the signature and the hints leave unobvious. Imperative mood,
+period-terminated.
 
 ## §0: Comment-or-not (write-time gate)
 
@@ -57,7 +64,7 @@ docstring is the signature in English, or the `#` comment restates the next line
    NO  -> no comment.
 
 4. A real gap or deferral?
-   YES -> a concrete # TODO(glw907): ...   NO -> no apology, no hedge.
+   YES -> a concrete # TODO(owner): ...   NO -> no apology, no hedge.
 ```
 
 ruff does not force a docstring to exist; the `D100` through `D107` presence family is ignored
@@ -77,7 +84,7 @@ precisely so this gate, not the linter, owns presence. That mirrors Go's opt-in-
 - A module docstring is one sentence of intent when it earns its place, not a banner and not
   metadata git already tracks.
 - Vary the opener across neighbors. Never lead every docstring with "Foo does X". One thought per
-  comment. No em dash.
+  comment.
 
 ## Linting: the copy-in ruff config
 
@@ -102,45 +109,19 @@ convention-incompatible ones for you (and suppresses the `D203`/`D211` and `D212
 incompatibility warnings). The `ignore` list drops the whole missing-docstring presence family,
 because ruff has no warn tier and presence is this skill's gate, not a hard block. `extend-select`
 restores `D401`, which the google convention drops. `per-file-ignores` exempts tests. ruff lints an
-extensionless script too when you pass its path, so the bin scripts are covered; Vale's `py` scope
-reaches `.py` files only.
+extensionless script too when you pass its path, so the bin scripts are covered.
 
-## §catalogue: the T-P1 through T-P13 AI-tell catalogue
+## Note on the division of labor
 
-Each tell: id, name, the mechanical avoidance rule. The full prose, with an AI-shaped example and a
-human counter-example, is in the `python-comments` register. When a finding triggers more than one
-tell, cite the strongest: T-P1 (signature restatement) outranks T-P6 (type in the docstring); T-P4
-(paraphrase) outranks a structural tell on the same line. Cite as `T-P<n> at file:line`.
-
-| id | name | rule |
-|---|---|---|
-| T-P1 | docstring restating the signature | if it is the signature in English, delete it |
-| T-P2 | reflexive docstring on a trivial helper | a private helper gets a docstring only for unobvious behavior |
-| T-P3 | `Args:`/`Returns:` duplicating type hints | document a constraint, not a type the hint declares |
-| T-P4 | `# This function` / restating the next line | the paraphrase test; comment the surprise |
-| T-P5 | module or class docstring banner | one prose sentence; no banner art, no metadata git tracks |
-| T-P6 | type info in the docstring | annotate the signature; the docstring states intent |
-| T-P7 | hedging or apologetic docstring | state the invariant; a real gap is a concrete `# TODO(glw907):` |
-| T-P8 | uniform docstring rhythm | length follows complexity |
-| T-P9 | uniform "Foo does X" shape | imperative mood, varied sentence shape across neighbors |
-| T-P10 | speculative `Raises:` entries | document only an exception a caller must handle |
-| T-P11 | over-explaining Python idioms | never explain `with` or a comprehension to a Python reader |
-| T-P12 | task-framing or changelog comments | git carries the task and the fix |
-| T-P13 | restated-annotation `#` comment | the annotation is the type statement; delete the comment |
-
-## Tooling and the division of labor
-
-- ruff (`D` rules) owns docstring correctness: imperative mood, the period, the one-line form,
-  argument-description completeness when an `Args:` block exists. It cannot see prose quality, and it
-  does not force presence.
-- Vale on `.py` comments owns the deterministic lexical net: the em dash, the marketing and slop
-  words, the banned phrases, inside `#` comments and `"""` docstrings. It reaches `.py` files only;
-  an extensionless script gets the ruff layer alone.
-- This skill and the register own the semantic tells neither tool can see: the paraphrase, the
-  reflexive docstring, the type narrated in prose, the uniform rhythm. When a finding is a plain
-  lexical or correctness hit, expect ruff or Vale to have caught it; spend the judgment here.
+ruff (`D` rules) owns docstring correctness: imperative mood, the period, the one-line form,
+argument-description completeness when an `Args:` block exists. It cannot see prose quality, and it
+does not force presence. The judgment this skill spends is on what ruff cannot catch: the
+paraphrase, the reflexive docstring on a trivial helper, the type narrated in prose, the uniform
+rhythm across neighbors. When the shape of a docstring is in doubt, read how the standard library
+documents the same kind of function and match it.
 
 ## Output
 
-When reviewing, cite each finding as `T-P<n> at file:line` with the one-line avoidance rule. When
-writing, run the §0 gate first, then the rubric, then write only what survives.
+When writing, run the §0 gate first, then the rubric, then write only what survives. When
+reviewing, cite each finding at `file:line` with the principle it breaks and, where it helps, the
+standard-library docstring it should resemble.
