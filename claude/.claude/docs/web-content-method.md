@@ -6,8 +6,8 @@ catalog, and the rubric. Both the `content-draft` and `content-review` skills lo
 
 The guiding principle: a website article is not a code comment. Website content starts from the
 audience. The substance levers (audience, concreteness, exemplars, an independent rubric review)
-do the real work. The avoidance levers (the banned list, burstiness) are backstops, best left to
-the deterministic `prose-guard`.
+do the real work. The avoidance levers (the banned list) are backstops, best left to
+the deterministic Vale check.
 
 ## 1. The brief-first drafting method
 
@@ -65,7 +65,7 @@ routing (for ECXC: `docs/content-guide.md`, "How the system learns").
 
 The primary style control. Each pair shows the slop version and the on-voice version of the same
 idea. Each site adds its own pairs in its local `content-guide.md`. The off-voice halves sit in a
-fenced block because they carry the words the guard blocks.
+fenced block so Vale skips the banned words they carry.
 
 ```
 Off-voice (AI or program marketing): "East Community Nordic offers a comprehensive summer training
@@ -86,7 +86,7 @@ hold together. Bring trail shoes, a water bottle, and bug spray."
 ## 3. The Signs-of-AI-writing catalog
 
 The full set, sourced from Wikipedia's "Signs of AI writing" page and the user's standard. It lives
-in a fenced block so the guard skips it.
+in a fenced block so Vale skips it.
 
 ```
 Vocabulary to skip: delve, dive into, navigate (as metaphor), unlock, embark, foster, cultivate,
@@ -118,7 +118,7 @@ being-verbs), formulaic upbeat conclusion sections, and vague attribution opener
 Audience-first, with hard gates that override the score.
 
 Hard gates. Any hit blocks publish, whatever the score:
-- A banned word or phrase from the catalog (also caught by `prose-guard`).
+- A banned word or phrase from the catalog (also caught by Vale).
 - An unverified or false factual claim, a false implication carried by the framing (true
   sentences can still assert a falsehood together), or fabricated social proof.
 - A safety or standard-of-care promise that carries legal risk.

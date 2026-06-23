@@ -134,9 +134,8 @@ tell, cite the strongest: T-P1 (signature restatement) outranks T-P6 (type in th
   argument-description completeness when an `Args:` block exists. It cannot see prose quality, and it
   does not force presence.
 - Vale on `.py` comments owns the deterministic lexical net: the em dash, the marketing and slop
-  words, the banned phrases, inside `#` comments and `"""` docstrings. It is the home of the retired
-  `prose-guard` comment tier. It reaches `.py` files only; an extensionless script gets the ruff
-  layer alone.
+  words, the banned phrases, inside `#` comments and `"""` docstrings. It reaches `.py` files only;
+  an extensionless script gets the ruff layer alone.
 - This skill and the register own the semantic tells neither tool can see: the paraphrase, the
   reflexive docstring, the type narrated in prose, the uniform rhythm. When a finding is a plain
   lexical or correctness hit, expect ruff or Vale to have caught it; spend the judgment here.

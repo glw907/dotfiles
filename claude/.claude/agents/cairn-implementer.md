@@ -53,8 +53,8 @@ rather than committing a red gate.
   modifiers; inputs are bordered by default and fields group with `<fieldset>`/`<legend>`. Do
   not emit the removed classes. (Component tests assert DOM and roles, not computed styles,
   so they will not catch a dead class; that is your responsibility.)
-- **No em dashes anywhere**, including comments and strings. A `prose-guard` hook rejects files
-  that contain them. Write in a plain voice.
+- **No em dashes anywhere**, including comments and strings. Cairn's `check:comments` Vale gate flags
+  them in comments, and the em dash is a tell here. Write in a plain voice.
 - **carta-md** is client-only: import it only inside `.svelte` files (the carta-boundary test
   bars server `.ts` modules from importing it). Its `Carta` class is not reachable as a named
   export under NodeNext; type the editing surface structurally and cast the dynamic import.

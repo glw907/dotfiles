@@ -8,8 +8,8 @@ Warnings and suggestions ride along as advisory additionalContext. The hook neve
 blocks a write (the tool has already run) and fails open: any internal problem, a
 missing Vale, or a file under no .vale.ini exits 0 in silence.
 
-Not wired into settings.json yet; prose-guard stays the active hook until the cutover
-plan. Invoke by piping the PostToolUse JSON on stdin.
+Wired into settings.json as the PostToolUse prose hook (the cutover, plan 07). Invoke
+by piping the PostToolUse JSON on stdin.
 """
 import json
 import os

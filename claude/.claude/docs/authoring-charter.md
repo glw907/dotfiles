@@ -85,7 +85,7 @@ own developer docs and code comments, and the two never merge.
   `~/.dotfiles/docs/superpowers/specs/2026-06-22-ai-drafting-prose-system-design.md`.
 - Code comments across four languages and the three layers are designed in
   `~/.dotfiles/docs/superpowers/specs/2026-06-22-code-comment-standards-design.md`.
-- Register routing for prose lives in `~/.claude/docs/prose-voice.md`, and the registers themselves
+- Register routing for prose lives in the `writing-voice` skill, and the registers themselves
   in `~/.claude/docs/voice/`.
 - Comment voice references are `~/.claude/docs/go-comment-voice.md` and
   `~/.claude/docs/voice/ts-svelte-comments.md` and `~/.claude/docs/voice/python-comments.md`.
@@ -104,7 +104,8 @@ own developer docs and code comments, and the two never merge.
 registers, the Vale `vale-hook` lints a saved Markdown file and scopes findings to the changed
 lines (exit 2 on an error-tier finding, advisory `additionalContext` otherwise, fail open), a
 Microsoft fixture guards the end-user baseline, and the `prose-voice-reviewer` subagent gives the
-read-only second opinion. The cutover is the next plan: wire the hook in `settings.json`, rewrite
-the always-on output style and the global CLAUDE.md, build the `writing-voice` Skill router, retire
-`prose-guard`, and repoint `prose-voice.md`.
-- `prose-guard` is being retired in full; Vale takes over the feedback layer.
+read-only second opinion. The cutover is complete (plan 07): the `vale-hook` is wired as the live
+prose hook, the output style and the global CLAUDE.md are leaned to the audience-invariant core, and
+the `writing-voice` skill routes the registers.
+- The legacy bespoke prose linter and its routing doc are fully retired and deleted; Vale, the
+  registers, and the `writing-voice` skill carry the feedback and feedforward.

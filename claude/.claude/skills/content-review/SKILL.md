@@ -19,9 +19,9 @@ rules, budgets, and recipes the draft was written against).
 1. **Read** the target file, the site guide, and the method. If the piece has a brief in
    `docs/content-briefs/`, read it; brief facts are the claim baseline.
 
-2. **Run prose-guard** on the file for the machine signals:
-   `prose-guard <file>`
-   It reports burstiness, banned words, structural tells, and the advisory sweep. Inputs, never
+2. **Run Vale** on the file for the machine signals (the site's `.vale.ini` selects the content
+   baseline): `vale <file>`
+   It reports banned words, structural tells, and the advisory sweep. Inputs, never
    the verdict.
 
 3. **Check the four hard gates:** a banned word or phrase, an unverified or false claim

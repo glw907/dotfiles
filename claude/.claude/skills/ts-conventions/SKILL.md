@@ -167,7 +167,7 @@ Three layers, three jobs:
 - ESLint (jsdoc + tsdoc) owns structure: the `{type}` ban, TSDoc syntax, `@param` drift, the
   coverage warning. It cannot see prose quality.
 - Vale on `.ts` comments owns the deterministic lexical net: the em dash, the marketing and
-  slop words, the banned phrases. It is the home of the retired `prose-guard` comment tier.
+  slop words, the banned phrases.
 - This skill and the register own the semantic tells Vale and ESLint cannot see: the paraphrase,
   the doc on a self-evident export, the uniform comment rhythm. When a finding is a plain
   lexical or structural hit, expect ESLint or Vale to have caught it; spend the judgment here.

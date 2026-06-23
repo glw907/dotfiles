@@ -52,8 +52,8 @@ output rather than committing a red gate.
   the `-bordered` input modifiers; inputs are bordered by default and fields group with
   `<fieldset>`/`<legend>`. Color through theme tokens, never hardcoded oklch or arbitrary
   Tailwind values.
-- **No em dashes anywhere**, including comments and strings. A `prose-guard` hook rejects
-  files that contain them. Write in a plain voice.
+- **No em dashes anywhere**, including comments and strings. The em dash is a tell here, and the
+  site's Vale config flags it where wired. Write in a plain voice.
 - **Website content is a different register.** Anything under `src/content/` (pages,
   posts, form copy) uses the site's web-content voice: read `docs/content-guide.md` in
   full before touching it, and run its self-critique pass on what you wrote. Code and

@@ -209,10 +209,9 @@ the component grammar plan (`docs/superpowers/plans/<file>.md`)." See the
   source-to-`dist` swap), confirm it against the real toolchain at the first task that touches it
   rather than trusting the lock. Plan 07's locked `publishConfig.exports` swap did not work on
   npm 11.
-- **prose-guard is tiered.** The blocking hook checks only em dashes, banned phrases and openers,
-  and structural patterns on the text being written. Anaphora and burstiness are advisory
-  sweep-only and scan the whole file, so do not gate commits or spend effort on them, especially
-  when they sit in a doc's pre-existing body. See the `prose-guard-tiers` memory.
+- **Vale findings are tiered.** The `vale-hook` drives a fix only on an error-tier finding (exit 2);
+  warnings and suggestions ride along as advisory context. Do not gate commits or spend effort on the
+  advisory tier, especially when it sits in a doc's pre-existing body.
 - **Suggest the Workflow tool at the right moments.** It runs only on the user's explicit
   opt-in ("use a workflow"), so name the moment when it would pay off, including the review
   gate of a large pass (an adversarial find-and-verify sweep catches more than the flat

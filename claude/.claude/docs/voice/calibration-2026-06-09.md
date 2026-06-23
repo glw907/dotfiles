@@ -33,12 +33,12 @@ added to the registry buys all three surfaces in one place, so they cannot disag
 
 ## Sample 3: agent-facing (a rule for handling post-hook feedback)
 
-Treat prose-guard post-hook feedback as a revision trigger, not noise. The feedback fires
+Treat the `vale-hook` post-hook feedback as a revision trigger, not noise. The feedback fires
 after a Write or Edit and lists advisory tells in the file you just touched. If a finding
 sits in prose you wrote this turn, revise it now; the draft is fresh and a reword costs
 one Edit. If it sits in pre-existing body text, leave it. Advisory findings never gate
 work, and sweep noise in an old file belongs to the file's owner, not to you. Never
-silence a finding by moving your own prose into a code fence. The fence tells the guard
+silence a finding by moving your own prose into a code fence. The fence tells Vale
 the text is quoted material; using it on prose you are writing is a dodge, and the dodge
 is itself a tell.
 
