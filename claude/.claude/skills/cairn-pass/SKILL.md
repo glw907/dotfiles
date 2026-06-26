@@ -138,6 +138,11 @@ fixes every doc its change touched, including the inbound references on other pa
 - Append any design friction the writing surfaced to `docs/internal/docs-friction-log.md`, one entry
   per finding with its perspective (developer or editor) and a short note. Triage candidates into
   `ROADMAP.md` (Now or Next) and the STATUS carry-forwards. This repo keeps no separate backlog file.
+- Keep `ROADMAP.md` current, the same as the reference docs. A pass that shipped a roadmap item marks it
+  done and removes it from the live tiers; a pass that surfaced a new direction files it into the right
+  tier. The roadmap is a forward view, not a changelog: shipped history lives in STATUS and the
+  post-mortems. A backlog file only ever appended to drifts heavy and resurfaces dead work (the
+  hardening initiative had to prune a stale friction log for exactly this), so prune as you go.
 
 A docs-only pass skips the engine check and test (step 2) but still does this step, including the doc
 gates. See the `docs-is-a-pass-dimension` memory.
