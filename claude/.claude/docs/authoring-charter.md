@@ -32,6 +32,7 @@ whether the writing is good.
 | Audience | Standard | Linter | Exemplars |
 |---|---|---|---|
 | Developer docs | Google Developer Documentation Style Guide | Vale Google package | Google's own docs |
+| Changelog, release notes, upgrade guide | Google Developer Documentation Style Guide | Vale Google package where the path is scoped | Google's own docs, the in-tree CHANGELOG |
 | End-user and editor docs | Microsoft Writing Style Guide | Vale Microsoft package | Microsoft Learn |
 | Go comments | Go Doc Comments, Effective Go | gofmt, go vet | the standard library |
 | TypeScript and Svelte comments | TSDoc, plus the Svelte `@component` convention | ESLint jsdoc + tsdoc | well-regarded libraries |

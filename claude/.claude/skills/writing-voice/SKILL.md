@@ -20,6 +20,7 @@ authoring charter (`~/.claude/docs/authoring-charter.md`).
 |---|---|---|
 | Developer docs, README, or design doc in a Go repo | Google Developer Documentation Style Guide | `~/.claude/docs/voice/technical-doc-go.md` |
 | Developer docs, README, or design doc in a SvelteKit or web repo | Google Developer Documentation Style Guide | `~/.claude/docs/voice/technical-doc-web.md` |
+| Changelog entry, GitHub release note, or upgrade-guide entry | Google Developer Documentation Style Guide (the developer reading the changelog is the same reader as the docs) | `~/.claude/docs/voice/technical-doc-web.md` (Go repo: `technical-doc-go.md`) |
 | End-user and editor product copy, admin walkthroughs | Microsoft Writing Style Guide | `~/.claude/docs/voice/editor.md` |
 | CLAUDE.md, skills, agent definitions, hook text | Anthropic Claude Code best practices | `~/.claude/docs/voice/agent-facing.md` |
 | Commit messages and PR bodies | Conventional Commits and the git-commit canon | `~/.claude/docs/voice/commit-and-pr.md` |
