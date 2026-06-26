@@ -112,6 +112,11 @@ def main():
     path = tool_input.get("file_path", "")
     if not path.endswith(".md"):
         return 0  # prose hook: Markdown only; code comments are the comment arm's
+    # Once-off planning docs (specs, plans, post-mortems) are internal engineering artifacts,
+    # not the published developer documentation the Google standard governs, so the hook skips
+    # them rather than spend tokens on advisory findings that do not matter for a write-once doc.
+    if "/superpowers/" in path:
+        return 0
     try:
         with open(path, encoding="utf-8") as handle:
             saved = handle.read()
