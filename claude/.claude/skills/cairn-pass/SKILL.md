@@ -78,6 +78,13 @@ bar, and that means `npm test` **exits 0**: a passing assertion count is not eno
 since an unhandled rejection can leave every test green while the process exits 1.
 Fix every failure before continuing.
 
+Then run `npm run check:comments` (the ESLint TSDoc + em-dash gate over `src/lib`). The
+`cairn-implementer` gate and `npm run check` (svelte-check) do **not** cover it, so a TSDoc structure
+slip (a multiline `/**` with text on the first line, a stray `{type}` tag) passes every other gate and
+only fails on CI. Run it here, with the from-scratch consumer build, before calling a pass done. This
+gate, and `check:reference:signatures` in step 5, are the two CI-only checks an `0.62.0`-era pass shipped
+red because the local ritual skipped them.
+
 **Prove the consumer build, not only `npm test`.** The package ships TypeScript inside its `.svelte`
 files, so a consumer-bundler incompatibility (a Vite 8 / Rolldown parse failure, an import-resolution
 gap) surfaces only when a consumer builds, never in the library's own `npm test`. The showcase e2e is
@@ -120,11 +127,14 @@ fixes every doc its change touched, including the inbound references on other pa
   or renames it, the reference page is not the only place that names it. `grep -rn` the whole `docs/`
   tree (and `README.md`) for the old name and any reference anchor (`core.md#<oldname>`), and repoint
   or rewrite every hit. The reference-coverage gate does not catch a stale inbound link.
-- **Run all three doc gates.** `npm run check:reference` (the export-coverage gate fails on an
-  undocumented export), `npm run check:package` (the entry-point shapes), and `npm run check:docs`
-  (the link gate, which fails on a dead relative link or a stale `#anchor` anywhere under `docs/`).
-  All three must pass. A public-API change is not done until its reference page matches and no doc
-  links to a name the pass removed.
+- **Run all four doc gates.** `npm run check:reference` (the export-coverage gate fails on an
+  undocumented export), `npm run check:reference:signatures` (the documented signature must match the
+  real exported type, so a member added to an exported function's return, like `helpLoad` on
+  `createContentRoutes`, fails until the reference signature carries it), `npm run check:package` (the
+  entry-point shapes), and `npm run check:docs` (the link gate, which fails on a dead relative link or a
+  stale `#anchor` anywhere under `docs/`). All four must pass. `check:reference:signatures` is CI-only
+  and easy to skip locally, so run it by name here. A public-API change is not done until its reference
+  page matches and no doc links to a name the pass removed.
 - Append any design friction the writing surfaced to `docs/internal/docs-friction-log.md`, one entry
   per finding with its perspective (developer or editor) and a short note. Triage candidates into
   `ROADMAP.md` (Now or Next) and the STATUS carry-forwards. This repo keeps no separate backlog file.
