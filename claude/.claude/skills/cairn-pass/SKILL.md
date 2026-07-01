@@ -149,6 +149,19 @@ gates. See the `docs-is-a-pass-dimension` memory.
 
 ### 6. Update tracking
 
+**A pass does NOT bump the version or publish — that is the default, not the exception.** A finished pass
+finalizes its `CHANGELOG.md` entry under `## Unreleased`, leaves `package.json` untouched, and stops: no
+`npm version`, no `gh release create`, no publish. New versions are deliberate and meaningful, never a
+per-pass reflex; cutting a release for every small change is the churn to avoid. The post-mortem, STATUS,
+and changelog steps below run every pass. The release steps (the version bump and the publish) run ONLY
+when a release is independently warranted: a consumer site needs the change now, or a coherent capability
+or initiative has landed and is worth publishing. Otherwise hold and batch — `main` stays releasable, so
+completed passes accumulate unpublished and a later publish rolls the window. When a cut IS warranted, the
+release is its own procedure: invoke the **`cairn-release`** skill, which carries the gate, the free-number
+check, the rolled notes, the OIDC publish, and the verify. Do not inline release mechanics here. See also the
+"Releases (cadence and scheme)" section in cairn-cms `CLAUDE.md` and the `cairn-release-process-and-versioning`
+memory.
+
 Append the post-mortem to the active plan file (what was built, what was verified
 with evidence, decisions locked in, blockers). Then update `cairn-cms/docs/STATUS.md`,
 the canonical rolling status, with where the work is now, what is next, the open
@@ -166,12 +179,11 @@ rediscovering each rename. The `0.x` changes also accumulate in the upgrade guid
 (`docs/guides/upgrade-cairn.md`), one per-version entry each; add the pass's entry there too,
 for a behavior change as well as a rename.
 
-**Release notes (on publish).** Every publish ships a GitHub Release, and its body is the
-changelog window since the last published tag, not an empty release. When a publish rolls
-several held minors into one (the common case in this initiative), the release body summarizes
-each minor in the window and carries every `Consumers must:` line from the breaking ones. The
-release is also what fires the OIDC trusted-publishing workflow, so cutting it with real notes
-is the publish step, not a chore after it. Cut it with `gh release create v<x.y.z> --target main`.
+**Releasing is a separate skill, not a step here.** When the cadence calls for a publish, invoke
+**`cairn-release`**. It owns the whole procedure: the gate (is a cut warranted), the free-number check
+(`npm view`; numbers are immutable), the version bump at the cut, the rolled release notes (the changelog
+window since the last published tag, carrying every `Consumers must:` line), the `gh release create
+v<x.y.z> --target main` that fires the OIDC publish, and the verify. A pass never inlines this.
 
 ### 7. Commit
 
