@@ -32,8 +32,9 @@ nearest the piece. Then work the steps in order.
    a place, date, cost, or quote. Vary the shapes: sentence counts, bullet architectures,
    paragraph sizes.
 
-3. **Independent humanize and skeptic critic.** Dispatch a fresh subagent (general-purpose; it
-   must not see the drafting conversation) with: the draft, the brief, the site's voice
+3. **Independent humanize and skeptic critic.** Dispatch a fresh subagent (general-purpose with
+   `model: sonnet`, since it has no frontmatter pin and would otherwise inherit the main-loop
+   model; it must not see the drafting conversation) with: the draft, the brief, the site's voice
    calibration set (`docs/voice-calibration.md`, negative and positive examples) if one exists,
    and the corpus entries nearest the piece. Two jobs. Style: list the sentences that
    pattern-match a negative example or could appear on any organization's site, each with the

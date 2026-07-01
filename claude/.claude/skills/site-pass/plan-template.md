@@ -1,10 +1,11 @@
 # Pass <n>: <topic>
 
-> **For agentic workers:** Implement this plan task-by-task in the main loop,
-> verifying each task before the next. Dispatch `site-implementer` subagents
-> only for parallel-independent tasks or a worktree-isolated change (they
-> inherit the main-loop model; pass `model: sonnet` for a mechanical fan-out).
-> Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Orchestrate this plan task-by-task from the main
+> loop: dispatch each task to a `site-implementer` subagent, review its diff,
+> and verify the gate before the next dispatch. `site-implementer` is pinned
+> to Sonnet in its own frontmatter; pass `model: opus` or `model: fable` only
+> to upshift a task with novel correctness-critical logic the plan does not
+> fully specify. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** One sentence stating what this pass produces.
 

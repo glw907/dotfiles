@@ -77,7 +77,7 @@ beyond your task.
 
 ## Verify plan assumptions
 
-A plan's draft code and prose are a starting point, not ground truth. When a task asserts a
+A plan's stated assumptions are a starting point, not ground truth. When a task asserts a
 packaging, build, or module-resolution mechanism (for example `publishConfig.exports`, an export
 condition, a source-to-`dist` swap, or an `attw`/`publint` expectation), confirm it against the
 real toolchain before following it verbatim. If a locked assumption turns out false, report it as

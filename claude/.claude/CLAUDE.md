@@ -77,9 +77,45 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
 
-## Model economy
+## Model economy (Fable conducts)
 
-The frontier main model is expensive; spend it where it makes a substantial difference and default to cheaper models everywhere else. The main loop keeps the thinking work: brainstorming, specs, plans, research synthesis, review-finding triage, post-mortems, and final user-facing prose. Well-specified implementation goes to Sonnet-pinned implementer agents, with the main loop reviewing diffs and verifying gates between dispatches. Reviewer agents keep their deliberate Opus pins (model diversity at the review gate is a design choice, and they run once per pass). Upshift a single dispatch (`model: opus` or `model: fable`) only for novel correctness-critical logic the plan does not fully specify.
+Two co-equal budgets govern every initiative at the same quality bar: total tokens spent and
+Geoff's attended time. Neither means minimal main-model usage, and they trade against each other.
+When they conflict, spend the budget that can buy the thing: tokens for anything research,
+verification, or a retry can resolve; attended time only for taste, priorities, and product
+forks. Asking Geoff what a search could answer misroutes his time; dispatching so cheap that he
+must correct the rework misroutes both. Fable output costs $50/MTok (2x Opus 4.8, ~3x Sonnet 5, 10x Haiku 4.5) and draws from a
+tighter rate-limit bucket than any other model, so its seat is the judgment that prevents rework:
+brainstorming, specs, plan authorship, dispatch decisions, diff review and finding triage,
+synthesis, post-mortems, and final user-facing prose. Never downshift the planner. A weak plan
+compounds into downstream rework that exceeds the savings; a cheap implementer executing a
+frontier-authored plan is the stable configuration.
+
+Volume work never runs in the main loop. If the main loop is implementing, bulk-reading files, or
+grinding mechanical edits, that is the leak; dispatch it. Well-specified implementation goes to the
+Sonnet-pinned implementer agents. Reviewer agents keep their Opus pins: with a Fable conductor and
+Sonnet implementers, the Opus review gate is also cross-model diversity, which counters the
+correlated blind spots of same-model self-review.
+
+Unpinned agents inherit the main model. `general-purpose`, `Plan`, the `claude` catch-all, and
+Workflow `agent()` calls without a `model` option all run on Fable at main-loop price unless told
+otherwise, so every dispatch to an unpinned agent carries an explicit model: `sonnet` by default,
+`haiku` for mechanical search and file discovery (Explore is already Haiku). Upshift a single
+dispatch (`model: opus` or `model: fable`) only for novel correctness-critical logic the plan does
+not fully specify.
+
+Effort is the second lever, cheaper than a model swap in both directions: drop `effort` to low on
+mechanical dispatches, and raise it on a cheap model before upshifting the model. The main loop
+stays at high (Fable's default); reserve xhigh or max for a single hard decision, since max is
+prone to overthinking.
+
+Subagents start with zero context and read the dispatch literally. Pre-extract exactly what the
+task needs; an under-specified dispatch returns incomplete work, and pasting whole history
+recreates the context bloat the split exists to remove.
+
+Trust but verify the pins: the model-pin mechanism has shipped silent failures in both directions
+(per-dispatch `model` ignored; frontmatter pins not applied). When a dispatch runs surprisingly
+slow, expensive, or weak, check which model actually ran before adjusting anything else.
 
 ## Multi-agent workflows: suggest, never launch unprompted
 
@@ -92,6 +128,34 @@ Plan and execute in one session. Fable 5's long context plus automatic summariza
 After authoring a plan, still pre-bake the durable artifacts before executing. Commit the plan, point the project's status doc at it as the immediate next action, and refresh any relevant memory. This is insurance for a crashed or interrupted session, not a handoff. Anything load-bearing must live in the plan, spec, status doc, or memory, never only in the conversation. Do not run the `superpowers:writing-plans` "which execution method?" handoff question; same-session orchestrate-and-verify is the default.
 
 A deliberate context clear is now the exception, reserved for an initiative whose brainstorm ran long and noisy. When clearing, give the exact prompt to paste in the fresh session, including which directory to launch in. This remains the pre-bake half of the autonomy-and-handoff practice.
+
+## Process proportionality (Fable-era superpowers)
+
+The human gate is plan approval, once. Brainstorm and plan interactively; after the plan is
+approved, execution runs to completion with no per-task check-ins, in the spirit of
+`superpowers:subagent-driven-development` ("should I continue?" prompts and progress summaries
+waste Geoff's time). Automated layers replace the mid-loop human: the repo's quality gates, the
+orchestrator's diff review after each dispatch, and the reviewer fan-out at the pass end. Batch
+judgment calls that arise mid-execution into one combined question instead of stopping per item;
+stop early only for a genuine blocker or a scope change.
+
+Plans specify outcomes, constraints, and acceptance criteria per task, never implementation code.
+A plan that embeds code is written twice, because the implementer rewrites it anyway; describe
+what done looks like (tests, seams, contracts) and let the implementer choose the code.
+
+Small tasks skip the ceremony. When a change touches a handful of files, has its behavior fully
+specified by the request or the existing tests, and adds no new public surface, schema, or auth
+behavior, skip brainstorming and plan-writing and implement directly, still through the quality
+gates and code-simplifier. Fable investigates before acting and verifies its own work, which
+covers what the ceremony compensated for in smaller models; for the same reason, do not add
+verification-reminder ceremony in the main loop on top of the mechanical gates. When the track
+is genuinely unclear, ask which one in a single sentence, not a brainstorming loop.
+
+Score both budgets at pass end. In the post-mortem, record two numbers: tokens spent (from
+`/cost` or the usage console) and human interaction points, counting every question, approval,
+and correction that pulled Geoff in. A question that did not change the outcome is a defect
+against the second budget. No proven composite score exists for the pair; the trend across
+passes is the signal, so record the numbers even when they look bad.
 
 ## Writing voice
 
