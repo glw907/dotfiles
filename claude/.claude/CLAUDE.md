@@ -121,6 +121,21 @@ slow, expensive, or weak, check which model actually ran before adjusting anythi
 
 The Workflow tool orchestrates fleets of subagents deterministically, and it runs only on my explicit opt-in. When a task would clearly benefit, suggest it rather than staying silent. Name what the workflow would do and the rough scale, and note that "use a workflow" is the opt-in phrase. Qualifying moments include the review gate of a large pass (an adversarial find-and-verify sweep catches more than a flat reviewer fan-out), a repo-wide audit or migration, a plan whose tasks are mostly independent, and deep multi-source research. The suggestion costs one sentence; skip it for small or already-verified work.
 
+**Runaway guard, mandatory on any workflow expected to run more than ~30 minutes.** Workflow
+scripts cannot watch a clock or the filesystem, exact token counts arrive only at completion,
+and an agent looping on cheap tool calls never errors, so nothing intervenes unless the main
+loop watches from outside (proven 2026-07-02: a sweep agent burned ~5 hours trimming its own
+agent-memory index). At launch, arm a background Bash guard polling the workflow transcript
+dir every ~5 minutes, alarming on either signature: `journal.jsonl` idle past ~25 minutes (a
+stall), or any single `agent-*.jsonl` past ~900KB and still growing (a token runaway; bytes
+are the live proxy at roughly 3.5-4 chars per token). Intervention: TaskStop the workflow
+task, relaunch with `resumeFromRunId` so completed steps replay from cache and only the live
+step re-runs. Prevention rides the prompts: any workflow agent using a memory-keeping
+agentType gets an explicit "skip agent-memory maintenance" line, and each step states a scope
+or wall-clock expectation so an agent that blows past it self-reports instead of grinding.
+For expensive sweeps, pair the soft guard with a hard turn-level token target, which makes
+`agent()` calls throw at the ceiling.
+
 ## Plan execution: same session by default
 
 Plan and execute in one session. Fable 5's long context plus automatic summarization removed the old reason to hand off, so the brainstorming that produced a plan no longer crowds out the execution. Execution is orchestrate-and-verify: dispatch each well-specified plan task to the repo's implementer agent (pinned Sonnet), review its diff, and confirm the full quality gate before the next dispatch. Implement a task in the main loop, or upshift the dispatch model, only when it carries novel correctness-critical logic the plan does not fully specify.
