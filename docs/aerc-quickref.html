@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>aerc Quick Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=DM+Sans:wght@400;500&display=swap');
+
+    :root {
+      --nord0: #2e3440; --nord1: #3b4252; --nord2: #434c5e; --nord3: #4c566a;
+      --nord4: #d8dee9; --nord6: #eceff4;
+      --frost0: #8fbcbb; --frost1: #88c0d0; --frost2: #81a1c1; --frost3: #5e81ac;
+      --red: #bf616a; --orange: #d08770; --yellow: #ebcb8b; --green: #a3be8c; --purple: #b48ead;
+      --bg: var(--nord0); --elevated: var(--nord1); --border: #3e4555; --dim: #7b88a1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--nord4);
+      line-height: 1.4;
+    }
+
+    /* noise */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      opacity: 0.015;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .page { max-width: 1400px; margin: 0 auto; padding: 2rem 2.5rem 3rem; }
+
+    /* ---- header ---- */
+    header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .title { display: flex; align-items: baseline; gap: 1rem; }
+    h1 {
+      font: 600 1.5rem/1 'JetBrains Mono', monospace;
+      color: var(--nord6);
+      letter-spacing: -0.02em;
+    }
+    h1 em { font-style: normal; color: var(--frost1); }
+    .subtitle { font: 400 0.75rem 'JetBrains Mono', monospace; color: var(--dim); }
+    .meta { font: 400 0.75rem 'JetBrains Mono', monospace; color: var(--nord4); display: flex; gap: 1.25rem; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; vertical-align: 1px; margin-right: 0.35rem; }
+
+    /* ---- sections ---- */
+    section { margin-bottom: 2.25rem; }
+    h2 {
+      font: 600 1.1rem 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    h2::after { content: ''; flex: 1; height: 2px; }
+    .s-list h2 { color: var(--frost1); }
+    .s-list h2::after { background: var(--frost1); opacity: 0.3; }
+    .s-view h2 { color: var(--green); }
+    .s-view h2::after { background: var(--green); opacity: 0.3; }
+    .s-compose h2 { color: var(--purple); }
+    .s-compose h2::after { background: var(--purple); opacity: 0.3; }
+    .s-nvim h2 { color: var(--orange); }
+    .s-nvim h2::after { background: var(--orange); opacity: 0.3; }
+
+    /* ---- grid ---- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    /* ---- cards ---- */
+    .card {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: var(--nord3); }
+    .s-list .card h3 { color: var(--frost1); }
+    .s-view .card h3 { color: var(--green); }
+    .s-compose .card h3 { color: var(--purple); }
+    .s-nvim .card h3 { color: var(--orange); }
+    .card h3 {
+      padding: 0.55rem 0.75rem;
+      font: 600 0.75rem 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid var(--border);
+      background: rgba(76, 86, 106, 0.25);
+    }
+
+    /* ---- key-value rows ---- */
+    dl { padding: 0.15rem 0; }
+    .row {
+      display: flex;
+      align-items: baseline;
+      padding: 0.3rem 0.75rem;
+      gap: 0.75rem;
+      border-bottom: 1px solid rgba(59, 66, 82, 0.5);
+      transition: background 0.15s;
+    }
+    .row:last-child { border-bottom: none; }
+    .row:hover { background: rgba(76, 86, 106, 0.15); }
+    dt { white-space: nowrap; flex-shrink: 0; }
+    dd { font-size: 0.82rem; }
+
+    /* ---- keys ---- */
+    kbd {
+      font: 400 0.75rem 'JetBrains Mono', monospace;
+      color: var(--nord6);
+      background: var(--nord2);
+      border: 1px solid var(--nord3);
+      border-bottom-width: 2px;
+      border-radius: 3px;
+      padding: 0.1em 0.4em;
+      line-height: 1;
+    }
+    .sep { color: var(--nord3); font: 400 0.7rem 'JetBrains Mono', monospace; margin: 0 0.1rem; }
+
+    /* ---- footer ---- */
+    footer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font: 300 0.65rem 'JetBrains Mono', monospace;
+      color: var(--dim);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ---- responsive ---- */
+    @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      .page { padding: 1rem; }
+      header { flex-direction: column; }
+    }
+
+    /* ---- print ---- */
+    @media print {
+      body { background: #fff; color: #1a1a1a; }
+      body::before { display: none; }
+      .card { border-color: #ccc; background: #fafafa; break-inside: avoid; }
+      .card h3 { background: #eee; }
+      kbd { background: #eee; border-color: #bbb; color: #1a1a1a; }
+      h2 { color: #333 !important; }
+      h2::after, header, footer { border-color: #ccc; }
+      .row:hover { background: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="title">
+      <h1><em>aerc</em> quick reference</h1>
+      <span class="subtitle">keybinding &amp; compose reference</span>
+    </div>
+    <div class="meta">
+      <span><span class="dot" style="background:var(--frost1)"></span>geoff@907.life</span>
+      <span><span class="dot" style="background:var(--green)"></span>Fastmail JMAP</span>
+      <span><span class="dot" style="background:var(--purple)"></span>nvim-mail</span>
+    </div>
+  </header>
+
+  <!-- NVIM-MAIL COMPOSE EDITOR -->
+  <section class="s-nvim">
+    <h2>nvim-mail (Compose Editor)</h2>
+    <div class="grid">
+
+      <div class="card"><h3>Exit &amp; Send</h3>
+        <dl>
+          <div class="row"><dt><kbd>Space</kbd><kbd>q</kbd></dt><dd>Save &amp; exit → review screen (spellcheck first)</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>x</kbd></dt><dd>Abort compose (no prompt)</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Spellcheck Prompt</h3>
+        <dl>
+          <div class="row"><dt><kbd>s</kbd></dt><dd>Jump to first misspelling</dd></div>
+          <div class="row"><dt><kbd>y</kbd></dt><dd>Send anyway</dd></div>
+          <div class="row"><dt><kbd>n</kbd></dt><dd>Stay in editor</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Spell Navigation</h3>
+        <dl>
+          <div class="row"><dt><kbd>]s</kbd> <span class="sep">/</span> <kbd>Space</kbd><kbd>]</kbd></dt><dd>Next misspelled word</dd></div>
+          <div class="row"><dt><kbd>[s</kbd> <span class="sep">/</span> <kbd>Space</kbd><kbd>[</kbd></dt><dd>Prev misspelled word</dd></div>
+          <div class="row"><dt><kbd>z=</kbd> <span class="sep">/</span> <kbd>Space</kbd><kbd>z</kbd></dt><dd>Spelling suggestions</dd></div>
+          <div class="row"><dt><kbd>zg</kbd></dt><dd>Add word to dictionary</dd></div>
+          <div class="row"><dt><kbd>zw</kbd></dt><dd>Mark word as misspelled</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Text &amp; Formatting</h3>
+        <dl>
+          <div class="row"><dt><kbd>Space</kbd><kbd>r</kbd> <span class="sep">/</span> <kbd>gqip</kbd></dt><dd>Reflow paragraph to 72 cols</dd></div>
+          <div class="row"><dt><kbd>gqq</kbd></dt><dd>Reflow current line</dd></div>
+          <div class="row"><dt><kbd>(</kbd> <span class="sep">/</span> <kbd>)</kbd></dt><dd>Sentence backward / forward</dd></div>
+          <div class="row"><dt><kbd>{</kbd> <span class="sep">/</span> <kbd>}</kbd></dt><dd>Paragraph backward / forward</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>khard &amp; Tools</h3>
+        <dl>
+          <div class="row"><dt><kbd>Space</kbd><kbd>k</kbd></dt><dd>Insert contact (khard picker)</dd></div>
+          <div class="row"><dt><kbd>Ctrl-o</kbd></dt><dd>Address complete in aerc header (pre-editor)</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>s</kbd></dt><dd>Toggle spell check</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>sig</kbd></dt><dd>Insert signature</dd></div>
+          <div class="row"><dt><kbd>Space</kbd><kbd>t</kbd></dt><dd>Tidy prose (tidytext)</dd></div>
+          <div class="row"><dt><kbd>g</kbd><kbd>Ctrl-g</kbd></dt><dd>Word / char count</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Insert Mode</h3>
+        <dl>
+          <div class="row"><dt><kbd>Ctrl-x</kbd><kbd>Ctrl-s</kbd></dt><dd>Spell suggestion</dd></div>
+          <div class="row"><dt><kbd>Ctrl-n</kbd> <span class="sep">/</span> <kbd>Ctrl-p</kbd></dt><dd>Word complete next / prev</dd></div>
+          <div class="row"><dt><kbd>Ctrl-w</kbd></dt><dd>Delete word backward</dd></div>
+          <div class="row"><dt><kbd>Ctrl-u</kbd></dt><dd>Delete to line start</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Editing</h3>
+        <dl>
+          <div class="row"><dt><kbd>ciw</kbd> <span class="sep">/</span> <kbd>cis</kbd> <span class="sep">/</span> <kbd>cip</kbd></dt><dd>Change word / sentence / paragraph</dd></div>
+          <div class="row"><dt><kbd>J</kbd></dt><dd>Join lines</dd></div>
+          <div class="row"><dt><kbd>gUw</kbd> <span class="sep">/</span> <kbd>guw</kbd></dt><dd>Uppercase / lowercase word</dd></div>
+          <div class="row"><dt><kbd>~</kbd></dt><dd>Toggle character case</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Copy / Paste / Delete</h3>
+        <dl>
+          <div class="row"><dt><kbd>yy</kbd> <span class="sep">/</span> <kbd>yiw</kbd> <span class="sep">/</span> <kbd>yis</kbd> <span class="sep">/</span> <kbd>yip</kbd></dt><dd>Yank line / word / sentence / paragraph</dd></div>
+          <div class="row"><dt><kbd>p</kbd> <span class="sep">/</span> <kbd>P</kbd></dt><dd>Paste after / before</dd></div>
+          <div class="row"><dt><kbd>dd</kbd> <span class="sep">/</span> <kbd>diw</kbd> <span class="sep">/</span> <kbd>dis</kbd> <span class="sep">/</span> <kbd>dip</kbd></dt><dd>Delete line / word / sentence / paragraph</dd></div>
+          <div class="row"><dt><kbd>D</kbd></dt><dd>Delete to end of line</dd></div>
+          <div class="row"><dt><kbd>x</kbd></dt><dd>Delete character</dd></div>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MESSAGE VIEWER -->
+  <section class="s-view">
+    <h2>Message Viewer</h2>
+    <div class="grid">
+
+      <div class="card"><h3>Navigation</h3>
+        <dl>
+          <div class="row"><dt><kbd>J</kbd> <span class="sep">/</span> <kbd>K</kbd></dt><dd>Next / prev message</dd></div>
+          <div class="row"><dt><kbd>Ctrl-j</kbd> <span class="sep">/</span> <kbd>Ctrl-k</kbd></dt><dd>Next / prev MIME part</dd></div>
+          <div class="row"><dt><kbd>H</kbd></dt><dd>Toggle headers</dd></div>
+          <div class="row"><dt><kbd>Tab</kbd></dt><dd>Link picker</dd></div>
+          <div class="row"><dt><kbd>Ctrl-l</kbd></dt><dd>Open link (manual URL)</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Actions</h3>
+        <dl>
+          <div class="row"><dt><kbd>q</kbd></dt><dd>Close viewer</dd></div>
+          <div class="row"><dt><kbd>d</kbd></dt><dd>Delete message</dd></div>
+          <div class="row"><dt><kbd>D</kbd></dt><dd>Close + delete</dd></div>
+          <div class="row"><dt><kbd>a</kbd></dt><dd>Archive</dd></div>
+          <div class="row"><dt><kbd>A</kbd></dt><dd>Close + archive</dd></div>
+          <div class="row"><dt><kbd>o</kbd> <span class="sep">/</span> <kbd>O</kbd></dt><dd>Open attachment</dd></div>
+          <div class="row"><dt><kbd>S</kbd></dt><dd>Save attachment</dd></div>
+          <div class="row"><dt><kbd>f</kbd></dt><dd>Forward</dd></div>
+          <div class="row"><dt><kbd>b</kbd></dt><dd>Save to corpus</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Reply &amp; Filters</h3>
+        <dl>
+          <div class="row"><dt><kbd>rr</kbd></dt><dd>Reply all</dd></div>
+          <div class="row"><dt><kbd>rq</kbd></dt><dd>Reply all, quote</dd></div>
+          <div class="row"><dt><kbd>Rr</kbd></dt><dd>Reply sender</dd></div>
+          <div class="row"><dt><kbd>Rq</kbd></dt><dd>Reply sender, quote</dd></div>
+          <div class="row"><dt><kbd>Ff</kbd></dt><dd>Filter by sender</dd></div>
+          <div class="row"><dt><kbd>Fs</kbd></dt><dd>Filter by subject</dd></div>
+          <div class="row"><dt><kbd>Ft</kbd></dt><dd>Filter by recipient</dd></div>
+          <div class="row"><dt><kbd>md</kbd></dt><dd>Delete masked address</dd></div>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMPOSE -->
+  <section class="s-compose">
+    <h2>Compose</h2>
+    <div class="grid">
+
+      <div class="card"><h3>Field Navigation</h3>
+        <dl>
+          <div class="row"><dt><kbd>Ctrl-j</kbd> <span class="sep">/</span> <kbd>Tab</kbd></dt><dd>Next field</dd></div>
+          <div class="row"><dt><kbd>Ctrl-k</kbd> <span class="sep">/</span> <kbd>Shift-Tab</kbd></dt><dd>Prev field</dd></div>
+          <div class="row"><dt><kbd>Alt-n</kbd> <span class="sep">/</span> <kbd>Alt-p</kbd></dt><dd>Switch account</dd></div>
+          <div class="row"><dt><kbd>Ctrl-o</kbd></dt><dd>Complete address</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Review Screen</h3>
+        <dl>
+          <div class="row"><dt><kbd>y</kbd></dt><dd>HTML multipart + send</dd></div>
+          <div class="row"><dt><kbd>n</kbd></dt><dd>Abort</dd></div>
+          <div class="row"><dt><kbd>v</kbd></dt><dd>Preview</dd></div>
+          <div class="row"><dt><kbd>p</kbd></dt><dd>Postpone</dd></div>
+          <div class="row"><dt><kbd>e</kbd></dt><dd>Back to editor</dd></div>
+          <div class="row"><dt><kbd>a</kbd> <span class="sep">/</span> <kbd>d</kbd></dt><dd>Attach / detach file</dd></div>
+          <div class="row"><dt><kbd>q</kbd></dt><dd>Discard or postpone</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Global</h3>
+        <dl>
+          <div class="row"><dt><kbd>Ctrl-p</kbd> <span class="sep">/</span> <kbd>Ctrl-n</kbd></dt><dd>Prev / next tab</dd></div>
+          <div class="row"><dt><kbd>Ctrl-t</kbd></dt><dd>Open terminal</dd></div>
+          <div class="row"><dt><kbd>?</kbd></dt><dd>Help</dd></div>
+          <div class="row"><dt><kbd>Ctrl-c</kbd> <span class="sep">/</span> <kbd>Ctrl-q</kbd></dt><dd>Quit (confirm)</dd></div>
+          <div class="row"><dt><kbd>$</kbd> <span class="sep">/</span> <kbd>!</kbd></dt><dd>Terminal with cmd</dd></div>
+          <div class="row"><dt><kbd>|</kbd></dt><dd>Pipe to command</dd></div>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MESSAGE LIST -->
+  <section class="s-list">
+    <h2>Message List</h2>
+    <div class="grid">
+
+      <div class="card"><h3>Navigation</h3>
+        <dl>
+          <div class="row"><dt><kbd>j</kbd> <span class="sep">/</span> <kbd>k</kbd></dt><dd>Next / prev message</dd></div>
+          <div class="row"><dt><kbd>g</kbd> <span class="sep">/</span> <kbd>G</kbd></dt><dd>First / last message</dd></div>
+          <div class="row"><dt><kbd>Ctrl-d</kbd> <span class="sep">/</span> <kbd>Ctrl-u</kbd></dt><dd>Half-page down / up</dd></div>
+          <div class="row"><dt><kbd>Ctrl-f</kbd> <span class="sep">/</span> <kbd>Ctrl-b</kbd></dt><dd>Full page down / up</dd></div>
+          <div class="row"><dt><kbd>J</kbd> <span class="sep">/</span> <kbd>K</kbd></dt><dd>Next / prev folder</dd></div>
+          <div class="row"><dt><kbd>H</kbd> <span class="sep">/</span> <kbd>L</kbd></dt><dd>Collapse / expand folder</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Actions</h3>
+        <dl>
+          <div class="row"><dt><kbd>Enter</kbd></dt><dd>Open message</dd></div>
+          <div class="row"><dt><kbd>d</kbd></dt><dd>Delete (confirm)</dd></div>
+          <div class="row"><dt><kbd>D</kbd></dt><dd>Delete (immediate)</dd></div>
+          <div class="row"><dt><kbd>a</kbd></dt><dd>Archive (flat)</dd></div>
+          <div class="row"><dt><kbd>A</kbd></dt><dd>Archive all marked</dd></div>
+          <div class="row"><dt><kbd>c</kbd></dt><dd>Change folder</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Compose</h3>
+        <dl>
+          <div class="row"><dt><kbd>C</kbd> <span class="sep">/</span> <kbd>m</kbd></dt><dd>New message</dd></div>
+          <div class="row"><dt><kbd>rr</kbd></dt><dd>Reply all</dd></div>
+          <div class="row"><dt><kbd>rq</kbd></dt><dd>Reply all, quote</dd></div>
+          <div class="row"><dt><kbd>Rr</kbd></dt><dd>Reply sender</dd></div>
+          <div class="row"><dt><kbd>Rq</kbd></dt><dd>Reply sender, quote</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Search</h3>
+        <dl>
+          <div class="row"><dt><kbd>/</kbd></dt><dd>Search</dd></div>
+          <div class="row"><dt><kbd>\</kbd></dt><dd>Filter</dd></div>
+          <div class="row"><dt><kbd>n</kbd> <span class="sep">/</span> <kbd>N</kbd></dt><dd>Next / prev result</dd></div>
+          <div class="row"><dt><kbd>Esc</kbd></dt><dd>Clear</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Marking &amp; Threads</h3>
+        <dl>
+          <div class="row"><dt><kbd>v</kbd></dt><dd>Toggle mark</dd></div>
+          <div class="row"><dt><kbd>Space</kbd></dt><dd>Mark + next</dd></div>
+          <div class="row"><dt><kbd>V</kbd></dt><dd>Visual mark mode</dd></div>
+          <div class="row"><dt><kbd>T</kbd></dt><dd>Toggle threads</dd></div>
+          <div class="row"><dt><kbd>Tab</kbd></dt><dd>Toggle fold</dd></div>
+          <div class="row"><dt><kbd>zc</kbd> <span class="sep">/</span> <kbd>zo</kbd></dt><dd>Fold / unfold</dd></div>
+          <div class="row"><dt><kbd>zM</kbd> <span class="sep">/</span> <kbd>zR</kbd></dt><dd>Fold all / unfold all</dd></div>
+          <div class="row"><dt><kbd>:mark -a</kbd></dt><dd>Mark all messages</dd></div>
+          <div class="row"><dt><kbd>:unmark -a</kbd></dt><dd>Unmark all messages</dd></div>
+        </dl>
+      </div>
+
+      <div class="card"><h3>Filters &amp; Patches</h3>
+        <dl>
+          <div class="row"><dt><kbd>ff</kbd></dt><dd>Filter by sender</dd></div>
+          <div class="row"><dt><kbd>fs</kbd></dt><dd>Filter by subject</dd></div>
+          <div class="row"><dt><kbd>ft</kbd></dt><dd>Filter by recipient</dd></div>
+          <div class="row"><dt><kbd>md</kbd></dt><dd>Delete masked address</dd></div>
+          <div class="row"><dt><kbd>s</kbd> <span class="sep">/</span> <kbd>S</kbd></dt><dd>Horizontal / vertical split</dd></div>
+          <div class="row"><dt><kbd>pl</kbd></dt><dd>Patch list</dd></div>
+          <div class="row"><dt><kbd>pa</kbd></dt><dd>Patch apply</dd></div>
+          <div class="row"><dt><kbd>pd</kbd></dt><dd>Patch drop</dd></div>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>source: ~/.config/aerc/binds.conf</span>
+    <span>nord theme</span>
+  </footer>
+
+</div>
+</body>
+</html>
