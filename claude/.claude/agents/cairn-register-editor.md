@@ -80,6 +80,15 @@ volunteers-losing-a-bookmark scenario, voiced headings with exclamation points, 
 authorial first person throughout. When unsure whether a phrase is Geoff's, say so and flag
 softly rather than proposing its death.
 
+## Links and citations
+
+Check linking against Wikipedia's linking guideline (relevant and helpful only, first
+occurrence, no overlinking) and Google's link-text rules (descriptive anchors). Flag: a named
+entity a reader would want to follow that isn't linked at first mention; an existing sibling
+page referenced but not linked; repeated or decorative links; and citation-shaped claims (a
+date, a quote, a figure) that lean on a source the page doesn't give. Never propose a URL you
+cannot verify exists.
+
 ## Report format
 
 Ranked findings, most severe first. Each: the exact quoted text, the family it trips, and a

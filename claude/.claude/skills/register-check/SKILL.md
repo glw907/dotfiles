@@ -33,6 +33,24 @@ consistency within the draft and against its sibling pages (README, why-cairn,
 editor-welcome, the docs index must stay mutually consistent). Skip this gate only for edits
 that touch no factual claim.
 
+## Gate 4: links and citations
+
+Audit the linking, in both directions, against two editorial standards: Wikipedia's linking
+guideline (link only where relevant and helpful to the reader, first occurrence only, no
+overlinking) and the Google developer style guide's link-text rules (descriptive anchors,
+never bare URLs or "here").
+
+- **Missing external links:** named entities a reader would plausibly want to follow
+  (products, tools, papers, standards, organizations) linked at first mention — Cloudflare,
+  iA Writer, a cited paper. A citation-shaped claim (a date, a quote, a figure) should carry
+  its source where a verified URL exists; never fabricate a URL to satisfy this.
+- **Missing internal links:** references to sibling pages that exist should link them, at the
+  point where a reader would actually want to jump.
+- **Gratuitous links:** repeated links to the same target, links on common words, decorative
+  links that serve credibility theater rather than the reader. When in doubt, cut; a page's
+  link density should stay low enough that each link reads as a recommendation.
+- **Link text:** descriptive, reading naturally in the sentence.
+
 ## Fold and report
 
 Consolidate the three gates into one ranked list: each finding with the exact quoted text,
