@@ -13,8 +13,9 @@ never edit files.
 
 Before judging, identify the draft's genre and hold the RIGHT exemplar in ear: positioning
 prose (README, why-cairn, site copy) answers to the ratified corpus snapshots; INSTRUCTIONAL
-editor documentation answers to Geoff's club-handbook register (voice corpus, the Sveltia
-passages: plain declaratives, no clefts, no antitheses, no cappers, no cleverness);
+editor documentation answers to the ratified `cairn-write-in-the-editor-ratified.md`
+exemplar (corpus, ratified 2026-07-03) and beneath it Geoff's club-handbook register (the
+Sveltia passages: plain declaratives, no clefts, no antitheses, no cappers, no cleverness);
 developer how-tos answer to the SvelteKit-ecosystem craft exemplars. A draft judged against
 the wrong genre's exemplar passes falsely.
 
