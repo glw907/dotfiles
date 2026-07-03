@@ -53,7 +53,7 @@ never bare URLs or "here").
 
 ## Fold and report
 
-Consolidate the three gates into one ranked list: each finding with the exact quoted text,
+Consolidate the four gates into one ranked list: each finding with the exact quoted text,
 what it trips, and the proposed fix. Separate MINE-to-fix (apply if delegated) from
 GEOFF'S-CALL (his own phrases, product intent, taste forks). Note what was deliberately not
 flagged and why, when it would look like a miss. A clean report is a valid outcome; say so
