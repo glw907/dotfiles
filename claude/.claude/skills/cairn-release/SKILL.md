@@ -109,9 +109,8 @@ This fires `publish.yml` (OIDC trusted publishing, `npm publish --access public`
 Do not pass `--prerelease` unless this is intentionally a release-candidate line. The publish step targets
 `latest` regardless, but the GitHub "Latest" badge follows the flag, so a real release should be a stable
 release. The workflow runs `npm install -g npm@latest` first because trusted publishing needs npm >= 11.5.1.
-Under trusted publishing the `--provenance` flag is unnecessary (provenance is automatic), and `publish.yml`
-in fact sets `NPM_CONFIG_PROVENANCE=false` because provenance attestation requires a public repo and cairn's
-is private; drop that env when the repo goes public.
+Under trusted publishing the `--provenance` flag is unnecessary: provenance is automatic (the repo went
+public 2026-07-03 and the old `NPM_CONFIG_PROVENANCE=false` override was removed with it).
 
 ## 6. Verify the publish
 
