@@ -46,6 +46,14 @@ Do not ask for review, confirmation, or approval until the task is fully complet
 
 ## Cloudflare / Wrangler
 
+**FULL ACCOUNT ACCESS (Geoff, 2026-07-06): the CLAUDE_CODE Cloudflare API token + the
+Cloudflare MCP plugin have full access to the glw907 account (120c269ad6d3dfbe6d63a0bb53758ca0)
+— zones, DNS, Workers, Access apps/policies, D1, R2. Make changes directly when a task
+needs them (DNS records, worker domains, Access policies); don't treat Cloudflare state as
+read-only or ask permission for routine wiring. The account holds BOTH the cairn-family
+sites AND the aksailingclub.org estate (asc-staging, asc-handbook, asc-ops, the live site
+worker, SendGrid/Resend mail DNS).**
+
 - `npx wrangler deploy` / `dev` / `secret put NAME` / `tail`
 - `CLOUDFLARE_API_TOKEN` in `~/.bashrc` -- Wrangler picks it up automatically
 
