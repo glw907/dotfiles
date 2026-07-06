@@ -39,6 +39,13 @@ each step traced to evidence in docs/internal/pre-beta-harvest.md (cairn-cms) an
    by the canonical CI runner (never trust a local render as canonical; regen by FILE PATH,
    not title grep — a grep that can't fail verifies nothing).
 
+7. **Iterate the template after every use (Geoff, 2026-07-05).** Each theme or site built
+   on Waymark ends with a harvest step: every friction, missing seam, structural-variant
+   need, and component gap found during the build folds back into the template (or the
+   engine) as landed improvements or ledger entries — the template gets better with every
+   consumer, and the next port starts from the improved base. A port/rebuild is not done
+   until its harvest is banked.
+
 ## Known anti-patterns (each cost a real deploy)
 
 - The official frontend-design skill is for ORIGINAL aesthetics; it has no
