@@ -73,6 +73,17 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 - **nvim-journal**: `~/.config/nvim-journal/` -- jrnl-md editor with zen-mode + typewriter scrolling
 - **Full setup docs**: `~/.claude/docs/neovim-setup.md` (read on demand)
 
+## Visual fidelity (all projects, 2026-07-05)
+
+Any UI work that must MATCH an existing reference — a site rebuild, a theme port, a design
+migration — invokes the `visual-fidelity` skill at the start and uses the `visual-verifier`
+agent as the grading gate. The core rules, even without the skill: reference screenshots
+before any plan (never build from a verbal description of a design); the context that
+built the UI never grades it (fresh-context verifier, then my own read of the renders);
+nothing deploys to production without at least one full-page render read in the main loop;
+user-facing sites get Geoff's before/after. Born from two same-day production visual
+misses whose mechanical gates were all green (cairn, 2026-07-05).
+
 ## Claude Code Agent Usage
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
