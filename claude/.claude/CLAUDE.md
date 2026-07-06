@@ -52,7 +52,12 @@ Cloudflare MCP plugin have full access to the glw907 account (120c269ad6d3dfbe6d
 needs them (DNS records, worker domains, Access policies); don't treat Cloudflare state as
 read-only or ask permission for routine wiring. The account holds BOTH the cairn-family
 sites AND the aksailingclub.org estate (asc-staging, asc-handbook, asc-ops, the live site
-worker, SendGrid/Resend mail DNS).**
+worker, SendGrid/Resend mail DNS).** Access-protected ASC sites (dev/staging) are reachable
+non-interactively via the service token in `~/.local/secrets`
+(`ASC_ACCESS_CLIENT_ID`/`ASC_ACCESS_CLIENT_SECRET`, CF-Access-Client-* headers); the full
+process is the `asc-cloudflare-access` memory in the cairn project. The MCP plugin's token
+is read-only for Access/Workers-domain writes; use curl with `$CLOUDFLARE_API_TOKEN` for
+writes.
 
 - `npx wrangler deploy` / `dev` / `secret put NAME` / `tail`
 - `CLOUDFLARE_API_TOKEN` in `~/.bashrc` -- Wrangler picks it up automatically
