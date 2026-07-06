@@ -27,10 +27,15 @@ each step traced to evidence in docs/internal/pre-beta-harvest.md (cairn-cms) an
    result, compare to the reference, list differences, fix. Tokens transfer color and
    faces; STRUCTURE requires building the structure — a theme layer over a mismatched
    scaffold cannot reach a different composition.
-4. **Fresh-context verifier gate.** A verifier agent that did NOT build grades each page:
-   reference and render as SEPARATE LABELED image blocks (Anthropic vision docs; composite
-   images are unproven), per width, verdict per visual device, differences classified
-   COSMETIC vs STRUCTURAL. The builder's own "matches" is never accepted.
+4. **Fresh-context verifier gate — a LOOP, not a line.** A verifier agent that did NOT
+   build grades each page: reference and render as SEPARATE LABELED image blocks (Anthropic
+   vision docs; composite images are unproven), per width, verdict per visual device,
+   differences classified COSMETIC vs STRUCTURAL. On FAIL: a fix agent works the list, and
+   then a FRESH verifier grades the fixed state — a fix agent confirming its own fixes is
+   the self-grading failure one level down (all three slate ports' fix agents did exactly
+   this, 2026-07-06, and each needed an independent recheck). The loop exits only on a
+   fresh PASS. In workflow scripts: while-not-PASS around verify->fix, never verify->fix->
+   done.
 5. **The one-check rule (deploy gate).** The main loop READS the final renders itself, and
    a member/user-facing site gets the owner's before/after approval. Nothing deploys
    unlooked-at. Deploy watchers verify the run's exact head sha (stale greens happen).
