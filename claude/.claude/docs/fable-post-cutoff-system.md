@@ -58,3 +58,25 @@ brainstorm). Structured for cache economics:
 `fable-batch add <job.md>` (queues), `submit` (batches the queue, shared-prefix aware),
 `poll`, `collect` (results to files + a digest). Job files carry YAML frontmatter
 (purpose, max_tokens, cache_prefix: <path>) so the ledger writes itself.
+
+## The conductor's suggestion rules (Opus-side, baked in)
+
+Opus NEVER silently spends Fable credits and never silently absorbs Fable-tier work into
+a worse output. When work crosses a trigger, Opus proposes — one sentence naming the job,
+the mode, and the rough size — and Geoff decides. The triggers:
+
+- **Propose a BATCH job when:** a major plan/spec needs authorship; a pass-end review has
+  accumulated (a diff Geoff will rely on, a release gate); a post-mortem closes an arc; a
+  register/prose pass covers user-facing text; multiple verdicts share one spec (batch
+  them with a shared cached prefix). Shape: "This is Fable-batch work — [job], ~[N]k
+  tokens, results by [when]. Queue it?"
+- **Propose a PER-DISPATCH when:** a single verdict gates the next step and Opus's own
+  confidence is genuinely low (say so plainly: "I'd trust Fable's judgment over mine
+  here"); or a design synthesis must reconcile conflicting constraints in one shot.
+- **Propose a SITTING when:** an interactive design/brainstorm session with Geoff is
+  itself the work (candidates + picks). Never for anything a batch job could do.
+- **Do NOT propose when:** Opus can verify the answer mechanically; the work is
+  execution-shaped (Sonnet's); the gain is stylistic; or the same question was already
+  Fable-answered this initiative (reuse the recorded answer).
+- **Self-check against theater:** proposing Fable to hedge responsibility is a defect;
+  the proposal must name what Fable adds that Opus lacks, or it doesn't get made.
