@@ -11,6 +11,11 @@ Fable is invoked ONLY for enumerated job types, each a deliberate spend:
 2. Design-sitting judgment (candidate synthesis, taste-fork framing).
 3. The hardest verification/triage (a verdict Opus hedges on; final pre-ship reviews).
 4. Post-mortems of large arcs (the synthesis that becomes doctrine).
+5. CRITICAL/COMPLEX CODE (Geoff, 2026-07-06): security-sensitive, correctness-critical,
+   or algorithmically hard code is Fable-written directly — or Opus-drafted and then
+   Fable BATCH-AUDITED line by line (the audit is a natural batch job: the draft + its
+   tests as context, the verdict + improved code as output). Never merely Opus-reviewed
+   by itself for this class.
 Everything else keeps the standing economy: Opus conducts and reviews, Sonnet implements,
 Haiku fetches. The doctrine's "never downshift the planner" becomes "schedule the planner."
 
