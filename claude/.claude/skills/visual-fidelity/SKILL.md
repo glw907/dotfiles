@@ -25,7 +25,11 @@ each step traced to evidence in docs/internal/pre-beta-harvest.md (cairn-cms) an
    counts); every interactive behavior (forms, filters, notifications, embeds); every
    feed, redirect, and error page. The manifest is a committed file. The build is not
    done until EVERY line is checked MATCHED / IMPROVED / DEFERRED-WITH-SANCTION (named in
-   the spec) — and verifiers verify against the MANIFEST, never against the plan (the
+   the spec) — with the STANDING SANCTION (Geoff, 2026-07-06): the original's
+   DEFECTS are always fixed and graded IMPROVED without per-item approval — typos, broken
+   behaviors, responsive failures, a11y violations, and implementation quality (our CSS
+   is better and cleaner than the original's, always). Defects are not design; the line
+   records what was fixed so the grade is auditable, but fidelity never preserves a bug — and verifiers verify against the MANIFEST, never against the plan (the
    plan is a lossy compression of the original; three builds under-matched because their
    reviews checked the compression). No design plan is authored from a verbal inventory
    alone.
