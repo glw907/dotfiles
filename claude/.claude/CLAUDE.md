@@ -141,6 +141,16 @@ Trust but verify the pins: the model-pin mechanism has shipped silent failures i
 (per-dispatch `model` ignored; frontmatter pins not applied). When a dispatch runs surprisingly
 slow, expensive, or weak, check which model actually ran before adjusting anything else.
 
+## Post-Fable model economy (from 2026-07-07, 11pm AK)
+
+The Max-plan Fable window closes 2026-07-07; after that OPUS 4.8 CONDUCTS and Fable is a
+credit-metered specialist governed by `~/.claude/docs/fable-post-cutoff-system.md`:
+batch-first (50% discount), per-dispatch one-shots, rare cached sittings — and the
+conductor's SUGGESTION RULES (baked there): never silently spend Fable, never silently
+absorb Fable-tier work; propose the job + mode + size in one sentence and let Geoff
+decide. The rest of the model economy (Sonnet volume, Opus review, pre-extraction,
+guards) stands unchanged.
+
 ## Multi-agent workflows: suggest, never launch unprompted
 
 The Workflow tool orchestrates fleets of subagents deterministically, and it runs only on my explicit opt-in. When a task would clearly benefit, suggest it rather than staying silent. Name what the workflow would do and the rough scale, and note that "use a workflow" is the opt-in phrase. Qualifying moments include the review gate of a large pass (an adversarial find-and-verify sweep catches more than a flat reviewer fan-out), a repo-wide audit or migration, a plan whose tasks are mostly independent, and deep multi-source research. The suggestion costs one sentence; skip it for small or already-verified work.
