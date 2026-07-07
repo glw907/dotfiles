@@ -14,9 +14,18 @@ each step traced to evidence in docs/internal/pre-beta-harvest.md (cairn-cms) an
 
 ## The method, in order
 
-1. **Reference capture BEFORE any plan.** Full-page screenshots of every page of the real
-   site at the family widths (320/390/768/1440/2560; at minimum phone + desktop). No design
-   plan is authored from a verbal inventory alone — the ecxc failure began at plan time.
+1. **THE ORIGINAL MANIFEST — the backbone (Geoff, 2026-07-06: "much more aggressive about
+   reviewing the original and matching ALL features and content").** The original is the
+   specification, exhaustively. Before any plan: capture every page (full-page, family
+   widths) AND enumerate the original into a checklist artifact — every page; every
+   section per page; every image and where it appears; every data element (lists, tables,
+   counts); every interactive behavior (forms, filters, notifications, embeds); every
+   feed, redirect, and error page. The manifest is a committed file. The build is not
+   done until EVERY line is checked MATCHED / IMPROVED / DEFERRED-WITH-SANCTION (named in
+   the spec) — and verifiers verify against the MANIFEST, never against the plan (the
+   plan is a lossy compression of the original; three builds under-matched because their
+   reviews checked the compression). No design plan is authored from a verbal inventory
+   alone.
 2. **Device catalogue.** An agent (vision-capable, Opus+) READS the references plus the
    source CSS and produces the structural + typographic device catalogue: chrome anatomy,
    composition per page template, card/band recipes, every typographic device (wordmark,
