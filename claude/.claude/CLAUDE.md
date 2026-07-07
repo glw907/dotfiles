@@ -71,6 +71,14 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 - **Never commit**: API tokens, passwords, keys, `.env` files with real values
 - **Local dev**: `~/.bashrc` (non-sensitive) or `~/.local/secrets` (sensitive, sourced from 1Password)
 - **CI/CD**: GitHub Actions secrets | **Runtime**: Cloudflare Workers secrets
+- **1Password: ONE prompt, never a loop.** Each `op` call can trigger a desktop approval, so a
+  loop of `op item get`/`op read` calls spams Geoff with prompts. Fetch once with a single
+  `op item get <id> --format json` and parse every field locally; batch a multi-item need into
+  one `op item list --format json`. A repeated prompt is a defect against Geoff's attention.
+- **Cloudflare estate + how each secret is reached**: `~/.claude/docs/cloudflare-estate-inventory.md`
+  (values-free inventory of D1/R2/workers/Access + the authorization model; worker secrets are
+  write-only, so a value comes from its origin store, not the worker). Read it before hunting a
+  credential or provisioning infra.
 
 ## Email (poplar)
 
