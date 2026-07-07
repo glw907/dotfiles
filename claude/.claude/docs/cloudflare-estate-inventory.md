@@ -47,8 +47,9 @@ CMS), Ops Dashboard (ops + staging), the Ops Schema API (public, consumed cross-
 handbook — do not lock it).
 
 **asc-site worker secrets (names):** GITHUB_APP_ID, GITHUB_APP_INSTALLATION_ID,
-GITHUB_APP_PRIVATE_KEY_B64. **Not yet set:** STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
-TURNSTILE_SECRET_KEY, CONTACT_EMAIL (the phase-2 payment + form path adds these).
+GITHUB_APP_PRIVATE_KEY_B64, STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET (Stripe SANDBOX test keys,
+set 2026-07-07; the sandbox webhook endpoint `we_...` targets /api/stripe/webhook). **Not yet
+set:** TURNSTILE_SECRET_KEY, CONTACT_EMAIL.
 
 ## Regenerate the live inventory
 
