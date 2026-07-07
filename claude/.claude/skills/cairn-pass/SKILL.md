@@ -13,10 +13,10 @@ description: >
 
 # Cairn Pass (cairn-cms rebuild)
 
-The cairn-cms library is being rebuilt test-first as a numbered plan series, 00
-(foundation) through 08 (scaffolder). The canonical source of truth is the
-functional spec, which supersedes the older plan and architecture writeups now kept under
-`docs/internal/history/`.
+The cairn-cms rebuild (numbered plans 00-08) landed long ago; the library publishes to
+npm and later engine work runs as named passes on feature worktrees off `main`. The
+canonical source of truth is the functional spec (locked decisions) plus `docs/STATUS.md`
+(the rolling now); the older writeups live under `docs/internal/history/`.
 Each plan is written just-in-time after the prior one lands, under
 `cairn-cms/docs/superpowers/plans/`.
 
