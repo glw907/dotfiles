@@ -1,0 +1,60 @@
+# The post-cutoff Fable system (effective 2026-07-07, 11:00pm AK)
+
+After the Max-plan window closes, Fable runs on usage credits at API rates (output ~$50/MTok,
+2x Opus). Token efficiency is the design constraint. The system: Opus 4.8 takes the conductor
+seat; Fable becomes a scheduled specialist with three access modes, batch-first.
+
+## The seat policy — when Fable at all
+
+Fable is invoked ONLY for enumerated job types, each a deliberate spend:
+1. Plan/spec authorship for major initiatives (the judgment that prevents rework).
+2. Design-sitting judgment (candidate synthesis, taste-fork framing).
+3. The hardest verification/triage (a verdict Opus hedges on; final pre-ship reviews).
+4. Post-mortems of large arcs (the synthesis that becomes doctrine).
+Everything else keeps the standing economy: Opus conducts and reviews, Sonnet implements,
+Haiku fetches. The doctrine's "never downshift the planner" becomes "schedule the planner."
+
+## Mode 1 — THE BATCH DESK (default; 50% discount)
+
+Non-interactive Fable jobs go through the Batch API (async, <24h, usually minutes-hours):
+- A queue directory of self-contained job files: task + ALL context pre-extracted (the
+  dispatch discipline is now economic law — a job that needs a follow-up question wasted
+  its round trip).
+- The Opus conductor submits, polls, folds results back.
+- Shared-prefix caching across jobs in one batch: N verifications against one spec share
+  the spec as a cached prefix — write it once, read it cheap.
+- Fits: plan drafts from prepared briefs, review verdicts, triage rankings, post-mortem
+  synthesis, register/prose passes. (Most of what Fable did this arc, honestly.)
+
+## Mode 2 — PER-DISPATCH (one-shot judgment from a live session)
+
+A single `model: fable` subagent dispatch from the Opus-conducted session, for judgments
+that gate immediate next steps. Rules: the brief is a prepared file; context <30k; output
+capped (ask for a verdict/decision table, not prose); never inside a loop.
+
+## Mode 3 — CACHED INTERACTIVE (rare; the design sitting)
+
+A live Fable session ONLY for true interactive judgment with Geoff (a design sitting, a
+brainstorm). Structured for cache economics:
+- Fresh session, pre-baked brief file, context kept <50k. NEVER >150k (the mega-session
+  lesson: 1.3B cache reads = the tax).
+- The stable prefix (brief + exhibits) enters ONCE at the top; turns stay inside the
+  5-minute cache TTL (the 1h extended TTL where a sitting has natural pauses — higher
+  write cost, still beats cold reads).
+- A declared turn budget before starting; the sitting ENDS when the decision lands
+  (artifacts + picks recorded, session closed).
+
+## Governance
+
+- Fable-credits are budget #3 (with tokens-at-large and Geoff's attended time): every
+  invocation logged (purpose, mode, tokens) in the session's post-mortem.
+- A weekly credit ceiling Geoff sets; the conductor asks before exceeding it, never after.
+- Verify current Batch/caching terms at first use (50% batch discount and 5min/1h TTLs
+  are the standing terms as designed; pricing pages govern).
+
+## Mechanics to build (Sonnet job)
+
+`fable-batch` — a small CLI in ~/.local/bin wrapping the Batch API with $ANTHROPIC_API_KEY:
+`fable-batch add <job.md>` (queues), `submit` (batches the queue, shared-prefix aware),
+`poll`, `collect` (results to files + a digest). Job files carry YAML frontmatter
+(purpose, max_tokens, cache_prefix: <path>) so the ledger writes itself.
