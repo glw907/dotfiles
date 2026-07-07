@@ -79,6 +79,13 @@ Use API or CLI first for external services -- never suggest the web dashboard un
   (values-free inventory of D1/R2/workers/Access + the authorization model; worker secrets are
   write-only, so a value comes from its origin store, not the worker). Read it before hunting a
   credential or provisioning infra.
+- **Check the stores before claiming a secret is missing.** Status docs and memories record
+  intent at write time; the stores record what actually happened. Before telling Geoff a
+  credential is missing or still owed, check in order: `npx wrangler secret list` (per worker),
+  `~/.local/secrets`, the age registry (`~/.dotfiles/secrets/registry.md`), and the estate
+  inventory above. Name-only checks, never print values. A wrong "you still owe me X" costs
+  Geoff attention and erodes trust in real gap reports. (Born 2026-07-07: a stale STATUS line
+  said the Stripe key was pending; the worker had held it for hours.)
 
 ## Email (poplar)
 
