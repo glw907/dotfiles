@@ -18,7 +18,10 @@ each step traced to evidence in docs/internal/pre-beta-harvest.md (cairn-cms) an
    reviewing the original and matching ALL features and content").** The original is the
    specification, exhaustively. Before any plan: capture every page (full-page, family
    widths) AND enumerate the original into a checklist artifact — every page; every
-   section per page; every image and where it appears; every data element (lists, tables,
+   section per page; every image WITH its identity — the manifest records which asset, its crop and
+   focal treatment, and where it appears (the original's image selections and croppings
+   are the club's content decisions, not free variables: a substituted hero or a bad
+   re-crop is the same defect as a missing section); every data element (lists, tables,
    counts); every interactive behavior (forms, filters, notifications, embeds); every
    feed, redirect, and error page. The manifest is a committed file. The build is not
    done until EVERY line is checked MATCHED / IMPROVED / DEFERRED-WITH-SANCTION (named in
