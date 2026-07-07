@@ -80,3 +80,19 @@ the mode, and the rough size — and Geoff decides. The triggers:
   Fable-answered this initiative (reuse the recorded answer).
 - **Self-check against theater:** proposing Fable to hedge responsibility is a defect;
   the proposal must name what Fable adds that Opus lacks, or it doesn't get made.
+
+## The pattern principle (Geoff, 2026-07-06)
+
+"Opus will do a much better job if it has a strong pattern to start with." Fable's
+highest-leverage output for an Opus-executed future is not verdicts but EXEMPLARS: a
+scaffold whose structure teaches its own extension (stand-ins with swap comments, one
+screen fully worked as the model for the rest), a mockup set that IS the design language,
+a manifest whose first ten lines teach the next ninety, a worked pass that becomes the
+template for its siblings. When queuing Fable batch jobs, prefer "produce the pattern +
+one worked instance" over "decide the question" — Opus extends strong patterns reliably;
+it re-derives designs from prose unevenly. Every Fable job spec should name what pattern
+it leaves behind. Geoff's formulation, the system's headline: **"I want to give it a
+setup where it just needs to color inside the lines. Fable draws the lines."** Fable's
+job is the lines — the structure, the acceptance, the worked instance; Opus's job is
+faithful, verified coloring. A Fable invocation that doesn't leave lines behind was
+probably the wrong invocation.
