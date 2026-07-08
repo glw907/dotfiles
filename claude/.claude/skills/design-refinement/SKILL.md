@@ -16,6 +16,24 @@ degrade the whole — and the study's key negative result is that adding surroun
 prose to narrow patches makes results WORSE, not better. The fix is a different unit of work,
 not better patch prompts.
 
+## Starting up: discover, then ask once
+
+On invocation, do not open with a questionnaire. First DISCOVER what the project already
+holds: look for the four persistent artifacts (benchmark captures, audit ledger, decisions
+log, recorded dose words — conventionally together, e.g. `docs/design-benchmark/`), the
+design's token/style system, the review surface (a dev deployment? a preview URL?), and any
+design doc or ruling history. Read what exists; a question whose answer is discoverable
+misroutes the owner's attention.
+
+Then ask ONE batched question covering only what is genuinely owner-held and still missing —
+typically: the dose level (felt-only / standard / deep), anything off-limits this round, and
+the target's priority order if several surfaces compete. If no benchmark exists, pinning one
+is the first work item, not a question ("which state should I pin?" is only asked when the
+answer is ambiguous). After that, questions during the arc are the exception: batch
+mid-round judgment calls rather than stopping per item, and reserve immediate questions for
+genuine forks in the owner's own taste — which get answered-then-executed per step 6, never
+silently absorbed.
+
 ## The shape: rounds, not a pass
 
 Refinement is inherently iterative — an owner reviews, notes arrive, a round runs, the owner
