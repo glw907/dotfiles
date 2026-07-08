@@ -114,6 +114,12 @@ Everything else is dispatched, and the dispatch is role-matched:
 - **Measure, then judge**: anything measurable (row alignment, spacing ratios, contrast,
   dot centering) gets measured by script before any agent opines on it. Agents are for the
   judgments a ruler can't make.
+- **Iterate cheap, verify real**: design iteration renders on the cheapest medium that tells
+  the truth — a standalone HTML file carrying the design's REAL tokens and CSS (so the render
+  can't lie about type, color, or spacing), or the framework's hot-reloading dev server.
+  Never a full production build per adjustment; the full build, gate, and deployed-surface
+  read run ONCE per round, at readiness. Candidate exploration doubly so: present options as
+  throwaway static HTML pages, and build only the winner.
 
 ## Hard scope limits
 
