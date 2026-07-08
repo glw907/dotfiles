@@ -16,6 +16,29 @@ degrade the whole — and the study's key negative result is that adding surroun
 prose to narrow patches makes results WORSE, not better. The fix is a different unit of work,
 not better patch prompts.
 
+## The shape: rounds, not a pass
+
+Refinement is inherently iterative — an owner reviews, notes arrive, a round runs, the owner
+reviews again — and the method is designed for that loop, not for one heroic pass. Each round:
+translate the new notes to axes (step 2), run the scoped passes (step 3), read and gate (step
+5), deploy once at readiness, owner reviews. Four artifacts persist BETWEEN rounds and are the
+loop's memory:
+
+- **The benchmark captures** (re-pinned deliberately when the owner ratifies a new state).
+- **The audit ledger** (already-right verdicts survive rounds; see step 7).
+- **The dose words** (the owner's calibration language, quoted verbatim into every round).
+- **The decisions log** — every settled design question with its reasoning ("corners:
+  group-rounded because the panels form one object; settled round 7"). Later rounds never
+  re-litigate a logged decision unless the owner reopens it.
+
+Read convergence from the notes themselves: notes getting smaller and finer-grained
+(paragraph-level → pixel-level) means the loop is converging — keep going. The SAME note
+recurring after an anchored fix means the unit of work is wrong — widen the pass, don't
+re-patch. Notes multiplying in new regions after each round means the rounds are shipping
+regressions — stop and audit before continuing. The arc ends when a round's notes are all
+felt-tier: run the full felt-refinement audit (step 4) as the closer, then pin the result as
+the new benchmark.
+
 ## The method
 
 1. **Pin the benchmark.** Refinement needs a reference render, never adjectives. Capture the
@@ -61,6 +84,36 @@ not better patch prompts.
    pass starts from the recorded already-right verdicts instead of re-auditing and possibly
    re-litigating settled decisions — the ledger is what stops refinement from oscillating.
    An entry is re-opened only when the code it graded has changed or the owner overrules it.
+
+## Agent economy (who runs, on what, and why)
+
+This skill runs in the DIRECTING context — the strongest model in the room, because
+adjudication, render reads, and axis translation are the judgment that prevents rework.
+Everything else is dispatched, and the dispatch is role-matched:
+
+- **Builders** execute already-decided treatments: a capable mid-tier model is right, because
+  the taste decisions travel IN the dispatch — named devices, the benchmark paths, exact
+  values where they're settled, the owner's dose words verbatim. Never send a builder the raw
+  note ("make it less bland"), this skill's text, or an open aesthetic choice: an
+  under-directed builder on any model produces the AI-default looks. If a round contains one
+  genuinely novel visual decision, either decide it in the directing context first or upshift
+  that single dispatch — not the whole round.
+- **Audit lenses** split by what they judge. Taste-heavy lenses (typography and rhythm;
+  color, surface, and depth) justify a strong model — misjudged taste findings cost real
+  rounds. Mechanically-verifiable lenses (interaction states, reduced motion, focus coverage,
+  overflow) run on a cheaper model with computed evidence required (getComputedStyle values,
+  measured coordinates), which beats a stronger model's unmeasured impression anyway.
+- **Panel economy**: two or three lenses per audit, once per ARC (at the felt-refinement
+  closer), not per round. Per-round quality lives in the directing context's own render read,
+  which is cheaper and faster than any panel. Refuter agents are spent only on contested
+  MAJOR findings — never on minors, and never as votes.
+- **Separation is context, not model**: the grader must not share the builder's context —
+  a fresh instance of the SAME model out-grades the builder grading itself. When budget
+  allows, cross-model diversity between builder and reviewer also counters correlated
+  blind spots.
+- **Measure, then judge**: anything measurable (row alignment, spacing ratios, contrast,
+  dot centering) gets measured by script before any agent opines on it. Agents are for the
+  judgments a ruler can't make.
 
 ## Hard scope limits
 
