@@ -1,6 +1,6 @@
 ---
 name: design-refinement
-description: Use when polishing an EXISTING design — a page, app screen, or artifact whose bones are approved — toward a benchmark or "truly designed" finish. The refinement counterpart to origination skills (frontend-design) and port-matching skills (visual-fidelity): axis passes, felt-refinement audits, knob ledgers, and separated render reads.
+description: Use when polishing an EXISTING design — a page, app screen, or artifact whose bones are approved — whether iterating live with the owner against a local dev server or landing a ratified design toward a benchmark finish. The refinement counterpart to origination skills (frontend-design) and port-matching skills (visual-fidelity).
 ---
 
 # Design refinement
@@ -34,7 +34,77 @@ mid-round judgment calls rather than stopping per item, and reserve immediate qu
 genuine forks in the owner's own taste — which get answered-then-executed per step 6, never
 silently absorbed.
 
-## The shape: rounds, not a pass
+## Two modes — pick by what the owner is doing
+
+The method runs in one of two modes, chosen at invocation and named out loud:
+
+- **Exploratory arc** — the owner is live, reviewing in a localhost tab (dev server + HMR),
+  and the notes are probes ("could", "maybe", "try") rather than directives. Expect 10-15
+  fast iterations; cost and latency per turn are the binding constraints, not per-turn
+  polish. Run the arc contract below; the rounds-and-passes machinery and every per-round
+  gate stay off until settle.
+- **Settled landing** — the design is ratified (or the owner reviews async on a deployed
+  surface) and the work is landing or closing it. Run the numbered method and agent economy
+  below as written.
+
+An arc ends by flowing into a one-time landing: the settle ritual IS the ceremony the
+iterations skipped.
+
+## The exploratory arc
+
+The shape this mode replaces failed its cold trial: live probes translated to axes and
+dispatched to builders with per-round gates — correctness ceremony on work whose whole
+point is cheap trial and error. The per-iteration contract:
+
+1. The directing context edits DIRECTLY against the running dev server. No builder
+   dispatches for iteration edits: a dispatch costs pre-extraction plus round-trip latency
+   exceeding the edit itself, and per-tweak diff review is exactly the ceremony the owner
+   banned.
+2. A note that is a question gets a reasoned answer before any edit. A probe gets rendered,
+   and the reply tells the owner exactly what to look at. The iteration ends with the
+   owner's verdict: keep, revert, or push further.
+3. Each kept iteration gets a one-line commit on the arc branch (`design: <probe>`); a
+   reverted probe is a checkout. No pushes and no deploys until settle.
+4. One line per iteration lands in an arc log beside the decisions log (probe, verdict,
+   why) — insurance against context loss, and the raw material the settle-time decisions
+   entry distills before the log is removed.
+5. The only dispatch inside an arc is a genuine taste fork: two or three parallel throwaway
+   static-HTML candidates generated while the main loop keeps iterating; the owner picks,
+   or the directing context does when the owner delegates.
+
+Self-checks run in three tiers, never the full gate:
+
+- **Every iteration:** watch the dev server's output (a background process) for HMR and
+  console errors. For pure CSS and copy tweaks that is all — the owner's live eyes are the
+  per-iteration visual gate.
+- **Structural edits** (splitters, wrappers, `{@html}` segments — anything whose failure is
+  invisible in the source): the targeted regression test plus a quick DOM sanity check. A
+  hydration-duplication bug once cost a whole round of misread owner notes because this
+  tier was missing.
+- **Every ~5 iterations,** and before any "ready for your look" on a structural rework: one
+  own render read at a narrow and a wide width, catching the global drift that focused
+  per-note eyes miss in both parties.
+
+The settle ritual, once, when the owner ratifies (notes go felt-tier or he calls it done):
+
+1. Design gates first: the project's design-probe script, a small fresh-context lens
+   fan-out, and a full-width-set render read; findings return to the owner as one batch.
+2. Code ceremony second: the simplifier over the arc's whole diff, then the repo's full
+   gate.
+3. A final quick render read confirming the ceremony changed nothing visible.
+4. Artifacts: the decisions-log entry (settled decisions with reasoning, dose words
+   quoted), benchmark re-pin if the owner ratified a new one, arc log distilled and
+   removed.
+5. Merge and push, then the one deploy (the default; a site may settle-and-hold and deploy
+   several arcs together), a post-deploy render read, and the owner's before/after where
+   the surface is member-facing.
+6. Harvest: engine frictions filed upstream, chassis-worthy machinery banked.
+
+Red flags you are in the wrong mode: dispatching a builder for a one-note tweak; running
+the simplifier or e2e on iteration 3 of 12; converting a "maybe try…" note into a work
+item; deploying mid-arc so the owner can review what localhost already shows.
+
+## The settled-landing shape: rounds, not a pass
 
 Refinement is inherently iterative — an owner reviews, notes arrive, a round runs, the owner
 reviews again — and the method is designed for that loop, not for one heroic pass. Each round:
