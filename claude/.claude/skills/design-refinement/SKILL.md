@@ -54,7 +54,14 @@ iterations skipped.
 
 The shape this mode replaces failed its cold trial: live probes translated to axes and
 dispatched to builders with per-round gates — correctness ceremony on work whose whole
-point is cheap trial and error. The per-iteration contract:
+point is cheap trial and error.
+
+Opening the arc, the directing context bootstraps the review surface itself — the owner
+arrives at a live tab, never at instructions. Start the site's dev server as a background
+process (its output stream is the tier-one check below), wait until it answers, seed local
+media if images 404 (`cairn-media-seed`, or the site's wrapper script), and open the owner's
+browser at the page under iteration (`xdg-open <url>` on this workstation). Then the
+per-iteration contract:
 
 1. The directing context edits DIRECTLY against the running dev server. No builder
    dispatches for iteration edits: a dispatch costs pre-extraction plus round-trip latency
