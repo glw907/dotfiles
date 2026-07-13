@@ -35,7 +35,11 @@ declare -A WORKER_SECRETS
 # MAGIC_LINK_SECRET/SESSION_SECRET are NOT managed here (worker-only, rotatable —
 # set directly via `wrangler secret put`; they must differ per site for session isolation).
 WORKER_SECRETS["907-life"]="CLOUDFLARE_API_TOKEN RESEND_API_KEY GITHUB_APP_ID GITHUB_APP_INSTALLATION_ID GITHUB_APP_PRIVATE_KEY_B64"
-WORKER_SECRETS["ecnordic"]="GITHUB_APP_ID GITHUB_APP_INSTALLATION_ID GITHUB_APP_PRIVATE_KEY_B64"
+# ecxc.ski's worker, renamed from "ecnordic" at the ECXC rebrand (Rename 4, 2026-06-08).
+# The Waymark rebuild commits appId/installationId in cairn.config.ts (public identifiers),
+# so unlike 907-life only the App PRIVATE KEY is a worker secret here. GOOGLE_SA_KEY_B64 is
+# the registration-roster Sheets writer (registry.md has the scope).
+WORKER_SECRETS["ecxc"]="GITHUB_APP_PRIVATE_KEY_B64 GOOGLE_SA_KEY_B64"
 
 # --- Argument parsing ---
 MODE="all"

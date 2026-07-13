@@ -74,31 +74,39 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 
 ## Master Routing Table
 
-(Worker names: 907-life's worker is `907-life`; ecnordic.ski's worker is `ecnordic`.)
+(Worker names: 907-life's worker is `907-life`; ecxc.ski's worker is `ecxc` — renamed from
+`ecnordic` at the ECXC rebrand, Rename 4, 2026-06-08.)
 
-| Secret              | Local (~/.local/secrets) | 907-life Worker | ecnordic Worker |
-|---------------------|--------------------------|-----------------|-----------------|
-| CLOUDFLARE_API_TOKEN | ✓                       | ✓               | —               |
-| CF_ZT_TOKEN         | ✓                        | —               | —               |
-| CF_ACCESS_CLIENT_SECRET | ✓                   | —               | —               |
-| ANTHROPIC_API_KEY   | ✓                        | —               | —               |
-| CMS_BOT_PAT         | ✓                        | —               | —               |
-| RESEND_API_KEY      | ✓                        | ✓               | —               |
-| FASTMAIL_API_TOKEN  | ✓                        | —               | —               |
-| GITHUB_APP_ID       | ✓                        | ✓               | ✓               |
-| GITHUB_APP_INSTALLATION_ID | ✓                 | ✓               | ✓               |
-| GITHUB_APP_PRIVATE_KEY_B64 | ✓                 | ✓               | ✓               |
+| Secret              | Local (~/.local/secrets) | 907-life Worker | ecxc Worker |
+|---------------------|--------------------------|-----------------|-------------|
+| CLOUDFLARE_API_TOKEN | ✓                       | ✓               | —           |
+| CF_ZT_TOKEN         | ✓                        | —               | —           |
+| CF_ACCESS_CLIENT_SECRET | ✓                   | —               | —           |
+| ANTHROPIC_API_KEY   | ✓                        | —               | —           |
+| CMS_BOT_PAT         | ✓                        | —               | —           |
+| RESEND_API_KEY      | ✓                        | ✓               | —           |
+| FASTMAIL_API_TOKEN  | ✓                        | —               | —           |
+| GITHUB_APP_ID       | ✓                        | ✓               | —           |
+| GITHUB_APP_INSTALLATION_ID | ✓                 | ✓               | —           |
+| GITHUB_APP_PRIVATE_KEY_B64 | ✓                 | ✓               | ✓           |
+| GOOGLE_SA_KEY_B64   | ✓                        | —               | ✓           |
+
+> The ecxc worker stopped needing `GITHUB_APP_ID`/`GITHUB_APP_INSTALLATION_ID` as secrets at
+> the Waymark rebuild (2026-07-05): the v2 adapter commits both in `cairn.config.ts` (they
+> are public identifiers), and only the private key stays secret. 907-life still takes all
+> three as secrets.
 
 > `GITHUB_APP_*` are the cairn-cms committing identity (GitHub App, App ID 3847496,
-> Installation `135372268` — single install on glw907, both repos selected). **Both the `ecnordic`
-> and `907-life` workers are wired into `sync.sh` and pushed (ecnordic go-live 2026-05-25, 907-life
-> go-live 2026-05-26);** `sync.sh --worker 907-life` re-pushes the shared App secrets reproducibly.
+> Installation `135372268` — single install on glw907, both repos selected). **Both the `ecxc`
+> and `907-life` workers are wired into `sync.sh` and pushed (ecxc go-live 2026-05-25 as
+> ecnordic, 907-life go-live 2026-05-26);** `sync.sh --worker 907-life` re-pushes the shared
+> App secrets reproducibly.
 >
 > **Per-site, NOT in this registry:** each cairn site's `MAGIC_LINK_SECRET` + `SESSION_SECRET`
 > are worker-only (set directly via `wrangler secret put`, freshly generated per site so sessions
 > don't cross sites — the locked "no cross-site SSO" decision). Rotatable: regenerate + re-put to
 > invalidate all active links/sessions. `sync.sh --verify` will list them as "extra" on both the
-> ecnordic and 907-life workers — expected (same as CONTACT_EMAIL / TURNSTILE_SECRET_KEY).
+> ecxc and 907-life workers — expected (same as CONTACT_EMAIL / TURNSTILE_SECRET_KEY).
 
 **1Password only** (not in values.age):
 - `WORKSTATION_SUDO` — sudo password, stored as `op://Private/Workstation sudo/password`
@@ -166,6 +174,20 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 - **Used by**: cairn-cms admin Worker (ecnordic + 907-life) — wired in Pass A.
 - **Rotate at**: https://github.com/settings/apps → cairn-cms → Private keys (generate new,
   base64 it, update values.age, re-run sync.sh). Revoke old key in the same screen.
+
+### GOOGLE_SA_KEY_B64
+- **Grants**: Google Sheets/Drive API as `ecxc-sheets@ecxc-registrations.iam.gserviceaccount.com`
+  (GCP project `ecxc-registrations`, owned by geoff@907.life). Editor on the ECXC registration
+  roster spreadsheet only ("Talkeetna Camp Registrations", ID in ecxc-ski's `wrangler.toml`
+  as `REGISTRATION_SHEET_ID`).
+- **Key encoding**: the service-account JSON key file, base64-encoded single-line
+  (values.age is line-parsed). Decode with `atob()` in the Worker.
+- **Used by**: the `ecxc` Worker's registration forms (Sheets `values.append` per
+  submission; added by the registration-forms pass, 2026-07-13).
+- **Rotate at**: `gcloud iam service-accounts keys create <file> --iam-account=ecxc-sheets@ecxc-registrations.iam.gserviceaccount.com --project=ecxc-registrations`,
+  then `secret-set.sh GOOGLE_SA_KEY_B64 --b64-file <file>`, `sync.sh --worker ecxc`, delete
+  the file and the old key (`gcloud iam service-accounts keys list/delete`). No loose copy
+  lives on disk; GCP IAM is the mint-a-new-key origin.
 
 ---
 
