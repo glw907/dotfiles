@@ -176,9 +176,13 @@ Trust but verify the pins: the model-pin mechanism has shipped silent failures i
 (per-dispatch `model` ignored; frontmatter pins not applied). When a dispatch runs surprisingly
 slow, expensive, or weak, check which model actually ran before adjusting anything else.
 
-## Post-Fable model economy (from 2026-07-07, 11pm AK)
+## Post-Fable model economy (after the included-access window closes)
 
-The Max-plan Fable window closes 2026-07-07; after that OPUS 4.8 CONDUCTS and Fable is a
+The Max-plan Fable window has been extended twice (2026-07-07 → 07-12 → **07-19**, per
+Anthropic's announcements; Fable draws up to 50% of weekly plan limits inside it). While the
+window is open, "Fable conducts" stands. The dates keep moving, so on any session where the
+distinction matters, verify the current window online before declaring the doctrine switched.
+After it truly closes, OPUS 4.8 CONDUCTS and Fable is a
 credit-metered specialist governed by `~/.claude/docs/fable-post-cutoff-system.md`:
 batch-first (50% discount), per-dispatch one-shots, rare cached sittings — and the
 conductor's SUGGESTION RULES (baked there): never silently spend Fable, never silently
