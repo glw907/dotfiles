@@ -4,6 +4,21 @@
 
 Do not ask for review, confirmation, or approval until the task is fully complete. Keep working through all known issues until every quality gate passes. The only reason to stop is a genuine blocker requiring information only the user can provide.
 
+## Search before you spelunk (Geoff, 2026-07-13)
+
+When a symptom looks framework- or library-specific (a form that will not submit, a build that
+fails only in one runtime, an API that rejects a shaped request), spend one web search on the
+exact symptom BEFORE opening an interactive debugging loop. A documented quirk, a GitHub issue,
+or an official-doc note often names the cause in one shot, where hands-on probing burns many
+expensive main-model turns to reach the same place. The rule earned itself twice on 2026-07-13:
+a SvelteKit remote-form that fired no POST cost a long browser-probing loop, and one search
+("remote functions form submit not firing") surfaced the identifier-path-parser cause
+immediately. The pattern generalizes: research is cheap tokens, interactive spelunking is
+expensive ones, and the two budgets (tokens, attended time) both favor the search. Corollary
+proven the same day: do not read a file's "current state" to draw conclusions while a background
+agent is concurrently editing that file; you will read its half-applied change and mislead
+yourself (and any agent you then instruct). Verify against committed state or wait for the agent.
+
 ## Machine Environment
 
 - **OS**: Linux Mint 22.3 "Zena" (Ubuntu 24.04 base), Cinnamon desktop
