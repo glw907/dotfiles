@@ -133,7 +133,13 @@ Do not provide human-scale time estimates. Describe relative complexity: "quick"
 ## Model economy (Fable conducts)
 
 Two co-equal budgets govern every initiative at the same quality bar: total tokens spent and
-Geoff's attended time. Neither means minimal main-model usage, and they trade against each other.
+Geoff's attended time. **Clock time is explicitly NOT a budget (Geoff, 2026-07-13): prefer the
+serial, cheaper path over parallelism or inline main-loop work bought at token cost, and never
+trade tokens or an extra Geoff interaction to finish sooner.** The frontier conductor is for
+high-ROI judgment only (planning, orchestrating, dispatch decisions, triage, final prose);
+everything mechanical goes to the cheapest agent suited to the task, and a frontier-conducted
+session keeps its own turn count low by batching tool calls and dispatching reads and edits.
+Neither budget means minimal main-model usage, and they trade against each other.
 When they conflict, spend the budget that can buy the thing: tokens for anything research,
 verification, or a retry can resolve; attended time only for taste, priorities, and product
 forks. Asking Geoff what a search could answer misroutes his time; dispatching so cheap that he
@@ -178,7 +184,11 @@ batch-first (50% discount), per-dispatch one-shots, rare cached sittings — and
 conductor's SUGGESTION RULES (baked there): never silently spend Fable, never silently
 absorb Fable-tier work; propose the job + mode + size in one sentence and let Geoff
 decide. The rest of the model economy (Sonnet volume, Opus review, pre-extraction,
-guards) stands unchanged.
+guards) stands unchanged. **Self-check at session start and on any cost signal: if the
+session is running Fable as conductor without a deliberate, Geoff-approved sitting, say so
+immediately and recommend switching to Opus** (a Fable-conducted ecxc session silently
+burned ~1M tokens on 2026-07-13; the flag came from Geoff, not the conductor — that order
+is the defect).
 
 ## Multi-agent workflows: suggest, never launch unprompted
 
@@ -198,6 +208,18 @@ agentType gets an explicit "skip agent-memory maintenance" line, and each step s
 or wall-clock expectation so an agent that blows past it self-reports instead of grinding.
 For expensive sweeps, pair the soft guard with a hard turn-level token target, which makes
 `agent()` calls throw at the ceiling.
+
+## Initiative-scoped sessions (from the cairn arc ledger; globalized 2026-07-13)
+
+One session per initiative, not one session per week. The cairn arc's cost ledger found its
+token total dominated by cache reads from a single five-day session: every turn re-reads the
+whole cached conversation, so a long session's meter compounds even when each step is
+disciplined and the volume work is dispatched. When an initiative lands (pass shipped, post-
+mortem recorded, STATUS pointed at the next action), close the session rather than rolling
+into the next initiative; the pre-baked artifacts are the handoff. Mid-initiative clears
+follow the existing rule (exact resume prompt, launch directory). Within a session, the same
+force argues for batching questions and dispatching reads: each extra turn re-buys the
+context.
 
 ## Plan execution: same session by default
 
