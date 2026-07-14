@@ -39,8 +39,10 @@ WORKER_SECRETS["907-life"]="CLOUDFLARE_API_TOKEN RESEND_API_KEY GITHUB_APP_ID GI
 # The Waymark rebuild commits appId/installationId in cairn.config.ts (public identifiers),
 # so unlike 907-life only the App PRIVATE KEY is a worker secret here. GOOGLE_SA_KEY_B64 is
 # the registration-roster Sheets writer (registry.md has the scope). ANTHROPIC_API_KEY
-# powers the cairn editor's tidy copy-edit (site.config.yaml tidy.enabled).
-WORKER_SECRETS["ecxc"]="GITHUB_APP_PRIVATE_KEY_B64 GOOGLE_SA_KEY_B64 ANTHROPIC_API_KEY"
+# powers the cairn editor's tidy copy-edit (site.config.yaml tidy.enabled). RESEND_API_KEY
+# switches the site's dual-transport email layer to Resend (2026-07-14 cutover; the Resend
+# account's verified domain is ecxc.ski).
+WORKER_SECRETS["ecxc"]="GITHUB_APP_PRIVATE_KEY_B64 GOOGLE_SA_KEY_B64 ANTHROPIC_API_KEY RESEND_API_KEY"
 
 # --- Argument parsing ---
 MODE="all"

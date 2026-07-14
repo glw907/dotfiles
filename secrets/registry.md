@@ -84,7 +84,7 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 | CF_ACCESS_CLIENT_SECRET | ✓                   | —               | —           |
 | ANTHROPIC_API_KEY   | ✓                        | —               | —           |
 | CMS_BOT_PAT         | ✓                        | —               | —           |
-| RESEND_API_KEY      | ✓                        | ✓               | —           |
+| RESEND_API_KEY      | ✓                        | ✓               | ✓           |
 | FASTMAIL_API_TOKEN  | ✓                        | —               | —           |
 | GITHUB_APP_ID       | ✓                        | ✓               | —           |
 | GITHUB_APP_INSTALLATION_ID | ✓                 | ✓               | —           |
@@ -154,7 +154,11 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 
 ### RESEND_API_KEY
 - **Grants**: Resend transactional email API
-- **Used by**: 907-life contact form worker, local email testing
+- **Used by**: 907-life contact form worker, ecxc worker (all outbound mail: registration
+  record/parent/coach copies, contact form, cairn magic links; the 2026-07-14 cutover off
+  Cloudflare Email Service), local email testing
+- **Scope note**: the Resend account's one verified sending domain is ecxc.ski as of
+  2026-07-14 (aksailingclub.org was removed the same day); sends from any other domain fail
 - **Rotate at**: https://resend.com/api-keys
 
 ### FASTMAIL_API_TOKEN
