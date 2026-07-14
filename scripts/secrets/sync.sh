@@ -43,6 +43,10 @@ WORKER_SECRETS["907-life"]="CLOUDFLARE_API_TOKEN RESEND_API_KEY GITHUB_APP_ID GI
 # switches the site's dual-transport email layer to Resend (2026-07-14 cutover; the Resend
 # account's verified domain is ecxc.ski).
 WORKER_SECRETS["ecxc"]="GITHUB_APP_PRIVATE_KEY_B64 GOOGLE_SA_KEY_B64 ANTHROPIC_API_KEY RESEND_API_KEY"
+# The ASC cairn site (dev.aksailingclub.org until the apex cutover). Its GitHub App and
+# Stripe secrets live in the ASC per-project store; only the workstation-scoped Anthropic
+# key routes from here (the cairn editor's tidy copy-edit, same as ecxc).
+WORKER_SECRETS["asc-site"]="ANTHROPIC_API_KEY"
 
 # --- Argument parsing ---
 MODE="all"
