@@ -75,7 +75,9 @@ is read-only for Access/Workers-domain writes; use curl with `$CLOUDFLARE_API_TO
 writes.
 
 - `npx wrangler deploy` / `dev` / `secret put NAME` / `tail`
-- `CLOUDFLARE_API_TOKEN` in `~/.bashrc` -- Wrangler picks it up automatically
+- `CLOUDFLARE_API_TOKEN` in `~/.local/secrets` (bashrc sources that file for interactive
+  shells only, so a script must `source ~/.local/secrets` directly). The token's exact
+  scopes: the estate inventory doc above -- the canonical record every project defers to.
 
 ## API-First Policy
 
