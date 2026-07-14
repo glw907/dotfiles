@@ -2,7 +2,11 @@
 set -euo pipefail
 
 # Workstation secrets sync — decrypts values.age and pushes secrets to local and Cloudflare targets.
-# Requires: 1Password CLI authenticated (eval $(op signin) before use).
+#
+# Authenticates to 1Password at most ONCE per login session: the age private key is
+# fetched on first use and cached in tmpfs (same shared cache as secret-set.sh), then
+# reused by later runs: no repeat desktop-approval prompts. The cache is wiped on
+# reboot, when the `claude` shell function exits, or via secret-session-clear.sh.
 #
 # Usage:
 #   sync.sh               # Sync local + all workers
@@ -12,7 +16,7 @@ set -euo pipefail
 #   sync.sh --verify      # Diff targets vs registry; exits non-zero if mismatch
 #
 # Design notes:
-#   - Private age key lives in 1Password only — never on disk persistently.
+#   - Private age key persists only in 1Password and the tmpfs session cache.
 #   - Decrypted secrets written to /dev/shm (tmpfs, not persisted to disk).
 #   - Trap ensures shred cleans up temp files even if script exits early.
 #   - Use count=$((count + 1)) not ((count++)) — the latter aborts under set -e.
@@ -21,12 +25,11 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SECRETS_FILE="$DOTFILES_DIR/secrets/values.age"
 LOCAL_SECRETS="$HOME/.local/secrets"
 
-# Temp files in /dev/shm (memory-backed, not written to disk)
-AGE_KEY_FILE="/dev/shm/age-key-$$.txt"
+CACHE="/dev/shm/.age-key-$(id -u)"      # session-cached age key (RAM, chmod 600; shared with secret-set.sh)
 DECRYPTED_FILE="/dev/shm/secrets-$$.txt"
 
-# Cleanup on any exit
-trap 'shred -u "$AGE_KEY_FILE" "$DECRYPTED_FILE" 2>/dev/null; true' EXIT
+# Cleanup on any exit. The session cache deliberately survives, since secret-session-clear.sh owns its lifecycle.
+trap 'shred -u "$DECRYPTED_FILE" 2>/dev/null; true' EXIT
 
 # --- Worker routing table ---
 # Maps worker name -> space-separated list of secrets to push
@@ -140,21 +143,25 @@ if [[ "$VERIFY" == true ]]; then
 fi
 
 # --- Decrypt ---
-echo "Fetching age private key from 1Password..."
-
-# Fetch key from 1Password. The notesPlain field contains the full age key file text.
-# sed strips surrounding quotes that op may add.
-op item get "Workstation age encryption key" --fields notesPlain --reveal 2>/dev/null \
-    | sed 's/^"//;s/"$//' > "$AGE_KEY_FILE"
-chmod 600 "$AGE_KEY_FILE"
-
-if [[ ! -s "$AGE_KEY_FILE" ]]; then
-    echo "Error: Could not fetch age key from 1Password." >&2
-    exit 1
+# Fetch the age key from 1Password only on a cache miss. The notesPlain field contains
+# the full age key file text; sed strips surrounding quotes that op may add.
+if [[ ! -s "$CACHE" ]]; then
+    echo "Fetching age private key from 1Password..."
+    op item get "Workstation age encryption key" --fields notesPlain --reveal 2>/dev/null \
+        | sed 's/^"//;s/"$//' > "$CACHE" || true
+    chmod 600 "$CACHE" 2>/dev/null || true
+    if [[ ! -s "$CACHE" ]]; then
+        rm -f "$CACHE"
+        echo "Error: Could not fetch age key from 1Password. Is the app unlocked?" >&2
+        exit 1
+    fi
+else
+    echo "Using session-cached age key."
 fi
 
 echo "Decrypting secrets..."
-age --decrypt -i "$AGE_KEY_FILE" "$SECRETS_FILE" > "$DECRYPTED_FILE"
+age --decrypt -i "$CACHE" "$SECRETS_FILE" > "$DECRYPTED_FILE" \
+    || { echo "Error: decrypt failed (stale cached key? run secret-session-clear.sh)." >&2; exit 1; }
 chmod 600 "$DECRYPTED_FILE"
 
 # Helper: get a value from the decrypted file
