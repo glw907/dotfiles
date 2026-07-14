@@ -146,6 +146,7 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 - **Grants**: Claude API access (claude-3-*, claude-sonnet-*, etc.)
 - **Used by**: Claude CLI, any scripts using the Anthropic SDK, ecxc worker and asc-site worker (editor tidy copy-edit)
 - **Rotate at**: https://console.anthropic.com/settings/keys
+- **Rotated**: 2026-07-14 (prior key answered 401, revoked upstream; new key verified 200 and stored in values.age; worker pushes to ecxc + asc-site PENDING on a valid CLOUDFLARE_API_TOKEN, see that entry)
 
 ### CMS_BOT_PAT
 - **Grants**: GitHub repository write access for CMS automation
