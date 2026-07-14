@@ -38,8 +38,9 @@ WORKER_SECRETS["907-life"]="CLOUDFLARE_API_TOKEN RESEND_API_KEY GITHUB_APP_ID GI
 # ecxc.ski's worker, renamed from "ecnordic" at the ECXC rebrand (Rename 4, 2026-06-08).
 # The Waymark rebuild commits appId/installationId in cairn.config.ts (public identifiers),
 # so unlike 907-life only the App PRIVATE KEY is a worker secret here. GOOGLE_SA_KEY_B64 is
-# the registration-roster Sheets writer (registry.md has the scope).
-WORKER_SECRETS["ecxc"]="GITHUB_APP_PRIVATE_KEY_B64 GOOGLE_SA_KEY_B64"
+# the registration-roster Sheets writer (registry.md has the scope). ANTHROPIC_API_KEY
+# powers the cairn editor's tidy copy-edit (site.config.yaml tidy.enabled).
+WORKER_SECRETS["ecxc"]="GITHUB_APP_PRIVATE_KEY_B64 GOOGLE_SA_KEY_B64 ANTHROPIC_API_KEY"
 
 # --- Argument parsing ---
 MODE="all"

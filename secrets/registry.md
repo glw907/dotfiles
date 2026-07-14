@@ -144,7 +144,7 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 
 ### ANTHROPIC_API_KEY
 - **Grants**: Claude API access (claude-3-*, claude-sonnet-*, etc.)
-- **Used by**: Claude CLI, any scripts using the Anthropic SDK
+- **Used by**: Claude CLI, any scripts using the Anthropic SDK, ecxc worker (editor tidy copy-edit)
 - **Rotate at**: https://console.anthropic.com/settings/keys
 
 ### CMS_BOT_PAT
