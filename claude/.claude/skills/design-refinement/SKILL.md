@@ -16,6 +16,13 @@ degrade the whole — and the study's key negative result is that adding surroun
 prose to narrow patches makes results WORSE, not better. The fix is a different unit of work,
 not better patch prompts.
 
+Refinement carries the evaluative design vocabulary (axes, knobs, dose); it does not carry the
+generative one. When a genuinely novel aesthetic decision arises inside a refinement arc — a
+taste fork, a new element or composition within the approved bones — load the frontend-design
+skill for that one decision (its direction-setting method: subject grounding, type pairing,
+palette authorship, the signature element), decide, then return here. Deciding a novel
+direction from refinement's checklists alone is how template looks slip in.
+
 ## Starting up: discover, then ask once
 
 On invocation, do not open with a questionnaire. First DISCOVER what the project already
@@ -225,10 +232,11 @@ Everything else is dispatched, and the dispatch is role-matched:
   responsive site), plus dark mode where the design ships it, plus interaction states — a
   single-desktop-screenshot audit reliably misses the defects owners find first.
 - Every audit includes one explicit coherence question: **does anything here read as
-  AI-default?** (the recognizable template looks: the cream-serif-terracotta cluster, the
-  dark-page-acid-accent cluster, uniform rounded cards with accent rails, gradient heroes,
-  emoji section markers). Refinement that installs a template look has failed even if every
-  knob passes.
+  AI-default?** (the recognizable template looks, kept in sync with frontend-design's
+  calibration list: the cream-serif-terracotta cluster, the dark-page-acid-accent cluster,
+  the broadsheet cluster — hairline rules, zero border-radius, dense newspaper columns —
+  uniform rounded cards with accent rails, gradient heroes, emoji section markers).
+  Refinement that installs a template look has failed even if every knob passes.
 
 ## Knob calibration (the kinds of thing an audit evaluates — not a checklist to satisfy)
 
