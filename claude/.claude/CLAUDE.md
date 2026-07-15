@@ -19,6 +19,26 @@ proven the same day: do not read a file's "current state" to draw conclusions wh
 agent is concurrently editing that file; you will read its half-applied change and mislead
 yourself (and any agent you then instruct). Verify against committed state or wait for the agent.
 
+## One executor per worktree (Geoff, 2026-07-14)
+
+Before launching ANY executor into a repo or worktree — a Workflow, an implementer dispatch,
+or inline main-loop edits — verify no live concurrent executor is already working it. The
+checks are cheap: `pgrep -f <worktree path>` for running processes, `git status` for warm
+uncommitted changes you did not author, other sessions' workflow journal mtimes, and the
+project's own status docs (a line like "a fresh session executes this" means another session
+may ALREADY be running it — confirm before assuming the seat is empty; when in doubt, one
+sentence to Geoff beats a race). Warm uncommitted code found at dispatch time is a
+stop-and-investigate signal, never free progress. If a live executor IS found: stand down or
+coordinate — two conductors must never both run a close ritual, merge, or release on the same
+branch. For an agent that discovers contention mid-flight, the recovery pattern is
+verify-not-duplicate: stop editing contested files, poll until the other's commit lands,
+verify it against the task's acceptance criteria, and report it as verified rather than
+re-authoring. Born 2026-07-14: two workflows raced the cairn nav-layout plan in one worktree
+(~1.2M duplicated subagent tokens); the implementer agents self-detected the contention and
+verified instead of duplicating, so every task landed exactly once and the worktree closed
+clean — the waste was real, the corruption was not, and the pre-dispatch check would have
+prevented both.
+
 ## Machine Environment
 
 - **OS**: Linux Mint 22.3 "Zena" (Ubuntu 24.04 base), Cinnamon desktop
