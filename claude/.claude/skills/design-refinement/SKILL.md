@@ -74,16 +74,20 @@ per-iteration contract:
    dispatches for iteration edits: a dispatch costs pre-extraction plus round-trip latency
    exceeding the edit itself, and per-tweak diff review is exactly the ceremony the owner
    banned.
-2. Direct editing does not suspend the axis rule. An owner note names a symptom, never a
-   unit of work: translate it to its design axis (emphasis, hierarchy, density, rhythm)
-   and answer with the axis's SYSTEM treatment — rule the grammar once (a ladder, a scale,
-   a reservation), log it, and apply it to every element the axis governs on the surface,
-   in one probe. A per-element patch answering a per-element note is how the
-   locally-coherent failure mode enters an arc, cheap probes or not. The live tell: the
-   owner's next note contradicting your last fix (too loud, then nearly invisible) is the
-   oscillation signature — the unit of work is wrong, so stop adjusting values and rule
-   the system. (Observed 2026-07-15, cairn admin arc: two reactive button patches, owner
-   caught the rabbit hole; the emphasis-ladder ruling ended it in one pass.)
+2. Direct editing does not suspend the axis rule, and the iteration unit is the ROUND, not
+   the note. Invite grouped feedback and batch the open notes; a note arriving while a pass
+   is in flight joins the current round, never spawns its own edit-render cycle. Translate
+   each note to its design axis (emphasis, hierarchy, density, rhythm), then answer the
+   whole batch with ONE composed pass over the surface: rule the grammar (a ladder, a
+   scale, a reservation), state every affected element's treatment before editing, apply it
+   everywhere the axes reach, render once. A per-element patch answering a per-element note
+   is how the locally-coherent failure mode enters an arc, cheap probes or not. Three live
+   tells, all observed (2026-07-15, cairn admin arc; the later two under a weaker version
+   of this rule): the owner's next note contradicting your last fix (too loud, then nearly
+   invisible); a third note arriving on the same surface (a pill family whose inks diverged
+   because it was assembled by accretion, never designed); and the owner having to say
+   "grouped feedback, holistic response" out loud. Each means the surface was never
+   designed whole — stop editing, write the surface's full spec, then one pass.
 3. A note that is a question gets a reasoned answer before any edit. A probe gets rendered,
    and the reply tells the owner exactly what to look at. The iteration ends with the
    owner's verdict: keep, revert, or push further.
@@ -128,7 +132,9 @@ Red flags you are in the wrong mode: dispatching a builder for a one-note tweak;
 the simplifier or e2e on iteration 3 of 12; converting a "maybe try…" note into a work
 item; deploying mid-arc so the owner can review what localhost already shows; answering
 an element complaint with an element edit when the previous iteration's fix drew the
-contradicting note — that oscillation means rule the axis's system, not re-tune the value.
+contradicting note — that oscillation means rule the axis's system, not re-tune the value;
+shipping a second consecutive single-note edit-render cycle on one surface instead of
+batching the round and re-composing the surface once.
 
 ## The settled-landing shape: rounds, not a pass
 
