@@ -3,6 +3,7 @@
   "permissions": {
     "defaultMode": "bypassPermissions"
   },
+  "model": "fable",
   "hooks": {
     "SessionStart": [
       {
@@ -34,6 +35,12 @@
             "type": "command",
             "command": "vale-hook",
             "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "claude-context-budget --hook",
+            "timeout": 10,
+            "statusMessage": "Checking context-file budgets"
           }
         ]
       }
@@ -60,6 +67,5 @@
   "tui": "fullscreen",
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
-  "voiceEnabled": true,
-  "model": "claude-fable-5[1m]"
+  "voiceEnabled": true
 }

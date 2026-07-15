@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# claude-context-budget: size budgets for context-loaded Claude files.
+#
+# These files load into every session's context (CLAUDE.md and its @-imports at
+# session start, the auto-memory MEMORY.md index on recall), so their length is a
+# per-session token tax. This gate catches regrowth at write time.
+#
+# Modes:
+#   claude-context-budget --hook        PostToolUse hook: read tool JSON on stdin
+#   claude-context-budget FILE...       check the named files (manual audit)
+#
+# Exit 0: within budget, or not a budgeted file. Exit 2: over budget, message on
+# stderr (PostToolUse feeds exit-2 stderr back to the writing session as blocking
+# feedback, so the session that grew the file is the one told to trim it).
+#
+# Budgets are approximate tokens (bytes / 4), overridable via environment.
+
+CLAUDE_MD_BUDGET="${CLAUDE_MD_BUDGET:-6000}"
+IMPORT_BUDGET="${IMPORT_BUDGET:-4000}"
+MEMORY_INDEX_BUDGET="${MEMORY_INDEX_BUDGET:-1500}"
+
+tokens_of() { echo $(( $(wc -c < "$1") / 4 )); }
+
+# Prints the budget for FILE, or nothing when the file is not budgeted.
+budget_for() {
+  local f="$1" base dir cm ref target
+  base=$(basename "$f")
+  if [ "$base" = "CLAUDE.md" ]; then echo "$CLAUDE_MD_BUDGET"; return; fi
+  if [ "$base" = "MEMORY.md" ] && [[ "$f" == */.claude/projects/* ]]; then
+    echo "$MEMORY_INDEX_BUDGET"; return
+  fi
+  [[ "$base" == *.md ]] || return 0
+  # An @-import: some ancestor CLAUDE.md references this file.
+  dir=$(dirname "$f")
+  while [ "$dir" != "/" ] && [ "$dir" != "$HOME" ]; do
+    cm="$dir/CLAUDE.md"
+    if [ -f "$cm" ]; then
+      while read -r ref; do
+        [ -n "$ref" ] || continue
+        case "$ref" in
+          /*) target="$ref" ;;
+          "~/"*) target="$HOME/${ref#\~/}" ;;
+          *) target="$dir/$ref" ;;
+        esac
+        if [ "$(realpath -m "$target" 2>/dev/null)" = "$f" ]; then
+          echo "$IMPORT_BUDGET"; return
+        fi
+      done < <(grep -oE '(^|[[:space:]])@[A-Za-z0-9_.~/-]+' "$cm" 2>/dev/null | sed -E 's/^[[:space:]]*@//')
+    fi
+    dir=$(dirname "$dir")
+  done
+}
+
+check() {
+  local f budget toks
+  f=$(realpath -m "$1" 2>/dev/null) || return 0
+  [ -f "$f" ] || return 0
+  budget=$(budget_for "$f")
+  [ -n "$budget" ] || return 0
+  toks=$(tokens_of "$f")
+  if [ "$toks" -gt "$budget" ]; then
+    echo "context-budget: $f is ~${toks} tokens, over its ${budget}-token budget for a context-loaded file. Trim it before this turn ends: archive superseded entries to a non-loaded file (the docs/status-archive.md pattern), compress verbose prose, or move detail into on-demand docs. Model economy: the trim is mechanical, so a frontier-conducted session (Fable/Opus) dispatches it to a cheap agent (model: sonnet) instead of grinding it inline; only the judgment of WHAT stays loaded belongs in the main loop. Do not raise the budget without Geoff's say-so." >&2
+    return 2
+  fi
+  return 0
+}
+
+if [ "$1" = "--hook" ]; then
+  file=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty' 2>/dev/null)
+  [ -n "$file" ] || exit 0
+  check "$file"
+  exit $?
+fi
+
+rc=0
+for f in "$@"; do check "$f" || rc=2; done
+exit $rc
