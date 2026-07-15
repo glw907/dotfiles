@@ -74,15 +74,25 @@ per-iteration contract:
    dispatches for iteration edits: a dispatch costs pre-extraction plus round-trip latency
    exceeding the edit itself, and per-tweak diff review is exactly the ceremony the owner
    banned.
-2. A note that is a question gets a reasoned answer before any edit. A probe gets rendered,
+2. Direct editing does not suspend the axis rule. An owner note names a symptom, never a
+   unit of work: translate it to its design axis (emphasis, hierarchy, density, rhythm)
+   and answer with the axis's SYSTEM treatment — rule the grammar once (a ladder, a scale,
+   a reservation), log it, and apply it to every element the axis governs on the surface,
+   in one probe. A per-element patch answering a per-element note is how the
+   locally-coherent failure mode enters an arc, cheap probes or not. The live tell: the
+   owner's next note contradicting your last fix (too loud, then nearly invisible) is the
+   oscillation signature — the unit of work is wrong, so stop adjusting values and rule
+   the system. (Observed 2026-07-15, cairn admin arc: two reactive button patches, owner
+   caught the rabbit hole; the emphasis-ladder ruling ended it in one pass.)
+3. A note that is a question gets a reasoned answer before any edit. A probe gets rendered,
    and the reply tells the owner exactly what to look at. The iteration ends with the
    owner's verdict: keep, revert, or push further.
-3. Each kept iteration gets a one-line commit on the arc branch (`design: <probe>`); a
+4. Each kept iteration gets a one-line commit on the arc branch (`design: <probe>`); a
    reverted probe is a checkout. No pushes and no deploys until settle.
-4. One line per iteration lands in an arc log beside the decisions log (probe, verdict,
+5. One line per iteration lands in an arc log beside the decisions log (probe, verdict,
    why) — insurance against context loss, and the raw material the settle-time decisions
    entry distills before the log is removed.
-5. The only dispatch inside an arc is a genuine taste fork: two or three parallel throwaway
+6. The only dispatch inside an arc is a genuine taste fork: two or three parallel throwaway
    static-HTML candidates generated while the main loop keeps iterating; the owner picks,
    or the directing context does when the owner delegates.
 
@@ -116,7 +126,9 @@ The settle ritual, once, when the owner ratifies (notes go felt-tier or he calls
 
 Red flags you are in the wrong mode: dispatching a builder for a one-note tweak; running
 the simplifier or e2e on iteration 3 of 12; converting a "maybe try…" note into a work
-item; deploying mid-arc so the owner can review what localhost already shows.
+item; deploying mid-arc so the owner can review what localhost already shows; answering
+an element complaint with an element edit when the previous iteration's fix drew the
+contradicting note — that oscillation means rule the axis's system, not re-tune the value.
 
 ## The settled-landing shape: rounds, not a pass
 
