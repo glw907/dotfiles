@@ -1,6 +1,6 @@
 ---
 name: design-refinement
-description: Use when polishing an EXISTING design — a page, app screen, or artifact whose bones are approved — whether iterating live with the owner against a local dev server or landing a ratified design toward a benchmark finish. The refinement counterpart to origination skills (frontend-design) and port-matching skills (visual-fidelity).
+description: Use when polishing an EXISTING design — a page, app screen, or artifact whose bones are approved — iterating live against a dev server, iterating async via probe pages the owner reviews on their own time, or landing a ratified design toward a benchmark finish. The refinement counterpart to origination skills (frontend-design) and port-matching skills (visual-fidelity).
 ---
 
 # Design refinement
@@ -41,21 +41,46 @@ mid-round judgment calls rather than stopping per item, and reserve immediate qu
 genuine forks in the owner's own taste — which get answered-then-executed per step 6, never
 silently absorbed.
 
-## Two modes — pick by what the owner is doing
+## Three modes — pick by whether taste is still converging, never by where the owner sits
 
-The method runs in one of two modes, chosen at invocation and named out loud:
+The deciding predicate is the WORK's state, not the owner's presence: while the owner's
+design notes are still arriving — taste unconverged — the work is an ARC and iterations must
+be cheap; only ratified work runs the full machinery. Routing an iterative round into the
+settled-landing pipeline because the owner reviews async is the observed expensive failure
+(ASC basic-polish, 2026-07-16: three notes-adjudicate-dispatch-gate-regen cycles before the
+owner named it — "it seems to frequently land us in these long, slow, and expensive loops";
+his ruling: "we're only running the deep and expensive full rebuild a minimum number of
+times"). The full build-gate-baseline cycle runs once per settle, never per iteration.
 
-- **Exploratory arc** — the owner is live, reviewing in a localhost tab (dev server + HMR),
-  and the notes are probes ("could", "maybe", "try") rather than directives. Expect 10-15
-  fast iterations; cost and latency per turn are the binding constraints, not per-turn
-  polish. Run the arc contract below; the rounds-and-passes machinery and every per-round
-  gate stay off until settle.
-- **Settled landing** — the design is ratified (or the owner reviews async on a deployed
-  surface) and the work is landing or closing it. Run the numbered method and agent economy
-  below as written.
+- **Exploratory arc (live)** — the owner is co-present, reviewing in a localhost tab (dev
+  server + HMR), and the notes are probes ("could", "maybe", "try"). Expect 10-15 fast
+  iterations; cost and latency per turn are the binding constraints. Run the arc contract
+  below; the rounds-and-passes machinery and every per-round gate stay off until settle.
+- **Async probe arc** — the owner reviews on their own time and the notes are still design
+  iteration (element complaints, taste directions, "needs a redesign"). Same arc economics,
+  different medium: instead of a live tab, each round delivers a self-contained PROBE PAGE
+  the owner opens whenever (see the probe-page contract below). No builder dispatches, no
+  gate, no baseline regeneration per round.
+- **Settled landing** — the design is RATIFIED (the owner's verdicts are in, or the round is
+  mechanical rollout of an already-ruled vocabulary) and the work is landing or closing it.
+  Run the numbered method and agent economy below as written — once per settle.
 
 An arc ends by flowing into a one-time landing: the settle ritual IS the ceremony the
 iterations skipped.
+
+## The async probe arc's probe-page contract
+
+A probe page is one self-contained HTML file (data-URI images, the design's REAL tokens and
+CSS inlined so the render cannot lie about type, color, or spacing), opened in the owner's
+browser (`xdg-open`), holding per region: the CURRENT state beside one or more CANDIDATE
+treatments (before/after pairs, or an A/B/C slate for a taste fork), at the design's real
+widths, each with a one-line caption naming the change. Candidates render via captured
+screenshots plus CSS-injected variants against the deployed or dev surface — never a
+production build per candidate. The owner verdicts per region (keep / revert / push
+further / pick B); kept verdicts accumulate in the arc log and land as ONE commit batch at
+settle, where the full gate, CI-canonical baseline regeneration, and deploy run exactly
+once. The ASC register round is the proven exemplar: probe page rendered, verdict in
+minutes, one landing commit.
 
 ## The exploratory arc
 
@@ -134,7 +159,10 @@ item; deploying mid-arc so the owner can review what localhost already shows; an
 an element complaint with an element edit when the previous iteration's fix drew the
 contradicting note — that oscillation means rule the axis's system, not re-tune the value;
 shipping a second consecutive single-note edit-render cycle on one surface instead of
-batching the round and re-composing the surface once.
+batching the round and re-composing the surface once; running the full
+build-gate-baseline-regen cycle more than once between owner verdicts — the owner's design
+notes are still arriving, so this is an arc, and the cycle belongs at settle; choosing
+settled-landing because the owner reviews async rather than because the work is ratified.
 
 ## The settled-landing shape: rounds, not a pass
 
