@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+"""PreToolUse hook that denies 1Password CLI calls from Claude sessions.
+
+Every op call can fire a desktop approval popup. Secrets are provisioned
+in ~/.local/secrets; the Secrets section of ~/.claude/CLAUDE.md lists the
+stores to check before escalating.
+"""
+
+import json
+import re
+import sys
+
+data = json.load(sys.stdin)
+cmd = (data.get("tool_input") or {}).get("command", "")
+op_call = re.compile(
+    r"(?:^|[\s;&|(`])op\s+"
+    r"(?:item|read|inject|run|signin|signout|vault|document"
+    r"|user|group|account|whoami|connect|plugin)\b"
+)
+if op_call.search(cmd):
+    reason = (
+        "1Password CLI blocked: every `op` call fires a desktop approval "
+        "popup at Geoff. Secrets are already provisioned in "
+        "~/.local/secrets; source it in the same shell as the command "
+        "that needs it, reference variables by name, and never print "
+        "values. Name inventory: ~/.dotfiles/secrets/registry.md and "
+        "~/.claude/docs/cloudflare-estate-inventory.md. If the secret "
+        "you need is absent from those stores, stop and report BLOCKED "
+        "naming it. Deliberate 1Password access happens only with "
+        "Geoff's explicit approval in the main conversation."
+    )
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": reason,
+        }
+    }))

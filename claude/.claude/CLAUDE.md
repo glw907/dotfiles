@@ -97,6 +97,8 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 - **1Password: ONE prompt, never a loop.** Each `op` call can trigger a desktop approval.
   Fetch once (`op item get <id> --format json`, or `op item list --format json` for several
   items) and parse locally. A repeated prompt is a defect against Geoff's attention.
+  Enforced since 2026-07-19: the `claude-block-op` PreToolUse hook (user settings.json)
+  denies `op` in every Claude session; if a fetch is genuinely required, ask Geoff.
 - **Installing a NEW long-lived secret, every project (Geoff, 2026-07-13): the workstation
   age store is the origin, never a loose file and never only `wrangler secret put`.** The flow:
   `~/.dotfiles/scripts/secrets/secret-set.sh NAME --value|--file|--b64-file` (writes
