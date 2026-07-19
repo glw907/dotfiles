@@ -167,8 +167,13 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 ### FASTMAIL_API_TOKEN
 - **Grants**: Full Fastmail JMAP access (mail, contacts, calendars, files, settings)
 - **Domain**: 907.life (business plan)
-- **Used by**: aerc (via `op read`), Claude Code JMAP scripting (via env var)
+- **Used by**: aerc (via `op read`), Claude Code JMAP scripting (via env var), poplar
+  corpus harvest
 - **Rotate at**: Fastmail > Settings > Privacy & Security > App Passwords
+- **History**: 2026-07-19 the stored value had gone stale (JMAP 401); re-anchored from the
+  1Password Fastmail item's `api access` field via secret-set.sh. If it goes stale again,
+  the 1Password copy and this store have diverged; re-anchor after any Fastmail-side
+  rotation.
 
 ### GITHUB_APP_ID / GITHUB_APP_INSTALLATION_ID / GITHUB_APP_PRIVATE_KEY_B64
 - **Grants**: cairn-cms GitHub App — `Contents: Read & write` on glw907/ecnordic-ski and
