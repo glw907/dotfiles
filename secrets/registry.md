@@ -148,7 +148,6 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 - **Rotate at**: https://console.anthropic.com/settings/keys
 - **Rotated 2026-07-14**: the prior key had been silently revoked (discovered when asc-site's
   editor Tidy failed auth); new key validated with a live messages call and pushed to both workers.
-- **Rotated**: 2026-07-14 (prior key answered 401, revoked upstream; new key verified 200 and stored in values.age; worker pushes to ecxc + asc-site PENDING on a valid CLOUDFLARE_API_TOKEN, see that entry)
 
 ### CMS_BOT_PAT
 - **Grants**: GitHub repository write access for CMS automation
