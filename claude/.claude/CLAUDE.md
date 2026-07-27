@@ -155,23 +155,30 @@ Geoff's attended time. **Clock time is explicitly NOT a budget (Geoff, 2026-07-1
 serial, cheaper path, and never trade tokens or an extra Geoff interaction to finish sooner.**
 When the budgets conflict, spend the one that can buy the thing: tokens for anything research,
 verification, or a retry can resolve; attended time only for taste, priorities, and product
-forks. Fable output costs $50/MTok (2x Opus 4.8, ~3x Sonnet 5, 10x Haiku 4.5) on the tightest
-rate-limit bucket, so its seat is the judgment that prevents rework: brainstorming, specs,
-plan authorship, dispatch decisions, diff review and finding triage, synthesis, post-mortems,
-final user-facing prose. Never downshift the planner: a weak plan compounds into rework that
-exceeds the savings; a cheap implementer executing a frontier-authored plan is the stable
-configuration.
+forks. Fable output costs $50/MTok (2x Opus 5, ~3x Sonnet 5, 10x Haiku 4.5) on the tightest
+rate-limit bucket. **Opus 5 narrowed Fable's seat (ratified 2026-07-26):** Fable keeps the
+sittings where taste, ambiguity, and doctrine are the product — brainstorming, spec and plan
+authorship, arc post-mortems, final user-facing prose — and an Opus 5 conductor takes
+execution: dispatch decisions, diff review, finding triage, gate-running. **A Fable planning
+sitting ends at plan approval; execution runs in a fresh Opus 5 session**, with the pre-baked
+artifacts (committed plan, STATUS pointer, refreshed memory) as the whole handoff. Never
+downshift the planner below Opus 5: a weak plan compounds into rework that exceeds the
+savings; a cheap implementer executing a frontier-authored plan is the stable configuration.
 
 Volume work never runs in the main loop; if the main loop is implementing, bulk-reading, or
 grinding mechanical edits, dispatch it. Well-specified implementation goes to the Sonnet-pinned
-implementers. Reviewers keep their Opus pins: beside a Fable conductor and Sonnet implementers,
-the Opus gate is also cross-model diversity against correlated self-review blind spots.
+implementers. Reviewers pin `claude-opus-5` (dated-ID pins repointed 2026-07-26; same price as
+4.8, better recall and precision, separate rate bucket): beside a Fable planner and Sonnet
+implementers the Opus gate is cross-model diversity against correlated self-review blind
+spots, and under an Opus 5 execution conductor it is still a fresh-context gate.
 
 Unpinned agents (`general-purpose`, `Plan`, the `claude` catch-all, Workflow `agent()` calls
 without `model`) inherit the main model at main-loop price, so every such dispatch carries an
 explicit model: `sonnet` by default, `haiku` for mechanical search (Explore is already Haiku).
-Upshift a single dispatch (`model: opus`/`fable`) only for novel correctness-critical logic
-the plan does not fully specify. Effort is the second lever, cheaper than a model swap in both
+Upshift a single dispatch to `model: opus` only for novel correctness-critical logic the plan
+does not fully specify; `model: fable` only when an Opus 5 verdict itself hedges on something
+that matters (the escalation ladder: Sonnet implements, Opus 5 reviews and verifies, Fable
+adjudicates the hedge). Effort is the second lever, cheaper than a model swap in both
 directions: low on mechanical dispatches; raise it on a cheap model before upshifting the
 model; the main loop stays at high, with xhigh/max reserved for a single hard decision (max
 overthinks). Subagents start with zero context and read the dispatch literally: pre-extract
@@ -179,19 +186,22 @@ exactly what the task needs; whole-history pastes recreate the bloat the split r
 but verify the pins (silent failures have shipped in both directions): when a dispatch runs
 surprisingly slow, expensive, or weak, check which model actually ran first.
 
-## Post-Fable model economy (after the included-access window closes)
+## Fable allocation economics (permanent inclusion since 2026-07-20)
 
-The Max-plan Fable window has been extended twice (2026-07-07 → 07-12 → **07-19**; Fable
-draws up to 50% of weekly plan limits inside it). While it is open, "Fable conducts" stands;
-the dates keep moving, so verify the current window online before declaring the doctrine
-switched. After it truly closes, OPUS 4.8 CONDUCTS and Fable is a credit-metered specialist
-governed by `~/.claude/docs/fable-post-cutoff-system.md`: batch-first (50% discount),
-per-dispatch one-shots, rare cached sittings, and the SUGGESTION RULES baked there (never
-silently spend Fable, never silently absorb Fable-tier work; propose job + mode + size in one
-sentence and let Geoff decide). The rest of the model economy stands unchanged. **Self-check
-at session start and on any cost signal: a Fable conductor without a deliberate,
-Geoff-approved sitting gets flagged immediately with a recommendation to switch to Opus** (an
-ecxc session silently burned ~1M tokens on 2026-07-13; the flag came from Geoff, not the
+The access whiplash is over: as of 2026-07-20, Fable 5 is PERMANENTLY included on the Max
+plan at roughly 50% of regular usage limits (verified online 2026-07-26; no expiry). There is
+no cutoff to plan around; the scarce resource is the weekly Fable allocation. Spend it where
+Fable is differentiated — the planning and taste sittings above — and never on
+execution-shaped work Opus 5 covers at half the API price and none of the allocation.
+Permanence also means sittings need no hoarding: a brainstorm or spec sitting is a routine,
+legitimate Fable use. Beyond the allocation, Fable runs on usage credits at API rates
+($10/$50), governed by `~/.claude/docs/fable-post-cutoff-system.md` as the OVERFLOW playbook:
+batch-first (50% discount), per-dispatch one-shots, and the SUGGESTION RULES baked there
+(never silently spend Fable credits, never silently absorb Fable-tier work; propose job +
+mode + size in one sentence and let Geoff decide). **Self-check at session start and on any
+cost signal: a Fable conductor doing execution-shaped work (dispatch grinding, gate-running,
+bulk reads) gets flagged immediately with a recommendation to hand off to an Opus 5 session**
+(an ecxc session silently burned ~1M tokens on 2026-07-13; the flag came from Geoff, not the
 conductor — that order is the defect).
 
 ## Multi-agent workflows: suggest, never launch unprompted
@@ -223,19 +233,21 @@ the pre-baked artifacts are the handoff. Mid-initiative clears follow the existi
 resume prompt, launch directory). The same force argues for batching questions and dispatching
 reads within a session: each extra turn re-buys the context.
 
-## Plan execution: same session by default
+## Plan execution: the plan-approval gate is the model boundary (revised 2026-07-26)
 
-Plan and execute in one session; long context plus summarization removed the old reason to
-hand off. Execution is orchestrate-and-verify: dispatch each plan task to the repo's
-implementer (pinned Sonnet), review its diff, confirm the full gate before the next dispatch;
-main-loop implementation or a model upshift only for novel correctness-critical logic the plan
-does not fully specify. Before executing, still pre-bake the durable artifacts as crash
-insurance: commit the plan, point the status doc at it as the immediate next action, refresh
-the relevant memory — anything load-bearing lives in the plan, spec, status doc, or memory,
-never only in the conversation. Do not run the `superpowers:writing-plans` "which execution
-method?" question; same-session is the default. A deliberate clear is the exception, for a
-brainstorm that ran long and noisy; when clearing, give the exact resume prompt and the launch
-directory.
+Within one model tier, plan and execute in one session; long context plus summarization
+removed the old reason to hand off. **The exception is now the rule that matters: a
+Fable-conducted planning sitting ends at plan approval, and execution runs in a fresh Opus 5
+session.** Execution is long, tool-heavy, and cache-read-dominated (the arc ledger's #1 cost
+leak), which is exactly where Fable's 2x multiplies; the pre-baked artifacts make the handoff
+nearly free. Always pre-bake before executing: commit the plan, point the status doc at it as
+the immediate next action, refresh the relevant memory — anything load-bearing lives in the
+plan, spec, status doc, or memory, never only in the conversation. When handing off, give the
+exact resume prompt and launch directory. Execution itself is orchestrate-and-verify: dispatch
+each plan task to the repo's implementer (pinned Sonnet), review its diff, confirm the full
+gate before the next dispatch; main-loop implementation or an upshift to `model: opus` only
+for novel correctness-critical logic the plan does not fully specify. Do not run the
+`superpowers:writing-plans` "which execution method?" question; these defaults answer it.
 
 ## Process proportionality (Fable-era superpowers)
 

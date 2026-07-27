@@ -2,7 +2,7 @@
 name: svelte-reviewer
 description: Reviews Svelte 5 (runes) and SvelteKit 2 code for reactivity bugs, load/action correctness, migration anti-patterns, and accessibility warnings. Use after writing or changing .svelte files or SvelteKit load/action/hook code.
 tools: Read, Grep, Glob, Bash
-model: claude-opus-4-8
+model: claude-opus-5
 effort: high
 color: orange
 ---
@@ -13,7 +13,9 @@ to see what changed, then read the surrounding files for context.
 
 Report findings grouped as **Blocker**, **Warning**, **Suggestion**, each with a
 `file:line` reference and a concrete fix. If you find nothing in a category, say so.
-End with a one-line verdict.
+Report every finding, including ones you are uncertain about or judge minor; the
+dispatching session triages, so coverage beats self-filtering. End with a one-line
+verdict.
 
 ## Runes correctness (the highest-value checks)
 

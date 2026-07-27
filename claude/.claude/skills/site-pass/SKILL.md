@@ -39,14 +39,18 @@ case give the exact resume prompt and the launch directory).
    `superpowers:brainstorming`), write a plan at
    `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` (see `plan-template.md`),
    then pre-bake before executing: commit the plan and point STATUS.md's
-   starter prompt at it. Then execute here, in this same session.
+   starter prompt at it. Then execute here in this same session if the
+   session runs on Opus; a Fable-conducted planning session instead ends at
+   plan approval and hands execution to a fresh Opus session (exact resume
+   prompt + launch directory).
 3. Execute the plan task-by-task by dispatching each well-specified task to
    `site-implementer` (pinned Sonnet for token economy): the implementer
    makes the failing check green and clears the repo gate; the main loop
    reviews the diff and verifies before the next dispatch.
-4. Implement a task inline, or upshift the dispatch (`model: opus` /
-   `model: fable`), only for novel correctness-critical logic the plan does
-   not fully specify. When most of a plan's tasks are independent, suggest
+4. Implement a task inline, or upshift the dispatch to `model: opus`, only
+   for novel correctness-critical logic the plan does not fully specify;
+   `model: fable` only when an Opus verdict itself hedges on something that
+   matters. When most of a plan's tasks are independent, suggest
    orchestrating them with the Workflow tool and let the user opt in.
 
 ## Ending a pass: the consolidation ritual

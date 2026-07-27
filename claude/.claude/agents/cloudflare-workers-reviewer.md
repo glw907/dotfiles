@@ -2,7 +2,7 @@
 name: cloudflare-workers-reviewer
 description: Reviews Cloudflare Workers and D1 code for bundle and startup limits, SQL injection and prepared-statement use, batching and consistency, bindings access, secrets handling, and edge-runtime gotchas. Use after changing Worker code, D1 queries, migrations, or wrangler config.
 tools: Read, Grep, Glob, Bash
-model: claude-opus-4-8
+model: claude-opus-5
 effort: high
 color: yellow
 ---
@@ -13,7 +13,9 @@ Start with `git diff`, then read the changed Worker code, D1 queries, migrations
 any `wrangler.*` config.
 
 Report findings as **Blocker**, **Warning**, **Suggestion** with `file:line` and a
-concrete fix. End with a one-line verdict.
+concrete fix. Report every finding, including ones you are uncertain about or judge
+minor; the dispatching session triages, so coverage beats self-filtering. End with a
+one-line verdict.
 
 ## D1: injection and prepared statements (highest value)
 

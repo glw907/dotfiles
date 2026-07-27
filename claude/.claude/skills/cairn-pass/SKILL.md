@@ -45,9 +45,9 @@ re-deriving the design.
    (pinned Sonnet for token economy). The suite is the acceptance contract: the implementer
    writes or confirms the failing test first, makes it green, and clears the full gate
    (`npm run check` 0/0, `npm test` exit 0); the main loop reviews the diff and verifies the
-   gate result before the next dispatch. Implement inline, or upshift the dispatch
-   (`model: opus` / `model: fable`), only for novel correctness-critical logic the plan does
-   not fully specify.
+   gate result before the next dispatch. Implement inline, or upshift the dispatch to
+   `model: opus`, only for novel correctness-critical logic the plan does not fully specify;
+   `model: fable` only when an Opus verdict itself hedges on something that matters.
    When most of a plan's tasks are independent, suggest orchestrating them with the
    Workflow tool and let the user opt in.
 
@@ -135,6 +135,11 @@ fixes every doc its change touched, including the inbound references on other pa
   stale `#anchor` anywhere under `docs/`). All four must pass. `check:reference:signatures` is CI-only
   and easy to skip locally, so run it by name here. A public-API change is not done until its reference
   page matches and no doc links to a name the pass removed.
+- **Any public-surface change also runs `npm run check:surface`** and, when the drift is intended,
+  `npm run check:surface -- --update` with the regenerated `docs/internal/api-surface.md` committed in
+  the same pass. This is the third CI-only gate a local ritual skips (the 2026-07-07 harvest pass
+  shipped a green local gate and failed CI on exactly this; the ambient `auditSink` addition needed
+  the snapshot regen). A type-only change to an augmentation counts as surface.
 - Append any design friction the writing surfaced to `docs/internal/docs-friction-log.md`, one entry
   per finding with its perspective (developer or editor) and a short note. Triage candidates into
   `ROADMAP.md` (Now or Next) and the STATUS carry-forwards. This repo keeps no separate backlog file.
@@ -205,10 +210,13 @@ direction is unsettled or the user wants to stop here.
 
 ### 9. Pre-bake, then continue in this session
 
-Plan and execution share the session by default; a plan written here gets executed here. The
-pre-bake still happens first, as insurance against a crashed or interrupted session rather
-than as a handoff. Do **not** run the `superpowers:writing-plans` "which execution method?"
-question (main-loop execution is the default).
+Plan and execution share the session when the session runs on Opus; a plan written here gets
+executed here. **When the planning session runs on Fable, it ends at plan approval and
+execution runs in a fresh Opus session** (revised 2026-07-26: execution is cache-read-heavy,
+exactly where Fable's 2x multiplies, and the pre-baked artifacts make the handoff free). The
+pre-bake always happens first, as crash insurance in the same-session case and as the whole
+handoff in the split case. Do **not** run the `superpowers:writing-plans` "which execution
+method?" question (these defaults answer it).
 
 - **Pre-bake the durable artifacts.** Commit the plan (push if the user wants it pushed).
   Update STATUS.md so its **immediate next action** line names the new plan, its path, and
@@ -216,12 +224,13 @@ question (main-loop execution is the default).
   Refresh the relevant `cairn-*` memory so a cold session recalls the initiative. Leave the
   tree clean. Anything load-bearing must live in the plan, the spec, STATUS.md, or memory,
   never only in the conversation.
-- **Then proceed straight into "Starting a plan" above**, in this same session.
+- **Then proceed straight into "Starting a plan" above** in this same session (Opus
+  conductor), or hand off to a fresh Opus session (Fable conductor), giving the exact resume
+  prompt and the launch directory (inside `cairn-cms`, so its hooks and memory load).
+  Example: "Execute the component grammar plan (`docs/superpowers/plans/<file>.md`)."
 
-Recommend a context clear only when the session that produced the plan ran long and noisy
-(a sprawling brainstorm, several dead ends). In that case give the exact resume prompt and
-the launch directory (inside `cairn-cms`, so its hooks and memory load). Example: "Execute
-the component grammar plan (`docs/superpowers/plans/<file>.md`)." See the
+On an Opus conductor, additionally recommend a context clear when the session that produced
+the plan ran long and noisy (a sprawling brainstorm, several dead ends). See the
 `clear-context-before-implementing-plans` memory for this default's history.
 
 ## Execution discipline (lessons from Plan 07)
