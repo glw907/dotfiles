@@ -70,6 +70,15 @@ existing surface) is a patch. The number signals scale, not compatibility: the c
 compatibility via `Consumers must:` lines. A minor must carry a `<!-- release-size: minor -->` marker in
 its CHANGELOG section (the `check:version` gate requires it). When unsure, it is a patch.
 
+**Derive the size HERE, at the cut, against this rule and the actual `## Unreleased` window — never
+inherit it from the conversation.** A number or size named earlier (in the launch prompt, a plan, or by
+Geoff in passing: "minor point release", "this'll be 0.90") is a hypothesis to re-derive, not an
+instruction; phrases like "point release" are ambiguous and a passing size call predates the window's
+final content anyway. When the derived size disagrees with what was said earlier, state the rule, name
+the derived number, and confirm the mismatch in one sentence. (Born 2026-07-16: a polish pass was
+launched as "a minor point release" and nearly cut as `0.88.0`; the window was UI polish with no new
+subsystem or surface, a patch by this rule, and Geoff had to catch it.)
+
 Set the version only now, at the cut (never pre-number a held pass, which mints a phantom like the
 `0.77.0` that rolled into `0.78.0`):
 

@@ -21,13 +21,17 @@ the wrong genre's exemplar passes falsely.
 
 ## Load the living contract first, every run
 
-1. The register rules: `docs/superpowers/plans/2026-07-01-docs-rewrite-stage-2.md` (the
-   register section, from "Register rules" to the end of the rule bullets). This is the
-   canonical, growing rule set; it outranks this file where they differ.
+1. The banked register standard: `docs/internal/docs-register.md` (ratified by Geoff
+   2026-07-18). This is the canonical contract for published docs prose — the keystone,
+   the universal contract, and the per-arm registers; it outranks this file and the plan
+   files below where they differ.
 2. The craft references: `docs/superpowers/plans/2026-07-02-docs-craft-references.md`.
 3. The voice corpus: `~/.claude/docs/register-exemplars/cairn/` — the INDEX, the two
    canonical cairn exemplars (README, why-cairn snapshots), and the delta rules in
-   `geoff-aksailingclub-voice.md`.
+   `geoff-aksailingclub-voice.md`. These still govern positioning and site prose, which
+   the docs-register standard does not cover.
+4. History only, when a ruling's origin matters: the register section of
+   `docs/superpowers/plans/2026-07-01-docs-rewrite-stage-2.md` (superseded by item 1).
 
 ## The frame (fails a draft on its own)
 
