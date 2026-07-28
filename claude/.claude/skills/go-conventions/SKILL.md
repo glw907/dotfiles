@@ -390,39 +390,67 @@ BINARY := tool-name
 build:   go build -o $(BINARY) ./cmd/tool-name
 test:    go test ./...
 vet:     go vet ./...
-lint:    @command -v golangci-lint >/dev/null 2>&1 && golangci-lint run ./... || echo "golangci-lint not installed, skipping"
+lint:    golangci-lint run ./...
 install: go install ./cmd/tool-name
-check:   vet test
+check:   vet lint test
 clean:   rm -f $(BINARY)
 ```
 
-- `make check` is the gate before committing: vet + test.
-- Lint is advisory (skips if not installed). Vet is mandatory.
-- No code generation, no build tags, no CGO.
+`make check` is the gate before committing, and every step in it
+gates. A check either gates or does not exist. Never guard a step
+with `command -v tool || echo "skipping"`: that turns a missing or
+misconfigured tool into a green build, and the gate then decays
+silently for months. If a tool is required, let its absence fail
+loudly. If reproducible tool versions matter, pin them in a
+separate `tools/go.mod` and invoke them with `go run -C tools`,
+which keeps the product module's dependency graph clean.
+
+No code generation, no build tags, no CGO.
 
 ## Linting
 
 `.golangci.yml`:
 
 ```yaml
+version: "2"
+
 linters:
+  default: none
   enable:
     - errcheck
     - govet
     - ineffassign
     - staticcheck
     - unused
-    - gosimple
+    - modernize
+    - misspell
+    - unparam
+  settings:
+    errcheck:
+      check-type-assertions: true
 
-linters-settings:
-  errcheck:
-    check-type-assertions: true
-
-issues:
-  exclude-use-default: false
+formatters:
+  enable:
+    - gofmt
+    - goimports
 ```
 
-No `nolint` pragmas. Fix the code instead.
+The `version: "2"` key is required. A v1-schema file fails against a
+v2 binary with "unsupported version of the configuration", which is
+easy to mistake for a missing linter when a Makefile swallows the
+error.
+
+`default: none` plus an explicit enable list is the legible form,
+and it is also load-bearing: v2's `default: none` drops errcheck,
+unused, and ineffassign unless you name them. `staticcheck` in v2
+subsumes the old `gosimple` and `stylecheck`. `modernize` (built in
+since v2.6.0) reports stale stdlib idioms, so a separate grep pass
+for them is redundant. Verify a config with
+`golangci-lint config verify` before committing it.
+
+No `nolint` pragmas. Fix the code instead. Where a project must
+allow them, enable `nolintlint` and require both a rule id and a
+reason, so every suppression is legible to a reviewer.
 
 ## Dependencies
 

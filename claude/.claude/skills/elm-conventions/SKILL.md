@@ -82,7 +82,23 @@ func fetchFolders(m *Sidebar, backend mail.Backend) tea.Cmd {
 }
 ```
 
-## Rule 3: All I/O in Cmds
+### The one recorded exception: a `tea.WithFilter` input coalescer
+
+A program-construction `tea.WithFilter` may collapse a burst of
+input messages before they reach `Update`. The motivating case is
+mouse wheel input, where an unfiltered burst costs one store round
+trip per tick against a latency budget. The filter samples over a
+short window (~16 ms), accumulates signed deltas, and resets on a
+direction change, emitting one message for the burst.
+
+This is legal only because it is pure. The filter holds no model
+state, makes no decision the model could make differently, and
+changes message volume rather than meaning. A filter that reads or
+writes model state, drops messages conditionally on application
+state, or performs I/O is Rule 2 and Rule 3 violation, not this
+exception. Record any filter's window and reset semantics where the
+program is constructed, since it sits outside the loop a reader
+follows.
 
 Blocking calls (backend methods, file I/O, network) run inside
 `tea.Cmd` functions, never in `Update` or `View`. `Update` must return
@@ -311,7 +327,7 @@ When a parent receives `tea.WindowSizeMsg`, it must:
    (research at `docs/poplar/research/2026-04-26-reference-apps.md` §4,
    §8 avoid #6).
 
-The full contract lives in `docs/poplar/bubbletea-conventions.md`,
+The full contract lives in `~/.claude/docs/bubbletea-conventions.md`,
 including the planning and review checklists that confirm this
 discipline before and after any UI change. Load that doc before
 planning UI/UX work, and run its review checklist after.
