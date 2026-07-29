@@ -249,6 +249,35 @@ gate before the next dispatch; main-loop implementation or an upshift to `model:
 for novel correctness-critical logic the plan does not fully specify. Do not run the
 `superpowers:writing-plans` "which execution method?" question; these defaults answer it.
 
+## Pass sizing is the orchestrator's job (Geoff, 2026-07-29)
+
+Geoff has no direct insight into when a pass is overloading. He sees per-item
+summaries in which every addition reads as small and adjacent; the orchestrator
+holds the whole dispatch list. **Detecting accumulation and raising it unprompted
+is the orchestrator's duty, and a pass that quietly doubles costs far more than
+one split early.** Two failure modes, both named from poplar pass 1b:
+
+- **A grant is not headroom.** "Use a workflow", "we can spread this over
+  several passes", "you have latitude" authorize a mechanism or a boundary,
+  never more work. Restate what a grant does and does not authorize before
+  acting on it.
+- **Accretion by adjacency.** Work joins a task because it sits next to what
+  that task already does. Each addition is defensible alone and none is weighed
+  against the total. Pass 1b's conformance task took a coverage ledger, an
+  unowned method, two doc corrections and two late defect fixes on top of a
+  full plate, and Geoff had to raise the size question twice before the
+  orchestrator said anything.
+
+Practice: state a task's deliverable count when dispatching it, and say plainly
+when it passes roughly four distinct deliverables or when anything is added
+after dispatch. Route discovered work to the pass that first leans on it, not
+the pass that found it. Prefer turning a discovered artifact into a standing
+input that later passes consume over making it a task now. Never add scope to a
+task already in flight unless it would otherwise build against something known
+wrong, and say so explicitly when doing it. Closing out and refreshing beats
+pushing a long session further: both output quality and token cost favor the
+clean boundary.
+
 ## Process proportionality (Fable-era superpowers)
 
 The human gate is plan approval, once. After approval, execution runs to completion with no
