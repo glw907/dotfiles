@@ -144,6 +144,29 @@ verbal description); the context that built the UI never grades it; nothing depl
 production without a full-page render read in the main loop; user-facing sites get Geoff's
 before/after. (Born from two same-day production misses with all-green mechanical gates.)
 
+## Engine-level UI mechanics, every cairn site (Geoff, 2026-07-30)
+
+Every cairn-cms site (aksailingclub-org, ecxc-ski, 907-life, later consumers), not one repo. A
+UI **mechanic** belongs to cairn; a design **choice** belongs to the site. A mechanic recurs in
+any component of that shape on any cairn site: how a padded label optically centers its text,
+which element a two-part row drops when space runs out, a framework default rendering an
+invisible control on a dark ground. Patching one in a site's theme or a route's scoped `<style>`
+leaves every sibling site to rediscover it.
+
+**Filing these is default behavior, never a response to being asked.** A pass carrying UI work
+ends by enumerating what it built, asking of each item whether it is a mechanic, and filing what
+qualifies in that pass's harvest-findings doc BEFORE reporting the pass done. **A repeated local
+workaround is the loudest signal that something sits at the wrong altitude**: "this repo has
+patched this before" is an automatic filing trigger, not a reason to patch it faster. (Born
+2026-07-30: a pass patched DaisyUI's invisible dark-mode `.btn` edge a third time, the pattern
+already in agent memory, and filed nothing until Geoff asked.)
+
+Two qualifications. A mechanic that is always right becomes a silent default (`text-box-trim`
+for optical centering); one whose answer depends on what the content means makes the choice
+explicit at the call site (which element a row drops). The mechanically detectable half belongs
+in `cairn-audit`, never a consuming site's own probe script. Worked example with the evidence
+and measurement methods: `aksailingclub-org/docs/2026-07-30-assets-substrate-harvest-findings.md`.
+
 ## Claude Code Agent Usage
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
