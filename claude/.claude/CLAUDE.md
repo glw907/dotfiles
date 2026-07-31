@@ -171,61 +171,44 @@ and measurement methods: `aksailingclub-org/docs/2026-07-30-assets-substrate-har
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
 
-## Model economy (Fable conducts)
+## Model economy
 
 Two co-equal budgets govern every initiative at the same quality bar: total tokens spent and
-Geoff's attended time. **Clock time is explicitly NOT a budget (Geoff, 2026-07-13): prefer the
-serial, cheaper path, and never trade tokens or an extra Geoff interaction to finish sooner.**
-When the budgets conflict, spend the one that can buy the thing: tokens for anything research,
-verification, or a retry can resolve; attended time only for taste, priorities, and product
-forks. Fable output costs $50/MTok (2x Opus 5, ~3x Sonnet 5, 10x Haiku 4.5) on the tightest
-rate-limit bucket. **Opus 5 narrowed Fable's seat (ratified 2026-07-26):** Fable keeps the
-sittings where taste, ambiguity, and doctrine are the product — brainstorming, spec and plan
-authorship, arc post-mortems, final user-facing prose — and an Opus 5 conductor takes
-execution: dispatch decisions, diff review, finding triage, gate-running. **A Fable planning
-sitting ends at plan approval; execution runs in a fresh Opus 5 session**, with the pre-baked
+Geoff's attended time. Clock time is explicitly NOT a budget: prefer the serial, cheaper path,
+and never trade tokens or an extra Geoff interaction to finish sooner. When the budgets
+conflict, spend the one that can buy the thing: tokens for anything research, verification, or
+a retry can resolve; attended time only for taste, priorities, and product forks.
+
+Fable keeps the sittings where taste, ambiguity, and doctrine are the product: brainstorming,
+spec and plan authorship, arc post-mortems, final user-facing prose. An Opus 5 conductor takes
+execution: dispatch decisions, diff review, finding triage, gate-running. A Fable planning
+sitting ends at plan approval; execution runs in a fresh Opus 5 session, with the pre-baked
 artifacts (committed plan, STATUS pointer, refreshed memory) as the whole handoff. Never
 downshift the planner below Opus 5: a weak plan compounds into rework that exceeds the
-savings; a cheap implementer executing a frontier-authored plan is the stable configuration.
+savings.
 
 Volume work never runs in the main loop; if the main loop is implementing, bulk-reading, or
 grinding mechanical edits, dispatch it. Well-specified implementation goes to the Sonnet-pinned
-implementers. Reviewers pin `claude-opus-5` (dated-ID pins repointed 2026-07-26; same price as
-4.8, better recall and precision, separate rate bucket): beside a Fable planner and Sonnet
-implementers the Opus gate is cross-model diversity against correlated self-review blind
-spots, and under an Opus 5 execution conductor it is still a fresh-context gate.
-
-Unpinned agents (`general-purpose`, `Plan`, the `claude` catch-all, Workflow `agent()` calls
-without `model`) inherit the main model at main-loop price, so every such dispatch carries an
-explicit model: `sonnet` by default, `haiku` for mechanical search (Explore is already Haiku).
+implementers. Reviewers pin `claude-opus-5` for cross-model diversity against correlated
+self-review blind spots. Unpinned agents (`general-purpose`, `Plan`, the `claude` catch-all,
+Workflow `agent()` calls without `model`) inherit the main model at main-loop price, so every
+such dispatch carries an explicit model: `sonnet` by default, `haiku` for mechanical search.
 Upshift a single dispatch to `model: opus` only for novel correctness-critical logic the plan
 does not fully specify; `model: fable` only when an Opus 5 verdict itself hedges on something
-that matters (the escalation ladder: Sonnet implements, Opus 5 reviews and verifies, Fable
-adjudicates the hedge). Effort is the second lever, cheaper than a model swap in both
-directions: low on mechanical dispatches; raise it on a cheap model before upshifting the
-model; the main loop stays at high, with xhigh/max reserved for a single hard decision (max
-overthinks). Subagents start with zero context and read the dispatch literally: pre-extract
-exactly what the task needs; whole-history pastes recreate the bloat the split removes. Trust
-but verify the pins (silent failures have shipped in both directions): when a dispatch runs
-surprisingly slow, expensive, or weak, check which model actually ran first.
+that matters. Effort is the second lever, cheaper than a model swap in both directions.
+Subagents start with zero context and read the dispatch literally: pre-extract exactly what
+the task needs. Trust but verify the pins: when a dispatch runs surprisingly slow, expensive,
+or weak, check which model actually ran first.
 
-## Fable allocation economics (permanent inclusion since 2026-07-20)
+Fable is permanently included on the Max plan at roughly 50% of regular usage limits, so the
+scarce resource is the weekly allocation, not a cutoff. Spend it where Fable is differentiated,
+never on execution-shaped work Opus 5 covers at half the API price. Self-check at session
+start and on any cost signal: a Fable conductor doing execution-shaped work (dispatch
+grinding, gate-running, bulk reads) gets flagged immediately with a recommendation to hand off
+to an Opus 5 session.
 
-The access whiplash is over: as of 2026-07-20, Fable 5 is PERMANENTLY included on the Max
-plan at roughly 50% of regular usage limits (verified online 2026-07-26; no expiry). There is
-no cutoff to plan around; the scarce resource is the weekly Fable allocation. Spend it where
-Fable is differentiated — the planning and taste sittings above — and never on
-execution-shaped work Opus 5 covers at half the API price and none of the allocation.
-Permanence also means sittings need no hoarding: a brainstorm or spec sitting is a routine,
-legitimate Fable use. Beyond the allocation, Fable runs on usage credits at API rates
-($10/$50), governed by `~/.claude/docs/fable-post-cutoff-system.md` as the OVERFLOW playbook:
-batch-first (50% discount), per-dispatch one-shots, and the SUGGESTION RULES baked there
-(never silently spend Fable credits, never silently absorb Fable-tier work; propose job +
-mode + size in one sentence and let Geoff decide). **Self-check at session start and on any
-cost signal: a Fable conductor doing execution-shaped work (dispatch grinding, gate-running,
-bulk reads) gets flagged immediately with a recommendation to hand off to an Opus 5 session**
-(an ecxc session silently burned ~1M tokens on 2026-07-13; the flag came from Geoff, not the
-conductor — that order is the defect).
+Pricing detail, rate buckets, dated history, and the credit-overflow mechanics live in
+`~/.claude/docs/model-economy.md` and `~/.claude/docs/fable-post-cutoff-system.md`.
 
 ## Multi-agent workflows: suggest, never launch unprompted
 
@@ -290,8 +273,26 @@ one split early.** Two failure modes, both named from poplar pass 1b:
   unowned method, two doc corrections and two late defect fixes on top of a
   full plate, and Geoff had to raise the size question twice before the
   orchestrator said anything.
+- **Splitting tasks instead of splitting the pass (Geoff, 2026-07-30).** **A
+  pass can be split at a logical point, and repeated task splits are the signal
+  that it should be.** Pass 1b split task 6 into 6a/6b, task 7 into 7a/7b and
+  task 11 into 11a/11b, turning twelve planned tasks into fifteen. Every split
+  was individually correct; each was made because that task had outgrown its
+  own written boundary. The orchestrator read them as three separate incidents
+  and never considered splitting the pass, until Geoff asked whether it had run
+  too long. **Splitting a task keeps the work inside the pass; only splitting
+  the pass lets work leave**, which is why task-splitting is the more
+  comfortable move: it looks like sizing discipline while changing nothing
+  about the commitment.
 
-Practice: state a task's deliverable count when dispatching it, and say plainly
+Practice: **count your own splits before answering "is this pass too long" — the
+count is the evidence and it is sitting in your dispatch history.** A second
+task split inside one pass is the prompt to propose splitting the pass; a third
+means the proposal is overdue. A pass that exists because its predecessor burst
+its scope is already on notice and gets watched harder, not less. When
+proposing, name the cut point (usually the last clean self-contained task), name
+what each half carries, and give the follow-up pass a number rather than leaving
+its work homeless. Also: state a task's deliverable count when dispatching it, and say plainly
 when it passes roughly four distinct deliverables or when anything is added
 after dispatch. Route discovered work to the pass that first leans on it, not
 the pass that found it. Prefer turning a discovered artifact into a standing
