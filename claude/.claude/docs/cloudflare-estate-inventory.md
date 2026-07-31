@@ -7,21 +7,51 @@ at the foot; treat the snapshot below as orientation, verify before acting.
 
 ## Authorization: how each thing is reached non-interactively
 
-- **Cloudflare API / Wrangler**: `CLOUDFLARE_API_TOKEN` in `~/.bashrc` (wrangler picks it up;
-  `curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"` for the REST API). Full account access
-  per the workstation CLAUDE.md: zones, DNS, Workers, Access, D1, R2. The Cloudflare MCP plugin's
-  token is READ-ONLY for Access/Workers-domain writes; use `curl` with the bashrc token for those
-  writes.
+- **Cloudflare API / Wrangler — THE CANONICAL TOKEN-SCOPE RECORD (all projects defer here;
+  never restate scopes in a project doc, link to this file).** ONE managed token exists:
+  "Cloudflare Admin", id `48efe6a43d660d3fc649c799ec6c0892`. It lives in `~/.local/secrets`
+  (regenerated from the ASC age store; `~/.bashrc` sources that file at line ~167, but ONLY
+  in interactive shells — its line-5 interactivity guard means a script's
+  `source ~/.bashrc` gets NOTHING; scripts must `source ~/.local/secrets` directly).
+  GitHub Actions repos hold synced copies as the `CLOUDFLARE_API_TOKEN` secret.
+  Scopes, each verified empirically 2026-07-14 (token "Cloudflare Admin 2026-07",
+  id `1d508f1ab69df49d3ef9572dc1917273`, minted 2026-07-14 after dashboard edits to the
+  prior token silently failed to persist): Workers scripts + schedules ✓, D1 ✓, R2 ✓,
+  Access apps/policies ✓, Access service tokens ✓, Email Sending ✓ (REST + binding),
+  Turnstile ✓ (granted, untested), zone read ✓, **Zone.DNS Edit ✓ (proven by live
+  record deletions)**, Zone Workers Routes ✓ (added by dashboard edit 2026-07-19 after
+  scripted cairn.pub deploys failed on the missing permission; GET verified live on the
+  cairn.pub zone, write granted per the edit but untested; recommended grant was
+  Edit on ALL zones so a newly registered zone never repeats the gap),
+  API-token management ✗ (deliberate: cannot self-extend).
+  Rotated into: the ASC age store, `~/.local/secrets`, and the four GH-Actions repos
+  (aksailingclub-legacy/-org, ecxc-ski, 907-life). Predecessors both deleted:
+  "Cloudflare Admin" (`48efe6a4...`) and `CF_ZT_TOKEN` / "Cloudflare Agent Token -
+  2026-05-25" (only consumers were verify-keys.sh health checks).
+  Second credential: the Cloudflare MCP plugin's OAuth (not in the token list; broad
+  READ incl. DNS, refuses writes). Maintenance rules: any scope change lands in THIS
+  bullet, same session; after a rotation, a RUNNING Claude session's env still holds
+  the OLD token (the harness captures env at session start) — prefix commands with
+  `source ~/.local/secrets` until the session cycles.
 - **Worker secrets are WRITE-ONLY**: `wrangler secret list` returns NAMES, never values; a value
   set with `wrangler secret put` cannot be read back. To learn a secret's value you need its
   origin store, not the worker.
 - **Access-protected sites (ASC dev/staging)**: the service token in `~/.local/secrets`
   (`ASC_ACCESS_CLIENT_ID` / `ASC_ACCESS_CLIENT_SECRET`), sent as `CF-Access-Client-Id` /
   `CF-Access-Client-Secret` headers. Full recipe: the cairn `asc-cloudflare-access` memory.
-- **The encrypted registry** `~/.dotfiles/secrets/values.age` and `~/.local/secrets`: the
-  workstation's own secrets (GitHub App key, the ASC Access service token, etc.). Stripe API keys
-  are NOT here — marked "ASC-managed separately"; they live only as worker secrets + the Stripe
-  dashboard.
+- **The workstation registry** `~/.dotfiles/secrets/values.age` and `~/.local/secrets`: the
+  workstation's own secrets (GitHub App key, the ASC Access service token, etc.). Its
+  `registry.md` marks some entries "ASC-managed separately" — those live in the ASC store below,
+  not nowhere.
+- **The ASC project store** `~/Projects/aksailingclub-legacy/secrets/values.age` (age key
+  `~/.config/age/asc-key.txt`, the same `AGE_KEY_FILE` in `.bashrc`): the club's own secrets —
+  Stripe keys, the seven `DISCORD_WEBHOOK_*` URLs, Resend, Turnstile, `CMS_BOT_PAT`. Its
+  `scripts/secrets/sync.sh` holds the per-worker secret map (`WORKER_SECRETS[...]`) and pushes
+  from the store to every target; its own `secrets/registry.md` documents each entry. To set one
+  secret without a full sync: `age -d -i $AGE_KEY_FILE values.age | grep '^NAME=' | cut -d= -f2- |
+  npx wrangler secret put NAME` (value piped, never printed). A per-project store like this is
+  the pattern: any repo with a `secrets/` dir + sync script is its own origin store — check it
+  before declaring a credential unmanaged.
 - **1Password** (interactive, `op` CLI): the fallback for a value in no scripted store — a
   dashboard LOGIN, a rarely-needed credential. **Each `op` call can prompt a desktop approval, so
   batch them: one `op item get --format json` and parse locally, never a loop of calls.** See the
