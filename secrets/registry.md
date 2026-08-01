@@ -90,6 +90,9 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 | GITHUB_APP_INSTALLATION_ID | ✓                 | ✓               | —           |
 | GITHUB_APP_PRIVATE_KEY_B64 | ✓                 | ✓               | ✓           |
 | GOOGLE_SA_KEY_B64   | ✓                        | —               | ✓           |
+| TWILIO_ACCOUNT_SID  | ✓                        | —               | —           |
+| TWILIO_API_KEY_SID  | ✓                        | —               | —           |
+| TWILIO_API_KEY_SECRET | ✓                      | —               | —           |
 
 > The ecxc worker stopped needing `GITHUB_APP_ID`/`GITHUB_APP_INSTALLATION_ID` as secrets at
 > the Waymark rebuild (2026-07-05): the v2 adapter commits both in `cairn.config.ts` (they
@@ -199,6 +202,19 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
   then `secret-set.sh GOOGLE_SA_KEY_B64 --b64-file <file>`, `sync.sh --worker ecxc`, delete
   the file and the old key (`gcloud iam service-accounts keys list/delete`). No loose copy
   lives on disk; GCP IAM is the mint-a-new-key origin.
+
+### TWILIO_ACCOUNT_SID / TWILIO_API_KEY_SID / TWILIO_API_KEY_SECRET
+- **Grants**: Twilio REST API on the team-platform account (`AC9387aa5b...`), via the
+  Standard API key "xcathletes-platform-2026-08" (key auth works on the v1 APIs and on
+  classic-API subresources; the account-root read is excluded, use subresource paths).
+- **Used by**: xcathletes platform provisioning (number purchase, toll-free verification or
+  10DLC filing) and, later, the xcathletes Worker's OTP + SMS fallback sends. Add the worker
+  column and sync.sh routing when platform pass 1 T1 creates the Worker.
+- **Scope note**: account funded 2026-08-01 ($20, out of trial); no phone number purchased
+  yet (AK local inventory was empty; number-type decision tracked in ecxc-ski's team-platform
+  T0 ledger). The API key SID is paired with its secret; rotate them together.
+- **Rotate at**: Twilio Console -> Account -> API keys & tokens (revoke, recreate under the
+  same name with a new date, then `secret-set.sh` all three and re-sync).
 
 ---
 
