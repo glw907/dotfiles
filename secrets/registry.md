@@ -210,9 +210,10 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 - **Used by**: xcathletes platform provisioning (number purchase, toll-free verification or
   10DLC filing) and, later, the xcathletes Worker's OTP + SMS fallback sends. Add the worker
   column and sync.sh routing when platform pass 1 T1 creates the Worker.
-- **Scope note**: account funded 2026-08-01 ($20, out of trial); no phone number purchased
-  yet (AK local inventory was empty; number-type decision tracked in ecxc-ski's team-platform
-  T0 ledger). The API key SID is paired with its secret; rotate them together.
+- **Scope note**: account funded 2026-08-01 ($20, out of trial). Owns toll-free
+  +1 888-609-8679 (bought 2026-08-02, ~$2.15/mo; verification submitted, see ecxc-ski's
+  team-platform T0 ledger for SIDs). The API key SID is paired with its secret; rotate them
+  together.
 - **Rotate at**: Twilio Console -> Account -> API keys & tokens (revoke, recreate under the
   same name with a new date, then `secret-set.sh` all three and re-sync).
 
