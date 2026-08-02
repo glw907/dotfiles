@@ -82,8 +82,10 @@ Then run `npm run check:comments` (the ESLint TSDoc + em-dash gate over `src/lib
 `cairn-implementer` gate and `npm run check` (svelte-check) do **not** cover it, so a TSDoc structure
 slip (a multiline `/**` with text on the first line, a stray `{type}` tag) passes every other gate and
 only fails on CI. Run it here, with the from-scratch consumer build, before calling a pass done. This
-gate, and `check:reference:signatures` in step 5, are the two CI-only checks an `0.62.0`-era pass shipped
-red because the local ritual skipped them.
+gate is one of FOUR CI-only checks the local ritual skips; the other three are
+`check:reference:signatures`, `check:surface`, and `check:snippets`, all in step 5. An `0.62.0`-era pass
+shipped red on this one, and the 2026-08-01 xcathletes seams pass shipped red on `check:snippets`. Treat
+the four as one list and run them by name.
 
 **Prove the consumer build, not only `npm test`.** The package ships TypeScript inside its `.svelte`
 files, so a consumer-bundler incompatibility (a Vite 8 / Rolldown parse failure, an import-resolution
@@ -140,6 +142,20 @@ fixes every doc its change touched, including the inbound references on other pa
   the same pass. This is the third CI-only gate a local ritual skips (the 2026-07-07 harvest pass
   shipped a green local gate and failed CI on exactly this; the ambient `auditSink` addition needed
   the snapshot regen). A type-only change to an augmentation counts as surface.
+- **Any pass that adds an export or touches a fenced `ts` block in `docs/guides` or `docs/reference`
+  runs `npm run check:snippets`.** It packages the library and typechecks every documented code block
+  against the BUILT package, so it catches what no other gate can: a doc importing a symbol from a
+  subpath that does not export it, and a guide block calling site-local helper names that are never
+  declared (the script only auto-stubs names appearing in an `import` clause; `declare` them in the
+  block rather than reaching for `<!-- snippet-check-skip: -->`, since the declaration also tells the
+  reader what shape their own helper must return). **This is the fourth CI-only gate a local ritual
+  skips, and the worst one to skip: it sits at `.github/workflows/test.yml:35` and short-circuits
+  every gate after it** (`check:prose`, `check:version`, `check:dev-package`, `check:consumers`,
+  `check:comments`), so one bad snippet hides five other gates' results. The 2026-08-01 xcathletes
+  seams pass ran the whole documented gate list green across four implementer dispatches and still had
+  `check:snippets` red at 12 problems; three of them were a missing `Manifest` export on the very
+  subpath that pass's headline function shipped on. Writing a new export and documenting it is not
+  enough, since the export map has to carry every type the signature names.
 - Append any design friction the writing surfaced to `docs/internal/docs-friction-log.md`, one entry
   per finding with its perspective (developer or editor) and a short note. Triage candidates into
   `ROADMAP.md` (Now or Next) and the STATUS carry-forwards. This repo keeps no separate backlog file.
@@ -208,7 +224,24 @@ design-and-approval gate: never auto-write a plan without the user's calls on th
 open decisions. The plan stays revisable next session. Skip only when the next pass's
 direction is unsettled or the user wants to stop here.
 
-### 9. Pre-bake, then continue in this session
+### 9. Pre-bake and prep the context clear (ALWAYS, not on request)
+
+**A finished pass always ends by prepping to clear context (Geoff, 2026-08-01). This is a step of
+the ritual, not a thing to do when asked or when the session felt long.** A pass is an initiative
+boundary, and every turn of a continued session re-buys the whole cached conversation, so a session
+carried past its pass costs the next pass real money for context it does not need. The prep is the
+same work whether or not the clear happens next, which is why it is unconditional: the artifacts are
+crash insurance mid-session and the entire handoff across one.
+
+Prepping the clear means the durable artifacts below are written, committed, and pushed, the tree is
+clean, and the last thing the user reads is the exact resume prompt plus the launch directory. Say
+plainly that the pass is closed and context is ready to clear. Anything load-bearing that exists
+only in the conversation at that moment is a defect: **the test is that a session starting cold from
+the resume prompt reaches the same next action, with the same constraints, having read only the
+plan, the spec, STATUS, and memory.** Walk the pass's own decisions against that test before
+declaring done, including the ones a reviewer or the user changed mid-pass, and including anything
+about branch topology (a deferred merge changes where the next pass branches from, and a cold
+session will branch off `main` by default and build against the wrong engine).
 
 Plan and execution share the session when the session runs on Opus; a plan written here gets
 executed here. **When the planning session runs on Fable, it ends at plan approval and
@@ -229,9 +262,10 @@ method?" question (these defaults answer it).
   prompt and the launch directory (inside `cairn-cms`, so its hooks and memory load).
   Example: "Execute the component grammar plan (`docs/superpowers/plans/<file>.md`)."
 
-On an Opus conductor, additionally recommend a context clear when the session that produced
-the plan ran long and noisy (a sprawling brainstorm, several dead ends). See the
-`clear-context-before-implementing-plans` memory for this default's history.
+Continuing in the same session is for work *within* one pass (a plan drafted here, executed here).
+It is not a reason to skip the prep above: prep the clear at the pass boundary either way, then
+continue or hand off. See the `clear-context-before-implementing-plans` memory for the
+same-session default's history and `cairn-pass-ends-with-context-clear-prep` for this rule.
 
 ## Execution discipline (lessons from Plan 07)
 

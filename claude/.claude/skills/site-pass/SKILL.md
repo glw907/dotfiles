@@ -123,16 +123,31 @@ Also refresh the project memory if the initiative's state changed; a cold
 session should recall where the roadmap stands from STATUS.md and memory
 alone.
 
-### 8. Roll into the next pass (same session by default)
+### 8. Prep the context clear, then roll into the next pass
 
-The just-landed pass is fresh: its patterns and carried follow-ups are in
-context, and re-deriving them cold is waste. With the ritual done the
-durable artifacts are already pre-baked (STATUS.md names the next pass,
-the tree is clean), so continue straight into "Starting a pass" above. If
-the next starter prompt has open questions, run the brainstorm now while
-context is warm. Stop only when the user wants to stop, the next pass's
-direction is unsettled, or the session ran long and noisy (then recommend
-a clear and give the exact resume prompt and launch directory).
+**A finished pass always ends by prepping to clear context (Geoff,
+2026-08-01). It is a ritual step, not something to offer when the session
+felt long.** A pass is an initiative boundary, and every turn of a
+continued session re-buys the whole cached conversation, so carrying one
+past its pass charges the next pass for context it does not need. The
+prep is the same work either way: the artifacts are crash insurance
+mid-session and the entire handoff across one.
+
+Prepping means STATUS.md names the next pass, the durable artifacts are
+committed and pushed, the tree is clean, and the user's last read is the
+exact resume prompt plus the launch directory. The test before declaring
+done: **a session starting cold from that prompt reaches the same next
+action under the same constraints, having read only the plan, STATUS, and
+memory.** Walk the pass's own decisions against it, including ones the
+user changed mid-pass and anything about branch topology (a deferred
+merge changes where the next pass branches from, and a cold session
+branches off the default).
+
+With that done, continuing in the same session is fine for work within
+one pass, and if the next starter prompt has open questions, run the
+brainstorm while context is warm. Stop when the user wants to stop or the
+next pass's direction is unsettled. See the
+`cairn-pass-ends-with-context-clear-prep` memory.
 
 ## Execution discipline
 
