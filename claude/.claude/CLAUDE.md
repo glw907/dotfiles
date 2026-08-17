@@ -37,6 +37,12 @@ worktree; ~1.2M duplicated tokens, zero corruption.)
 - **Dev tools**: Python 3.12, Java 17 (OpenJDK), Node/nvm, Git 2.43, Go 1.26.1 (/usr/local/go)
 - **Android SDK**: `~/Android/` -- `ANDROID_HOME` set in .bashrc
 
+## Browser: Chromium only
+
+Chrome and Firefox removed 2026-08-16; never suggest reinstalling either. Invoke as
+`chromium`. Telemetry is off by root-owned managed policy -- never quietly relax an entry.
+Read `~/.claude/docs/chromium-browser.md` before any browser, Playwright, or extension work.
+
 ## Sysadmin Preferences
 
 - **Troubleshooting**: Search web after 1-2 failed attempts -- include "Linux Mint 22" in queries
@@ -94,11 +100,12 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 - **Never commit**: API tokens, passwords, keys, `.env` files with real values
 - **Local dev**: `~/.bashrc` (non-sensitive) or `~/.local/secrets` (sensitive, sourced from 1Password)
 - **CI/CD**: GitHub Actions secrets | **Runtime**: Cloudflare Workers secrets
-- **1Password: ONE prompt, never a loop.** Each `op` call can trigger a desktop approval.
-  Fetch once (`op item get <id> --format json`, or `op item list --format json` for several
-  items) and parse locally. A repeated prompt is a defect against Geoff's attention.
-  Enforced since 2026-07-19: the `claude-block-op` PreToolUse hook (user settings.json)
-  denies `op` in every Claude session; if a fetch is genuinely required, ask Geoff.
+- **1Password: sudo semantics, never a loop.** The first `op` call in a session fires ONE
+  desktop approval; that is the session's authentication, and later calls ride it. Fetch
+  once (`op item get <id> --format json`) and parse locally. The `claude-block-op` hook
+  enforces only the loop half: 3+ `op` calls in a minute deny (repaired 2026-08-16 from a
+  blanket deny; ruling: authenticate once per session, like sudo). Passkeys are used, never
+  read: a passkey-gated flow routes through the browser, Geoff's touch as approval.
 - **Installing a NEW long-lived secret, every project (Geoff, 2026-07-13): the workstation
   age store is the origin, never a loose file and never only `wrangler secret put`.** The flow:
   `~/.dotfiles/scripts/secrets/secret-set.sh NAME --value|--file|--b64-file` (writes
