@@ -17,10 +17,14 @@ decision is verifiable. Render first, then fix. Never guess.
 
 **Always launch the binary for the user at conversation start.**
 Build and open it in a kitty window so they can see the current
-state while discussing changes:
+state while discussing changes. Use the project's own build target
+when one exists. Otherwise build the binary directly from its
+`cmd/` package:
 
 ```bash
-go build -o /tmp/poplar ./cmd/poplar/ && kitty --title "Poplar" -e /tmp/poplar &
+make build && kitty --title "myapp" -e ./myapp &  # path per the build target
+# no build target:
+go build -o /tmp/myapp ./cmd/myapp/ && kitty --title "myapp" -e /tmp/myapp &
 ```
 
 After making changes, rebuild and relaunch so the user sees the
@@ -183,6 +187,14 @@ Write checks as Go test assertions. This is the regression safety
 net.
 
 **When:** After any layout code change. Always.
+
+For golden-file assertions on a rendered `View()` string,
+`github.com/charmbracelet/x/exp/golden` is the light option. For
+full-program assertions, `teatest/v2`
+(`github.com/charmbracelet/x/exp/teatest/v2`) runs the whole tea
+program against in-memory buffers. Both live under `x/exp` with no
+tagged releases, so treat the API as movable. Pin terminal size and
+color profile in every golden test, or the files flap in CI.
 
 ### Mode 2: Render-and-Snapshot
 

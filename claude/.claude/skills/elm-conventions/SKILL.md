@@ -100,6 +100,8 @@ exception. Record any filter's window and reset semantics where the
 program is constructed, since it sits outside the loop a reader
 follows.
 
+## Rule 3: I/O Only in tea.Cmd
+
 Blocking calls (backend methods, file I/O, network) run inside
 `tea.Cmd` functions, never in `Update` or `View`. `Update` must return
 instantly.
@@ -346,8 +348,8 @@ falls back to string switches, and that's listed as an anti-pattern
 `Enabled()` flag (norms §3, `key/key.go:130-138`), making per-state
 activation declarative; string switches force inline state checks.
 
-Poplar's keybindings are modifier-free single keys (ADR-0015, 0024,
-0051, 0068, 0076). That doesn't change the declaration form. The
+Poplar's keybindings are modifier-free single keys (ADR-0012). That
+doesn't change the declaration form. The
 `KeyMap` struct still uses `key.Binding`; the help text just reads
 `"k"` instead of `"↑/k"`.
 
@@ -498,4 +500,83 @@ if styles.HelpKey.Render("test") == "" {
 `GetForeground` / `GetBackground` / `GetBold` / `GetItalic` /
 `GetUnderline` return the resolved attribute (nil / false / true)
 and let the test name a specific claim the style must satisfy.
-ADR-0233.
+
+## Rule 10: Lipgloss v2 Box Math and Styled Strings
+
+Charm's production guidance for bubbletea v2 (Crush's
+`internal/ui/AGENTS.md`) codifies four rules for width math and
+styled-string handling. They hold anywhere a box is rendered or
+styled segments are concatenated.
+
+**`Width(n)` sets the total box width before margins.** Border and
+padding live inside it; margins add outside it. A style carrying
+`Width(n)` wraps its own content at the inner width, so no pre-wrap
+is needed. Pre-wrap only when sizing content to fit inside a
+container, and subtract the child style's frame from the container's
+width. `GetHorizontalFrameSize` counts margins too, so the formula
+assumes the Padding rule below is being followed.
+
+**Right (child sized to fit a container):**
+```go
+w := width - childStyle.GetHorizontalFrameSize()
+inner := ansi.Hardwrap(ansi.Wordwrap(content, w, ""), w, false)
+box := childStyle.Render(inner)
+```
+
+**Wrong:**
+```go
+// Sized to the container's full width. The child's border and
+// padding push it over, and the last few characters re-wrap
+// inside the frame.
+inner := ansi.Wordwrap(content, width, "")
+box := childStyle.Render(inner)
+```
+
+**Inset with Padding, never Margin.** Margin sits outside the
+declared width and pushes the block past the frame. Padding sits
+inside the width and applies to every wrapped line.
+
+**Right:**
+```go
+style.Width(width).Padding(0, 1) // stays inside the declared width
+```
+
+**Wrong:**
+```go
+style.Width(width).Margin(0, 1) // pushes the block past width
+```
+
+**Render styled segments individually, then concatenate.** Build
+`styleA.Render(x) + styleB.Render(y)`. Never nest a rendered segment
+inside an outer style's input: the inner segment's ANSI reset code
+ends the outer style for everything after it.
+
+**Right:**
+```go
+line := label.Render("From: ") + value.Render(msg.From) +
+    label.Render(" (verified)")
+```
+
+**Wrong:**
+```go
+// value's reset ends outer's style; " (verified)" renders unstyled
+line := outer.Render("From: " + value.Render(msg.From) + " (verified)")
+```
+
+**Cut styled strings only through `charmbracelet/x/ansi`.** Route
+truncation, slicing, and cutting of content that may carry ANSI
+codes through `ansi.Truncate`, `ansi.Strip`, or `ansi.Cut`. Never
+slice or index a styled string at the byte or rune level; escape
+sequences aren't visible characters. For width, the display-cell
+rule in Rule 6 still governs: `lipgloss.Width`, or `displayCells`
+when Nerd Font glyphs are possible.
+
+**Right:**
+```go
+trimmed := ansi.Truncate(styled, width, "…")
+```
+
+**Wrong:**
+```go
+trimmed := styled[:width] // slices mid-escape-sequence, corrupts output
+```
