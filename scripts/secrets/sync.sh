@@ -51,9 +51,10 @@ WORKER_SECRETS["ecxc"]="GITHUB_APP_PRIVATE_KEY_B64 GOOGLE_SA_KEY_B64 ANTHROPIC_A
 # key routes from here (the cairn editor's tidy copy-edit, same as ecxc).
 WORKER_SECRETS["asc-site"]="ANTHROPIC_API_KEY"
 # The xcathletes team platform (xcathletes.org), a cairn consumer sharing the same GitHub App
-# installation as ecxc and 907-life, so only the App private key routes from here. The platform's
-# member OTP layer adds Twilio and Turnstile secrets in a later pass.
-WORKER_SECRETS["xcathletes"]="GITHUB_APP_PRIVATE_KEY_B64"
+# installation as ecxc and 907-life, so the App private key routes from here alongside the Twilio
+# credentials its member OTP layer sends sign-in codes through. TURNSTILE_SECRET_KEY is worker-only
+# by the ecxc precedent: it is recoverable from the Turnstile API, so it never enters this store.
+WORKER_SECRETS["xcathletes"]="GITHUB_APP_PRIVATE_KEY_B64 TWILIO_ACCOUNT_SID TWILIO_API_KEY_SID TWILIO_API_KEY_SECRET"
 
 # --- Argument parsing ---
 MODE="all"
