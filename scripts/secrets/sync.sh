@@ -50,6 +50,10 @@ WORKER_SECRETS["ecxc"]="GITHUB_APP_PRIVATE_KEY_B64 GOOGLE_SA_KEY_B64 ANTHROPIC_A
 # Stripe secrets live in the ASC per-project store; only the workstation-scoped Anthropic
 # key routes from here (the cairn editor's tidy copy-edit, same as ecxc).
 WORKER_SECRETS["asc-site"]="ANTHROPIC_API_KEY"
+# The xcathletes team platform (xcathletes.org), a cairn consumer sharing the same GitHub App
+# installation as ecxc and 907-life, so only the App private key routes from here. The platform's
+# member OTP layer adds Twilio and Turnstile secrets in a later pass.
+WORKER_SECRETS["xcathletes"]="GITHUB_APP_PRIVATE_KEY_B64"
 
 # --- Argument parsing ---
 MODE="all"
