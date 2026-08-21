@@ -123,10 +123,11 @@ Documentation is a pass dimension, not a follow-up. Before the pass is done, upd
 whatever it changed. The standing principle is that docs stay current and never drift, so a pass
 fixes every doc its change touched, including the inbound references on other pages.
 
-- Update the relevant `docs/` arm: the reference page for any public-API change, and the guides,
-  explanation, or tutorial as the change touches them. Update `CHANGELOG.md` and the upgrade guide
-  (`docs/guides/upgrade-cairn.md`) for any **behavior** change, not only a rename, with a short
-  per-version entry. The "Consumers must:" convention below applies to the changelog; a behavior change
+- Update the relevant `docs/` track: the reference page for any public-API change, and the admin,
+  editors, or extend track as the change touches its reader. Update `CHANGELOG.md` and the
+  per-version record (`docs/extend/migration-notes.md`) for any **behavior** change, not only a
+  rename, with a short per-version entry. (`docs/extend/upgrade-cairn.md` is the short task, bump
+  and verify; the record is the other half of that split.) The "Consumers must:" convention below applies to the changelog; a behavior change
   that needs no consumer action still gets an entry that says so, so an upgrader who hits it has a
   reference.
 - **Hunt drift on a removed or renamed symbol.** When a pass removes a symbol from the public surface
@@ -146,7 +147,7 @@ fixes every doc its change touched, including the inbound references on other pa
   the same pass. This is the third CI-only gate a local ritual skips (the 2026-07-07 harvest pass
   shipped a green local gate and failed CI on exactly this; the ambient `auditSink` addition needed
   the snapshot regen). A type-only change to an augmentation counts as surface.
-- **Any pass that adds an export or touches a fenced `ts` block in `docs/guides` or `docs/reference`
+- **Any pass that adds an export or touches a fenced `ts` block in `docs/extend` or `docs/reference`
   runs `npm run check:snippets`.** It packages the library and typechecks every documented code block
   against the BUILT package, so it catches what no other gate can: a doc importing a symbol from a
   subpath that does not export it, and a guide block calling site-local helper names that are never
@@ -195,13 +196,23 @@ part of the merge. Durable cross-cutting gotchas stay as focused `cairn-*` memor
 locked architecture decisions stay in the functional spec. Do **not** write cairn state
 into a consumer site's `STATUS.md`; that is the site's own.
 
+**STATUS is present tense only.** It is read in full at the start of every session, so a
+finished pass parked there is a context cost paid on every session forever, for something
+needed only at a post-mortem. Anything past tense goes to `cairn-cms/docs/HISTORY.md`
+(create it if absent): the per-pass ledger, newest first, carrying what landed, what the
+gate caught, and what a later pass would be wrong to rediscover. STATUS keeps the current
+state, the immediate next action, the open decisions, and the carry-forwards, and nothing
+else. This is the workstation-wide split (`~/.claude/CLAUDE.md`, "Project ledgers"); cairn
+follows it like every other repo. STATUS reaching for a "what we did in pass N" section is
+the signal to move, not to summarize harder.
+
 **Changelog convention (enforced).** If the pass made any breaking change to the public
 surface, its `CHANGELOG.md` entry must carry a `Consumers must:` line per breaking change,
 stating the concrete consumer action (the rename, the moved import, the new required
 argument). A non-breaking change needs no such line. This convention exists so a site
 crossing several `0.x` versions reads the actions off the changelog instead of
-rediscovering each rename. The `0.x` changes also accumulate in the upgrade guide
-(`docs/guides/upgrade-cairn.md`), one per-version entry each; add the pass's entry there too,
+rediscovering each rename. The `0.x` changes also accumulate in the per-version record
+(`docs/extend/migration-notes.md`), one entry each; add the pass's entry there too,
 for a behavior change as well as a rename.
 
 **Releasing is a separate skill, not a step here.** When the cadence calls for a publish, invoke

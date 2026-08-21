@@ -101,11 +101,37 @@ Also keep the site's own docs current for whatever the pass changed (a README
 note, a config comment, or an architecture entry). The cairn-cms library carries
 the full docs-as-a-pass-dimension rule; for a site this is the light version.
 
-### 5. Update docs/STATUS.md
+### 5. Update the three ledgers
+
+STATUS is read in full at the start of every session, so anything parked there is a
+context cost paid on every session forever. The three files split by read frequency, and
+the pass close writes to all three rather than piling everything into STATUS.
+
+**`docs/STATUS.md`** — current state, what exists, the next action, pass-scoped carried
+items. Nothing else.
 
 - Mark the current pass `done` in the pass table.
 - Write the next starter prompt (see format below).
-- STATUS.md must stay ≤60 lines. Prune if it grows.
+- **STATUS.md must stay ≤60 lines.** This cap has always been here and every repo blew
+  past it (ecxc-ski 173, 907-life 236, cairn-cms 540) because "prune" had no destination.
+  It does now: history goes to `docs/HISTORY.md`, standard-setting work to `ROADMAP.md`.
+  Pruning means moving, never deleting.
+
+**`docs/HISTORY.md`** — the per-pass ledger, read on demand at a post-mortem or a "when
+did this change" question, never at session start. Create it if absent.
+
+- Add this pass's entry, newest first: what landed, what the review gate caught, and
+  anything a later pass would be wrong to rediscover from scratch. That last part is what
+  makes the file worth keeping rather than a changelog nobody opens.
+- STATUS gets NO pass entries. If a `## History` or `## Passes` section is still sitting
+  in STATUS, move it here as part of this pass's close.
+
+**`ROADMAP.md`** — strategic initiatives, meaning work spanning passes or setting a
+standard other work is measured against. Managed by `/log-project`; `Active` / `Planned` /
+`Someday`.
+
+- A carried item that is really an initiative belongs here, not in STATUS's carried list.
+  The test: does it set a standard other work is measured against, or span several passes?
 
 ### 6. Archive plan + spec
 

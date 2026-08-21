@@ -256,6 +256,31 @@ shipped, post-mortem recorded, STATUS pointed at the next action), close the ses
 artifacts are the handoff. The same force argues for batching questions and dispatching reads
 within a session: each extra turn re-buys the context.
 
+## Project ledgers: STATUS is present tense (Geoff, 2026-08-21)
+
+Every project repo splits its written state across three files by how often each is read.
+The whole rule follows from one fact: **`docs/STATUS.md` is read in full at the start of
+every session**, so anything parked there is a context cost paid on every session forever.
+
+- **`docs/STATUS.md`** — present tense only: current state, what exists, the immediate next
+  action, open decisions, and pass-scoped carry-forwards. Target ≤60 lines.
+- **`docs/HISTORY.md`** — the per-pass ledger, newest first, read on demand at a post-mortem
+  or a "when did this change" question. Each entry carries what landed, what the gate caught,
+  and **what a later pass would be wrong to rediscover from scratch**. That last clause is
+  what makes the file worth keeping rather than a changelog nobody opens.
+- **`ROADMAP.md`** — strategic initiatives: work spanning passes, or setting a standard other
+  work is measured against. `Active` / `Planned` / `Someday`, managed by `/log-project`. A
+  carried item that sets a standard belongs here, not in STATUS's carried list.
+
+The ≤60-line cap is not new; `site-pass` has always carried it and every repo blew past it
+(ecxc-ski 173, 907-life 236, cairn-cms 540) because "prune" had no destination. It has one
+now, so **pruning means moving, never deleting.** A STATUS reaching for a `## History` or
+`## Passes` section is the signal to move it, not to summarize harder.
+
+Applies to every repo in the clade, cairn-cms included. Migrating an existing repo is a
+close-out chore, not a standalone pass: when a pass closes in a repo whose STATUS still
+carries history, move it as part of that close.
+
 ## Pass sizing is the orchestrator's job (Geoff, 2026-07-29)
 
 Geoff sees per-item summaries in which every addition reads as small; the orchestrator holds
