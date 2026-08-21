@@ -73,7 +73,7 @@ Read `~/.claude/docs/chromium-browser.md` before any browser, Playwright, or ext
 
 ## Go Development
 
-**MANDATORY: Invoke the `go-conventions` skill before writing ANY Go code.** Every Go file, function, test, and error message must conform. (For bubbletea UI work, additionally invoke `elm-conventions`.)
+**MANDATORY: Invoke the `go-conventions` skill before writing ANY Go code.** Every Go file, function, test, and error message must conform. (For bubbletea UI work, additionally invoke `elm-conventions`; before claiming any TUI screen works, and at every TUI pass gate, `tui-visual-verify`: goldens and tmux captures check text, only a screenshot of the real terminal is evidence.)
 
 ## Cloudflare / Wrangler
 
