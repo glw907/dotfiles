@@ -1,5 +1,12 @@
 # The Fable overflow system (reframed 2026-07-26; originally the post-cutoff plan of 2026-07-07)
 
+**Superseded 2026-08-21:** the seat policy below (Opus 5 holds the
+execution-conductor seat) is superseded by the global CLAUDE.md "Conducting
+a pass" section and `model-economy.md`. Fable now conducts plan through
+execution in one session. The overflow mechanics in the rest of this doc
+(the access modes, the batch desk, the suggestion rules) remain in force for
+Fable use beyond the 50% weekly cap.
+
 There is no cutoff anymore: as of 2026-07-20 Fable 5 is permanently included on the Max plan
 at ~50% of regular usage limits. This doc now governs Fable use BEYOND that allocation, where
 Fable runs on usage credits at API rates (output ~$50/MTok, 2x Opus 5). Token efficiency is

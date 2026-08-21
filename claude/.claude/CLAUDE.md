@@ -178,52 +178,63 @@ and measurement methods: `aksailingclub-org/docs/2026-07-30-assets-substrate-har
 
 Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
 
-## Model economy
+## Conducting a pass (revised 2026-08-21; supersedes the 2026-07-26 Opus-executes rule)
 
 Two co-equal budgets govern every initiative at the same quality bar: total tokens spent and
-Geoff's attended time. Clock time is explicitly NOT a budget: prefer the serial, cheaper path,
-and never trade tokens or an extra Geoff interaction to finish sooner. When the budgets
-conflict, spend the one that can buy the thing: tokens for anything research, verification, or
-a retry can resolve; attended time only for taste, priorities, and product forks.
+Geoff's attended time. Clock time is not a budget: prefer the serial, cheaper path. When the
+budgets conflict, spend the one that can buy the thing: tokens for anything research,
+verification, or a retry can resolve; attended time only for taste, priorities, and product
+forks.
 
-Fable keeps the sittings where taste, ambiguity, and doctrine are the product: brainstorming,
-spec and plan authorship, arc post-mortems, final user-facing prose. An Opus 5 conductor takes
-execution: dispatch decisions, diff review, finding triage, gate-running. A Fable planning
-sitting ends at plan approval; execution runs in a fresh Opus 5 session, with the pre-baked
-artifacts (committed plan, STATUS pointer, refreshed memory) as the whole handoff. Never
-downshift the planner below Opus 5: a weak plan compounds into rework that exceeds the
-savings.
+Fable conducts coding projects from brainstorm through post-mortem in one session. The
+plan-approval gate is the single human gate and is no longer a model boundary. **The
+conductor is thin:** during execution it never reads a source file, a diff, a test log, or a
+gate transcript. It consumes structured agent reports and decides only what needs judgment
+(accept, re-dispatch with a correction, split, upshift, stop). A conductor caught reading
+diffs or grinding edits inline flags itself and dispatches.
 
-Volume work never runs in the main loop; if the main loop is implementing, bulk-reading, or
-grinding mechanical edits, dispatch it. Well-specified implementation goes to the Sonnet-pinned
-implementers. Reviewers pin `claude-opus-5` for cross-model diversity against correlated
-self-review blind spots. Unpinned agents (`general-purpose`, `Plan`, the `claude` catch-all,
-Workflow `agent()` calls without `model`) inherit the main model at main-loop price, so every
-such dispatch carries an explicit model: `sonnet` by default, `haiku` for mechanical search.
-Upshift a single dispatch to `model: opus` only for novel correctness-critical logic the plan
-does not fully specify; `model: fable` only when an Opus 5 verdict itself hedges on something
-that matters. Effort is the second lever, cheaper than a model swap in both directions.
-Subagents start with zero context and read the dispatch literally: pre-extract exactly what
-the task needs. Trust but verify the pins: when a dispatch runs surprisingly slow, expensive,
-or weak, check which model actually ran first.
+Each plan task runs as a chain. The repo's Sonnet implementer returns a fixed shape (files
+touched, gate result, decisions the plan did not cover, anything it could not do). The
+`diff-reviewer` agent (`claude-opus-5`) reads the diff against the task's acceptance criteria
+and returns accept, fix, or escalate with `file:line` findings. The repo's full gate runs
+inside the chain, never in the main loop. One re-dispatch on `fix`; a second `fix` is the
+conductor's decision. Domain reviewers still fan out at pass end. Below six tasks, dispatch
+the chain per task with the Agent tool; at six or more, or when the plan marks tasks
+independent, run `~/.claude/workflows/pass-execute.js`, which pipelines the chain and returns
+one report per task. A plan that names the workflow mode is the opt-in.
 
-Fable is permanently included on the Max plan at roughly 50% of regular usage limits, so the
-scarce resource is the weekly allocation, not a cutoff. Spend it where Fable is differentiated,
-never on execution-shaped work Opus 5 covers at half the API price. Self-check at session
-start and on any cost signal: a Fable conductor doing execution-shaped work (dispatch
-grinding, gate-running, bulk reads) gets flagged immediately with a recommendation to hand off
-to an Opus 5 session.
+Every dispatch names a model and an effort: `sonnet` by default, `haiku` for mechanical
+search, `claude-opus-5` for reviewers (cross-model diversity against correlated blind spots).
+Unpinned agents (`general-purpose`, `Plan`, `claude`, Workflow `agent()` without `model`)
+inherit Fable at Fable price. Upshift one dispatch to `opus` only for novel
+correctness-critical logic the plan does not specify; `fable` only when an Opus verdict
+hedges on something that matters. Effort is the cheaper lever in both directions. Subagents
+start with zero context and read the dispatch literally: pre-extract what the task needs.
+When a dispatch runs surprisingly slow, expensive, or weak, check which model ran.
 
-Pricing detail, rate buckets, dated history, and the credit-overflow mechanics live in
-`~/.claude/docs/model-economy.md` and `~/.claude/docs/fable-post-cutoff-system.md`.
+Every pass plan header carries a token ceiling and a checkpoint interval (default four
+tasks). At each checkpoint, at any split, and before any question to Geoff, write STATUS
+(task ledger, decisions taken, spend, next task), then continue and rely on compaction. At
+80% of the ceiling, finish the task, write STATUS, and ask one combined question. Pre-bake
+before executing: commit the plan, point STATUS at it, refresh memory; anything load-bearing
+lives in an artifact, never only in the conversation. Do not run the `writing-plans` "which
+execution method?" question. Fable on Max draws from the shared weekly pool up to a 50% cap
+(verified 2026-08-21); the cap, not API price, is the constraint, so minimize Fable context,
+never Fable turns. Pricing, history, and the overflow playbook:
+`~/.claude/docs/model-economy.md`.
+
+## Compact instructions
+
+Preserve the plan path and pass number; the task ledger (done, in flight, next); open
+decisions and the last `diff-reviewer` verdict; the token ceiling and spend so far; and the
+STATUS resume prompt. Drop tool output, diffs, and agent transcripts.
 
 ## Multi-agent workflows: suggest, never launch unprompted
 
-The Workflow tool runs only on Geoff's explicit opt-in ("use a workflow"). When a task would
-clearly benefit — a large pass's review gate (adversarial find-and-verify beats a flat
-reviewer fan-out), a repo-wide audit or migration, a plan of mostly independent tasks, deep
-multi-source research — suggest it in one sentence naming the shape and rough scale. Skip the
-suggestion for small or already-verified work.
+Outside a pass plan that names the workflow mode, the Workflow tool runs only on Geoff's
+explicit opt-in ("use a workflow"). When a task would clearly benefit (a large review gate
+where adversarial find-and-verify beats a flat fan-out, a repo-wide audit or migration, deep
+multi-source research) suggest it in one sentence naming the shape and rough scale.
 
 **Runaway guard, mandatory on any workflow expected to run past ~30 minutes.** Nothing
 intervenes unless the main loop watches from outside (proven 2026-07-02: a sweep agent burned
@@ -236,98 +247,53 @@ explicit "skip agent-memory maintenance" line, and each step states a scope expe
 agent that blows past it self-reports. For expensive sweeps, add a hard turn-level token
 target, which makes `agent()` calls throw at the ceiling.
 
-## Initiative-scoped sessions (from the cairn arc ledger; globalized 2026-07-13)
+## Initiative-scoped sessions (globalized 2026-07-13)
 
-One session per initiative, not one session per week: every turn re-reads the whole cached
+One session per initiative, not one per week: every turn re-reads the whole cached
 conversation, so a long session's meter compounds even with disciplined steps (the cairn arc's
-cost ledger was dominated by one five-day session's cache reads). When an initiative lands
-(pass shipped, post-mortem recorded, STATUS pointed at the next action), close the session;
-the pre-baked artifacts are the handoff. Mid-initiative clears follow the existing rule (exact
-resume prompt, launch directory). The same force argues for batching questions and dispatching
-reads within a session: each extra turn re-buys the context.
-
-## Plan execution: the plan-approval gate is the model boundary (revised 2026-07-26)
-
-Within one model tier, plan and execute in one session; long context plus summarization
-removed the old reason to hand off. **The exception is now the rule that matters: a
-Fable-conducted planning sitting ends at plan approval, and execution runs in a fresh Opus 5
-session.** Execution is long, tool-heavy, and cache-read-dominated (the arc ledger's #1 cost
-leak), which is exactly where Fable's 2x multiplies; the pre-baked artifacts make the handoff
-nearly free. Always pre-bake before executing: commit the plan, point the status doc at it as
-the immediate next action, refresh the relevant memory — anything load-bearing lives in the
-plan, spec, status doc, or memory, never only in the conversation. When handing off, give the
-exact resume prompt and launch directory. Execution itself is orchestrate-and-verify: dispatch
-each plan task to the repo's implementer (pinned Sonnet), review its diff, confirm the full
-gate before the next dispatch; main-loop implementation or an upshift to `model: opus` only
-for novel correctness-critical logic the plan does not fully specify. Do not run the
-`superpowers:writing-plans` "which execution method?" question; these defaults answer it.
+ledger was dominated by one five-day session's cache reads). When an initiative lands (pass
+shipped, post-mortem recorded, STATUS pointed at the next action), close the session; the
+artifacts are the handoff. The same force argues for batching questions and dispatching reads
+within a session: each extra turn re-buys the context.
 
 ## Pass sizing is the orchestrator's job (Geoff, 2026-07-29)
 
-Geoff has no direct insight into when a pass is overloading. He sees per-item
-summaries in which every addition reads as small and adjacent; the orchestrator
-holds the whole dispatch list. **Detecting accumulation and raising it unprompted
-is the orchestrator's duty, and a pass that quietly doubles costs far more than
-one split early.** Two failure modes, both named from poplar pass 1b:
+Geoff sees per-item summaries in which every addition reads as small; the orchestrator holds
+the whole dispatch list, so detecting accumulation and raising it unprompted is its duty. A
+pass that quietly doubles costs more than one split early. Three failure modes, all named from
+poplar pass 1b (narrative in `model-economy.md`): **a grant is not headroom** ("use a
+workflow", "you have latitude" authorize a mechanism, never more work; restate what a grant
+authorizes before acting on it); **accretion by adjacency** (work joins a task because it
+sits next to it, each addition defensible alone and none weighed against the total); and
+**splitting tasks instead of the pass** (a task split keeps work inside the pass; only a pass
+split lets work leave, which is why task splits feel like discipline while changing nothing).
 
-- **A grant is not headroom.** "Use a workflow", "we can spread this over
-  several passes", "you have latitude" authorize a mechanism or a boundary,
-  never more work. Restate what a grant does and does not authorize before
-  acting on it.
-- **Accretion by adjacency.** Work joins a task because it sits next to what
-  that task already does. Each addition is defensible alone and none is weighed
-  against the total. Pass 1b's conformance task took a coverage ledger, an
-  unowned method, two doc corrections and two late defect fixes on top of a
-  full plate, and Geoff had to raise the size question twice before the
-  orchestrator said anything.
-- **Splitting tasks instead of splitting the pass (Geoff, 2026-07-30).** **A
-  pass can be split at a logical point, and repeated task splits are the signal
-  that it should be.** Pass 1b split task 6 into 6a/6b, task 7 into 7a/7b and
-  task 11 into 11a/11b, turning twelve planned tasks into fifteen. Every split
-  was individually correct; each was made because that task had outgrown its
-  own written boundary. The orchestrator read them as three separate incidents
-  and never considered splitting the pass, until Geoff asked whether it had run
-  too long. **Splitting a task keeps the work inside the pass; only splitting
-  the pass lets work leave**, which is why task-splitting is the more
-  comfortable move: it looks like sizing discipline while changing nothing
-  about the commitment.
+Practice: count your own splits before answering "is this pass too long". A second task split
+in one pass is the prompt to propose splitting the pass; a third means the proposal is
+overdue. When proposing, name the cut point, what each half carries, and the follow-up pass's
+number. State a task's deliverable count at dispatch and say plainly when it passes roughly
+four or when anything is added after dispatch. Route discovered work to the pass that first
+leans on it; prefer turning a discovered artifact into a standing input over making it a task
+now. Never add scope to an in-flight task unless it would otherwise build against something
+known wrong, and say so when doing it.
 
-Practice: **count your own splits before answering "is this pass too long" — the
-count is the evidence and it is sitting in your dispatch history.** A second
-task split inside one pass is the prompt to propose splitting the pass; a third
-means the proposal is overdue. A pass that exists because its predecessor burst
-its scope is already on notice and gets watched harder, not less. When
-proposing, name the cut point (usually the last clean self-contained task), name
-what each half carries, and give the follow-up pass a number rather than leaving
-its work homeless. Also: state a task's deliverable count when dispatching it, and say plainly
-when it passes roughly four distinct deliverables or when anything is added
-after dispatch. Route discovered work to the pass that first leans on it, not
-the pass that found it. Prefer turning a discovered artifact into a standing
-input that later passes consume over making it a task now. Never add scope to a
-task already in flight unless it would otherwise build against something known
-wrong, and say so explicitly when doing it. Closing out and refreshing beats
-pushing a long session further: both output quality and token cost favor the
-clean boundary.
-
-## Process proportionality (Fable-era superpowers)
+## Process proportionality
 
 The human gate is plan approval, once. After approval, execution runs to completion with no
-per-task check-ins ("should I continue?" prompts and progress summaries waste Geoff's time);
-the automated layers replace the mid-loop human: quality gates, the orchestrator's per-dispatch
-diff review, the pass-end reviewer fan-out. Batch mid-execution judgment calls into one
+per-task check-ins; the automated layers replace the mid-loop human: the per-task chain, the
+quality gates, the pass-end reviewer fan-out. Batch mid-execution judgment calls into one
 combined question; stop early only for a genuine blocker or scope change.
 
 Plans specify outcomes, constraints, and acceptance criteria per task, never implementation
-code (embedded code is written twice; the implementer rewrites it anyway). Small tasks skip
-the ceremony: a change touching a handful of files, fully specified by the request or existing
-tests, adding no new public surface, schema, or auth behavior, goes straight to implementation
-through the gates and code-simplifier. Do not add verification-reminder ceremony on top of the
-mechanical gates; when the track is genuinely unclear, ask in one sentence.
+code. Small tasks skip the ceremony: a change touching a handful of files, fully specified by
+the request or existing tests, adding no new public surface, schema, or auth behavior, goes
+straight to implementation through the gates and code-simplifier. When the track is genuinely
+unclear, ask in one sentence.
 
-Score both budgets at pass end: tokens spent (from `/cost` or the usage console) and human
-interaction points (every question, approval, and correction that pulled Geoff in; a question
-that did not change the outcome is a defect). The trend across passes is the signal, so record
-the numbers even when they look bad.
+Score both budgets at pass end: tokens spent against the plan's ceiling (from `/cost` or the
+usage console) and human interaction points (every question, approval, and correction that
+pulled Geoff in; a question that did not change the outcome is a defect). Record the numbers
+even when they look bad; the trend is the signal.
 
 ## Writing voice
 

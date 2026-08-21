@@ -41,15 +41,19 @@ re-deriving the design.
    architecture, and **the plan file in full** for the task-by-task steps and exit criteria.
 2. Confirm you are in a feature worktree off `main`, not the `main` checkout itself.
    STATUS.md lists the active worktrees.
-3. Execute task-by-task by dispatching each well-specified task to `cairn-implementer`
-   (pinned Sonnet for token economy). The suite is the acceptance contract: the implementer
-   writes or confirms the failing test first, makes it green, and clears the full gate
-   (`npm run check` 0/0, `npm test` exit 0); the main loop reviews the diff and verifies the
-   gate result before the next dispatch. Implement inline, or upshift the dispatch to
-   `model: opus`, only for novel correctness-critical logic the plan does not fully specify;
-   `model: fable` only when an Opus verdict itself hedges on something that matters.
-   When most of a plan's tasks are independent, suggest orchestrating them with the
-   Workflow tool and let the user opt in.
+3. Each task runs as a chain. `cairn-implementer` (pinned Sonnet for token economy) writes
+   or confirms the failing test first, makes it green, clears the full gate (`npm run check`
+   0/0, `npm test` exit 0), and returns files touched, the gate result, and anything it could
+   not do. The `diff-reviewer` agent (`claude-opus-5`) then reads the diff against the task's
+   acceptance criteria and returns accept, fix, or escalate with `file:line` findings; the
+   conductor does not read the diff itself. One re-dispatch on `fix`; a second `fix` verdict
+   goes to the conductor as a decision. Below six tasks, dispatch the chain per task with the
+   Agent tool. At six or more, or when the plan marks tasks independent, run
+   `~/.claude/workflows/pass-execute.js` with `{repo: "cairn-cms", gate: "npm run check &&
+   npm test", implementer: "cairn-implementer", tasks: [{id, title, criteria, files, notes}]}`.
+   Implement a task inline, or upshift the dispatch to `model: opus`, only for novel
+   correctness-critical logic the plan does not fully specify; `model: fable` only when an
+   Opus verdict itself hedges on something that matters.
 
 > **Legacy discipline.** The frozen `legacy/` build only ever got smoke tests, not real
 > use, so it is an accelerator and a behavioral reference, not a proven artifact to
@@ -243,13 +247,14 @@ declaring done, including the ones a reviewer or the user changed mid-pass, and 
 about branch topology (a deferred merge changes where the next pass branches from, and a cold
 session will branch off `main` by default and build against the wrong engine).
 
-Plan and execution share the session when the session runs on Opus; a plan written here gets
-executed here. **When the planning session runs on Fable, it ends at plan approval and
-execution runs in a fresh Opus session** (revised 2026-07-26: execution is cache-read-heavy,
-exactly where Fable's 2x multiplies, and the pre-baked artifacts make the handoff free). The
-pre-bake always happens first, as crash insurance in the same-session case and as the whole
-handoff in the split case. Do **not** run the `superpowers:writing-plans` "which execution
-method?" question (these defaults answer it).
+Plan and execution share the session regardless of model (revised 2026-08-21; supersedes the
+2026-07-26 Opus-executes rule): a plan written here gets executed here. The pre-bake always
+happens first, as crash insurance whether or not a clear follows. Do **not** run the
+`superpowers:writing-plans` "which execution method?" question (these defaults answer it).
+
+Every plan file's header carries a token ceiling and a checkpoint interval (default four
+tasks). At each checkpoint, at any task or pass split, and before any question to the user,
+write STATUS.md (task ledger, decisions taken, spend, next task), then continue.
 
 - **Pre-bake the durable artifacts.** Commit the plan (push if the user wants it pushed).
   Update STATUS.md so its **immediate next action** line names the new plan, its path, and
@@ -257,10 +262,10 @@ method?" question (these defaults answer it).
   Refresh the relevant `cairn-*` memory so a cold session recalls the initiative. Leave the
   tree clean. Anything load-bearing must live in the plan, the spec, STATUS.md, or memory,
   never only in the conversation.
-- **Then proceed straight into "Starting a plan" above** in this same session (Opus
-  conductor), or hand off to a fresh Opus session (Fable conductor), giving the exact resume
-  prompt and the launch directory (inside `cairn-cms`, so its hooks and memory load).
-  Example: "Execute the component grammar plan (`docs/superpowers/plans/<file>.md`)."
+- **Then proceed straight into "Starting a plan" above**, in this same session. If a context
+  clear intervenes anyway, give the exact resume prompt and the launch directory (inside
+  `cairn-cms`, so its hooks and memory load). Example: "Execute the component grammar plan
+  (`docs/superpowers/plans/<file>.md`)."
 
 Continuing in the same session is for work *within* one pass (a plan drafted here, executed here).
 It is not a reason to skip the prep above: prep the clear at the pass boundary either way, then

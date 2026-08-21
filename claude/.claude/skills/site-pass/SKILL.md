@@ -37,21 +37,29 @@ case give the exact resume prompt and the launch directory).
 2. Read the plan doc for the current pass. If none exists and the starter
    prompt lists open questions, brainstorm first (invoke
    `superpowers:brainstorming`), write a plan at
-   `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` (see `plan-template.md`),
-   then pre-bake before executing: commit the plan and point STATUS.md's
-   starter prompt at it. Then execute here in this same session if the
-   session runs on Opus; a Fable-conducted planning session instead ends at
-   plan approval and hands execution to a fresh Opus session (exact resume
-   prompt + launch directory).
-3. Execute the plan task-by-task by dispatching each well-specified task to
-   `site-implementer` (pinned Sonnet for token economy): the implementer
-   makes the failing check green and clears the repo gate; the main loop
-   reviews the diff and verifies before the next dispatch.
+   `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` (see `plan-template.md`;
+   its header carries a token ceiling and a checkpoint interval, default
+   four tasks), then pre-bake before executing: commit the plan and point
+   STATUS.md's starter prompt at it. Then execute here in this same
+   session, regardless of model.
+3. Each task runs as a chain. `site-implementer` (pinned Sonnet for token
+   economy) makes the failing check green, clears the repo gate, and
+   returns files touched, the gate result, and anything it could not do.
+   The `diff-reviewer` agent (`claude-opus-5`) then reads the diff against
+   the task's acceptance criteria and returns accept, fix, or escalate with
+   `file:line` findings; the conductor does not read the diff itself. One
+   re-dispatch on `fix`; a second `fix` verdict goes to the conductor as a
+   decision. Below six tasks, dispatch the chain per task with the Agent
+   tool. At six or more, or when the plan marks tasks independent, run
+   `~/.claude/workflows/pass-execute.js` with `{repo: "<site repo>", gate:
+   "<repo's full gate command>", implementer: "site-implementer", tasks:
+   [{id, title, criteria, files, notes}]}`.
 4. Implement a task inline, or upshift the dispatch to `model: opus`, only
    for novel correctness-critical logic the plan does not fully specify;
    `model: fable` only when an Opus verdict itself hedges on something that
-   matters. When most of a plan's tasks are independent, suggest
-   orchestrating them with the Workflow tool and let the user opt in.
+   matters. At each checkpoint, at any split, and before any question to
+   the user, write STATUS.md (task ledger, decisions taken, spend, next
+   task), then continue.
 
 ## Ending a pass: the consolidation ritual
 
