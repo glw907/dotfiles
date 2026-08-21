@@ -93,6 +93,7 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 | TWILIO_ACCOUNT_SID  | ✓                        | —               | —           |
 | TWILIO_API_KEY_SID  | ✓                        | —               | —           |
 | TWILIO_API_KEY_SECRET | ✓                      | —               | —           |
+| VAPID_PRIVATE_KEY   | ✓                        | —               | —           |
 
 > The ecxc worker stopped needing `GITHUB_APP_ID`/`GITHUB_APP_INSTALLATION_ID` as secrets at
 > the Waymark rebuild (2026-07-05): the v2 adapter commits both in `cairn.config.ts` (they
@@ -216,6 +217,24 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
   together.
 - **Rotate at**: Twilio Console -> Account -> API keys & tokens (revoke, recreate under the
   same name with a new date, then `secret-set.sh` all three and re-sync).
+
+### VAPID_PRIVATE_KEY
+- **Grants**: signs Web Push messages as the xcathletes application server. Paired with the
+  PUBLIC key, which is not secret and is committed as the `VAPID_PUBLIC_KEY` var in
+  `xcathletes-org/wrangler.jsonc`; `VAPID_SUBJECT` (`mailto:`) is a committed var too.
+  Generated 2026-08-21 with `@mmmike/web-push`'s `generateVapidKeys()`, base64url, P-256.
+- **Used by**: the xcathletes Worker's push send path (`src/lib/server/push/send.ts`), which
+  reaches only the four allowlisted push hosts. Routed to the worker through sync.sh.
+- **Scope note**: it signs, it does not encrypt. It cannot address a device on its own: a
+  push needs the device's own endpoint plus its p256dh and auth keys, which live in
+  `push_subscriptions` in D1. Not recoverable from any API, unlike TURNSTILE_SECRET_KEY,
+  which is why it lives in this store rather than worker-only.
+- **Rotate at**: nowhere upstream; generate a fresh pair locally. **Rotation invalidates
+  every existing device subscription.** The browser binds a subscription to the public key it
+  was created with, so a new pair does not swap in: every installed phone stops receiving
+  until its own service worker fires `pushsubscriptionchange` and re-subscribes, and a phone
+  that never opens the app again never recovers. Rotate only on suspected compromise, and
+  change `VAPID_PUBLIC_KEY` in `wrangler.jsonc` in the same deploy.
 
 ---
 

@@ -54,7 +54,9 @@ WORKER_SECRETS["asc-site"]="ANTHROPIC_API_KEY"
 # installation as ecxc and 907-life, so the App private key routes from here alongside the Twilio
 # credentials its member OTP layer sends sign-in codes through. TURNSTILE_SECRET_KEY is worker-only
 # by the ecxc precedent: it is recoverable from the Turnstile API, so it never enters this store.
-WORKER_SECRETS["xcathletes"]="GITHUB_APP_PRIVATE_KEY_B64 TWILIO_ACCOUNT_SID TWILIO_API_KEY_SID TWILIO_API_KEY_SECRET"
+# VAPID_PRIVATE_KEY signs Web Push messages; it routes from here because it is NOT recoverable from
+# any API, and rotating it silently invalidates every device subscription (see registry.md).
+WORKER_SECRETS["xcathletes"]="GITHUB_APP_PRIVATE_KEY_B64 TWILIO_ACCOUNT_SID TWILIO_API_KEY_SID TWILIO_API_KEY_SECRET VAPID_PRIVATE_KEY"
 
 # --- Argument parsing ---
 MODE="all"
