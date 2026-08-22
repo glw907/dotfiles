@@ -134,6 +134,13 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 - **Grants**: Full Cloudflare API access (DNS, Workers, Pages, Access, R2)
 - **Used by**: wrangler, DNS automation scripts, all project deployments
 - **Rotate at**: https://dash.cloudflare.com/profile/api-tokens
+- **Also wrapped as a Workers Builds build token** (2026-08-22, Geoff's call): build token
+  `503cd3fe-a701-4d5e-be7b-4c93a61335fa` "xcathletes build token (CLAUDE_CODE admin token)"
+  backs the Workers Builds triggers for `xcathletes` and both `907-life` triggers (the
+  three older build tokens on the account were rolled). Rotating this token breaks
+  auto-deploy for both workers until a new build token is created
+  (`POST /accounts/{id}/builds/tokens` with the new token id and value) and each trigger
+  is PATCHed to it. Scope added 2026-08-22: Workers Builds Configuration: Edit.
 
 ### CF_ZT_TOKEN
 - **Grants**: Cloudflare Zero Trust API (Access apps, policies, identity providers)
