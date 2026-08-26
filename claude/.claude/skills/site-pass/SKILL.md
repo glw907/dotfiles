@@ -36,13 +36,22 @@ case give the exact resume prompt and the launch directory).
 1. Read `docs/STATUS.md` to get the current pass number and starter prompt.
 2. Read the plan doc for the current pass. If none exists and the starter
    prompt lists open questions, brainstorm first (invoke
-   `superpowers:brainstorming`), write a plan at
+   `superpowers:brainstorming`), then run the engine-contact enumeration
+   per the `engine-consult` skill and record its outcome in the plan
+   header (either the consultation-brief link or the one-line "no engine
+   asks"), then write a plan at
    `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` (see `plan-template.md`;
    its header carries a token ceiling and a checkpoint interval, default
    four tasks), then pre-bake before executing: commit the plan and point
    STATUS.md's starter prompt at it. Then execute here in this same
    session, regardless of model.
-3. Each task runs as a chain. `site-implementer` (pinned Sonnet for token
+3. **Consultation backstop, blocking.** If the plan header carries neither
+   a consultation-brief link nor the "no engine asks" line, run the
+   engine-contact enumeration per the `engine-consult` skill now and
+   append the resulting line to the committed plan. This is a blocking
+   precondition on the first implementer dispatch: no `site-implementer`
+   dispatch until the plan header carries one of the two.
+4. Each task runs as a chain. `site-implementer` (pinned Sonnet for token
    economy) makes the failing check green, clears the repo gate, and
    returns files touched, the gate result, and anything it could not do.
    The `diff-reviewer` agent (`claude-opus-5`) then reads the diff against
@@ -54,7 +63,7 @@ case give the exact resume prompt and the launch directory).
    `~/.claude/workflows/pass-execute.js` with `{repo: "<site repo>", gate:
    "<repo's full gate command>", implementer: "site-implementer", tasks:
    [{id, title, criteria, files, notes}]}`.
-4. Implement a task inline, or upshift the dispatch to `model: opus`, only
+5. Implement a task inline, or upshift the dispatch to `model: opus`, only
    for novel correctness-critical logic the plan does not fully specify;
    `model: fable` only when an Opus verdict itself hedges on something that
    matters. At each checkpoint, at any split, and before any question to
@@ -179,7 +188,10 @@ branches off the default).
 
 With that done, continuing in the same session is fine for work within
 one pass, and if the next starter prompt has open questions, run the
-brainstorm while context is warm. Stop when the user wants to stop or the
+brainstorm while context is warm. A plan drafted here gets the
+engine-contact enumeration per the `engine-consult` skill before it is
+written, the same as any plan, and carries the consultation line in its
+header. Stop when the user wants to stop or the
 next pass's direction is unsettled. See the
 `cairn-pass-ends-with-context-clear-prep` memory.
 

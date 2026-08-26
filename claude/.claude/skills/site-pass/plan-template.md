@@ -9,6 +9,10 @@
 
 **Goal:** One sentence stating what this pass produces.
 
+**Engine consultation:** link to the filed brief
+(`cairn-cms/docs/internal/consultations/YYYY-MM-DD-<site>-<pass>.md`), or
+the one line "no engine asks". Required; see the `engine-consult` skill.
+
 **Architecture:** What this pass delivers, including files created/modified
 and key decisions locked in.
 

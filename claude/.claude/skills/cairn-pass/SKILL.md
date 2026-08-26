@@ -39,6 +39,10 @@ re-deriving the design.
 1. **Read `cairn-cms/docs/STATUS.md`** for the current state and open decisions, the
    **functional spec** (sections relevant to the plan) for the locked decisions and
    architecture, and **the plan file in full** for the task-by-task steps and exit criteria.
+   Also check `docs/internal/consultations/` for briefs whose verdicts are unrecorded or
+   whose accepted items are queued for this pass; STATUS should name them, and an
+   unanswered brief is worked before unrelated tasks (the `engine-consult` skill carries
+   the protocol).
 2. Confirm you are in a feature worktree off `main`, not the `main` checkout itself.
    STATUS.md lists the active worktrees.
 3. Each task runs as a chain. `cairn-implementer` (pinned Sonnet for token economy) writes
@@ -86,10 +90,18 @@ Then run `npm run check:comments` (the ESLint TSDoc + em-dash gate over `src/lib
 `cairn-implementer` gate and `npm run check` (svelte-check) do **not** cover it, so a TSDoc structure
 slip (a multiline `/**` with text on the first line, a stray `{type}` tag) passes every other gate and
 only fails on CI. Run it here, with the from-scratch consumer build, before calling a pass done. This
-gate is one of FOUR CI-only checks the local ritual skips; the other three are
-`check:reference:signatures`, `check:surface`, and `check:snippets`, all in step 5. An `0.62.0`-era pass
-shipped red on this one, and the 2026-08-01 xcathletes seams pass shipped red on `check:snippets`. Treat
-the four as one list and run them by name.
+gate is one of SIX CI-only checks the local ritual skips; the other five are
+`check:reference:signatures`, `check:surface`, and `check:snippets`, all in step 5, plus
+`check:transcripts` and `check:symbols` below. An `0.62.0`-era pass shipped red on `check:comments`,
+and the 2026-08-01 xcathletes seams pass shipped red on `check:snippets`. Treat the six as one list
+and run them by name.
+
+Also run `npm run check:transcripts` and `npm run check:symbols`. `check:transcripts` fails when a
+quoted transcript block on an admin doc page has drifted from its recorded fixture; the
+newest-toolchain pass (2026-08-21/22) hit this on a hand edit to an admin page that no other local
+gate caught. `check:symbols` fails when a backticked dotted token in a code comment reads as an
+unresolved log-event reference; the same pass hit this on a new comment and fixed it by adding the
+token to that gate's allowlist rather than renaming it.
 
 **Prove the consumer build, not only `npm test`.** The package ships TypeScript inside its `.svelte`
 files, so a consumer-bundler incompatibility (a Vite 8 / Rolldown parse failure, an import-resolution
@@ -161,6 +173,9 @@ fixes every doc its change touched, including the inbound references on other pa
   `check:snippets` red at 12 problems; three of them were a missing `Manifest` export on the very
   subpath that pass's headline function shipped on. Writing a new export and documenting it is not
   enough, since the export map has to carry every type the signature names.
+- A pass that rules on a consultation item or executes an audit verdict updates
+  `docs/internal/engine-rulings.md` in the same pass (accepts close with the one-line
+  seam-fit report).
 - Append any design friction the writing surfaced to `docs/internal/docs-friction-log.md`, one entry
   per finding with its perspective (developer or editor) and a short note. Triage candidates into
   `ROADMAP.md` (Now or Next) and the STATUS carry-forwards. This repo keeps no separate backlog file.
