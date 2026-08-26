@@ -85,6 +85,7 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 | ANTHROPIC_API_KEY   | ✓                        | —               | —           |
 | CMS_BOT_PAT         | ✓                        | —               | —           |
 | RESEND_API_KEY      | ✓                        | ✓               | ✓           |
+| CONTACT_EMAIL       | ✓                        | —               | —           |
 | FASTMAIL_API_TOKEN  | ✓                        | —               | —           |
 | GITHUB_APP_ID       | ✓                        | ✓               | —           |
 | GITHUB_APP_INSTALLATION_ID | ✓                 | ✓               | —           |
@@ -93,6 +94,7 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 | TWILIO_ACCOUNT_SID  | ✓                        | —               | —           |
 | TWILIO_API_KEY_SID  | ✓                        | —               | —           |
 | TWILIO_API_KEY_SECRET | ✓                      | —               | —           |
+| TWILIO_AUTH_TOKEN   | ✓                        | —               | —           |
 | VAPID_PRIVATE_KEY   | ✓                        | —               | —           |
 
 > The ecxc worker stopped needing `GITHUB_APP_ID`/`GITHUB_APP_INSTALLATION_ID` as secrets at
@@ -224,6 +226,27 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
   together.
 - **Rotate at**: Twilio Console -> Account -> API keys & tokens (revoke, recreate under the
   same name with a new date, then `secret-set.sh` all three and re-sync).
+
+### CONTACT_EMAIL
+- **Grants**: nothing; it is the destination inbox address for the xcathletes `/contact`
+  form (`geoff.wright@xcathletes.org`, a Cloudflare Email Routing forward to
+  `geoff@907.life`). Stored here so the address is config, never a literal in source,
+  per xcathletes-org's `docs/deploy.md`. Installed 2026-08-26 (public-design pass).
+  Note: 907-life's separately-set CONTACT_EMAIL stays worker-only; only the xcathletes
+  one is managed here.
+- **Used by**: xcathletes Worker (`WORKER_SECRETS["xcathletes"]`), the `/contact` action.
+- **Rotate at**: no credential to rotate; change the value with `secret-set.sh` and
+  `sync.sh --worker xcathletes` when the operator inbox moves, and adjust the Email
+  Routing rule on the xcathletes.org zone to match.
+
+### TWILIO_AUTH_TOKEN
+- **Grants**: the Twilio account's primary Auth Token (full account access, broader than the
+  API key). The xcathletes Worker uses it only to verify the `X-Twilio-Signature` on inbound
+  SMS webhooks (`/api/sms/inbound`, STOP/START/HELP); Twilio signs callbacks with this token
+  and nothing else, so the API key cannot substitute. Installed 2026-08-22.
+- **Used by**: xcathletes Worker (`WORKER_SECRETS["xcathletes"]`).
+- **Rotate at**: Twilio Console -> Account -> API keys & tokens -> Auth Token (request a
+  secondary token, promote it, then `secret-set.sh` and `sync.sh --worker xcathletes`).
 
 ### VAPID_PRIVATE_KEY
 - **Grants**: signs Web Push messages as the xcathletes application server. Paired with the

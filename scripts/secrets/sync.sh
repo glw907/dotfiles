@@ -56,7 +56,9 @@ WORKER_SECRETS["asc-site"]="ANTHROPIC_API_KEY"
 # by the ecxc precedent: it is recoverable from the Turnstile API, so it never enters this store.
 # VAPID_PRIVATE_KEY signs Web Push messages; it routes from here because it is NOT recoverable from
 # any API, and rotating it silently invalidates every device subscription (see registry.md).
-WORKER_SECRETS["xcathletes"]="GITHUB_APP_PRIVATE_KEY_B64 TWILIO_ACCOUNT_SID TWILIO_API_KEY_SID TWILIO_API_KEY_SECRET VAPID_PRIVATE_KEY"
+# CONTACT_EMAIL is the /contact form's destination inbox (public-design pass, 2026-08-26);
+# an address, not a credential, but managed here so it is config rather than a source literal.
+WORKER_SECRETS["xcathletes"]="GITHUB_APP_PRIVATE_KEY_B64 TWILIO_ACCOUNT_SID TWILIO_API_KEY_SID TWILIO_API_KEY_SECRET TWILIO_AUTH_TOKEN VAPID_PRIVATE_KEY CONTACT_EMAIL"
 
 # --- Argument parsing ---
 MODE="all"
