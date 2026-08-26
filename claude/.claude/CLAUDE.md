@@ -151,7 +151,7 @@ verbal description); the context that built the UI never grades it; nothing depl
 production without a full-page render read in the main loop; user-facing sites get Geoff's
 before/after. (Born from two same-day production misses with all-green mechanical gates.)
 
-## Engine-level UI mechanics, every cairn site (Geoff, 2026-07-30)
+## Engine-level UI mechanics, every cairn site (Geoff, 2026-07-30; consultation 2026-08-26)
 
 Every cairn-cms site (aksailingclub-org, ecxc-ski, 907-life, later consumers), not one repo. A
 UI **mechanic** belongs to cairn; a design **choice** belongs to the site. A mechanic recurs in
@@ -160,9 +160,16 @@ which element a two-part row drops when space runs out, a framework default rend
 invisible control on a dark ground. Patching one in a site's theme or a route's scoped `<style>`
 leaves every sibling site to rediscover it.
 
-**Filing these is default behavior, never a response to being asked.** A pass carrying UI work
-ends by enumerating what it built, asking of each item whether it is a mechanic, and filing what
-qualifies in that pass's harvest-findings doc BEFORE reporting the pass done. **A repeated local
+**The primary path is consultation, before the pass builds.** Engine edges are enumerated at
+plan-authoring time through the `engine-consult` skill (both pass skills carry the hook), and
+accepted work lands ahead of the site task that needs it.
+
+**Mid-pass filing stays as the fallback, default behavior, never a response to being asked.**
+Consultation cannot foresee what a pass discovers while building: a pass carrying UI work ends
+by enumerating what it built, asking of each item whether it is a mechanic, and filing what
+qualifies BEFORE reporting the pass done. A mid-pass staging doc uses the consultation brief's
+four-field item schema, and its triage runs through `engine-triage` against the rulings ledger
+(`cairn-cms/docs/internal/engine-rulings.md`). **A repeated local
 workaround is the loudest signal that something sits at the wrong altitude**: "this repo has
 patched this before" is an automatic filing trigger, not a reason to patch it faster. (Born
 2026-07-30: a pass patched DaisyUI's invisible dark-mode `.btn` edge a third time, the pattern
