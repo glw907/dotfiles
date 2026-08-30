@@ -55,3 +55,5 @@ cask "claude-code"
 # asks for, and Ptyxis (the daily terminal) uses the system monospace.
 brew "gitleaks"     # staged-secret scan in the pre-commit hook and scripts/check.sh
 brew "shellcheck"   # bash lint; adopted 2026-08-30 after check-drift flagged it installed-unmanifested
+brew "bats-core"    # bash test framework; musicbox scripts run their bats suites on this machine
+brew "libarchive"   # for bsdtar: safe archive extraction in the musicbox inbox scripts
