@@ -50,4 +50,10 @@ sweep.
   not covered it. Installed via `uv tool install ruff`; `bootstrap.sh`'s
   `setup_mise_uv` now lists it alongside `khard`, `vdirsyncer`, `yt-dlp`.
 
-Budgets: recorded at pass close.
+Budgets: roughly 1.3M tokens of a 3M ceiling (exploration fan-out ~250k, the
+execution workflow ~850k over 8 tasks with 16 agent dispatches, plus the
+close-out remainder). Human touchpoints: the plan approval and one batched
+four-question decision round; two implementer dispatches (T5, T7) were
+blocked by the tool-permission classifier over live-system deletions and
+finished in the main loop, with the deletion targets parked in
+`~/.local/state/trash-2026-08-30/` instead of destroyed.

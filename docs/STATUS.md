@@ -10,8 +10,8 @@ artifacts. github.com/glw907/workstation.
 Post-migration reorg complete: the repo describes the Bluefin machine as it
 actually stands, not the retired Mint 22 desktop setup.
 
-- **Stow packages** (single source: `bluefin/stow-packages.txt`): `bash bin
-  claude contacts git kitty mise vale`. Both `bluefin/bootstrap.sh` and
+- **Stow packages** (single source: `bluefin/stow-packages.txt`): `bash beets
+  bin claude contacts git kitty mise vale`. Both `bluefin/bootstrap.sh` and
   `sync-dotfiles.sh` read that file.
 - **Layered RPMs** (`bluefin/layered-packages.txt`): `1password
   1password-cli firefox chromium`, kept deliberately minimal and
