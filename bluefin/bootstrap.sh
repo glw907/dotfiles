@@ -34,9 +34,43 @@ STOW_PACKAGES=(bash bin claude git kitty contacts)
 STOW_SHARED_DIRS=("$HOME/.local/bin" "$HOME/.claude" "$HOME/.config/khard" \
     "$HOME/.config/systemd/user")
 
+# Where stow_clear_conflicts parks files it moves out of the way.
+STOW_CONFLICT_BACKUP="$HOME/.dotfiles-preexisting"
+
 # Reads a list file, dropping comment and blank lines.
 read_list() {
     grep -vE '^[[:space:]]*(#|$)' "$1"
+}
+
+# stow refuses to replace a real file at a target path, and a single conflict
+# fails the whole package. On a fresh install that is easy to hit: `gh auth
+# login` writes ~/.gitconfig, and anything launched before setup can leave a
+# config file behind the same way.
+#
+# Only files the packages actually provide are considered, so unrelated
+# neighbours in a shared target dir (the uv-installed shims in ~/.local/bin,
+# say) are never touched. Conflicts are moved rather than deleted: the
+# tracked copy supersedes them, but a backup costs nothing and keeps a
+# surprise recoverable. Existing symlinks are left alone — they are either
+# already ours or something stow should report on its own.
+stow_clear_conflicts() {
+    local pkg src rel target moved=0
+    for pkg in "${STOW_PACKAGES[@]}"; do
+        [[ -d "$DOTFILES_DIR/$pkg" ]] || continue
+        while IFS= read -r -d '' src; do
+            rel="${src#"$DOTFILES_DIR/$pkg/"}"
+            target="$HOME/$rel"
+            if [[ -f "$target" && ! -L "$target" ]]; then
+                mkdir -p "$(dirname "$STOW_CONFLICT_BACKUP/$rel")"
+                mv "$target" "$STOW_CONFLICT_BACKUP/$rel"
+                echo "moved aside $target"
+                moved=$((moved + 1))
+            fi
+        done < <(find "$DOTFILES_DIR/$pkg" -type f -print0)
+    done
+    if [[ $moved -gt 0 ]]; then
+        echo "$moved pre-existing file(s) backed up under $STOW_CONFLICT_BACKUP"
+    fi
 }
 
 # The running image's name, e.g. "bluefin" or "bluefin-dx". Bluefin writes
@@ -237,6 +271,7 @@ setup_stow() {
     # symlinks per file instead of folding the whole dir into a repo symlink
     # (a fold would make later installs write inside ~/.dotfiles).
     mkdir -p "${STOW_SHARED_DIRS[@]}"
+    stow_clear_conflicts
     (cd "$DOTFILES_DIR" && stow -R "${STOW_PACKAGES[@]}")
 }
 
@@ -485,6 +520,7 @@ restore_place_home() {
     done
     # Pre-create the shared target dirs so the re-stow can't re-fold them.
     mkdir -p "${STOW_SHARED_DIRS[@]}"
+    stow_clear_conflicts
     (cd "$DOTFILES_DIR" && stow -R "${STOW_PACKAGES[@]}")
 
     # Direct restores: plain directories/files, no stow overlap.
