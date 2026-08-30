@@ -153,17 +153,25 @@ phase_layer() {
     # read-only /usr, so the import fails. Instead the key goes to /etc
     # (mutable) and the repo's gpgkey= points at it; rpm-ostree verifies
     # packages against that file itself at install time.
-    curl -fsSL https://downloads.1password.com/linux/keys/1password.asc \
-        | sudo tee /etc/pki/rpm-gpg/RPM-GPG-KEY-1password > /dev/null
-    sudo tee /etc/yum.repos.d/1password.repo > /dev/null <<'EOF'
-[1password]
-name=1Password Stable Channel
-baseurl=https://downloads.1password.com/linux/rpm/stable/$basearch
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-1password
-EOF
+    # Fetch the signing key and assert its fingerprint before installing it;
+    # a repo file with gpgcheck=1 is only as good as the key it points at.
+    # Expected fingerprint verified against the key that has validated every
+    # 1Password install on thinkpad-x1 since the 2026-08 migration.
+    local key_tmp expected_fpr actual_fpr
+    expected_fpr="3FEF9748469ADBE15DA7CA80AC2D62742012EA22"
+    key_tmp=$(mktemp)
+    curl -fsSL https://downloads.1password.com/linux/keys/1password.asc -o "$key_tmp"
+    actual_fpr=$(gpg --show-keys --with-colons "$key_tmp" 2>/dev/null \
+        | awk -F: '/^fpr:/{print $10; exit}')
+    if [[ "$actual_fpr" != "$expected_fpr" ]]; then
+        echo "1Password key fingerprint mismatch: got '${actual_fpr}'" >&2
+        rm -f "$key_tmp"
+        return 1
+    fi
+    sudo install -m 0644 "$key_tmp" /etc/pki/rpm-gpg/RPM-GPG-KEY-1password
+    rm -f "$key_tmp"
+    sudo install -m 0644 "$BLUEFIN_DIR/etc/yum.repos.d/1password.repo" \
+        /etc/yum.repos.d/1password.repo
 
     echo "== layer: rpm-ostree install =="
     local list="$BLUEFIN_DIR/layered-packages.txt"
@@ -262,6 +270,9 @@ setup_brew() {
         echo "brew not on PATH, installing Homebrew..."
         NONINTERACTIVE=1 /bin/bash -c \
             "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        # The installer does not put brew on PATH; eval by absolute path so
+        # the bundle step below works in this same process.
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
     eval "$(brew shellenv)"
     brew bundle --file="$BLUEFIN_DIR/Brewfile"
@@ -272,12 +283,14 @@ setup_mise_uv() {
     eval "$(mise activate bash)"
     mise use --global node@lts
 
-    # khard, vdirsyncer, yt-dlp, ruff are Python tools per the brief;
-    # installed via uv rather than Homebrew.
+    # Python CLI tools ride uv rather than Homebrew. This list is the source
+    # of truth for the machine's uv tool set; keep `uv tool list` matching it.
     uv tool install khard
     uv tool install vdirsyncer
     uv tool install yt-dlp
     uv tool install ruff
+    uv tool install jrnl
+    uv tool install "beets[fetchart,embedart]"
 }
 
 setup_stow() {
@@ -288,6 +301,30 @@ setup_stow() {
     mkdir -p "${STOW_SHARED_DIRS[@]}"
     stow_clear_conflicts
     (cd "$DOTFILES_DIR" && stow -R "${STOW_PACKAGES[@]}")
+}
+
+setup_git_hooks() {
+    echo "== setup: repo git hooks =="
+    # The pre-commit hook runs gitleaks over staged content; this repo is
+    # public, so the hook is the last local line of defense for secrets.
+    (cd "$DOTFILES_DIR" && git config core.hooksPath scripts/githooks)
+}
+
+setup_vale_styles() {
+    echo "== setup: vale style packages =="
+    # The Google and Microsoft style trees are deliberately not committed
+    # (vale/.gitignore); `vale sync` fetches them into the stowed config.
+    # Without this step every Vale run, including the vale-hook Claude hook,
+    # errors on an empty StylesPath.
+    (cd "$HOME/.config/vale" && vale sync)
+}
+
+setup_contacts_timer() {
+    echo "== setup: vdirsyncer user timer =="
+    # The unit files arrive via the contacts stow package, but a stowed
+    # [Install] section is inert until the timer is enabled.
+    systemctl --user daemon-reload
+    systemctl --user enable --now vdirsyncer.timer
 }
 
 # kitty is not the daily terminal on Bluefin -- Ptyxis is, and it ships with
@@ -302,12 +339,17 @@ setup_kitty() {
         echo "kitty already installed, skipping"
         return
     fi
-    # Verify on first boot: confirm this URL still serves the installer script.
-    curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+    # launch=n keeps the installer from opening a kitty window, which would
+    # block a non-interactive run (same fix update-kitty carries).
+    curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
     if [[ ! -x "$kitty_bin" ]]; then
         echo "kitty install failed: $kitty_bin not found" >&2
         return 1
     fi
+    # The installer populates ~/.local/kitty.app only; kitty reaches PATH
+    # through these links (the kitty-shot harness invokes bare `kitty`).
+    ln -sf "$HOME/.local/kitty.app/bin/kitty" "$HOME/.local/bin/kitty"
+    ln -sf "$HOME/.local/kitty.app/bin/kitten" "$HOME/.local/bin/kitten"
 }
 
 # Claude Code comes from the Homebrew cask in the Brewfile, installed by
@@ -369,7 +411,9 @@ Android:
 Homebrew / mise / uv:
   - `brew doctor`
   - `mise doctor`
-  - `uv tool list` shows khard, vdirsyncer, yt-dlp, ruff
+  - `uv tool list` shows khard, vdirsyncer, yt-dlp, ruff, jrnl, beets
+  - `vale sync` already ran; `vale --version` works and ~/.config/vale/styles
+    is populated
 
 Dotfiles:
   - `stow -n $(grep -vE '^[[:space:]]*(#|$)' bluefin/stow-packages.txt)`
@@ -399,11 +443,17 @@ Image:
     rebase never landed).
 
 Next: in 1Password, sign in and enable Settings -> Developer -> "Integrate
-with 1Password CLI" (GUI-only toggle), then run:
+with 1Password CLI" (GUI-only toggle).
+
+FIRST WORKSTATION ONLY (the 2026-08 Mint migration): open a NEW terminal --
+the shell that ran setup never sourced the just-stowed .bashrc, so mise/npx
+are not on its PATH -- then run:
 
   ~/.dotfiles/bluefin/bootstrap.sh restore
 
-It restores the pre-migration R2 backup with the same hard stops.
+It restores the pre-migration R2 backup with the same hard stops. A second
+workstation has no backup to restore and is DONE at this point; its home
+directory content arrives by other means (git clones, syncthing).
 EOF
 }
 
@@ -722,6 +772,9 @@ phase_setup() {
         setup_brew
         setup_mise_uv
         setup_stow
+        setup_git_hooks
+        setup_vale_styles
+        setup_contacts_timer
         setup_kitty
         setup_verify_claude_code
         setup_syncthing

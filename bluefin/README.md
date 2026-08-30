@@ -16,9 +16,14 @@ sudo systemctl reboot
 sudo systemctl reboot
 ~/.dotfiles/bluefin/bootstrap.sh setup
 # 1Password app: sign in, then Settings -> Developer -> "Integrate with 1Password CLI"
+# FIRST WORKSTATION ONLY, and in a NEW terminal (setup's shell never sourced
+# the just-stowed .bashrc, so mise/npx are missing from its PATH):
 ~/.dotfiles/bluefin/bootstrap.sh restore
 claude   # first launch asks you to log in
 ```
+
+A second workstation stops after `setup`; there is no backup for it to
+restore (see "Second workstation" below).
 
 Two reboots, both required. The official ISO installs the non-DX `bluefin`
 image; `devmode` rebases to `bluefin-dx` and only takes effect on boot, and
