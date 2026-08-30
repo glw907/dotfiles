@@ -192,30 +192,35 @@ phase_layer() {
     echo "  $0 setup"
 }
 
+# Every multi-command setup step ends its commands with `|| return 1`.
+# phase_setup calls steps inside `if ! "$step"`, and bash suppresses errexit
+# for the whole dynamic extent of a condition, so without the explicit
+# returns a step reports only its LAST command's status and mid-step
+# failures vanish (caught by the 2026-08-30 verification pass).
 setup_etc_drops() {
     echo "== setup: /etc drops =="
 
-    sudo mkdir -p /etc/chromium/policies/managed
+    sudo mkdir -p /etc/chromium/policies/managed || return 1
     shopt -s nullglob
     local policies=("$BLUEFIN_DIR"/etc/chromium-policies/*.json)
     shopt -u nullglob
     if [[ ${#policies[@]} -eq 0 ]]; then
         echo "no chromium policy files found in $BLUEFIN_DIR/etc/chromium-policies, skipping" >&2
     else
-        sudo install -m 0644 "${policies[@]}" /etc/chromium/policies/managed/
+        sudo install -m 0644 "${policies[@]}" /etc/chromium/policies/managed/ || return 1
     fi
 
     sudo install -m 0644 "$BLUEFIN_DIR/etc/udev/51-android.rules" \
-        /etc/udev/rules.d/51-android.rules
-    sudo udevadm control --reload-rules
-    sudo udevadm trigger
+        /etc/udev/rules.d/51-android.rules || return 1
+    sudo udevadm control --reload-rules || return 1
+    sudo udevadm trigger || return 1
     # The rule grants uaccess via udev TAG+="uaccess" for known Android
     # vendor IDs; no group membership or relogin needed.
 }
 
 setup_dx_group() {
     echo "== setup: ujust dx-group =="
-    require_dx_image
+    require_dx_image || return 1
     ujust dx-group
 }
 
@@ -236,7 +241,7 @@ setup_remove_conflicting_flatpaks() {
     for app in org.mozilla.firefox com.onepassword.OnePassword; do
         if flatpak info "$app" > /dev/null 2>&1; then
             echo "removing $app"
-            flatpak uninstall --system -y --delete-data "$app"
+            flatpak uninstall --system -y --delete-data "$app" || return 1
         else
             echo "$app not installed, skipping"
         fi
@@ -269,37 +274,37 @@ setup_brew() {
         # that isn't true for this image build. Verify on first boot.
         echo "brew not on PATH, installing Homebrew..."
         NONINTERACTIVE=1 /bin/bash -c \
-            "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || return 1
         # The installer does not put brew on PATH; eval by absolute path so
         # the bundle step below works in this same process.
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" || return 1
     fi
-    eval "$(brew shellenv)"
+    eval "$(brew shellenv)" || return 1
     brew bundle --file="$BLUEFIN_DIR/Brewfile"
 }
 
 setup_mise_uv() {
     echo "== setup: mise + uv tool installs =="
-    eval "$(mise activate bash)"
-    mise use --global node@lts
+    eval "$(mise activate bash)" || return 1
+    mise use --global node@lts || return 1
 
     # Python CLI tools ride uv rather than Homebrew. This list is the source
     # of truth for the machine's uv tool set; keep `uv tool list` matching it.
-    uv tool install khard
-    uv tool install vdirsyncer
-    uv tool install yt-dlp
-    uv tool install ruff
-    uv tool install jrnl
-    uv tool install "beets[fetchart,embedart]"
+    local tool
+    for tool in khard vdirsyncer yt-dlp ruff jrnl "beets[fetchart,embedart]"; do
+        uv tool install "$tool" || return 1
+    done
 }
 
 setup_stow() {
     echo "== setup: stow dotfiles packages =="
     # Pre-create the target dirs that other things also write into, so stow
-    # symlinks per file instead of folding the whole dir into a repo symlink
-    # (a fold would make later installs write inside ~/.dotfiles).
-    mkdir -p "${STOW_SHARED_DIRS[@]}"
-    stow_clear_conflicts
+    # symlinks their direct children instead of folding each dir into one
+    # repo symlink. Only the dirs listed here are unfolded; a package's own
+    # subdirs (for example ~/.claude/skills) still fold, so anything writing
+    # inside one of those lands in ~/.dotfiles.
+    mkdir -p "${STOW_SHARED_DIRS[@]}" || return 1
+    stow_clear_conflicts || return 1
     (cd "$DOTFILES_DIR" && stow -R "${STOW_PACKAGES[@]}")
 }
 
@@ -322,9 +327,17 @@ setup_vale_styles() {
 setup_contacts_timer() {
     echo "== setup: vdirsyncer user timer =="
     # The unit files arrive via the contacts stow package, but a stowed
-    # [Install] section is inert until the timer is enabled.
-    systemctl --user daemon-reload
-    systemctl --user enable --now vdirsyncer.timer
+    # [Install] section is inert until the timer is enabled. The service
+    # needs credentials from ~/.local/secrets (fastmail-dav-password), which
+    # do not exist until the restore phase or a manual secrets sync, so
+    # enabling before then would just fail on every hourly tick.
+    systemctl --user daemon-reload || return 1
+    if [[ -f "$HOME/.local/secrets" ]]; then
+        systemctl --user enable --now vdirsyncer.timer
+    else
+        echo "skipped enable: no ~/.local/secrets yet. After the secrets"
+        echo "sync, run: systemctl --user enable --now vdirsyncer.timer"
+    fi
 }
 
 # kitty is not the daily terminal on Bluefin -- Ptyxis is, and it ships with
@@ -341,14 +354,14 @@ setup_kitty() {
     fi
     # launch=n keeps the installer from opening a kitty window, which would
     # block a non-interactive run (same fix update-kitty carries).
-    curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
+    curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n || return 1
     if [[ ! -x "$kitty_bin" ]]; then
         echo "kitty install failed: $kitty_bin not found" >&2
         return 1
     fi
     # The installer populates ~/.local/kitty.app only; kitty reaches PATH
     # through these links (the kitty-shot harness invokes bare `kitty`).
-    ln -sf "$HOME/.local/kitty.app/bin/kitty" "$HOME/.local/bin/kitty"
+    ln -sf "$HOME/.local/kitty.app/bin/kitty" "$HOME/.local/bin/kitty" || return 1
     ln -sf "$HOME/.local/kitty.app/bin/kitten" "$HOME/.local/bin/kitten"
 }
 
@@ -628,7 +641,10 @@ restore_place_home() {
 
     # Selected .config subdirs.
     mkdir -p "$HOME/.config"
-    for item in chromium gcloud gh op 1Password poplar khard vale google-workspace systemd; do
+    # vale is deliberately absent: ~/.config/vale is a stow fold on a fresh
+    # machine, an rsync into it would write backup bytes inside the repo,
+    # and the styles it held are regenerated by `vale sync` anyway.
+    for item in chromium gcloud gh op 1Password poplar khard google-workspace systemd; do
         if [[ -e "$home_src/.config/$item" ]]; then
             rsync -a --ignore-existing "$home_src/.config/$item" "$HOME/.config/"
         fi
@@ -764,6 +780,10 @@ phase_restore() {
 }
 
 phase_setup() {
+    # Bare call, outside any condition, so errexit is live and a non-DX
+    # image hard-stops the whole phase (the README promises this).
+    require_dx_image
+
     local steps=(
         setup_etc_drops
         setup_dx_group

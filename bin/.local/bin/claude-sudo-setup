@@ -21,5 +21,6 @@ if [ -z "$PASSWORD" ]; then
 fi
 
 umask 077
+rm -f "$CACHE"  # the umask guarantee holds only for a freshly created file
 printf '%s\n' "$PASSWORD" > "$CACHE"
 echo "Sudo password cached in tmpfs from 1Password."

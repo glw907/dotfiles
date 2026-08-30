@@ -23,12 +23,14 @@ run() {
 }
 
 check_bash_syntax() {
+    # Every tracked file whose shebang names bash, wherever it lives
+    # (extensionless skill scripts included).
     local f ok=0
     while IFS= read -r f; do
-        if head -1 "$f" | grep -q 'bash'; then
+        if head -1 "$f" 2>/dev/null | grep -q '^#!.*bash'; then
             bash -n "$f" || ok=1
         fi
-    done < <(git ls-files '*.sh' 'bin/.local/bin/*' 'scripts/githooks/*')
+    done < <(git ls-files)
     return "$ok"
 }
 

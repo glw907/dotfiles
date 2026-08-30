@@ -30,7 +30,8 @@ CACHE="/dev/shm/.age-key-$(id -u)"      # session-cached age key (RAM, chmod 600
 DECRYPTED_FILE="$(mktemp /dev/shm/secrets-XXXXXX)"
 
 # Cleanup on any exit. The session cache deliberately survives, since secret-session-clear.sh owns its lifecycle.
-trap 'shred -u "$DECRYPTED_FILE" 2>/dev/null; true' EXIT
+OUT_FILE=""  # push_local's staging file; shredded by the same trap
+trap 'shred -u "$DECRYPTED_FILE" "$OUT_FILE" 2>/dev/null; true' EXIT
 
 # --- Worker routing table ---
 # Maps worker name -> space-separated list of secrets to push
@@ -191,7 +192,9 @@ push_local() {
     fi
 
     # Build the output in a temp file to avoid subshell counting issues
-    local out_file="/dev/shm/local-secrets-out-$$.txt"
+    local out_file
+    out_file="$(mktemp /dev/shm/local-secrets-out-XXXXXX)"
+    OUT_FILE="$out_file"
     count=0
 
     {

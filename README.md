@@ -14,12 +14,14 @@ that bring a fresh Bluefin install to a working state.
 | `scripts/` | Repo-maintenance scripts, including the secrets sync pipeline |
 | `secrets/` | Age-encrypted secret store and rotation registry |
 | `docs/` | Repo documentation, including this file's companions |
-| `tests/` | Python test suite for the repo's own scripts |
+| `tests/` | Test suite for the repo's own scripts: pytest for vale-hook, bash fixtures for the vale styles |
 
 The Stow packages are the top-level directories named in
 `bluefin/stow-packages.txt`; every other top-level entry is repo
-infrastructure. That file is the single source: `bluefin/bootstrap.sh` and
-`check-drift` both read it, and no other document restates the list.
+infrastructure. That file is the single source `bluefin/bootstrap.sh` and
+`check-drift` read. Two context-loaded docs (`docs/STATUS.md`, the CLAUDE.md
+Dotfiles section) mirror the list for readers and must follow this file, not
+lead it.
 
 One package needs a warning: `claude/` stows config into `~/.claude`, but that
 directory also holds unstowed live state (sessions, credentials, history,

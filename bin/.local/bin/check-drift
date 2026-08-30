@@ -23,11 +23,13 @@ for pkg in "${packages[@]}"; do
         fail=1
         continue
     fi
-    # A simulated plain stow plans no LINK for a fully stowed package;
-    # planned LINKs mean unstowed files, CONFLICTs mean foreign files in the
-    # way. Either is drift.
-    plan=$(cd "$DOTFILES" && stow -n -v "$pkg" 2>&1 | grep -E 'LINK|CONFLICT' || true)
-    if [[ -n "$plan" ]]; then
+    # A simulated plain stow plans no LINK for a fully stowed package and
+    # exits 0. Planned LINKs mean unstowed files; a conflict (foreign file in
+    # the way) makes stow abort with a nonzero exit and "conflicts" prose,
+    # not a LINK line, so the probe checks the exit code as well as the plan.
+    out=$(cd "$DOTFILES" && stow -n -v "$pkg" 2>&1) && rc=0 || rc=$?
+    plan=$(grep -iE 'LINK|conflict' <<< "$out" || true)
+    if [[ "$rc" -ne 0 || -n "$plan" ]]; then
         echo "  x $pkg: not fully stowed"
         sed 's/^/      /' <<< "$plan"
         fail=1

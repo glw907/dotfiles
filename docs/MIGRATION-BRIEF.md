@@ -240,8 +240,9 @@ Found while executing setup and restore on the installed system.
   restored from backup before first launch either way.
 - 1Password askpass flow: SUDO_ASKPASS=~/.local/bin/claude-askpass (script in
   dotfiles bin package); depends on 1Password desktop + op CLI desktop-app
-  integration; `claude-sudo-setup` re-mints the age file.
-- Stow packages: bash bin claude git kitty contacts (android package holds
-  README only).
+  integration; `claude-sudo-setup` refreshes the tmpfs cache (updated
+  2026-08-30; the original age-file cache design was never built).
+- Stow packages: the list in `bluefin/stow-packages.txt` (updated 2026-08-30;
+  this line originally froze a six-package set that has since grown).
 - GNOME on Bluefin replaces Cinnamon; no desktop config carries over (Geoff
   explicitly does not need desktop defaults preserved).

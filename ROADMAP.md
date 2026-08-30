@@ -14,10 +14,13 @@ Current state lives in `docs/STATUS.md`; the per-pass ledger in
   privacy hygiene, not incident response. Needs `git filter-repo` plus a
   force-push to main, which standing convention forbids; runs only on Geoff's
   explicit go.
-- **musicbox repo split**: the music-VPS spec and plan
-  (`docs/superpowers/{specs,plans}/2026-08-30-music-vps-*`) describe a Hetzner
-  server, another machine's config. They move to their own repo before server
-  artifacts accrete; coordinate with the music session that owns them.
+- **musicbox repo split**: the music-VPS spec, plan, and library design
+  (`docs/superpowers/plans/2026-08-30-music-vps-build.md`,
+  `docs/superpowers/specs/2026-08-30-music-vps-build-design.md`,
+  `docs/superpowers/specs/2026-08-30-music-library-design.md`) describe a
+  Hetzner server, another machine's config. They move to their own repo
+  before server artifacts accrete; coordinate with the music session that
+  owns them.
 
 ## Someday
 

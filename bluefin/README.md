@@ -110,8 +110,8 @@ list is curated from, not the other way around.
 
 The SDK lives in `~/Android/`, outside this repo, and is not Stow-managed.
 `bin/.local/bin/update-android-sdk` checks it for platform-tools, build-tools,
-and platform updates via `sdkmanager`; run it directly or through
-`workstation-update`.
+and platform updates via `sdkmanager`. `workstation-update` runs its own
+equivalent `sdkmanager --update` step; the two do not invoke each other.
 
 USB device access (adb, fastboot) is granted through `etc/udev/51-android.rules`,
 staged here and installed to `/etc/udev/rules.d/` by `setup_etc_drops` during
