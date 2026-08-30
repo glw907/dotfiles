@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+# claude-notify: Notification-hook wrapper for Claude Code. A bare notify-send
+# creates a new bubble per event, so repeated events (each permission prompt in
+# a stuck session) stack identical notifications. Persisting the last id and
+# passing --replace-id keeps one live bubble. replace-id 0 means "create new",
+# so a missing, empty, or corrupt state file degrades to the old behavior for
+# one call. The hook must not fail a session, so every path exits 0.
+
+state_file="${XDG_RUNTIME_DIR:-/tmp}/claude-notify-id"
+
+last_id=$(cat "$state_file" 2>/dev/null)
+[[ "$last_id" =~ ^[0-9]+$ ]] || last_id=0
+
+id=$(notify-send --print-id --replace-id="$last_id" --urgency=normal \
+    "Claude Code" "Needs your attention" 2>/dev/null) || exit 0
+
+# The shell reports a failed redirection itself, so the group carries the
+# silencing; losing the id only costs the next event its bubble reuse.
+{ printf '%s\n' "$id" >"$state_file"; } 2>/dev/null
+exit 0
