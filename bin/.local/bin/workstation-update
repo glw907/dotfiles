@@ -86,6 +86,7 @@ fi
 section "Done"
 if [[ ${#ERRORS[@]} -eq 0 ]]; then
     echo -e "${GREEN}✓ All updates completed — run 'ujust update' separately for the system image, Flatpaks, and Homebrew${NC}"
+    echo -e "Then: ${BOLD}check-drift${NC} to reconcile the manifests against the live system"
 else
     echo -e "${RED}✗ Errors in: ${ERRORS[*]}${NC}"
     exit 1

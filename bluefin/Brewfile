@@ -54,3 +54,4 @@ cask "claude-code"
 # JetBrains Mono and Symbols Nerd Font Mono, which is what kitty.conf now
 # asks for, and Ptyxis (the daily terminal) uses the system monospace.
 brew "gitleaks"     # staged-secret scan in the pre-commit hook and scripts/check.sh
+brew "shellcheck"   # bash lint; adopted 2026-08-30 after check-drift flagged it installed-unmanifested

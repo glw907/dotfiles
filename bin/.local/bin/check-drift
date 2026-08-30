@@ -1,53 +1,141 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
-# check-drift: report stow and git drift for ~/.dotfiles. Read-only; it never
-# modifies the repo, the packages, or $HOME. Replaces the old sync-dotfiles.sh,
-# which only checked that package directories existed.
+# check-drift: reconcile this repo against the live machine. Read-only; it
+# never modifies the repo, the packages, or $HOME.
 #
-# Exit 0 when every package is fully stowed and the repo is clean; exit 1
-# otherwise, with per-package detail.
+# Sections: stow state per package, rpm-ostree layered set, Homebrew,
+# flatpaks (against the manifest, with Bluefin's stock set implicit), uv
+# tools, staged /etc drops, untracked ~/.local/bin executables, and git
+# state. Exit 0 only when everything matches; exit 1 with per-item detail
+# otherwise. The manifests record intent; this script reports what happened.
 
 DOTFILES="$HOME/.dotfiles"
-PKG_LIST="$DOTFILES/bluefin/stow-packages.txt"
+BLUEFIN="$DOTFILES/bluefin"
 
 fail=0
+bad() { echo "  x $*"; fail=1; }
+ok()  { echo "  + $*"; }
 
-echo "Stow state (packages from bluefin/stow-packages.txt):"
-# Reads the list file, dropping comment and blank lines. Same expression as
+# Reads a list file, dropping comment and blank lines. Same expression as
 # bootstrap.sh's read_list; duplicated so this script stays standalone.
-mapfile -t packages < <(grep -vE '^[[:space:]]*(#|$)' "$PKG_LIST")
+read_list() { grep -vE '^[[:space:]]*(#|$)' "$1"; }
+
+echo "Stow state (bluefin/stow-packages.txt):"
+mapfile -t packages < <(read_list "$BLUEFIN/stow-packages.txt")
 for pkg in "${packages[@]}"; do
     if [[ ! -d "$DOTFILES/$pkg" ]]; then
-        echo "  x $pkg: listed but no package directory"
-        fail=1
+        bad "$pkg: listed but no package directory"
         continue
     fi
     # A simulated plain stow plans no LINK for a fully stowed package and
-    # exits 0. Planned LINKs mean unstowed files; a conflict (foreign file in
-    # the way) makes stow abort with a nonzero exit and "conflicts" prose,
-    # not a LINK line, so the probe checks the exit code as well as the plan.
+    # exits 0; a conflict aborts with a nonzero exit and "conflicts" prose.
     out=$(cd "$DOTFILES" && stow -n -v "$pkg" 2>&1) && rc=0 || rc=$?
     plan=$(grep -iE 'LINK|conflict' <<< "$out" || true)
     if [[ "$rc" -ne 0 || -n "$plan" ]]; then
-        echo "  x $pkg: not fully stowed"
+        bad "$pkg: not fully stowed"
         sed 's/^/      /' <<< "$plan"
-        fail=1
     else
-        echo "  + $pkg"
+        ok "$pkg"
     fi
 done
+
+echo ""
+echo "Layered RPMs (bluefin/layered-packages.txt):"
+live_layered=$(rpm-ostree status --json 2>/dev/null \
+    | jq -r '.deployments[0]["requested-packages"][]?' | sort) || live_layered=""
+want_layered=$(read_list "$BLUEFIN/layered-packages.txt" | sort)
+if [[ "$live_layered" == "$want_layered" ]]; then
+    ok "exact match"
+else
+    bad "layered set differs from the manifest:"
+    diff <(echo "$want_layered") <(echo "$live_layered") | sed 's/^/      /'
+fi
+
+echo ""
+echo "Homebrew (bluefin/Brewfile):"
+if brew bundle check --file="$BLUEFIN/Brewfile" >/dev/null 2>&1; then
+    ok "every Brewfile entry installed"
+else
+    bad "Brewfile entries missing (brew bundle check failed):"
+    brew bundle check --verbose --file="$BLUEFIN/Brewfile" 2>&1 | sed 's/^/      /'
+fi
+extra_brews=$(comm -23 \
+    <(brew leaves 2>/dev/null | sort) \
+    <(grep -oP '^brew "\K[^"]+' "$BLUEFIN/Brewfile" | sed 's|.*/||' | sort))
+if [[ -n "$extra_brews" ]]; then
+    bad "installed leaves not in the Brewfile (adopt or uninstall):"
+    sed 's/^/      /' <<< "$extra_brews"
+else
+    ok "no unmanifested leaves"
+fi
+
+echo ""
+echo "Flatpaks (bluefin/flatpaks.txt; Bluefin stock set implicit):"
+stock=$(grep -hoP '^flatpak "\K[^"]+' \
+    /usr/share/ublue-os/homebrew/system-flatpaks.Brewfile \
+    /usr/share/ublue-os/homebrew/system-dx-flatpaks.Brewfile 2>/dev/null | sort -u)
+installed=$(flatpak list --app --columns=application 2>/dev/null | sort -u)
+manifest=$(read_list "$BLUEFIN/flatpaks.txt" | sort -u)
+missing=$(comm -23 <(echo "$manifest") <(echo "$installed"))
+[[ -n "$missing" ]] && { bad "in manifest but not installed:"; sed 's/^/      /' <<< "$missing"; } \
+    || ok "every manifest entry installed"
+extras=$(comm -23 <(echo "$installed") <(sort -u <(echo "$stock") <(echo "$manifest")))
+[[ -n "$extras" ]] && { bad "installed, neither stock nor in manifest (adopt or remove):"; sed 's/^/      /' <<< "$extras"; } \
+    || ok "no unmanifested apps beyond the stock set"
+
+echo ""
+echo "uv tools (bluefin/uv-tools.txt):"
+# Package lines are "name vX.Y.Z"; executable lines start "- name" and are
+# not packages ("-" sits inside the character class, so filter them first).
+live_uv=$(uv tool list 2>/dev/null | grep -v '^- ' | awk '/ v[0-9]/{print $1}' | sort)
+want_uv=$(read_list "$BLUEFIN/uv-tools.txt" | sed 's/\[.*//' | sort)
+if [[ "$live_uv" == "$want_uv" ]]; then
+    ok "exact match"
+else
+    bad "uv tool set differs from the manifest:"
+    diff <(echo "$want_uv") <(echo "$live_uv") | sed 's/^/      /'
+fi
+
+echo ""
+echo "Staged /etc drops (bluefin/etc/):"
+etc_pair() {
+    local src="$1" dst="$2"
+    if sudo -n true 2>/dev/null || [[ -r "$dst" ]]; then
+        if diff -q "$src" "$dst" >/dev/null 2>&1; then
+            ok "$dst"
+        else
+            bad "$dst differs from staged copy (or is absent)"
+        fi
+    else
+        echo "  ? $dst unreadable without sudo, skipped"
+    fi
+}
+for f in "$BLUEFIN"/etc/chromium-policies/*.json; do
+    etc_pair "$f" "/etc/chromium/policies/managed/$(basename "$f")"
+done
+etc_pair "$BLUEFIN/etc/udev/51-android.rules" /etc/udev/rules.d/51-android.rules
+etc_pair "$BLUEFIN/etc/yum.repos.d/1password.repo" /etc/yum.repos.d/1password.repo
+
+echo ""
+echo "Untracked ~/.local/bin executables (bluefin/untracked-bin.txt):"
+strays=$(comm -23 \
+    <(find "$HOME/.local/bin" -maxdepth 1 -type f -perm -u+x -printf '%f\n' | sort) \
+    <(read_list "$BLUEFIN/untracked-bin.txt" | sort))
+[[ -n "$strays" ]] && { bad "plain-file executables not in the known-untracked list:"; sed 's/^/      /' <<< "$strays"; } \
+    || ok "no unexplained strays"
 
 echo ""
 echo "Git state:"
 drift=$(cd "$DOTFILES" && git status --porcelain)
 if [[ -n "$drift" ]]; then
-    echo "  x uncommitted changes:"
+    bad "uncommitted changes:"
     sed 's/^/      /' <<< "$drift"
     echo "  Review and commit the specific files (never git add -A)."
-    fail=1
 else
-    echo "  + working tree clean"
+    ok "working tree clean"
 fi
 
+echo ""
+[[ "$fail" -eq 0 ]] && echo "check-drift: clean" || echo "check-drift: DRIFT FOUND"
 exit "$fail"

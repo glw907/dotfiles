@@ -1,0 +1,12 @@
+# Executables that live in ~/.local/bin as plain files, deliberately outside
+# this repo because each owns its install path (see README "Intentionally
+# untracked local tools"). check-drift flags any plain-file executable NOT
+# listed here, so a new stray surfaces instead of silently accumulating.
+# Symlinks (stow, uv shims, kitty) are never flagged.
+NumberLink.AppImage
+harper-ls
+marksman
+odin4
+perfspike
+poplar
+samfusdl

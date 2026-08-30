@@ -53,7 +53,7 @@ Workers by `scripts/secrets/sync.sh`. Architecture, inventory, and rotation:
 
 | Command | Purpose |
 |---------|---------|
-| `check-drift` | Probe every package's real Stow state and report git drift |
+| `check-drift` | Reconcile the repo against the live machine: stow state, layered RPMs, Brewfile, flatpaks, uv tools, staged /etc drops, stray local binaries, git drift |
 | `workstation-update` | Update the tiers `ujust update` does not cover: mise, uv tools, kitty, Android SDK. Run `ujust update` itself separately and interactively |
 | `scripts/check.sh` | The repo gate: shell syntax, ruff docstring rules, the test suite, vale fixtures, gitleaks |
 

@@ -1,0 +1,10 @@
+# Python CLI tools installed via `uv tool install`, one per line. Single
+# source of truth: bootstrap.sh's setup_mise_uv installs from this file and
+# check-drift reconciles `uv tool list` against it. A bracketed extras
+# suffix is part of the install spec; the tool name is the part before it.
+khard
+vdirsyncer
+yt-dlp
+ruff
+jrnl
+beets[fetchart,embedart]

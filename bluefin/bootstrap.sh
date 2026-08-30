@@ -288,12 +288,12 @@ setup_mise_uv() {
     eval "$(mise activate bash)" || return 1
     mise use --global node@lts || return 1
 
-    # Python CLI tools ride uv rather than Homebrew. This list is the source
-    # of truth for the machine's uv tool set; keep `uv tool list` matching it.
+    # Python CLI tools ride uv rather than Homebrew. uv-tools.txt is the
+    # source of truth; check-drift reconciles `uv tool list` against it.
     local tool
-    for tool in khard vdirsyncer yt-dlp ruff jrnl "beets[fetchart,embedart]"; do
+    while IFS= read -r tool; do
         uv tool install "$tool" || return 1
-    done
+    done < <(read_list "$BLUEFIN_DIR/uv-tools.txt")
 }
 
 setup_stow() {
@@ -424,7 +424,7 @@ Android:
 Homebrew / mise / uv:
   - `brew doctor`
   - `mise doctor`
-  - `uv tool list` shows khard, vdirsyncer, yt-dlp, ruff, jrnl, beets
+  - `uv tool list` matches bluefin/uv-tools.txt (check-drift verifies)
   - `vale sync` already ran; `vale --version` works and ~/.config/vale/styles
     is populated
 
