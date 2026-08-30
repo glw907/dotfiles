@@ -3,4 +3,4 @@ Description=Sync contacts via vdirsyncer
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/vdirsyncer sync
+ExecStart=%h/.local/bin/vdirsyncer sync
