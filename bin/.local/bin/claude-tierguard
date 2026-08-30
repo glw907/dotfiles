@@ -50,7 +50,7 @@ done
 set +f
 
 if [[ ${#unlisted[@]} -gt 0 ]]; then
-  deny "Package(s) not in layered-packages.txt: ${unlisted[*]}. The layered set stays minimal by policy. To add one: record it with a reason in ~/.dotfiles/bluefin/MIGRATION-BRIEF.md, add it to layered-packages.txt, commit, then retry. Prefer brew (CLI), flatpak (GUI), or mise/uv (runtimes) if the package fits a higher tier."
+  deny "Package(s) not in layered-packages.txt: ${unlisted[*]}. The layered set stays minimal by policy. To add one: record it with a reason in ~/.dotfiles/docs/MIGRATION-BRIEF.md, add it to layered-packages.txt, commit, then retry. Prefer brew (CLI), flatpak (GUI), or mise/uv (runtimes) if the package fits a higher tier."
 fi
 
 exit 0

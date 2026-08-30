@@ -16,11 +16,15 @@ that bring a fresh Bluefin install to a working state.
 | `docs/` | Repo documentation, including this file's companions |
 | `tests/` | Python test suite for the repo's own scripts |
 
-Each directory listed above with its own `.md` (`bash/`, `bin/`, `claude/`,
-`contacts/`, `git/`, `kitty/`, `vale/`) is a Stow package. The authoritative
-package list is `bluefin/stow-packages.txt`; both `bluefin/bootstrap.sh` and
-`sync-dotfiles.sh` read it rather than carrying their own copy, so it is the
-single place to add or remove a package.
+The Stow packages are the top-level directories named in
+`bluefin/stow-packages.txt`; every other top-level entry is repo
+infrastructure. That file is the single source: `bluefin/bootstrap.sh` and
+`check-drift` both read it, and no other document restates the list.
+
+One package needs a warning: `claude/` stows config into `~/.claude`, but that
+directory also holds unstowed live state (sessions, credentials, history,
+plugins). `~/.claude` is not disposable just because a stow package feeds it;
+never remove the directory wholesale.
 
 ### Day-to-day Stow usage
 
@@ -40,15 +44,16 @@ restoring from the encrypted backup.
 
 1Password is the source of truth. Secret values are age-encrypted in
 `secrets/values.age` and synced out to `~/.local/secrets` and Cloudflare
-Workers by `scripts/secrets/sync.sh`. Full architecture and the secret
-inventory: [docs/secrets.md](docs/secrets.md).
+Workers by `scripts/secrets/sync.sh`. Architecture, inventory, and rotation:
+[secrets/registry.md](secrets/registry.md).
 
 ## System maintenance
 
 | Command | Purpose |
 |---------|---------|
-| `sync-dotfiles.sh` | Check Stow status and git drift across tracked packages |
-| `workstation-update` | Run the Bluefin update flow: `ujust update`, mise, uv tools, kitty |
+| `check-drift` | Probe every package's real Stow state and report git drift |
+| `workstation-update` | Update the tiers `ujust update` does not cover: mise, uv tools, kitty, Android SDK. Run `ujust update` itself separately and interactively |
+| `scripts/check.sh` | The repo gate: shell syntax, ruff docstring rules, the test suite, vale fixtures, gitleaks |
 
 ## Repo status and history
 
@@ -66,6 +71,6 @@ because they own their own install or update path:
   `samfusdl`, `odin4`. Each ships as a single binary with no package manager
   of its own; they live in `~/.local/bin` without a tracked source.
 - **uv-tool shims** -- Python CLIs (`khard`, `vdirsyncer`, `yt-dlp`, `ruff`,
-  `jrnl`) installed via `uv tool install` land in `~/.local/bin` as shims.
+  `jrnl`, `beets`) installed via `uv tool install` land in `~/.local/bin` as shims.
   `bluefin/bootstrap.sh` installs the set; nothing in this repo tracks the
   shims themselves.

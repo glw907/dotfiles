@@ -1,8 +1,10 @@
 # Bluefin bootstrap
 
-Bootstrap artifacts for converting a workstation from Linux Mint to Bluefin
-DX (stable). Decisions record and fact base: `MIGRATION-BRIEF.md`. Read that
-file first; this directory implements it and does not repeat its reasoning.
+Provisioning artifacts for a Bluefin DX (stable) workstation: everything a
+fresh install needs to reach the working state this repo describes. Decisions
+record and fact base: `../docs/MIGRATION-BRIEF.md` (born in the 2026-08 Mint
+migration). Read that file first; this directory implements it and does not
+repeat its reasoning.
 
 ## Quick card: fresh Bluefin to working machine
 
@@ -37,13 +39,14 @@ to `restore`.
 
 | File | Purpose |
 |------|---------|
-| `MIGRATION-BRIEF.md` | Decisions, verified platform facts, backup state |
+| `../docs/MIGRATION-BRIEF.md` | Decisions, verified platform facts, backup state |
 | `bootstrap.sh` | `devmode`, `layer`, `setup`, and `restore` phases, run in order below |
 | `layered-packages.txt` | The minimal rpm-ostree layered set |
 | `flatpaks.txt` | Flatpak app IDs to install |
 | `Brewfile` | CLI tool formulae for `brew bundle` |
 | `stow-packages.txt` | The Stow packages this repo manages, single source of truth |
-| `etc/` | Captured `/etc` drops: chromium policies, android udev rule |
+| `etc/` | Captured `/etc` drops: chromium policies, android udev rule, 1Password repo |
+| `devenv-research.md` | Dev-environment tiering research (devcontainers, distrobox); kept here because site-repo backlogs point at this path |
 
 ## Order of operations, fresh install
 
@@ -100,7 +103,7 @@ the image instead of undoing them per machine.
 ## Changing the layered package set
 
 `layered-packages.txt` stays minimal by design. Before adding a package to
-it, record the reason in `MIGRATION-BRIEF.md`. That file is the source the
+it, record the reason in `../docs/MIGRATION-BRIEF.md`. That file is the source the
 list is curated from, not the other way around.
 
 ## Android

@@ -4,14 +4,12 @@ Standing reference for administering the Bluefin DX system (stable stream, Fedor
 base). Read this before installing software, editing `/etc`, running an update, or
 touching browser configuration on this machine.
 
-Supersedes `chromium-browser.md`'s Mint-specific content after cutover. That file
-described the Mint apt-installed Chromium; this file and its Browsers section below
-are authoritative once the machine is running Bluefin. Do not follow
-`chromium-browser.md`'s install or policy-path instructions post-cutover; its
-telemetry-policy content (what each key disables, the trade-offs) still applies since
-the same JSON files carry over, but the paths and package origin do not.
+The Mint-era `chromium-browser.md` was retired 2026-08-30 (recoverable from git
+history); this file's Browsers section is the authority. The old file's
+telemetry-policy reasoning still holds, since the same JSON policy files carried
+over unchanged.
 
-Decisions record and fact base: `~/.dotfiles/bluefin/MIGRATION-BRIEF.md`. Treat that
+Decisions record and fact base: `~/.dotfiles/docs/MIGRATION-BRIEF.md`. Treat that
 file as authoritative for anything this doc doesn't cover.
 
 ## Software-tier policy
@@ -58,7 +56,7 @@ chromium
 Before layering anything new, check this file first — if a package isn't already
 listed, adding it is a deliberate escalation past every tier above, not a default
 move. **Every addition to the layered set gets recorded in both this file and
-`MIGRATION-BRIEF.md`** (append to the Decisions or Platform facts section, whichever
+`docs/MIGRATION-BRIEF.md`** (append to the Decisions or Platform facts section, whichever
 fits). A layered package that isn't in this file is drift — reconcile it in one
 direction or the other rather than leaving the mismatch.
 

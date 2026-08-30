@@ -4,6 +4,46 @@ Plaintext inventory — no secret values here. All values live in `secrets/value
 
 ---
 
+## Architecture
+
+(Folded in from the retired `docs/secrets.md`, 2026-08-30; this file is the one
+secrets document, at the path every project's doctrine already references.)
+
+```
+1Password (source of truth)
+    |
+    v
+secrets/values.age (encrypted, safe to commit)
+    |
+    v  scripts/secrets/sync.sh
+    |
+    +---> ~/.local/secrets (local env vars, sourced by .bashrc)
+    +---> Cloudflare Workers (per-worker secrets via wrangler)
+```
+
+- **1Password** holds all secret values and the age encryption key
+- **values.age** is the encrypted bundle committed to this repo
+- **sync.sh** decrypts via 1Password CLI and pushes to targets
+- **~/.local/secrets** is chmod 600, gitignored, sourced by `.bashrc`
+- Decryption happens in `/dev/shm` (tmpfs); plaintext never touches disk
+
+**Sync-time** (occasional, needs 1Password): `sync.sh --local` after cloning or
+when secrets change. **Runtime** (day to day, no 1Password): secrets are env
+vars already sourced by `.bashrc`; read `$FASTMAIL_API_TOKEN` etc. directly and
+never call `op` to fetch what the environment already carries.
+
+**Sudo helper**: `claude-sudo-setup` fetches the sudo password from 1Password
+into a tmpfs cache (`/dev/shm/claude-sudo-$UID`, umask 077); `claude-askpass`
+supplies it to `sudo -A`; `claude-sudo-clear` shreds it when a Claude session
+exits, and reboot clears it regardless. The password persists nowhere on disk.
+
+**What goes where**: sensitive tokens in `~/.local/secrets` via sync.sh;
+non-sensitive config (paths, emails, model names) as plain `.bashrc` exports;
+worker secrets pushed by sync.sh via `wrangler secret put`; the sudo password
+in 1Password plus the tmpfs cache above.
+
+---
+
 ## How to Decrypt
 
 1. **Authenticate 1Password CLI** (required once per session):

@@ -4,7 +4,7 @@ set -euo pipefail
 # Bluefin DX (stable) bootstrap for thinkpad-x1, and for the second
 # workstation this same directory provisions later.
 #
-# Decisions and facts referenced here come from MIGRATION-BRIEF.md, in this
+# Decisions and facts referenced here come from docs/MIGRATION-BRIEF.md, in this
 # same directory. Read it before changing this script.
 #
 # Usage:
@@ -35,7 +35,7 @@ read_list() {
 
 # Shared between setup_stow and restore_place_home, which both pre-create
 # these dirs (to keep stow from folding them) and then run the same stow.
-# Single-sourced from stow-packages.txt so sync-dotfiles.sh can't drift from
+# Single-sourced from stow-packages.txt so check-drift cannot drift from
 # what this script actually stows.
 STOW_PACKAGES=()
 mapfile -t STOW_PACKAGES < <(read_list "$BLUEFIN_DIR/stow-packages.txt")

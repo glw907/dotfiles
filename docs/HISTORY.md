@@ -3,6 +3,47 @@
 Per-pass ledger, newest first. Current state lives in `docs/STATUS.md`;
 strategic initiatives spanning passes live in `ROADMAP.md`.
 
+## 2026-08-30 -- Post-review fix pass
+
+The adversarial three-lens review at the reorg close (correctness,
+organization, secrets/idiom; findings in the session record, plan at
+`docs/superpowers/plans/2026-08-30-post-review-fix-pass.md`) drove a same-day
+fix pass. Security: the sudo cache moved to tmpfs, session context now
+redacts export values, the auto-mode trust block scoped to the machine, and
+three write-time guards landed (claude-secret-guard PreToolUse hook, gitleaks
+pre-commit via `core.hooksPath`, GitHub secret scanning + push protection).
+Fresh-machine: bootstrap gained the full uv tool set, `vale sync`, timer
+enable, git-hook config, a fingerprint-checked 1Password key, a fixed kitty
+install, and stopped routing workstation #2 into the migration restore.
+Tooling: `check-drift` (a real stow probe) replaced sync-dotfiles.sh;
+update-go and chromium-browser.md retired; tierguard's chained-command false
+positive fixed. Organization: `scripts/check.sh` is now the one gate;
+MIGRATION-BRIEF.md moved to `docs/`; docs/secrets.md merged into
+`secrets/registry.md`; vale's tests joined `tests/`; completed plans moved to
+`plans/archive/`; `ROADMAP.md` created.
+
+**What a later pass should not rediscover**:
+
+- **The 2026-01 token leak and its post-mortem** live in
+  `secrets/registry.md` under CLOUDFLARE_API_TOKEN. The leaked value is dead
+  (verified against the API); the history purge is a ROADMAP decision item.
+- **A stow package is pure payload**: the gate's own pytest run once wrote
+  `__pycache__` into `bin/` and stow linked it into `~/.local/bin`.
+  `PYTHONDONTWRITEBYTECODE=1` in check.sh plus `bin/.stow-local-ignore`
+  prevent it; anything a tool generates inside a package will be stowed.
+- **Hook bypass must be inline**: a PreToolUse hook cannot see per-command
+  environment variables, so claude-secret-guard's bypass is the
+  `secret-guard-allow` marker on the flagged line, not only the env var.
+- **tierguard denies via JSON permissionDecision and exits 0**; testing it
+  by exit code alone reads a deny as a pass.
+- **devenv-research.md stays in `bluefin/`** deliberately: four site-repo
+  backlog entries point at that path (2026-08-30).
+
+Budgets: this pass ran inline (small cross-referenced edits; a chain would
+have re-encoded the whole review into every dispatch), roughly 400k tokens
+including the three-lens review itself. Human touchpoints: "start the work"
+plus two mid-flight refinements (prevention infra, friction preference).
+
 ## 2026-08-30 -- Bluefin repo reorg pass
 
 Rewrote the repo end to end for the Mint-to-Bluefin DX migration completed
@@ -25,7 +66,9 @@ deployed the staged Android udev rule live, and rewrote the root README,
 script; the `test_vale_hook.py` suite confirming vale-hook still passed
 after the install-path change; a repo-wide grep sweep for stale Mint-era
 terms catching leftover references the manual pass missed on the first
-sweep.
+sweep. (Correction, same day: the sweep was incomplete — chromium-browser.md
+and update-go still carried apt/dpkg content; the post-review fix pass above
+retired both.)
 
 **What a later pass should not rediscover**:
 

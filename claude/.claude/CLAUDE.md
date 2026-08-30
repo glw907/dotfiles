@@ -53,13 +53,13 @@ build of either: the sandbox blocks required native messaging. Read
 
 - **Troubleshooting**: Search web after 1-2 failed attempts, with "Bluefin DX"
   or "Universal Blue" in the query
-- **sudo**: Always `sudo -A` (via `claude-askpass`); stale age file ->
-  `claude-sudo-setup` (1Password desktop unlocked); failures -> the GID gotcha
-  in `bluefin-admin.md`.
+- **sudo**: `sudo -A` via `claude-askpass` (tmpfs cache); stale cache ->
+  `claude-sudo-setup` (1Password unlocked); failures -> GID gotcha in
+  `bluefin-admin.md`.
 - **Software tiers**: mise/uv runtimes, Homebrew CLI, Flatpak GUI,
   distrobox/devcontainers for dev envs, rpm-ostree layering last resort; source
   of truth `~/.dotfiles/bluefin/layered-packages.txt` (additions also recorded
-  in `MIGRATION-BRIEF.md`); policy and command map: `bluefin-admin.md`.
+  in `docs/MIGRATION-BRIEF.md`); policy and command map: `bluefin-admin.md`.
 - **Destructive ops**: Show dry-run or confirmation step first
 
 ## System Organization
@@ -74,8 +74,8 @@ build of either: the sandbox blocks required native messaging. Read
 
 - **Location**: `~/.dotfiles`, GNU Stow; packages from
   `bluefin/stow-packages.txt`: `bash beets bin claude contacts git kitty mise vale`
-- `sync-dotfiles.sh` reads that file for stow/git drift; new script: add to
-  `bin/.local/bin/`, then `stow -R bin`
+- `check-drift` probes real stow state per package and git drift; new script:
+  add to `bin/.local/bin/`, then `stow -R bin`. Repo gate: `scripts/check.sh`.
 
 ## Git Conventions
 

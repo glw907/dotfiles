@@ -49,8 +49,8 @@ improves the tooling that session will use.
   `~/.claude/.mcp.json`; investigate where MCP config actually lives before changing it.
 - Dotfiles workflow: edit the source under `~/.dotfiles/claude/.claude/...`, then `cd ~/.dotfiles
   && stow -R claude`, then commit in the workstation repo. Adding a tracked script means copying it
-  into `~/.dotfiles/bin/.local/bin/` and `stow -R bin`. The sync script is
-  `~/.dotfiles/sync-dotfiles.sh`. `sudo -A` decrypts automatically via `claude-askpass`.
+  into `~/.dotfiles/bin/.local/bin/` and `stow -R bin`. The drift checker is
+  `check-drift` (on PATH). `sudo -A` decrypts automatically via `claude-askpass`.
 - `prose-guard` gates any documentation prose written (it rejects em dashes, anaphora runs of three,
   and the banned-word set). The `writing-voice` output style is always on, so it governs this work too.
 
