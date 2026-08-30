@@ -115,7 +115,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-export PATH="$HOME/.local/bin:$HOME/go/bin:/usr/local/go/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 # Claude mode aliases
 # Modal Claude launchers at ~/.local/bin/cld*
 # cld, cld-arch, cld-research, cld-write, cld-critic
@@ -166,10 +166,6 @@ fi
 export ANDROID_HOME="$HOME/Android"
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 # SSH Agent (auto-start for GitHub authentication)
 if [ -z "$SSH_AUTH_SOCK" ]; then
     eval "$(ssh-agent -s)" > /dev/null
@@ -193,10 +189,8 @@ export AGE_KEY_FILE="$HOME/.config/age/asc-key.txt"
 # Run sync.sh after any credential rotation to update this file.
 [ -f "$HOME/.local/secrets" ] && source "$HOME/.local/secrets"
 
-# Homebrew (Bluefin DX and any other machine with linuxbrew installed);
-# harmless no-op on machines without it, such as Mint.
+# Homebrew (Bluefin DX and any other machine with linuxbrew installed)
 [ -x /home/linuxbrew/.linuxbrew/bin/brew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# mise (Bluefin DX Node/tool version manager); harmless no-op on machines
-# without it, such as Mint.
+# mise (Bluefin DX Node/tool version manager)
 command -v mise > /dev/null 2>&1 && eval "$(mise activate bash)"
