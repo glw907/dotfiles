@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# Helix wrapper for journal editing with journal-specific config.
-# Used as the editor in jrnl-md config.
-export XDG_CONFIG_HOME="$HOME/.config/helix-journal-xdg"
-exec hx "$@"

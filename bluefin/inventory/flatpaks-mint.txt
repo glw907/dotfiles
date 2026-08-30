@@ -1,6 +1,0 @@
-com.discordapp.Discord
-com.fastmail.Fastmail
-im.dino.Dino
-io.github.janbar.noson
-org.fedoraproject.MediaWriter
-org.gajim.Gajim
