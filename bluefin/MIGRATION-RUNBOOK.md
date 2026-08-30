@@ -286,8 +286,12 @@ Steps:
    ```bash
    flatpak uninstall --system -y --delete-data org.mozilla.firefox
    flatpak uninstall --system -y --delete-data com.onepassword.OnePassword
-   xdg-settings set default-web-browser firefox.desktop
+   xdg-settings set default-web-browser org.mozilla.firefox.desktop
    ```
+
+   (The Fedora firefox RPM ships `org.mozilla.firefox.desktop`, the same
+   desktop id the Flatpak exported, so the association resolves to the RPM
+   once the Flatpak is gone — brief amendment, 2026-08-30 restore day.)
 
 9. Launch 1Password, sign in, and enable **Settings → Developer →
    "Integrate with 1Password CLI"**. This is a GUI-only toggle with no CLI
@@ -426,9 +430,18 @@ Preconditions before starting: mise's Node is active (`npx` resolves) and
    done
 
    # .claude: memory/history/projects are runtime state, not stow-tracked.
-   # Skills/agents/docs/workflows/CLAUDE.md/settings.json ARE stow-tracked;
-   # --ignore-existing means the stow symlinks from step 3.8 win.
-   [ -d "$S/.claude" ] && rsync -a --ignore-existing "$S/.claude/" ~/.claude/
+   # Every top-level name in the claude stow package is excluded outright:
+   # the backup holds Mint-era stow symlinks for those, and recreating them
+   # through today's stow-folded dirs loops (ELOOP). The exclude set is
+   # derived from the package dir so it cannot drift from what stow places;
+   # the git-tracked copies placed by stow in step 3.8 are canonical.
+   if [ -d "$S/.claude" ]; then
+     excludes=()
+     for entry in ~/.dotfiles/claude/.claude/*; do
+       excludes+=(--exclude="/$(basename "$entry")")
+     done
+     rsync -a --ignore-existing "${excludes[@]}" "$S/.claude/" ~/.claude/
+   fi
 
    # Assert the unfold + restore above didn't write anything into the
    # dotfiles repo itself. This should print nothing.

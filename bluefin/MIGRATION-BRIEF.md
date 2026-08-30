@@ -104,6 +104,28 @@ implemented in `bootstrap.sh`.
   `kitty.conf` forces XWayland, and `xdotool` joins the Brewfile (it was not
   installed and not listed anywhere).
 
+### Amendments (2026-08-30, restore day)
+
+Found while executing setup and restore on the installed system.
+
+- The Fedora 44 firefox RPM ships `org.mozilla.firefox.desktop`, not
+  `firefox.desktop`. It is the same desktop id the Flatpak exported, so the
+  default-browser association survives the Flatpak removal and lands on the
+  RPM by itself; `setup` now sets that id explicitly instead of the
+  nonexistent `firefox.desktop`.
+- `stow_clear_conflicts` in bootstrap.sh followed paths through stow-folded
+  parent symlinks (e.g. `~/.claude/skills` -> repo) and moved the repo's own
+  tracked files aside as "conflicts", gutting the working tree. The
+  `restore_place_home` git-status assertion caught it; the helper now skips
+  any target whose realpath resolves inside the dotfiles repo.
+- The backup's `.claude` carries Mint-era stow output for the stow-tracked
+  names (a real `docs/` dir of per-file symlinks into the repo, folded
+  `skills`), which collides with today's stow-folded dirs when rsynced back
+  (symlink loops, ELOOP). The `.claude` restore rsync now excludes every
+  top-level name in the claude stow package, derived from the package dir
+  itself so the set cannot drift; the git-tracked copies placed by stow are
+  canonical and runtime state is all the backup should contribute.
+
 ## Platform facts (verified 2026-08-29)
 
 - Streams: `gts` / `stable` / `latest`; DX is its own image tag

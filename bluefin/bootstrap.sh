@@ -60,7 +60,11 @@ stow_clear_conflicts() {
         while IFS= read -r -d '' src; do
             rel="${src#"$DOTFILES_DIR/$pkg/"}"
             target="$HOME/$rel"
-            if [[ -f "$target" && ! -L "$target" ]]; then
+            # A target reached through a stow-folded parent symlink resolves
+            # to the tracked file inside the repo itself. That is not a
+            # conflict, and moving it would gut the repo.
+            if [[ -f "$target" && ! -L "$target" ]] \
+                && [[ "$(realpath -m "$target")" != "$DOTFILES_DIR"/* ]]; then
                 mkdir -p "$(dirname "$STOW_CONFLICT_BACKUP/$rel")"
                 mv "$target" "$STOW_CONFLICT_BACKUP/$rel"
                 echo "moved aside $target"
@@ -227,13 +231,15 @@ setup_remove_conflicting_flatpaks() {
         fi
     done
 
-    # Hand the default-browser association to the layered RPM. Without this
-    # the association keeps pointing at the now-removed Flatpak desktop file.
-    if [[ -f /usr/share/applications/firefox.desktop ]]; then
-        xdg-settings set default-web-browser firefox.desktop
-        echo "default browser set to firefox.desktop (layered RPM)"
+    # Hand the default-browser association to the layered RPM. The Fedora 44
+    # firefox RPM ships org.mozilla.firefox.desktop, the same desktop id the
+    # Flatpak exported, so once the Flatpak is gone the id resolves to the
+    # RPM; setting it explicitly covers a system where it pointed elsewhere.
+    if [[ -f /usr/share/applications/org.mozilla.firefox.desktop ]]; then
+        xdg-settings set default-web-browser org.mozilla.firefox.desktop
+        echo "default browser set to org.mozilla.firefox.desktop (layered RPM)"
     else
-        echo "WARNING: /usr/share/applications/firefox.desktop not found;" >&2
+        echo "WARNING: /usr/share/applications/org.mozilla.firefox.desktop not found;" >&2
         echo "         is the firefox RPM layered? (bootstrap.sh layer)" >&2
     fi
 }
@@ -346,8 +352,9 @@ Browsers:
   - Firefox 1Password integration connects (needs the RPM build, not flatpak).
   - `flatpak list | grep -iE 'firefox|onepassword'` returns nothing: the
     preinstalled Flatpak builds are gone and the layered RPMs are what runs.
-  - `xdg-settings get default-web-browser` prints firefox.desktop, not
-    org.mozilla.firefox.desktop.
+  - `xdg-settings get default-web-browser` prints org.mozilla.firefox.desktop,
+    which with the Flatpak gone resolves to the RPM's desktop file under
+    /usr/share/applications, not the Flatpak export.
   - `about:support` in Firefox shows an RPM install path, not /app or
     /var/lib/flatpak.
 
@@ -578,10 +585,18 @@ restore_place_home() {
     done
 
     # .claude: memory/history/projects are runtime state, not stow-tracked.
-    # Skills/agents/docs/workflows/CLAUDE.md/settings.json ARE stow-tracked;
-    # --ignore-existing means the stow symlinks win.
+    # Every top-level name in the claude stow package is excluded outright:
+    # the backup holds Mint-era stow symlinks for those, and recreating them
+    # through today's stow-folded dirs loops (ELOOP). The exclude set is
+    # derived from the package dir so it cannot drift from what stow places;
+    # the git-tracked copies placed by stow above are the canonical ones.
     if [[ -d "$home_src/.claude" ]]; then
-        rsync -a --ignore-existing "$home_src/.claude/" "$HOME/.claude/"
+        local claude_excludes=() entry
+        for entry in "$DOTFILES_DIR/claude/.claude"/*; do
+            claude_excludes+=(--exclude="/$(basename "$entry")")
+        done
+        rsync -a --ignore-existing "${claude_excludes[@]}" \
+            "$home_src/.claude/" "$HOME/.claude/"
     fi
 
     # The age key file the brief documents as asc-key.txt: restore it to the
