@@ -142,7 +142,12 @@ phase_layer() {
     require_dx_image
 
     echo "== layer: 1Password repo =="
-    sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+    # No `rpm --import` here: on ostree the rpm database lives under the
+    # read-only /usr, so the import fails. Instead the key goes to /etc
+    # (mutable) and the repo's gpgkey= points at it; rpm-ostree verifies
+    # packages against that file itself at install time.
+    curl -fsSL https://downloads.1password.com/linux/keys/1password.asc \
+        | sudo tee /etc/pki/rpm-gpg/RPM-GPG-KEY-1password > /dev/null
     sudo tee /etc/yum.repos.d/1password.repo > /dev/null <<'EOF'
 [1password]
 name=1Password Stable Channel
@@ -150,7 +155,7 @@ baseurl=https://downloads.1password.com/linux/rpm/stable/$basearch
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
-gpgkey="https://downloads.1password.com/linux/keys/1password.asc"
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-1password
 EOF
 
     echo "== layer: rpm-ostree install =="
