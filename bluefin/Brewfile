@@ -27,6 +27,12 @@ brew "vale"
 brew "syncthing"
 brew "chafa"
 
+# tui-visual-verify's kitty-shot harness: it locates and focuses the kitty
+# window with xdotool and captures it with ImageMagick's `import`, both
+# X11-only. kitty.conf forces XWayland so they can see it. (imagemagick is
+# already above; `import` comes from it.)
+brew "xdotool"
+
 # Go toolchain (brief: "Go via Homebrew")
 brew "go"
 brew "gofumpt"
@@ -44,7 +50,6 @@ brew "uv"
 # alongside everything else instead of self-updating on its own schedule.
 cask "claude-code"
 
-# kitty.conf sets `font_family Monaspace Neon`. Bluefin's own font list
-# (/usr/share/ublue-os/homebrew/fonts.Brewfile, offered by `ujust devmode`)
-# does not include Monaspace, so without this kitty silently falls back.
-cask "font-monaspace"
+# No font casks, deliberately. The Bluefin base image already ships
+# JetBrains Mono and Symbols Nerd Font Mono, which is what kitty.conf now
+# asks for, and Ptyxis (the daily terminal) uses the system monospace.

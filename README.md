@@ -28,7 +28,7 @@ Personal dotfiles and configuration reference -- Linux Mint 22 (Cinnamon), manag
 | `git` | `~/` | `.gitconfig` |
 | `beautiful-aerc` | `~/.config/aerc/`, `~/.config/nvim-mail/`, `~/.local/bin/` | aerc config, theme, filters, compose editor (symlink to `~/Projects/beautiful-aerc`) |
 | `contacts` | `~/.config/vdirsyncer/`, `~/.config/khard/`, systemd units | CardDAV contact sync with Fastmail |
-| `kitty` | `~/.config/kitty/` | Terminal config (Monaspace Neon, Nord colors, powerline tabs) |
+| `kitty` | `~/.config/kitty/` | kitty config (JetBrains Mono, Nord colors, powerline tabs). On Bluefin kitty is the `tui-visual-verify` gate platform, not the daily terminal -- that is Ptyxis |
 | `android` | *(docs only)* | SDK setup guide -- SDK itself lives in `~/Android/` |
 | `themes` | `~/.themes/` | Nord GTK theme installer |
 | `wallpapers` | `~/Pictures/Wallpapers/` | `nord-gradient.png`, `nord-minimal.png` |
@@ -84,9 +84,13 @@ Full wiring details: [docs/email.md](docs/email.md) | Keybinding cheat sheet: [a
 
 **kitty** installed via [official installer](https://sw.kovidgoyal.net/kitty/installer.sh) to `~/.local/kitty.app/`. Not in apt.
 
-- Font: Monaspace Neon 11pt, JetBrainsMono Nerd Font for symbols
+- Font: JetBrains Mono 11pt, Symbols Nerd Font Mono for symbols (both ship in
+  the Bluefin base image; nothing is installed for them)
 - Colors: Nord palette
 - Config: `kitty` stow package
+- On Bluefin: forced to XWayland via `linux_display_server x11`, because the
+  `kitty-shot` capture harness needs xdotool and ImageMagick's `import`, and
+  neither can see a native-Wayland window
 
 ---
 

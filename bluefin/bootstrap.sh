@@ -125,10 +125,10 @@ phase_devmode() {
   "Do you want to install extra monospace fonts?"            -> no
 
 The two "no" answers are deliberate. Flatpaks come from flatpaks.txt in this
-directory, and fonts come from the Brewfile (Bluefin's font list has no
-Monaspace, which kitty.conf asks for). Both are tracked here so the second
-workstation gets the same set; letting ujust install its own would put
-untracked apps on the machine.
+directory, tracked so the second workstation gets the same set; letting ujust
+install its own would put untracked apps on the machine. The fonts are simply
+not needed: the base image already ships JetBrains Mono and Symbols Nerd Font
+Mono, which is all kitty.conf asks for, and Ptyxis uses the system monospace.
 
 EOF
     ujust devmode
@@ -275,8 +275,13 @@ setup_stow() {
     (cd "$DOTFILES_DIR" && stow -R "${STOW_PACKAGES[@]}")
 }
 
+# kitty is not the daily terminal on Bluefin -- Ptyxis is, and it ships with
+# the image. kitty is installed only as the gate platform for the
+# tui-visual-verify skill, whose kitty-shot harness drives a real kitty
+# window through kitty's remote control and photographs it. Ptyxis has no
+# remote-control equivalent, so nothing else can stand in.
 setup_kitty() {
-    echo "== setup: kitty upstream installer =="
+    echo "== setup: kitty upstream installer (TUI verification gate) =="
     local kitty_bin="$HOME/.local/kitty.app/bin/kitty"
     if [[ -x "$kitty_bin" ]]; then
         echo "kitty already installed, skipping"
@@ -354,10 +359,19 @@ Dotfiles:
   - `stow -n bash bin claude git kitty contacts` reports no conflicts
     (already stowed by this script; -n dry-runs to confirm).
 
-kitty, Claude Code, syncthing:
-  - `kitty --version`, and confirm it renders in Monaspace Neon (the
-    font-monaspace cask in the Brewfile; Bluefin's own font list has no
-    Monaspace, so a fallback font here means the cask didn't install)
+Terminal:
+  - Ptyxis is the daily terminal and needs no setup; it ships with the image.
+
+TUI verification gate (tui-visual-verify / kitty-shot):
+  - `kitty --version` and `xdotool --version` both work.
+  - Launch kitty, then confirm `xdotool search --name kitty` finds it. If it
+    finds nothing, the `linux_display_server x11` line in kitty.conf did not
+    take and kitty is running on native Wayland, where xdotool and
+    ImageMagick's `import` are both blind. The harness depends on this.
+  - Glyphs render rather than tofu (JetBrains Mono + Symbols Nerd Font Mono,
+    both already in the base image; nothing is installed for them).
+
+Claude Code, syncthing:
   - `claude --version`, and `command -v claude` points into
     /home/linuxbrew/.linuxbrew/bin, not ~/.local/bin
   - syncthing web UI reachable at http://127.0.0.1:8384

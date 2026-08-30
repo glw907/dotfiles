@@ -26,7 +26,11 @@ Day-to-day admin reference this draft points to: `~/.claude/docs/bluefin-admin.m
 ## Machine Environment
 
 - **OS**: Bluefin DX, `stable` stream (Fedora 44 base), image-based (bootc/ostree)
-- **Desktop**: GNOME | **Shell**: bash | **Terminal**: kitty
+- **Desktop**: GNOME (Wayland) | **Shell**: bash | **Terminal**: Ptyxis (ships
+  with the image). kitty is installed but is NOT the daily terminal -- it is the
+  gate platform for `tui-visual-verify` only, forced to XWayland in its config so
+  the xdotool/`import` capture path works. Do not suggest kitty as the terminal
+  or assume a kitty-specific feature in day-to-day work.
 - **Key paths**: `~/Projects/` (all repos), `~/.dotfiles/` (config), `~/.local/bin/`
   (scripts)
 - **Dev tools**: Node via mise, Python via uv, Go via Homebrew, Java 17 (OpenJDK) for

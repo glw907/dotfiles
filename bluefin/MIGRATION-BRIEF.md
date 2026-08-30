@@ -82,12 +82,27 @@ implemented in `bootstrap.sh`.
   also shadow the cask on PATH, leaving two installs and two update paths.
   This is the brief's own "idiom wins" rule applied to a decision made before
   the system was available to check. `setup` warns if both exist.
-- `font-monaspace` is added to the Brewfile. VERIFIED: `kitty.conf` sets
-  `font_family Monaspace Neon`, and Bluefin's font list
-  (`/usr/share/ublue-os/homebrew/fonts.Brewfile`, offered during `ujust
-  devmode`) contains no Monaspace, so kitty would silently fall back. Fonts
-  are tracked here rather than accepted from ujust's prompt so the second
-  workstation gets the same set.
+- No fonts are installed at all (Geoff, 2026-08-30: "happy to work with
+  bluefin fonts"). `kitty.conf` asked for Monaspace Neon, which Bluefin does
+  not ship; rather than add a cask, kitty now uses **JetBrains Mono**, and its
+  `symbol_map` now points at **Symbols Nerd Font Mono**. VERIFIED: both are
+  already in the base image. The old symbol_map named `JetBrainsMonoNL Nerd
+  Font`, the patched variant, which is NOT installed here — the glyph mapping
+  was silently falling through to tofu. Ptyxis uses the system monospace.
+  Decline ujust's font prompt: there is nothing to add.
+- Ptyxis is the daily terminal, not kitty (Geoff, 2026-08-30: use the default
+  terminal unless there is a real deficiency). Ptyxis ships with the image and
+  needs no setup. kitty stays installed but is demoted to one job: the gate
+  platform for the `tui-visual-verify` skill, whose `kitty-shot` harness
+  drives a real kitty window through kitty's remote control. Ptyxis has no
+  remote-control equivalent, so nothing else can stand in for that.
+- The TUI verification gate needed repair independent of the terminal choice.
+  VERIFIED: `kitty-shot` locates the window with `xdotool` and captures it
+  with ImageMagick's `import`, both X11-only, and Bluefin's GNOME session is
+  Wayland (`XDG_SESSION_TYPE=wayland`) where they are blind. Mint/Cinnamon was
+  X11, so this never came up before. Two fixes: `linux_display_server x11` in
+  `kitty.conf` forces XWayland, and `xdotool` joins the Brewfile (it was not
+  installed and not listed anywhere).
 
 ## Platform facts (verified 2026-08-29)
 
@@ -194,8 +209,10 @@ implemented in `bootstrap.sh`.
   khard/vdirsyncer/yt-dlp are Python: prefer `uv tool install`.
 - npm globals in use: browser-sync, markdownlint-cli, prettier (via mise
   node, or per-project).
-- kitty is the terminal (config stowed); install via upstream binary
-  installer into ~/.local/kitty.app, not layered.
+- kitty was the terminal on Mint (config stowed); install via upstream binary
+  installer into ~/.local/kitty.app, not layered. Superseded by the amendment
+  above: on Bluefin, Ptyxis is the terminal and kitty is kept only as the
+  tui-visual-verify gate platform. The installer path is unchanged.
 - Claude Code via the Homebrew cask (see the amendment above; this line
   originally said the native installer to ~/.local/bin/claude). ~/.claude is
   restored from backup before first launch either way.

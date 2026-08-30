@@ -9,6 +9,12 @@ set -euo pipefail
 # xdotool, and import on PATH. The tui-visual-verify skill explains
 # each choice in here.
 #
+# On a Wayland session (Bluefin's GNOME is one), kitty must be forced to
+# XWayland or xdotool and import cannot see its window at all -- the
+# search below returns nothing and every capture fails. The workstation
+# kitty.conf sets `linux_display_server x11` for exactly this reason; if
+# you run this against some other kitty config, set it there too.
+#
 #   scripts/kitty-shot [-o OUTDIR] [-t dark|light] [-s COLSxROWS] [-c CMD] STEP...
 #
 # Each STEP is one of

@@ -64,9 +64,11 @@ its full memory restored:
    ```
    This wraps `ujust devmode`, which prompts three times: answer **yes** to
    enabling developer mode, then **no** to the default development flatpaks
-   and **no** to the extra monospace fonts. Both declines are deliberate —
-   flatpaks come from `flatpaks.txt` and fonts from the `Brewfile`, so that
-   the second workstation gets the same tracked set.
+   and **no** to the extra monospace fonts. Both declines are deliberate.
+   Flatpaks come from `flatpaks.txt`, so the second workstation gets the same
+   tracked set. The fonts are simply not needed: the base image already ships
+   JetBrains Mono and Symbols Nerd Font Mono, which is all `kitty.conf` asks
+   for, and Ptyxis uses the system monospace.
 5. Reboot into the DX image.
 6. Layer packages and add the 1Password repo:
    ```

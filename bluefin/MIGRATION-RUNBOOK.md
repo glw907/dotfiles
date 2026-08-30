@@ -197,9 +197,10 @@ are checked against the brief's decisions:
 - `setup` should install mise (Node) and uv (Python tool installs), install
   Homebrew if not already present, install the curated Brewfile (see the
   CLI estate list in the brief's "Current-machine facts" section, plus the
-  `claude-code` and `font-monaspace` casks), run `stow -R` for the
+  `claude-code` cask and `xdotool`; no font casks), run `stow -R` for the
   `bash bin claude git kitty contacts` packages, install kitty via its own
-  upstream installer (not layered), enable the syncthing user service,
+  upstream installer (not layered, and as the tui-visual-verify gate
+  platform rather than as the terminal), enable the syncthing user service,
   install the Chromium managed policies and the Android udev rule from
   `bluefin/etc/`, remove the preinstalled Flatpak Firefox and 1Password, and
   run `ujust dx-group`.
@@ -223,8 +224,10 @@ Steps:
 
    `ujust devmode` prompts three times. Answer **yes** to enabling developer
    mode, **no** to the default development flatpaks, **no** to the extra
-   monospace fonts. The declines are deliberate: those sets are tracked in
-   `flatpaks.txt` and the `Brewfile` so both workstations match.
+   monospace fonts. The declines are deliberate: flatpaks are tracked in
+   `flatpaks.txt` so both workstations match, and no fonts are needed at all
+   — the base image already ships JetBrains Mono and Symbols Nerd Font Mono,
+   which is all `kitty.conf` asks for.
 
 3. Reboot:
 
