@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 077  # every temp and cache file is born private, no chmod race
 
 # Workstation secrets sync — decrypts values.age and pushes secrets to local and Cloudflare targets.
 #
@@ -26,7 +27,7 @@ SECRETS_FILE="$DOTFILES_DIR/secrets/values.age"
 LOCAL_SECRETS="$HOME/.local/secrets"
 
 CACHE="/dev/shm/.age-key-$(id -u)"      # session-cached age key (RAM, chmod 600; shared with secret-set.sh)
-DECRYPTED_FILE="/dev/shm/secrets-$$.txt"
+DECRYPTED_FILE="$(mktemp /dev/shm/secrets-XXXXXX)"
 
 # Cleanup on any exit. The session cache deliberately survives, since secret-session-clear.sh owns its lifecycle.
 trap 'shred -u "$DECRYPTED_FILE" 2>/dev/null; true' EXIT
@@ -107,7 +108,7 @@ if [[ "$VERIFY" == true ]]; then
         echo "Local (~/.local/secrets): present"
         # List keys present in local secrets
         while IFS='=' read -r key _; do
-            [[ "$key" =~ ^export\ ([A-Z_]+)$ ]] && echo "  ✓ ${BASH_REMATCH[1]}"
+            [[ "$key" =~ ^export\ ([A-Z0-9_]+)$ ]] && echo "  ✓ ${BASH_REMATCH[1]}"
         done < "$LOCAL_SECRETS"
     else
         echo "Local (~/.local/secrets): MISSING" >&2

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Pre-commit gate for this repo: block secret-shaped staged content.
+# Wired via `git config core.hooksPath scripts/githooks` (bootstrap sets it).
+# gitleaks comes from the Brewfile; a missing binary fails the commit closed,
+# since this repo is public and the hook is the last local line of defense.
+if ! command -v gitleaks >/dev/null; then
+    echo "pre-commit: gitleaks not found (brew install gitleaks)" >&2
+    exit 1
+fi
+exec gitleaks git --staged --no-banner --redact

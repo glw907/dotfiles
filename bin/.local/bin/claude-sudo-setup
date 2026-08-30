@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Retrieves sudo password from 1Password and caches it for the Claude CLI session.
-# Run this once at the start of a CLI mode (cld) session.
+# Retrieves the sudo password from 1Password and caches it for the Claude
+# session in tmpfs. The cache lives in /dev/shm so it never touches persistent
+# disk and vanishes on reboot; claude-sudo-clear shreds it on session exit.
 #
 # Prerequisites:
 #   - 1Password desktop app running with CLI integration enabled
-#   - eval $(op signin) must have been run in the terminal (or app integration active)
 #
 # Usage: claude-sudo-setup
+
+CACHE="/dev/shm/claude-sudo-$(id -u)"
 
 PASSWORD=$(op read "op://Private/Workstation sudo/password" 2>/dev/null)
 
@@ -18,6 +20,6 @@ if [ -z "$PASSWORD" ]; then
     exit 1
 fi
 
-echo "$PASSWORD" > ~/.cache/claude-sudo-token
-chmod 600 ~/.cache/claude-sudo-token
-echo "Sudo password cached from 1Password."
+umask 077
+printf '%s\n' "$PASSWORD" > "$CACHE"
+echo "Sudo password cached in tmpfs from 1Password."

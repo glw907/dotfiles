@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -eo pipefail
+umask 077  # every temp and cache file is born private, no chmod race
 
 # Add or update ONE secret in values.age, then regenerate ~/.local/secrets.
 #
@@ -13,7 +14,11 @@ set -eo pipefail
 # files on disk. values.age is the source of truth; sync.sh pushes to Workers.
 #
 # Usage:
-#   secret-set.sh NAME --value 'literal'   # single-line value (token, id, etc.)
+#   secret-set.sh NAME --stdin             # prompt for the value, no echo (preferred
+#                                          #   interactive form: keeps the value out of
+#                                          #   shell history, /proc cmdline, transcripts)
+#   secret-set.sh NAME --value 'literal'   # single-line value on the command line
+#                                          #   (non-interactive callers only)
 #   secret-set.sh NAME --file PATH         # raw file contents (must be single-line)
 #   secret-set.sh NAME --b64-file PATH     # base64-encode a file → single line
 #                                          #   (use for PEMs / any multi-line material;
@@ -32,7 +37,7 @@ OP_ITEM="Workstation age encryption key"
 
 die() { echo "Error: $*" >&2; exit 1; }
 
-usage() { sed -n '4,30p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+usage() { sed -n '4,35p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
 
 # --- Parse arguments ---
 NAME=""
@@ -42,6 +47,7 @@ DRY_RUN=false
 SYNC_ONLY=false
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --stdin)    MODE="stdin";    shift ;;
         --value)    MODE="value";    SRC="${2:?--value needs an argument}"; shift 2 ;;
         --file)     MODE="file";     SRC="${2:?--file needs a path}";       shift 2 ;;
         --b64-file) MODE="b64-file"; SRC="${2:?--b64-file needs a path}";   shift 2 ;;
@@ -107,10 +113,11 @@ fi
 
 [[ -n "$NAME" ]] || die "missing secret NAME (or use --sync). See --help."
 [[ "$NAME" =~ ^[A-Z][A-Z0-9_]*$ ]] || die "NAME must be UPPER_SNAKE_CASE: '$NAME'"
-[[ -n "$MODE" ]] || die "need one of --value / --file / --b64-file (or --sync)"
+[[ -n "$MODE" ]] || die "need one of --stdin / --value / --file / --b64-file (or --sync)"
 
 # --- Build the value (always single-line) ---
 case "$MODE" in
+    stdin)    IFS= read -rsp "Value for ${NAME} (no echo): " VAL; echo >&2 ;;
     value)    VAL="$SRC" ;;
     file)     [[ -f "$SRC" ]] || die "no such file: $SRC"; VAL="$(cat "$SRC")" ;;
     b64-file) [[ -f "$SRC" ]] || die "no such file: $SRC"; VAL="$(base64 -w0 "$SRC")" ;;

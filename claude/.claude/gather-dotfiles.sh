@@ -17,7 +17,9 @@ fi
 if [[ -f ~/.bashrc ]]; then
     echo "### Exports and functions (~/.bashrc)"
     echo '```bash'
-    grep -E '^export |^[a-zA-Z_][a-zA-Z0-9_-]*\(\)' ~/.bashrc || echo "# none"
+    grep -E '^export |^[a-zA-Z_][a-zA-Z0-9_-]*\(\)' ~/.bashrc \
+        | sed -E 's/^(export[[:space:]]+[A-Za-z_][A-Za-z0-9_]*)=.*/\1=<value redacted>/' \
+        || echo "# none"
     echo '```'
     echo ""
 fi
@@ -25,7 +27,8 @@ fi
 if [[ -f ~/.profile ]] && grep -q '^export' ~/.profile; then
     echo "### Exports (~/.profile)"
     echo '```bash'
-    grep '^export' ~/.profile
+    grep '^export' ~/.profile \
+        | sed -E 's/^(export[[:space:]]+[A-Za-z_][A-Za-z0-9_]*)=.*/\1=<value redacted>/'
     echo '```'
     echo ""
 fi

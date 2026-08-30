@@ -53,3 +53,4 @@ cask "claude-code"
 # No font casks, deliberately. The Bluefin base image already ships
 # JetBrains Mono and Symbols Nerd Font Mono, which is what kitty.conf now
 # asks for, and Ptyxis (the daily terminal) uses the system monospace.
+brew "gitleaks"     # staged-secret scan in the pre-commit hook and scripts/check.sh

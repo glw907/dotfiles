@@ -37,3 +37,13 @@ __pycache__/
 secrets/*.txt
 secrets/*.env
 secrets/*.decrypted
+
+# Browser-state dumps and databases never belong in this repo (a places.sqlite
+# with session tokens sat in public history Jan-Apr 2026; see registry.md)
+*.sqlite
+*places*
+*bookmarks*
+
+# Tool caches (each also self-ignores, but do not depend on that)
+.pytest_cache/
+.ruff_cache/

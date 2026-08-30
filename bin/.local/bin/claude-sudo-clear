@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
-# Clear the cached sudo password token
-# Called automatically when Claude sessions exit
-rm -f ~/.cache/claude-sudo-token
+# Clear the cached sudo password. Called automatically when Claude sessions
+# exit. Shreds the tmpfs cache; also removes the legacy on-disk cache if one
+# survives from before the 2026-08-30 move to /dev/shm.
+shred -u "/dev/shm/claude-sudo-$(id -u)" 2>/dev/null || true
+shred -u ~/.cache/claude-sudo-token 2>/dev/null || true

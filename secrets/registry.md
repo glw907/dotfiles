@@ -65,8 +65,8 @@ there is no reusable CLI session token (`op signin --raw` returns nothing). So `
 fetches the age key from 1Password on first use, caches it in tmpfs
 (`/dev/shm/.age-key-$UID`, chmod 600), and reuses it for the rest of the session — only the
 first call prompts. The cache is wiped on reboot, when the `claude` shell function exits, or
-via `scripts/secrets/secret-session-clear.sh`. (`sync.sh` still fetches+shreds its own key
-per run; for multi-step manual work, prefer `secret-set.sh` to avoid repeat prompts.)
+via `scripts/secrets/secret-session-clear.sh`. `sync.sh` shares the same cache and the
+same once-per-session behavior.
 
 To rotate: regenerate the source credential, then `secret-set.sh NAME …` overwrites it.
 
@@ -77,25 +77,28 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 (Worker names: 907-life's worker is `907-life`; ecxc.ski's worker is `ecxc` — renamed from
 `ecnordic` at the ECXC rebrand, Rename 4, 2026-06-08.)
 
-| Secret              | Local (~/.local/secrets) | 907-life Worker | ecxc Worker |
-|---------------------|--------------------------|-----------------|-------------|
-| CLOUDFLARE_API_TOKEN | ✓                       | ✓               | —           |
-| CF_ZT_TOKEN         | ✓                        | —               | —           |
-| CF_ACCESS_CLIENT_SECRET | ✓                   | —               | —           |
-| ANTHROPIC_API_KEY   | ✓                        | —               | —           |
-| CMS_BOT_PAT         | ✓                        | —               | —           |
-| RESEND_API_KEY      | ✓                        | ✓               | ✓           |
-| CONTACT_EMAIL       | ✓                        | —               | —           |
-| FASTMAIL_API_TOKEN  | ✓                        | —               | —           |
-| GITHUB_APP_ID       | ✓                        | ✓               | —           |
-| GITHUB_APP_INSTALLATION_ID | ✓                 | ✓               | —           |
-| GITHUB_APP_PRIVATE_KEY_B64 | ✓                 | ✓               | ✓           |
-| GOOGLE_SA_KEY_B64   | ✓                        | —               | ✓           |
-| TWILIO_ACCOUNT_SID  | ✓                        | —               | —           |
-| TWILIO_API_KEY_SID  | ✓                        | —               | —           |
-| TWILIO_API_KEY_SECRET | ✓                      | —               | —           |
-| TWILIO_AUTH_TOKEN   | ✓                        | —               | —           |
-| VAPID_PRIVATE_KEY   | ✓                        | —               | —           |
+(Regenerated 2026-08-30 against `sync.sh`'s WORKER_SECRETS routing, the code-side source
+of truth; a mismatch between this table and that table is a bug in whichever changed last.)
+
+| Secret              | Local | 907-life | ecxc | asc-site | xcathletes |
+|---------------------|-------|----------|------|----------|------------|
+| CLOUDFLARE_API_TOKEN | ✓    | ✓        | —    | —        | —          |
+| CF_ZT_TOKEN         | ✓     | —        | —    | —        | —          |
+| CF_ACCESS_CLIENT_SECRET | ✓ | —        | —    | —        | —          |
+| ANTHROPIC_API_KEY   | ✓     | —        | ✓    | ✓        | —          |
+| CMS_BOT_PAT         | ✓     | —        | —    | —        | —          |
+| RESEND_API_KEY      | ✓     | ✓        | ✓    | —        | —          |
+| CONTACT_EMAIL       | ✓     | —        | —    | —        | ✓          |
+| FASTMAIL_API_TOKEN  | ✓     | —        | —    | —        | —          |
+| GITHUB_APP_ID       | ✓     | ✓        | —    | —        | —          |
+| GITHUB_APP_INSTALLATION_ID | ✓ | ✓     | —    | —        | —          |
+| GITHUB_APP_PRIVATE_KEY_B64 | ✓ | ✓     | ✓    | —        | ✓          |
+| GOOGLE_SA_KEY_B64   | ✓     | —        | ✓    | —        | —          |
+| TWILIO_ACCOUNT_SID  | ✓     | —        | —    | —        | ✓          |
+| TWILIO_API_KEY_SID  | ✓     | —        | —    | —        | ✓          |
+| TWILIO_API_KEY_SECRET | ✓   | —        | —    | —        | ✓          |
+| TWILIO_AUTH_TOKEN   | ✓     | —        | —    | —        | ✓          |
+| VAPID_PRIVATE_KEY   | ✓     | —        | —    | —        | ✓          |
 
 > The ecxc worker stopped needing `GITHUB_APP_ID`/`GITHUB_APP_INSTALLATION_ID` as secrets at
 > the Waymark rebuild (2026-07-05): the v2 adapter commits both in `cairn.config.ts` (they
@@ -136,6 +139,12 @@ To rotate: regenerate the source credential, then `secret-set.sh NAME …` overw
 - **Grants**: Full Cloudflare API access (DNS, Workers, Pages, Access, R2)
 - **Used by**: wrangler, DNS automation scripts, all project deployments
 - **Rotate at**: https://dash.cloudflare.com/profile/api-tokens
+- **Exposure post-mortem (2026-08-30 audit)**: a PRIOR value of this token sat in plaintext
+  in the public repo's git history (`bash/.bashrc`, 2026-01-30 to 2026-03-19, also copied
+  into `cli-mode.md` for a period). Verified 2026-08-30: the leaked value is dead
+  (Cloudflare rejects it) and differs from the live value by hash. History purge is a
+  standing decision item; secret scanning + push protection are now enabled on the repo,
+  and the claude-secret-guard hook blocks credential-shaped writes at the source.
 - **Also wrapped as a Workers Builds build token** (2026-08-22, Geoff's call): build token
   `503cd3fe-a701-4d5e-be7b-4c93a61335fa` "xcathletes build token (CLAUDE_CODE admin token)"
   backs the Workers Builds triggers for `xcathletes` and both `907-life` triggers (the
@@ -293,4 +302,7 @@ Secrets this registry will set:
 - **Algorithm**: X25519 (age native)
 - **Public key**: age197mcd2m3z90t49n9t5v3ujjntw7krfkw5y9sjfc545v28qvezugshg7jgk
 - **Private key storage**: 1Password > Private vault > "Workstation age encryption key"
-- **No persistent key file on disk** — private key is fetched from 1Password at decrypt time
+- **No persistent copy of THIS store's key on disk** — it is fetched from 1Password at
+  decrypt time and cached only in tmpfs. (The separate ASC project key at
+  `~/.config/age/asc-key.txt` is a different key for a different store and does live on
+  disk, mode 600, by that project's own design.)
