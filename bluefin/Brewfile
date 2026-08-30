@@ -38,3 +38,13 @@ brew "openjdk@17"
 # Runtime/tool version managers (brief: "Node via mise ... Python tools via uv")
 brew "mise"
 brew "uv"
+
+# Claude Code. The cask, not the native ~/.local/bin installer: Homebrew is
+# the CLI tier on this machine, and the cask updates with `ujust update`
+# alongside everything else instead of self-updating on its own schedule.
+cask "claude-code"
+
+# kitty.conf sets `font_family Monaspace Neon`. Bluefin's own font list
+# (/usr/share/ublue-os/homebrew/fonts.Brewfile, offered by `ujust devmode`)
+# does not include Monaspace, so without this kitty silently falls back.
+cask "font-monaspace"

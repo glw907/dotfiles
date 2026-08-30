@@ -48,14 +48,72 @@ deliberate exception, forced by native messaging).
   bootstrap artifacts. A custom uBlue image is an explicit later decision
   point, not a commitment.
 
+### Amendments (2026-08-30, verified against the installed system)
+
+These four supersede the corresponding decisions above. All were found by
+checking the running Bluefin install rather than the docs, and each is
+implemented in `bootstrap.sh`.
+
+- DX enablement is its own bootstrap phase, `bootstrap.sh devmode`, run
+  before `layer`. VERIFIED: the ISO installs `ghcr.io/ublue-os/bluefin:stable`
+  (non-DX) — the unified ISO does not ask, and the resulting system has no
+  docker and no VS Code. The mechanism is `ujust devmode`, which runs
+  `bootc switch --enforce-container-sigpolicy` to the matching `-dx` tag.
+  Preferred over calling `bootc` directly so the image reference stays
+  whatever Bluefin says it is. This adds a second mandatory reboot: `layer`
+  must run against the booted image, so layering before the DX reboot would
+  strand the RPMs on the deployment being replaced. `layer` and `setup` both
+  hard-stop on a non-DX image rather than proceeding.
+- Preinstalled Flatpak Firefox and 1Password are removed in `setup`, before
+  anything depends on them. VERIFIED: the base image ships
+  `org.mozilla.firefox` as a system Flatpak and sets it as the default
+  browser; `com.onepassword.OnePassword` was also present. Both collide with
+  the layered RPMs this brief already requires, and the sandboxed builds are
+  precisely the ones ruled out above for native messaging. Removal sticks:
+  the system Flatpak set comes from `ujust install-system-flatpaks`, a manual
+  "for rebasers" recipe that no image update re-runs. `setup` also reassigns
+  the default-browser association to `firefox.desktop`, which otherwise keeps
+  pointing at the removed Flatpak.
+- Claude Code comes from the Homebrew cask (`cask "claude-code"` in the
+  Brewfile), not the native `~/.local/bin/claude` installer this brief
+  originally specified. Bluefin ships the cask preinstalled, Homebrew is the
+  CLI tier here, and the cask updates under `ujust update` with everything
+  else instead of self-updating on its own schedule. A native install would
+  also shadow the cask on PATH, leaving two installs and two update paths.
+  This is the brief's own "idiom wins" rule applied to a decision made before
+  the system was available to check. `setup` warns if both exist.
+- `font-monaspace` is added to the Brewfile. VERIFIED: `kitty.conf` sets
+  `font_family Monaspace Neon`, and Bluefin's font list
+  (`/usr/share/ublue-os/homebrew/fonts.Brewfile`, offered during `ujust
+  devmode`) contains no Monaspace, so kitty would silently fall back. Fonts
+  are tracked here rather than accepted from ujust's prompt so the second
+  workstation gets the same set.
+
 ## Platform facts (verified 2026-08-29)
 
 - Streams: `gts` / `stable` / `latest`; DX is its own image tag
   (`bluefin-dx:stable`). `stable` is the daily-driver recommendation, weekly
-  builds, gated kernel.
+  builds, gated kernel. VERIFIED 2026-08-30 on the installed system: the ISO
+  lands you on non-DX `bluefin:stable` and DX is a post-install rebase, per
+  the devmode amendment above.
+- `ujust devmode` also offers to install DX flatpaks and extra monospace
+  fonts. Decline both: those sets are tracked in `flatpaks.txt` and the
+  `Brewfile` instead, so the two workstations stay identical. Bluefin's DX
+  flatpak list (`system-dx-flatpaks.Brewfile`) is Clapgrep, embellish, Podman
+  Desktop, devtoolbox, and GNOME Builder — none of which are in use here.
+- Bluefin manages its preinstalled Flatpaks through Brewfiles at
+  `/usr/share/ublue-os/homebrew/system-flatpaks.Brewfile` (+ the `-dx`
+  variant), applied by the manual `ujust install-system-flatpaks` recipe.
+  Nothing re-runs it on update, so removing a preinstalled Flatpak is
+  durable. The one automatic hook that mentions Firefox
+  (`privileged-setup.hooks.d/99-flatpaks.sh`) is version-gated and only
+  writes prefs into an extension dir; it never installs the app.
 - bootc and rpm-ostree are BOTH live in 2026. `bootc switch`/`status` for
   rebases and inspection, `rpm-ostree install` still standard for layering.
-  Docs and community guidance mix the two; this is normal.
+  Docs and community guidance mix the two; this is normal. Note `bootc
+  status` needs root (`sudo bootc status`); unprivileged it errors out on
+  "Querying root privilege". `rpm-ostree status` does not, and is the easier
+  reflex for a quick look at deployments and layered packages.
 - Software tiers: Flatpak for GUI, Homebrew for CLI, distrobox/devcontainers
   for dev environments, rpm-ostree layering as last resort. Bluefin DX ships
   Docker Engine, Podman, distrobox, VS Code out of the box.
@@ -138,8 +196,9 @@ deliberate exception, forced by native messaging).
   node, or per-project).
 - kitty is the terminal (config stowed); install via upstream binary
   installer into ~/.local/kitty.app, not layered.
-- Claude Code via native installer to ~/.local/bin/claude; ~/.claude restored
-  from backup before first launch.
+- Claude Code via the Homebrew cask (see the amendment above; this line
+  originally said the native installer to ~/.local/bin/claude). ~/.claude is
+  restored from backup before first launch either way.
 - 1Password askpass flow: SUDO_ASKPASS=~/.local/bin/claude-askpass (script in
   dotfiles bin package); depends on 1Password desktop + op CLI desktop-app
   integration; `claude-sudo-setup` re-mints the age file.

@@ -8,10 +8,17 @@ set -euo pipefail
 # same directory. Read it before changing this script.
 #
 # Usage:
-#   bootstrap.sh layer     # run once, right after first boot
+#   bootstrap.sh devmode   # run once, right after first boot; reboot after
+#   bootstrap.sh layer     # run once, after the reboot from `devmode`
 #   bootstrap.sh setup     # run once, right after the reboot from `layer`
 #   bootstrap.sh restore   # run once, after `setup` and the 1Password CLI
 #                          # toggle; executes MIGRATION-RUNBOOK.md section 4
+#
+# Two reboots, and they are not optional. `devmode` rebases the image to
+# bluefin-dx (a staged bootc switch that only takes effect on boot), and
+# `layer` adds the layered RPMs to whatever image is actually booted. Running
+# `layer` before the DX reboot would layer onto the non-DX deployment and
+# strand the packages when the rebase lands.
 #
 # Uses plain `sudo`, not the `sudo -A` / claude-askpass flow: that flow
 # depends on the `bin` stow package and ~/.local/secrets, neither of which
@@ -32,7 +39,74 @@ read_list() {
     grep -vE '^[[:space:]]*(#|$)' "$1"
 }
 
+# The running image's name, e.g. "bluefin" or "bluefin-dx". Bluefin writes
+# this at build time; `ujust devmode` reads the same file to decide which way
+# to toggle.
+IMAGE_INFO_FILE="${IMAGE_INFO_FILE:-/usr/share/ublue-os/image-info.json}"
+
+current_image_name() {
+    jq -rc '."image-name"' "$IMAGE_INFO_FILE" 2> /dev/null || echo unknown
+}
+
+# True when the booted deployment is a -dx image. Both `layer` and `setup`
+# gate on this: the whole point of the devmode phase is that everything after
+# it assumes DX, and silently proceeding on the base image produces a machine
+# that looks set up but has no docker, no dx-group, and no DX flatpaks.
+on_dx_image() {
+    [[ "$(current_image_name)" == *-dx ]]
+}
+
+require_dx_image() {
+    if on_dx_image; then
+        return 0
+    fi
+    cat >&2 <<EOF
+HARD STOP: this is not a Developer Experience image.
+  booted image: $(current_image_name)
+
+Run the devmode phase first, then reboot:
+  $0 devmode
+  sudo systemctl reboot
+EOF
+    return 1
+}
+
+# `ujust devmode` runs `bootc switch --enforce-container-sigpolicy` to the
+# matching -dx image tag. It is the project-supported mechanism and is
+# preferred over calling bootc directly, so that the image reference stays
+# whatever Bluefin says it should be rather than one hardcoded here.
+phase_devmode() {
+    echo "== devmode: rebase to the Developer Experience image =="
+    if on_dx_image; then
+        echo "already on $(current_image_name), nothing to do"
+        return
+    fi
+
+    cat <<'EOF'
+`ujust devmode` will prompt three times. Answer:
+
+  "Would you like to enable developer mode?"                 -> yes
+  "Do you want to also install the default development
+   flatpaks?"                                               -> no
+  "Do you want to install extra monospace fonts?"            -> no
+
+The two "no" answers are deliberate. Flatpaks come from flatpaks.txt in this
+directory, and fonts come from the Brewfile (Bluefin's font list has no
+Monaspace, which kitty.conf asks for). Both are tracked here so the second
+workstation gets the same set; letting ujust install its own would put
+untracked apps on the machine.
+
+EOF
+    ujust devmode
+
+    echo
+    echo "Rebase staged. Reboot, then run:"
+    echo "  $0 layer"
+}
+
 phase_layer() {
+    require_dx_image
+
     echo "== layer: 1Password repo =="
     sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
     sudo tee /etc/yum.repos.d/1password.repo > /dev/null <<'EOF'
@@ -87,7 +161,42 @@ setup_etc_drops() {
 
 setup_dx_group() {
     echo "== setup: ujust dx-group =="
+    require_dx_image
     ujust dx-group
+}
+
+# Bluefin preinstalls a Flatpak Firefox, and the base image's default browser
+# points at it. The brief requires the layered RPM builds instead: Flatpak's
+# sandbox blocks the native messaging that 1Password and Claude's browser
+# tooling both depend on. Leaving the Flatpak installed means two Firefoxes
+# with the sandboxed one still winning every link click.
+#
+# This sticks. The system Flatpak set is installed by `ujust
+# install-system-flatpaks`, which is a manual "for rebasers" recipe, not
+# something an image update re-runs. The only automatic hook that touches
+# Firefox (privileged-setup.hooks.d/99-flatpaks.sh) writes prefs into an
+# extension directory and never installs the app.
+setup_remove_conflicting_flatpaks() {
+    echo "== setup: remove Flatpaks superseded by layered RPMs =="
+    local app
+    for app in org.mozilla.firefox com.onepassword.OnePassword; do
+        if flatpak info "$app" > /dev/null 2>&1; then
+            echo "removing $app"
+            flatpak uninstall --system -y --delete-data "$app"
+        else
+            echo "$app not installed, skipping"
+        fi
+    done
+
+    # Hand the default-browser association to the layered RPM. Without this
+    # the association keeps pointing at the now-removed Flatpak desktop file.
+    if [[ -f /usr/share/applications/firefox.desktop ]]; then
+        xdg-settings set default-web-browser firefox.desktop
+        echo "default browser set to firefox.desktop (layered RPM)"
+    else
+        echo "WARNING: /usr/share/applications/firefox.desktop not found;" >&2
+        echo "         is the firefox RPM layered? (bootstrap.sh layer)" >&2
+    fi
 }
 
 setup_flatpaks() {
@@ -146,14 +255,23 @@ setup_kitty() {
     fi
 }
 
-setup_claude_code() {
-    echo "== setup: Claude Code native installer =="
-    local claude_bin="$HOME/.local/bin/claude"
-    # Verify on first boot: confirm this URL still serves the installer script.
-    curl -fsSL https://claude.ai/install.sh | bash
-    if [[ ! -x "$claude_bin" ]]; then
-        echo "Claude Code install failed: $claude_bin not found" >&2
+# Claude Code comes from the Homebrew cask in the Brewfile, installed by
+# setup_brew like every other CLI tool. The brief originally called for the
+# native installer into ~/.local/bin; the cask is the idiomatic tier for a
+# CLI tool here and rides `ujust update` with everything else, so there is no
+# separate self-update path to keep track of. Bluefin also ships the cask
+# preinstalled, and a native install would shadow it on PATH.
+setup_verify_claude_code() {
+    echo "== setup: verify Claude Code =="
+    if ! command -v claude > /dev/null 2>&1; then
+        echo "claude not on PATH after brew bundle" >&2
         return 1
+    fi
+    echo "claude: $(command -v claude)"
+    if [[ -x "$HOME/.local/bin/claude" ]]; then
+        echo "WARNING: a native-installer Claude Code at ~/.local/bin/claude" >&2
+        echo "         shadows the Homebrew cask. Remove it to keep one" >&2
+        echo "         install and one update path." >&2
     fi
 }
 
@@ -181,6 +299,12 @@ SELinux (brief: skipping this is a documented cause of broken logins):
 Browsers:
   - chrome://policy in Chromium shows the three managed policies applied.
   - Firefox 1Password integration connects (needs the RPM build, not flatpak).
+  - `flatpak list | grep -iE 'firefox|onepassword'` returns nothing: the
+    preinstalled Flatpak builds are gone and the layered RPMs are what runs.
+  - `xdg-settings get default-web-browser` prints firefox.desktop, not
+    org.mozilla.firefox.desktop.
+  - `about:support` in Firefox shows an RPM install path, not /app or
+    /var/lib/flatpak.
 
 Android:
   - `adb devices` sees a plugged-in device (uaccess tagging applies
@@ -196,9 +320,18 @@ Dotfiles:
     (already stowed by this script; -n dry-runs to confirm).
 
 kitty, Claude Code, syncthing:
-  - `kitty --version`
-  - `claude --version`
+  - `kitty --version`, and confirm it renders in Monaspace Neon (the
+    font-monaspace cask in the Brewfile; Bluefin's own font list has no
+    Monaspace, so a fallback font here means the cask didn't install)
+  - `claude --version`, and `command -v claude` points into
+    /home/linuxbrew/.linuxbrew/bin, not ~/.local/bin
   - syncthing web UI reachable at http://127.0.0.1:8384
+
+Image:
+  - `rpm-ostree status` shows a bluefin-dx image, and lists 1password,
+    1password-cli, firefox, and chromium as layered packages.
+  - `docker --version` works (DX ships it; its absence means the devmode
+    rebase never landed).
 
 Next: in 1Password, sign in and enable Settings -> Developer -> "Integrate
 with 1Password CLI" (GUI-only toggle), then run:
@@ -508,12 +641,13 @@ phase_setup() {
     local steps=(
         setup_etc_drops
         setup_dx_group
+        setup_remove_conflicting_flatpaks
         setup_flatpaks
         setup_brew
         setup_mise_uv
         setup_stow
         setup_kitty
-        setup_claude_code
+        setup_verify_claude_code
         setup_syncthing
     )
     local failed=()
@@ -535,6 +669,9 @@ phase_setup() {
 }
 
 case "${1:-}" in
+    devmode)
+        phase_devmode
+        ;;
     layer)
         phase_layer
         ;;
@@ -545,7 +682,7 @@ case "${1:-}" in
         phase_restore
         ;;
     *)
-        echo "Usage: $0 {layer|setup|restore}" >&2
+        echo "Usage: $0 {devmode|layer|setup|restore}" >&2
         exit 1
         ;;
 esac

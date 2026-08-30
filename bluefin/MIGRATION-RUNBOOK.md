@@ -144,10 +144,12 @@ Do not proceed to step 7 (flashing the ISO) until every check below passes.
    step, the R2 bucket (`workstation-backup`) is the *only* remaining copy
    of the backup — there is no local fallback until a fresh copy is made.
 
-   - Download the Bluefin DX ISO (`stable` stream) from
+   - Download the Bluefin ISO (`stable` stream) from
      `https://download.projectbluefin.io/` (or the Universal Blue project
      page, whichever is current — **verify on first boot** which mirror is
-     live at flash time).
+     live at flash time). The ISO is unified: there is no separate DX
+     image to download, and it installs non-DX `bluefin`. DX comes from the
+     `devmode` rebase in section 3.
    - Open Fedora Media Writer, select the downloaded ISO, select the USB
      stick, and write.
 
@@ -182,21 +184,25 @@ Do not proceed to step 7 (flashing the ISO) until every check below passes.
 ## 3. First boot
 
 **Verify on first boot**: `~/.dotfiles/bluefin/bootstrap.sh` must exist,
-committed before wipe day, with a `layer` mode (rpm-ostree layering, needs a
-reboot to apply) and a `setup` mode (everything else — mise, uv, Homebrew,
-stow, syncthing, kitty, Claude Code, udev rules, Chromium policies). If it
-does not exist yet, do not proceed past this section until it is written and
-its contents are checked against the brief's decisions:
+committed before wipe day, with a `devmode` mode (bootc rebase to DX, needs a
+reboot to apply), a `layer` mode (rpm-ostree layering, needs a second reboot)
+and a `setup` mode (everything else — mise, uv, Homebrew, stow, syncthing,
+kitty, udev rules, Chromium policies, Flatpak removals). If it does not exist
+yet, do not proceed past this section until it is written and its contents
+are checked against the brief's decisions:
 
+- `devmode` should run `ujust devmode` and stop for a reboot.
 - Layer only `1password`, `1password-cli`, `firefox`, `chromium` (plus the
   1Password RPM repo + signing key, added first).
 - `setup` should install mise (Node) and uv (Python tool installs), install
   Homebrew if not already present, install the curated Brewfile (see the
-  CLI estate list in the brief's "Current-machine facts" section), run
-  `stow -R` for the `bash bin claude git kitty contacts` packages, install
-  kitty via its own upstream installer (not layered), enable the syncthing
-  user service, install the Chromium managed policies and the Android udev
-  rule from `bluefin/etc/`, and run `ujust dx-group`.
+  CLI estate list in the brief's "Current-machine facts" section, plus the
+  `claude-code` and `font-monaspace` casks), run `stow -R` for the
+  `bash bin claude git kitty contacts` packages, install kitty via its own
+  upstream installer (not layered), enable the syncthing user service,
+  install the Chromium managed policies and the Android udev rule from
+  `bluefin/etc/`, remove the preinstalled Flatpak Firefox and 1Password, and
+  run `ujust dx-group`.
 
 Steps:
 
@@ -207,12 +213,18 @@ Steps:
    git clone https://github.com/glw907/workstation.git ~/.dotfiles
    ```
 
-2. Run the layering phase. This uses `rpm-ostree install`, which stages
-   packages for the next boot; it does not take effect until you reboot.
+2. Rebase to the Developer Experience image. The official ISO installs the
+   non-DX `bluefin:stable`; DX is a post-install rebase (brief amendment,
+   2026-08-30). This stages a `bootc switch` that takes effect on boot.
 
    ```bash
-   ~/.dotfiles/bluefin/bootstrap.sh layer
+   ~/.dotfiles/bluefin/bootstrap.sh devmode
    ```
+
+   `ujust devmode` prompts three times. Answer **yes** to enabling developer
+   mode, **no** to the default development flatpaks, **no** to the extra
+   monospace fonts. The declines are deliberate: those sets are tracked in
+   `flatpaks.txt` and the `Brewfile` so both workstations match.
 
 3. Reboot:
 
@@ -220,7 +232,33 @@ Steps:
    sudo systemctl reboot
    ```
 
-4. After reboot, confirm the layered packages landed:
+4. After reboot, confirm DX landed before layering anything onto it:
+
+   ```bash
+   rpm-ostree status
+   docker --version
+   ```
+
+   The deployment should name a `bluefin-dx` image, and `docker` should
+   exist (DX ships it; the base image does not). If you are still on
+   `bluefin`, the rebase did not apply — do not continue, since `layer`
+   would put the RPMs on the deployment about to be replaced. `layer` and
+   `setup` both hard-stop on a non-DX image for this reason.
+
+5. Run the layering phase. This uses `rpm-ostree install`, which stages
+   packages for the next boot; it does not take effect until you reboot.
+
+   ```bash
+   ~/.dotfiles/bluefin/bootstrap.sh layer
+   ```
+
+6. Reboot again:
+
+   ```bash
+   sudo systemctl reboot
+   ```
+
+7. After reboot, confirm the layered packages landed:
 
    ```bash
    rpm-ostree status
@@ -230,15 +268,29 @@ Steps:
    `chromium` should all appear in the current deployment's layered
    packages.
 
-5. Run the setup phase:
+8. Run the setup phase:
 
    ```bash
    ~/.dotfiles/bluefin/bootstrap.sh setup
    ```
 
-6. Launch 1Password, sign in, and enable **Settings → Developer →
+   Among other things this removes the preinstalled Flatpak Firefox and
+   1Password and hands the default-browser association to the layered RPM.
+   Both Flatpaks collide with the layered builds, and the sandboxed ones
+   cannot do the native messaging that 1Password and Claude's browser
+   tooling need. Manual equivalent, if running the phase piecemeal:
+
+   ```bash
+   flatpak uninstall --system -y --delete-data org.mozilla.firefox
+   flatpak uninstall --system -y --delete-data com.onepassword.OnePassword
+   xdg-settings set default-web-browser firefox.desktop
+   ```
+
+9. Launch 1Password, sign in, and enable **Settings → Developer →
    "Integrate with 1Password CLI"**. This is a GUI-only toggle with no CLI
-   equivalent, and step 4 below depends on it.
+   equivalent, and section 4 below depends on it. Make sure you are opening
+   the layered RPM app, not a leftover Flatpak — step 8 should have removed
+   the Flatpak entirely.
 
 Do not launch `claude` yet — section 4 restores `~/.claude` before first
 launch.
@@ -254,7 +306,7 @@ remaining judgment items when done. The steps below are its specification
 and the manual fallback; keep the two in sync when editing either.
 
 Preconditions before starting: mise's Node is active (`npx` resolves) and
-1Password desktop CLI integration is on (step 3.6).
+1Password desktop CLI integration is on (step 3.9).
 
 1. **Fetch the 1Password age identity — one `op` call.** This decrypts the
    backup tarball in step 4.5. It is the same "Workstation age encryption
@@ -327,7 +379,7 @@ Preconditions before starting: mise's Node is active (`npx` resolves) and
 
 6. **Selectively move into place.** Restore is additive, never destructive:
    use `--ignore-existing` so anything `stow -R` already symlinked in step
-   3.5 is left alone (the git-tracked copy wins over the backup copy).
+   3.8 is left alone (the git-tracked copy wins over the backup copy).
 
    Skip `home/.dotfiles` entirely — it's superseded by the git clone in
    step 3.1.
@@ -372,7 +424,7 @@ Preconditions before starting: mise's Node is active (`npx` resolves) and
 
    # .claude: memory/history/projects are runtime state, not stow-tracked.
    # Skills/agents/docs/workflows/CLAUDE.md/settings.json ARE stow-tracked;
-   # --ignore-existing means the stow symlinks from step 3.5 win.
+   # --ignore-existing means the stow symlinks from step 3.8 win.
    [ -d "$S/.claude" ] && rsync -a --ignore-existing "$S/.claude/" ~/.claude/
 
    # Assert the unfold + restore above didn't write anything into the
@@ -436,7 +488,7 @@ Preconditions before starting: mise's Node is active (`npx` resolves) and
      | xargs -0 -r -I{} sudo cp {} /etc/chromium/policies/managed/
    ```
 
-   (If step 3.5's `bootstrap.sh setup` already installed these from
+   (If step 3.8's `bootstrap.sh setup` already installed these from
    `~/.dotfiles/bluefin/etc/`, this step is redundant — harmless either
    way, since the files are identical captures.)
 
@@ -482,7 +534,7 @@ Preconditions before starting: mise's Node is active (`npx` resolves) and
 
 3. **1Password desktop integration + `claude-sudo-setup`.** Confirm the
    1Password desktop app is running and unlocked (already done in step
-   3.6), then:
+   3.9), then:
 
    ```bash
    claude-sudo-setup

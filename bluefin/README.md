@@ -11,6 +11,8 @@ live in `MIGRATION-RUNBOOK.md`; nothing here requires reading it first.
 
 ```bash
 git clone https://github.com/glw907/workstation.git ~/.dotfiles
+~/.dotfiles/bluefin/bootstrap.sh devmode   # answer: yes, no, no
+sudo systemctl reboot
 ~/.dotfiles/bluefin/bootstrap.sh layer
 sudo systemctl reboot
 ~/.dotfiles/bluefin/bootstrap.sh setup
@@ -18,6 +20,11 @@ sudo systemctl reboot
 ~/.dotfiles/bluefin/bootstrap.sh restore
 claude   # first launch asks you to log in
 ```
+
+Two reboots, both required. The official ISO installs the non-DX `bluefin`
+image; `devmode` rebases to `bluefin-dx` and only takes effect on boot, and
+`layer` must run against the image that is actually booted. `layer` and
+`setup` both hard-stop if they find themselves on a non-DX image.
 
 Then hand the Claude session this prompt, and it finishes the rest
 (re-authentication walkthrough, verification, the CLAUDE.md rewrite) with
@@ -32,7 +39,7 @@ its full memory restored:
 |------|---------|
 | `MIGRATION-BRIEF.md` | Decisions, verified platform facts, backup state |
 | `MIGRATION-RUNBOOK.md` | Wipe-day and restore procedure, authoritative from step 7 |
-| `bootstrap.sh` | `layer`, `setup`, and `restore` phases, run in order below |
+| `bootstrap.sh` | `devmode`, `layer`, `setup`, and `restore` phases, run in order below |
 | `layered-packages.txt` | The minimal rpm-ostree layered set |
 | `flatpaks.txt` | Flatpak app IDs to install |
 | `Brewfile` | CLI tool formulae for `brew bundle` |
@@ -42,25 +49,36 @@ its full memory restored:
 
 ## Order of operations, fresh install
 
-1. Write the Bluefin DX ISO with Fedora Media Writer, install to `stable`
-   with whole-disk LUKS. Enable "Allow Microsoft 3rd Party UEFI CA" in BIOS
-   first.
+1. Write the Bluefin ISO with Fedora Media Writer, install to `stable` with
+   whole-disk LUKS. Enable "Allow Microsoft 3rd Party UEFI CA" in BIOS
+   first. There is no separate DX ISO — the image is unified and installs
+   non-DX `bluefin`; DX comes from the `devmode` rebase in step 4.
 2. First boot: enroll the MOK (password `universalblue`).
 3. Clone dotfiles:
    ```
    git clone https://github.com/glw907/workstation.git ~/.dotfiles
    ```
-4. Layer packages and add the 1Password repo:
+4. Rebase to the Developer Experience image:
+   ```
+   ~/.dotfiles/bluefin/bootstrap.sh devmode
+   ```
+   This wraps `ujust devmode`, which prompts three times: answer **yes** to
+   enabling developer mode, then **no** to the default development flatpaks
+   and **no** to the extra monospace fonts. Both declines are deliberate —
+   flatpaks come from `flatpaks.txt` and fonts from the `Brewfile`, so that
+   the second workstation gets the same tracked set.
+5. Reboot into the DX image.
+6. Layer packages and add the 1Password repo:
    ```
    ~/.dotfiles/bluefin/bootstrap.sh layer
    ```
-5. Reboot (the layered packages need the new deployment applied).
-6. Run the rest of setup:
+7. Reboot (the layered packages need the new deployment applied).
+8. Run the rest of setup:
    ```
    ~/.dotfiles/bluefin/bootstrap.sh setup
    ```
    Read the verification checklist it prints at the end before moving on.
-7. Selective restore from the encrypted backup:
+9. Selective restore from the encrypted backup:
    ```
    ~/.dotfiles/bluefin/bootstrap.sh restore
    ```
@@ -73,9 +91,11 @@ its full memory restored:
 ## Second workstation
 
 This same directory provisions the second workstation arriving a few weeks
-after thinkpad-x1: same ISO, same `bootstrap.sh layer` / `setup` sequence,
-same package lists. A custom uBlue image is a later decision point, not
-assumed here.
+after thinkpad-x1: same ISO, same `bootstrap.sh devmode` / `layer` / `setup`
+sequence, same package lists. A custom uBlue image is a later decision point,
+not assumed here — though note that a custom image is the standard way to
+avoid the devmode rebase and the Flatpak removals below, by baking both into
+the image instead of undoing them per machine.
 
 ## Changing the layered package set
 
