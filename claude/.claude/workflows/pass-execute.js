@@ -151,11 +151,16 @@ async function runTask(t, a) {
   const reviewer = a.reviewer || "diff-reviewer";
   const maxFix = a.maxFix == null ? 1 : a.maxFix;
 
+  // A task may name an implementer model override (t.model); agent()'s model
+  // option takes precedence over the agent definition's pinned model.
+  const implOpts = t.model ? { model: t.model } : {};
+
   let implReport = await agent(implementPrompt(t, a, null), {
     label: `impl:${t.id}`,
     phase: "Implement",
     agentType: implementer,
-    schema: IMPL_SCHEMA
+    schema: IMPL_SCHEMA,
+    ...implOpts
   });
 
   if (!implReport) {
@@ -183,7 +188,8 @@ async function runTask(t, a) {
       label: `impl:${t.id}:fix${fixRounds}`,
       phase: "Implement",
       agentType: implementer,
-      schema: IMPL_SCHEMA
+      schema: IMPL_SCHEMA,
+      ...implOpts
     });
 
     if (!implReport) {

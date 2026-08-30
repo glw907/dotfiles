@@ -1,7 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
-    "defaultMode": "bypassPermissions"
+    "allow": [
+      "Bash(chromium:*)",
+      "Bash(chromium-shot:*)"
+    ],
+    "defaultMode": "auto"
   },
   "model": "fable",
   "hooks": {
@@ -64,13 +68,20 @@
     "superpowers@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
-    "cloudflare@cloudflare": true
+    "cloudflare@cloudflare": true,
+    "tui-design@tui-design-marketplace": true
   },
   "extraKnownMarketplaces": {
     "cloudflare": {
       "source": {
         "source": "github",
         "repo": "cloudflare/skills"
+      }
+    },
+    "tui-design-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "gfargo/tui-design-skill"
       }
     }
   },
@@ -79,5 +90,35 @@
   "tui": "fullscreen",
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "agentPushNotifEnabled": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: Cloudflare (glw907 account, id 120c269ad6d3dfbe6d63a0bb53758ca0) — Workers, DNS/zones, Access, D1, R2",
+      "**Repository visibility**: private (github.com/glw907/cairn-pub, confirmed via gh)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: Workstation age store (`~/.dotfiles/scripts/secrets/secret-set.sh`) sourced into `~/.local/secrets`; 1Password holds only the age key; Cloudflare Workers secrets at runtime; GitHub Actions secrets for CI",
+      "**Default / protected branches**: default branch unknown (origin/HEAD unset); no protected branches listed via gh (rulesets not queryable here — non-empty Rulesets can still mean protected, but none were retrievable)",
+      "**CI/CD deploy targets**: Cloudflare Workers via `.github/workflows` and `npx wrangler deploy` (CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN referenced in CI config)",
+      "**Network posture**: None configured",
+      "**Source control**: github.com/glw907/cairn-pub (this repo's only remote)",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: cairn.pub (contacted 45× in this project's transcripts)",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited — e.g. matches `prod-db`, not `producer`)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic (note: k8s namespaces `src` and `node` were observed in this project's transcripts but carry no `prod`/`production` marker)",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development",
+      "**Trusted repo**: /home/glw907/Projects/cairn-pub (github.com/glw907/cairn-pub, private) — confidential material is fine to commit/push here; secrets and sensitive personal/entrusted data are never cleared into it by visibility alone",
+      "**Org-specific CLIs**: None configured",
+      "routine under glw907/ prefix: applies to this repo and its own remote only (github.com/glw907/cairn-pub) — no additional org scope configured"
+    ]
+  },
   "voiceEnabled": true
 }

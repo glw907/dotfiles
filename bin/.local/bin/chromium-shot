@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# Render a URL with headless Chromium: PNG, PDF, or rendered DOM.
+# Uses a throwaway profile, so it never touches the live browser profile
+# and works while Chromium is open.
+set -euo pipefail
+
+readonly PROG=${0##*/}
+
+usage() {
+    cat <<EOF
+Usage: $PROG [options] <url-or-file>
+
+Options:
+  -o FILE     Output path. Default: shot.png, or shot.pdf with --pdf.
+  -w WIDTH    Viewport width in px. Default: 1280.
+  -H HEIGHT   Viewport height in px. Default: 900. Pass a tall value
+              (e.g. -H 5000) to capture a whole page in one image.
+  -t MS       Time budget for scripts and fonts before capture. Default: 3000.
+  --pdf       Write a PDF of the full document instead of a PNG.
+  --dom       Print the rendered DOM to stdout and exit.
+  --mobile    Shorthand for a 390x844 viewport.
+  -h          Show this help.
+
+Examples:
+  $PROG http://localhost:5173 -o home.png
+  $PROG http://localhost:5173 -w 1440 -H 5000 -o home-tall.png
+  $PROG http://localhost:5173 --pdf -o home.pdf
+  $PROG http://localhost:5173 --dom | rg 'data-testid'
+
+Full-page PNG with lazy-loaded content needs a real driver that scrolls
+first. Use Playwright's fullPage screenshot for visual-fidelity work.
+EOF
+}
+
+out=""
+width=1280
+height=900
+budget=3000
+mode=png
+
+rest=()
+
+# Options may appear before or after the target, so collect positionals
+# rather than stopping at the first one.
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -o) out=$2; shift 2 ;;
+        -w) width=$2; shift 2 ;;
+        -H) height=$2; shift 2 ;;
+        -t) budget=$2; shift 2 ;;
+        --pdf) mode=pdf; shift ;;
+        --dom) mode=dom; shift ;;
+        --mobile) width=390; height=844; shift ;;
+        -h|--help) usage; exit 0 ;;
+        --) shift; rest+=("$@"); break ;;
+        -*) printf '%s: unknown option %s\n\n' "$PROG" "$1" >&2; usage >&2; exit 2 ;;
+        *) rest+=("$1"); shift ;;
+    esac
+done
+
+if [[ ${#rest[@]} -lt 1 ]]; then
+    printf '%s: need a url or file\n\n' "$PROG" >&2
+    usage >&2
+    exit 2
+fi
+
+target=${rest[0]}
+
+# A bare path is not a URL; hand Chromium a file:// URL instead.
+if [[ ! $target =~ ^[a-zA-Z][a-zA-Z0-9+.-]*: ]]; then
+    if [[ ! -e $target ]]; then
+        printf '%s: no such file: %s\n' "$PROG" "$target" >&2
+        exit 1
+    fi
+    target="file://$(readlink -f "$target")"
+fi
+
+profile=$(mktemp -d "${TMPDIR:-/tmp}/chromium-shot.XXXXXX")
+trap 'rm -rf "$profile"' EXIT
+
+common=(
+    --headless=new
+    --disable-gpu
+    --hide-scrollbars
+    --no-first-run
+    --disable-extensions
+    --user-data-dir="$profile"
+    --window-size="$width,$height"
+    --virtual-time-budget="$budget"
+)
+
+case $mode in
+    dom)
+        # Chromium writes renderer noise to stderr; the DOM goes to stdout.
+        chromium "${common[@]}" --dump-dom "$target" 2>/dev/null
+        ;;
+    pdf)
+        out=${out:-shot.pdf}
+        chromium "${common[@]}" --no-pdf-header-footer \
+            --print-to-pdf="$out" "$target" 2>/dev/null
+        printf '%s\n' "$out"
+        ;;
+    png)
+        out=${out:-shot.png}
+        chromium "${common[@]}" --screenshot="$out" "$target" 2>/dev/null
+        printf '%s\n' "$out"
+        ;;
+esac

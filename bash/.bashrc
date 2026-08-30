@@ -123,9 +123,36 @@ export PATH="$HOME/.local/bin:$HOME/go/bin:/usr/local/go/bin:$PATH"
 # Claude sudo helper setup
 export SUDO_ASKPASS="$HOME/.local/bin/claude-askpass"
 
-# Claude wrapper function - clears sudo token on exit
+# Claude wrapper function - adds browser tools in web repos, clears sudo token on exit.
+# Browser tools cost context in every session, so only the web repos opt in; Go work
+# (poplar, jrnl-md) stays lean. Override either way with an explicit --chrome / --no-chrome.
 claude() {
-    command claude "$@"
+    local args=("$@")
+
+    case "$1" in
+        # Subcommands take their own flags; never inject --chrome into them.
+        mcp|config|plugin|update|doctor|install|setup-token|migrate-installer) ;;
+        *)
+            case " $* " in
+                *" --chrome "*|*" --no-chrome "*) ;;
+                *)
+                    case "$PWD/" in
+                        "$HOME"/Projects/ecxc-ski/*|\
+                        "$HOME"/Projects/907-life/*|\
+                        "$HOME"/Projects/cairn-*/*|\
+                        "$HOME"/Projects/aksailingclub-*/*|\
+                        "$HOME"/Projects/asc-*/*|\
+                        "$HOME"/Projects/smallbusinessak-org/*|\
+                        "$HOME"/Projects/hugo-blog-template/*)
+                            args+=(--chrome)
+                            ;;
+                    esac
+                    ;;
+            esac
+            ;;
+    esac
+
+    command claude "${args[@]}"
     claude-sudo-clear 2>/dev/null
     ~/.dotfiles/scripts/secrets/secret-session-clear.sh >/dev/null 2>&1
 }

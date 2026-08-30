@@ -1,6 +1,6 @@
 ---
 name: visual-fidelity
-description: The port/migration method for reference-faithful UI work — reference capture, device catalogue, build-with-screenshot-loop, fresh-context verifier gate, the owner-eyes deploy gate, and the pixel-diff CI rider. Invoke at the START of any site rebuild, theme port, or design migration (cairn-family or otherwise), and when a visual result must match an existing reference rather than merely look good.
+description: The port/migration method for reference-faithful UI work — reference capture, device catalogue, build-with-screenshot-loop, fresh-context verifier gate, the owner-eyes deploy gate, and the pixel-diff CI rider. Invoke at the START of any site rebuild, theme port, or design migration (cairn-family or otherwise), and when a visual result must match an existing reference rather than merely look good. ALSO invoke, for the "ink, not boxes" section alone, on any VERTICAL-ALIGNMENT or optical-centring judgment in ordinary layout work (an icon beside text, a chip beside a title, a control beside a stacked field), which is where this defect class is born rather than ported.
 ---
 
 # Visual fidelity (ports, rebuilds, migrations)
@@ -76,3 +76,56 @@ each step traced to evidence in docs/internal/pre-beta-harvest.md (cairn-cms) an
   right); frame experiments as measurements, not constraints.
 - Acceptance criteria containing "looks like X" cannot be graded by the context that
   built X.
+
+## Ink, not boxes (the vertical-alignment blind spot)
+
+Born 2026-08-07, the cairn vertical-alignment pass: three audit rounds, a probe condemned
+three times, and the same root error in two disguises. Read this section for ANY vertical
+alignment judgment, not only a port. This defect class is authored, not ported: the three
+admin rows the pass finally confirmed had been 2.5px wrong since the day they were written,
+through every green test run.
+
+**Why this one is different from every other visual defect.** Horizontal alignment is
+box-level, and boxes are what CSS talks about and what `getBoundingClientRect` returns, so
+reasoning from source lands close to reality. Vertical alignment is INK-level: the eye
+centres a glyph's visual mass, CSS centres its line box, and an SVG's drawn art sits wherever
+it sits inside a viewBox that centres perfectly. Every layer of the stack is box-shaped and
+the judgment is ink-shaped. There is no doubt signal, because `items-center` reads as its own
+confirmation, which is why this survives review and gets fixed instantly once someone points.
+
+**The four rules, each one earned:**
+
+1. **Compare against what the composition DECLARED.** Both major errors in that pass were the
+   same shape: measuring a member against a target the CSS never asked for (a wrapping block's
+   first line, then a baseline) on rows that declared `align-items: center` and ACHIEVED it.
+   Read the container's alignment before judging any vertical relationship. The defect is
+   deviation from the declared intent, never from an assumed one.
+2. **Measure ink where the eye is the judge.** `getBBox()` is the GEOMETRY box, not the
+   painted box, so a `fill="none"` spacer path inflates it to the full viewBox. Union only
+   what actually paints, map through the screen CTM, and MARK any element-box fallback so it
+   is never passed off as ink.
+3. **A padded chip is a BOX, not a text run.** Scoring one `text-beside-text` and comparing
+   BASELINES manufactures a defect equal to the cap-height ratio. The converse of the
+   mixed-size rule is equally true and is the half everyone forgets: a mixed-size pair sharing
+   a CENTRE has baselines that diverge by design.
+4. **Read type metrics off the element that OWNS THE LINE BOX**, never an ancestor container
+   and never the first text node's parent. A 10px `<span>` leading a 24px `<h2>` will resolve
+   every font metric wrong and report a broken row as clean.
+
+**The image settles what arithmetic cannot.** Three rounds of numeric correction moved that
+pass 37 rows to 13 to 10 without resolving a single row's truth. One grader opening the PNGs
+at 4x to 8x zoom resolved all ten definitively in one pass, and caught a "reviewed" decline
+citing a crop nobody had looked at. So: NO row gets a disposition without its crop being seen,
+and that belongs in the measuring tool's contract rather than an auditor's discretion.
+
+**Two gate lessons that generalize past alignment:**
+
+- **An approved snapshot baseline certifies STABILITY, never correctness.** A defect that
+  ships before the baseline is written becomes the baseline, and no amount of green can ever
+  surface it. Never cite a passing visual suite as evidence a composition is right.
+- **Conformance verification cannot find a wrong premise.** Three adversarial verifiers found
+  14 real defects, 8 in the reports-green-on-broken direction, and ALL THREE missed the
+  premise error, because each was handed the spec's traps as ground truth and asked "does this
+  conform?" Only the auditor asked "is this trustworthy?" and only the auditor caught it. Any
+  verification fan-out needs at least one agent whose question is whether the whole thing is
+  RIGHT, not whether it matches the brief that produced it.

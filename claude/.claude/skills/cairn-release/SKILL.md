@@ -98,6 +98,13 @@ held section in the window and carries EVERY `Consumers must:` line from the bre
 a notes file rather than by hand at the `gh` prompt. Add the matching per-version entry to
 `docs/guides/upgrade-cairn.md` if the pass did not already.
 
+A window touching an admin surface (`src/lib/components/*.svelte`, `cairn-admin.css`) also earns a
+re-read of the reproduction stories and docs pages the change reaches: check every affected story's
+caption against what it now renders, and, on a page carrying a keyed callout list, that the list still
+matches. A reproduction pictures a live render, so an admin change can silently falsify the prose
+sitting next to it, and this is the last point before the change ships where the mismatch is still
+cheap to catch.
+
 Beware the Tailwind-scans-docs gotcha: an arbitrary-value class written in CHANGELOG or doc prose with a
 non-value placeholder inside the brackets (an ASCII `...`, a `*`, or a `|`) compiles to malformed CSS and
 breaks `npm run package`. Write the concrete token. A quick check:
@@ -114,10 +121,18 @@ gh release create v<x.y.z> --target main \
   --notes-file <notes-file>
 ```
 
-This fires `publish.yml` (OIDC trusted publishing, `npm publish --access public`, to the `latest` tag).
-Do not pass `--prerelease` unless this is intentionally a release-candidate line. The publish step targets
-`latest` regardless, but the GitHub "Latest" badge follows the flag, so a real release should be a stable
-release. The workflow runs `npm install -g npm@latest` first because trusted publishing needs npm >= 11.5.1.
+This fires `publish.yml` (OIDC trusted publishing, `npm publish --access public`). The workflow derives
+the dist-tag from the version: a stable number goes to `latest`, and any version carrying a prerelease
+suffix goes to `next`, so a candidate never reaches a bare `npm install` (wired 2026-08-05 for the
+`0.94.0-rc.1` cut; before that the workflow passed no `--tag` and npm's `latest` default applied to
+everything). Pass `--prerelease` to `gh release create` on a candidate so the GitHub "Latest" badge
+follows suit. A prerelease also has to clear `check:version`, which sizes an entry against the nearest
+earlier heading whose numeric core differs, so `0.94.0-rc.1` and the `0.94.0` it promotes into declare
+their shared `<!-- release-size: minor -->` marker once, on whichever heading is current.
+
+**A consumer cannot reach a prerelease through its caret range.** A `^0.93.0` dependency does not resolve
+`0.94.0-rc.1`, by SemVer's own rule, so a site testing against a candidate pins the exact version
+(`"@glw907/cairn-cms": "0.94.0-rc.1"`) and moves back to a caret when the stable lands. The workflow runs `npm install -g npm@latest` first because trusted publishing needs npm >= 11.5.1.
 Under trusted publishing the `--provenance` flag is unnecessary: provenance is automatic (the repo went
 public 2026-07-03 and the old `NPM_CONFIG_PROVENANCE=false` override was removed with it).
 
