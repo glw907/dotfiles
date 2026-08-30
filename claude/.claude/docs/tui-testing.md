@@ -175,26 +175,6 @@ command:
 tmux send-keys -t test Enter && sleep 0.3
 ```
 
-### aerc-Specific
-
-aerc needs longer startup time to connect to the mail server:
-
-```bash
-tmux new-session -d -s test -x 140 -y 40 'aerc'
-sleep 8
-
-# Navigate to a folder
-tmux send-keys -t test 'c' && sleep 0.5
-tmux send-keys -t test 'Sent' Enter && sleep 2
-
-# Open a message
-tmux send-keys -t test Enter && sleep 3
-tmux capture-pane -t test -p | head -15
-
-# Toggle thread view
-tmux send-keys -t test 'T' && sleep 2
-```
-
 ### Testing for Crashes
 
 When testing changes that might crash the app:

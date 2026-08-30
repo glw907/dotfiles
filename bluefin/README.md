@@ -6,8 +6,7 @@ file first; this directory implements it and does not repeat its reasoning.
 
 ## Quick card: fresh Bluefin to working machine
 
-Every command to type on the new system, in order. Details and hard stops
-live in `MIGRATION-RUNBOOK.md`; nothing here requires reading it first.
+Every command to type on the new system, in order.
 
 ```bash
 git clone https://github.com/glw907/workstation.git ~/.dotfiles
@@ -26,26 +25,20 @@ image; `devmode` rebases to `bluefin-dx` and only takes effect on boot, and
 `layer` must run against the image that is actually booted. `layer` and
 `setup` both hard-stop if they find themselves on a non-DX image.
 
-Then hand the Claude session this prompt, and it finishes the rest
-(re-authentication walkthrough, verification, the CLAUDE.md rewrite) with
-its full memory restored:
-
-> Read ~/.dotfiles/bluefin/MIGRATION-RUNBOOK.md. Sections 1-4 are done.
-> Continue from section 5, then apply CLAUDE-md-draft.md per its header.
+`setup` prints a verification checklist at the end; read it before moving on
+to `restore`.
 
 ## Contents
 
 | File | Purpose |
 |------|---------|
 | `MIGRATION-BRIEF.md` | Decisions, verified platform facts, backup state |
-| `MIGRATION-RUNBOOK.md` | Wipe-day and restore procedure, authoritative from step 7 |
 | `bootstrap.sh` | `devmode`, `layer`, `setup`, and `restore` phases, run in order below |
 | `layered-packages.txt` | The minimal rpm-ostree layered set |
 | `flatpaks.txt` | Flatpak app IDs to install |
 | `Brewfile` | CLI tool formulae for `brew bundle` |
-| `CLAUDE-md-draft.md` | Draft CLAUDE.md machine-section replacement, applied during restore |
+| `stow-packages.txt` | The Stow packages this repo manages, single source of truth |
 | `etc/` | Captured `/etc` drops: chromium policies, android udev rule |
-| `inventory/` | Captured lists from the Mint machine, source data for the above |
 
 ## Order of operations, fresh install
 
@@ -84,11 +77,11 @@ its full memory restored:
    ```
    ~/.dotfiles/bluefin/bootstrap.sh restore
    ```
-   This executes `MIGRATION-RUNBOOK.md` section 4 with the same hard stops
-   (checksum, decrypt, dotfiles-repo cleanliness). The runbook section
-   remains the specification and the manual fallback, and the runbook is
-   authoritative for everything after: re-authentication, verification, and
-   the CLAUDE.md rewrite.
+   This decrypts the backup, verifies its checksum, and selectively restores
+   `$HOME` content, with hard stops on a dirty dotfiles checkout or a
+   checksum mismatch. It prints a checklist at the end covering the judgment
+   calls that remain: re-authentication, verification, and diffing the
+   restored `~/.local/bin` against the `bin` Stow package.
 
 ## Second workstation
 
@@ -104,3 +97,17 @@ the image instead of undoing them per machine.
 `layered-packages.txt` stays minimal by design. Before adding a package to
 it, record the reason in `MIGRATION-BRIEF.md`. That file is the source the
 list is curated from, not the other way around.
+
+## Android
+
+The SDK lives in `~/Android/`, outside this repo, and is not Stow-managed.
+`bin/.local/bin/update-android-sdk` checks it for platform-tools, build-tools,
+and platform updates via `sdkmanager`; run it directly or through
+`workstation-update`.
+
+USB device access (adb, fastboot) is granted through `etc/udev/51-android.rules`,
+staged here and installed to `/etc/udev/rules.d/` by `setup_etc_drops` during
+`bootstrap.sh setup`. It tags matching devices `uaccess` rather than adding a
+`plugdev` group membership: Bluefin has no `plugdev` group, and `uaccess` is
+the systemd-native equivalent, granting access to the user at the active
+console session.

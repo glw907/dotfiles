@@ -73,10 +73,10 @@ build of either: the sandbox blocks required native messaging. Read
 
 ## Dotfiles Management
 
-- **Location**: `~/.dotfiles` (git: github.com/glw907/workstation), managed via
-  GNU Stow; packages `bash bin claude git kitty contacts`
-- `sync-dotfiles.sh` checks stow status and git drift; new tracked script: add
-  to `bin/.local/bin/`, then `stow -R bin`
+- **Location**: `~/.dotfiles`, GNU Stow; packages from
+  `bluefin/stow-packages.txt`: `bash bin claude contacts git kitty mise vale`
+- `sync-dotfiles.sh` reads that file for stow/git drift; new script: add to
+  `bin/.local/bin/`, then `stow -R bin`
 
 ## Git Conventions
 
