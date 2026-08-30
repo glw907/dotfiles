@@ -1,0 +1,21 @@
+{
+  "MetricsReportingEnabled": false,
+  "UrlKeyedAnonymizedDataCollectionEnabled": false,
+  "DomainReliabilityAllowed": false,
+  "ChromeVariations": 2,
+  "FeedbackSurveysEnabled": false,
+  "SearchSuggestEnabled": false,
+  "SpellCheckServiceEnabled": false,
+  "SafeBrowsingProtectionLevel": 0,
+  "SafeBrowsingExtendedReportingEnabled": false,
+  "PrivacySandboxPromptEnabled": false,
+  "PrivacySandboxAdTopicsEnabled": false,
+  "PrivacySandboxSiteEnabledAdsEnabled": false,
+  "PrivacySandboxAdMeasurementEnabled": false,
+  "BackgroundModeEnabled": false,
+  "ShoppingListEnabled": false,
+  "PromotionsEnabled": false,
+  "BuiltInDnsClientEnabled": true,
+  "DnsOverHttpsMode": "secure",
+  "DnsOverHttpsTemplates": "https://cloudflare-dns.com/dns-query"
+}

@@ -1,0 +1,40 @@
+# Homebrew formulae for the Bluefin DX CLI estate.
+# Curated from the CLI estate list in MIGRATION-BRIEF.md, not the full apt dump.
+#
+# khard, vdirsyncer, and yt-dlp are Python tools: installed via `uv tool
+# install` in bootstrap.sh setup instead of Homebrew.
+#
+# npm globals decision: browser-sync, markdownlint-cli, prettier stay
+# per-project via mise node, deliberately not installed globally.
+
+brew "age"
+brew "gh"
+brew "git"
+brew "jq"
+brew "yq"
+brew "micro"
+brew "stow"
+brew "tmux"
+brew "pandoc"
+brew "hugo"
+brew "sqlite"
+brew "imagemagick"
+brew "ffmpeg"
+brew "socat"
+brew "ttyd"
+brew "rsync"
+brew "vale"
+brew "syncthing"
+brew "chafa"
+
+# Go toolchain (brief: "Go via Homebrew")
+brew "go"
+brew "gofumpt"
+brew "golangci-lint"
+
+# Android tooling dependency
+brew "openjdk@17"
+
+# Runtime/tool version managers (brief: "Node via mise ... Python tools via uv")
+brew "mise"
+brew "uv"

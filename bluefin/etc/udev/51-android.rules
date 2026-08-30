@@ -1,0 +1,7 @@
+# Android adb/fastboot USB access via udev uaccess tagging (no plugdev
+# group model on Bluefin). Verify on first boot: confirm these two vendor
+# IDs cover the devices actually plugged in; add more as needed. Source:
+# the old Mint rule (SUBSYSTEM=="usb", ATTR{idVendor}=="*", MODE="0666",
+# GROUP="plugdev").
+SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", TAG+="uaccess"

@@ -1,0 +1,149 @@
+# Bluefin DX migration brief: thinkpad-x1
+
+Decisions record and context for the Mint 22.3 to Bluefin DX conversion, written
+2026-08-29 during Phase 0. Authoritative for all bootstrap artifacts and for the
+second workstation arriving a few weeks later. Sources: docs.projectbluefin.io,
+Universal Blue Discourse, 1Password release notes, verified 2026-08-29.
+
+## Goal
+
+Maximum-clean, idiomatic atomic setup for daily productivity and coding. The
+base image stays stock apart from the four layered RPMs. Every install has one
+correct tier, the bootstrap artifacts are the source of truth, and nothing
+lands on the system ad hoc. When Mint habit and Bluefin idiom conflict, the
+idiom wins unless it breaks a real workflow (the layered browsers are the one
+deliberate exception, forced by native messaging).
+
+## Decisions (approved by Geoff)
+
+- One-shot clean install from the official Bluefin ISO on `stable` (Fedora 44
+  base), written to USB with Fedora Media Writer. Whole-disk automatic
+  partitioning with LUKS full-disk encryption. VERIFIED 2026-08-29: the ISO is
+  unified (https://download.projectbluefin.io/bluefin-stable-x86_64.iso, 5.6G,
+  no separate -dx ISO); DX is enabled post-install by rebasing to
+  bluefin-dx:stable (or ujust devmode; confirm the current mechanism on first
+  boot). ISO downloaded to ~/Downloads with upstream CHECKSUM verification.
+- Secure Boot: enable in BIOS before install ("Allow Microsoft 3rd Party UEFI
+  CA" must be ON, a ThinkPad gotcha). Bluefin enrolls its MOK at first boot;
+  password is the string `universalblue`.
+- Fresh home directory, selective restore from the encrypted backup. Nothing
+  restored wholesale; ~/Downloads abandoned.
+- Browsers: Firefox (Fedora RPM, layered) is the daily browser with 1Password
+  integration. Chromium (Fedora RPM, layered) is the development and testing
+  browser used by Claude Code (claude-in-chrome native host, DevTools
+  automation, chromium-shot). Flatpak builds of either are ruled out: 1Password
+  and Claude's native-messaging hosts cannot reach sandboxed browsers.
+- Node via mise (replacing nvm). Python tools via uv. Go via Homebrew.
+- Neovim is dropped entirely; Geoff does not use it. micro is the terminal
+  editor. The eudaimonia project is dead: do not carry its cron entries or
+  config.
+- Layered RPM set, kept deliberately minimal: `1password`, `1password-cli`,
+  `firefox`, `chromium`. Everything else lives in Homebrew, Flatpak, mise/uv,
+  or the home directory.
+- Enforcement: the `claude-tierguard` PreToolUse hook (dotfiles bin package,
+  wired in claude/.claude/settings.json) denies any Claude-run `rpm-ostree
+  install` of a package not in layered-packages.txt. No-op on machines
+  without rpm-ostree. Additions go list-first, then install.
+- Second workstation: provisioned from a stock Bluefin DX ISO plus these
+  bootstrap artifacts. A custom uBlue image is an explicit later decision
+  point, not a commitment.
+
+## Platform facts (verified 2026-08-29)
+
+- Streams: `gts` / `stable` / `latest`; DX is its own image tag
+  (`bluefin-dx:stable`). `stable` is the daily-driver recommendation, weekly
+  builds, gated kernel.
+- bootc and rpm-ostree are BOTH live in 2026. `bootc switch`/`status` for
+  rebases and inspection, `rpm-ostree install` still standard for layering.
+  Docs and community guidance mix the two; this is normal.
+- Software tiers: Flatpak for GUI, Homebrew for CLI, distrobox/devcontainers
+  for dev environments, rpm-ostree layering as last resort. Bluefin DX ships
+  Docker Engine, Podman, distrobox, VS Code out of the box.
+- Key ujust commands: `ujust update` (system + flatpak + brew), `ujust
+  rebase-helper` (stream switch / rollback to date-tagged builds), `ujust
+  dx-group` (adds user to dev groups; needed on stable, not gts), `ujust
+  devmode`, `ujust enroll-secure-boot-key`.
+- Updates check every 6 hours automatically; system image applies at reboot.
+- `/etc` is writable and persists across image updates; `/home` symlinks to
+  `/var/home` (stow works unchanged).
+- 1Password: layer the official RPM (repo file + key into /etc/yum.repos.d).
+  The pre-July-2026 "updates fail on ostree" bug is fixed upstream
+  (v8.12.30-19). Known residual gotcha: helper-tool GID mismatch on ostree
+  (community fix script, gist b-/ed2cdc182ae5a92bdcd6b73308832a70) if the
+  browser extension or CLI cannot connect. The Homebrew cask 1Password is
+  broken (missing setgid); never use it. Layered 1Password updates ride
+  `ujust update`, no self-update.
+- Homebrew Chromium/Firefox do not exist on Linux (casks are macOS-only for
+  browsers; no formulae). Confirmed dead end, do not revisit.
+- Chromium policies: /etc/chromium/policies/managed/*.json works identically
+  to Mint for the layered RPM. Captured policies: 1password.json,
+  extensions.json, no-google-telemetry.json (in etc/chromium-policies/).
+- Firefox 1Password integration needs the RPM (non-sandboxed) build; native
+  messaging manifests land in the standard Mozilla paths.
+- Android: Bluefin ships no adb udev rules. 51-android.rules is captured in
+  etc/udev/, install to /etc/udev/rules.d/ + udevadm reload. SDK reinstalls
+  via cmdline-tools into ~/Android; adb keys restored from backup (~/.android).
+- SELinux: Bluefin enforces; Mint data carries no labels. After ANY restore
+  into /var/home, run `sudo restorecon -R -v /var/home/glw907`. Skipping this
+  is a documented cause of broken logins.
+
+## Backup state (Phase 0, complete as of this writing)
+
+- All repos pushed to GitHub, including backup/pre-bluefin-* stash refs
+  (907-life, aksailingclub-org, asc-site). EXCEPTION: cairn-cms had a live
+  Claude session; Geoff pauses and pushes it himself before the wipe. Verify
+  before wiping: `cd ~/Projects/cairn-cms && git status && git log
+  --branches --not --remotes --oneline` must be clean/empty, including
+  .claude/worktrees/*.
+- smallbusinessak-org has NO GitHub remote (gh repo create was pending);
+  full git bundle is in the backup at projects/smallbusinessak-org.bundle.
+- Encrypted backup: pre-bluefin-backup.tar.age, 2.5G,
+  sha256 db0c2c041d2587ac300421734e4d4f32f436832242d385f20cc913aee0a0dbe1.
+  Copies: USB stick (/media/glw907/writable/pre-bluefin/, until the stick is
+  reflashed with the Bluefin ISO) and R2 bucket `workstation-backup` under
+  pre-bluefin/ as 250M chunks (chunk-aa, chunk-ab, ...; reassemble with
+  `cat chunk-* > pre-bluefin-backup.tar.age`, verify sha256).
+- Gotcha for future R2 work: `wrangler r2 object put` writes to the LOCAL
+  Miniflare simulator unless `--remote` is passed. The first upload pass hit
+  this; always verify with the R2 objects API listing, never trust "Upload
+  complete" alone.
+- Encrypted to the workstation age recipient
+  age197mcd2m3z90t49n9t5v3ujjntw7krfkw5y9sjfc545v28qvezugshg7jgk. The
+  identity key lives in 1Password (fetch once per session, sudo semantics).
+  Decrypt: `age -d -i <keyfile> pre-bluefin-backup.tar.age | tar -x`.
+- Tarball contents: home/ (.dotfiles, .ssh, .contacts, .vdirsyncer, .android,
+  Documents, corpus, Pictures, .local/bin, .local/share/keyrings, selected
+  .config including chromium profile, gcloud, gh, op, 1Password, poplar,
+  jrnl*, khard, vale, google-workspace, age key asc-key.txt, systemd user
+  units; .claude with memory, settings, skills, docs, agents, workflows,
+  history), projects/ (aksailingclub-sveltekit minus node_modules,
+  cairn-scratch minus artifacts, ecxc-ski-agent-memory,
+  smallbusinessak-org.bundle), etc-capture/ (chromium policies, 51-android
+  udev rule, crontab.txt), manifest.txt.
+
+## Current-machine facts the artifacts must honor
+
+- Active services to re-establish: syncthing (systemd user service, active on
+  Mint; on Bluefin, `brew services start syncthing` generates and manages the
+  service unit itself, no manual `systemctl --user enable --now` step needed).
+- Crontab: only the weekly workstation-update line concept carries forward
+  (Bluefin auto-updates; the script likely becomes unnecessary; eudaimonia
+  lines are dead).
+- CLI estate observed in use on Mint (curate Brewfile from this, not from the
+  full apt dump): age gh git jq yq micro stow tmux pandoc hugo sqlite3
+  imagemagick ffmpeg yt-dlp socat ttyd rsync khard vdirsyncer vale syncthing
+  go gofumpt golangci-lint chafa. Java 17 (openjdk@17) for Android tooling.
+  khard/vdirsyncer/yt-dlp are Python: prefer `uv tool install`.
+- npm globals in use: browser-sync, markdownlint-cli, prettier (via mise
+  node, or per-project).
+- kitty is the terminal (config stowed); install via upstream binary
+  installer into ~/.local/kitty.app, not layered.
+- Claude Code via native installer to ~/.local/bin/claude; ~/.claude restored
+  from backup before first launch.
+- 1Password askpass flow: SUDO_ASKPASS=~/.local/bin/claude-askpass (script in
+  dotfiles bin package); depends on 1Password desktop + op CLI desktop-app
+  integration; `claude-sudo-setup` re-mints the age file.
+- Stow packages: bash bin claude git kitty contacts (android package holds
+  README only).
+- GNOME on Bluefin replaces Cinnamon; no desktop config carries over (Geoff
+  explicitly does not need desktop defaults preserved).

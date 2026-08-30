@@ -1,0 +1,9 @@
+# Flatpak app IDs for a fresh Bluefin DX install.
+# Source: inventory/flatpaks-mint.txt, minus org.fedoraproject.MediaWriter
+# (that was the ISO-writing tool used to build the install media; not needed
+# on the installed system).
+com.discordapp.Discord
+com.fastmail.Fastmail
+im.dino.Dino
+io.github.janbar.noson
+org.gajim.Gajim

@@ -17,6 +17,11 @@
             "type": "command",
             "command": "claude-block-op",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "claude-tierguard",
+            "timeout": 10
           }
         ]
       }

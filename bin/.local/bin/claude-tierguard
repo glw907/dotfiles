@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# PreToolUse guard: rpm-ostree install is allowed only for packages listed in
+# ~/.dotfiles/bluefin/layered-packages.txt. No-op on machines without rpm-ostree.
+set -euo pipefail
+
+cmd=$(jq -r '.tool_input.command // empty' 2>/dev/null) || exit 0
+[[ "$cmd" == *rpm-ostree*install* ]] || exit 0
+command -v rpm-ostree >/dev/null 2>&1 || exit 0
+
+list="$HOME/.dotfiles/bluefin/layered-packages.txt"
+
+deny() {
+  jq -n --arg reason "$1" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: $reason
+    }
+  }'
+  exit 0
+}
+
+[[ -f "$list" ]] || deny "layered-packages.txt not found at $list. Restore the dotfiles bluefin artifacts before layering anything."
+
+# Allowlist contents, minus comment and blank lines. An all-comment list reads
+# as empty, which denies everything; that is the intended fail-closed behavior.
+allowed=$(grep -vE '^[[:space:]]*(#|$)' "$list" || true)
+
+# Collect non-flag arguments after the install verb. $cmd is deliberately
+# unquoted here so the command string splits into words.
+seen_install=0
+unlisted=()
+for word in $cmd; do
+  if [[ $seen_install -eq 0 ]]; then
+    [[ "$word" == "install" ]] && seen_install=1
+    continue
+  fi
+  [[ "$word" == -* || "$word" == "&&" || "$word" == ";" ]] && continue
+  if ! grep -qx "$word" <<< "$allowed"; then
+    unlisted+=("$word")
+  fi
+done
+
+if [[ ${#unlisted[@]} -gt 0 ]]; then
+  deny "Package(s) not in layered-packages.txt: ${unlisted[*]}. The layered set stays minimal by policy. To add one: record it with a reason in ~/.dotfiles/bluefin/MIGRATION-BRIEF.md, add it to layered-packages.txt, commit, then retry. Prefer brew (CLI), flatpak (GUI), or mise/uv (runtimes) if the package fits a higher tier."
+fi
+
+exit 0

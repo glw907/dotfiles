@@ -192,3 +192,11 @@ export AGE_KEY_FILE="$HOME/.config/age/asc-key.txt"
 # Load workstation secrets (decrypted by ~/.dotfiles/scripts/secrets/sync.sh)
 # Run sync.sh after any credential rotation to update this file.
 [ -f "$HOME/.local/secrets" ] && source "$HOME/.local/secrets"
+
+# Homebrew (Bluefin DX and any other machine with linuxbrew installed);
+# harmless no-op on machines without it, such as Mint.
+[ -x /home/linuxbrew/.linuxbrew/bin/brew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# mise (Bluefin DX Node/tool version manager); harmless no-op on machines
+# without it, such as Mint.
+command -v mise > /dev/null 2>&1 && eval "$(mise activate bash)"
