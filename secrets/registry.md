@@ -182,9 +182,13 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 - **Exposure post-mortem (2026-08-30 audit)**: a PRIOR value of this token sat in plaintext
   in the public repo's git history (`bash/.bashrc`, 2026-01-30 to 2026-03-19, also copied
   into `cli-mode.md` for a period). Verified 2026-08-30: the leaked value is dead
-  (Cloudflare rejects it) and differs from the live value by hash. History purge is a
-  standing decision item; secret scanning + push protection are now enabled on the repo,
-  and the claude-secret-guard hook blocks credential-shaped writes at the source.
+  (Cloudflare rejects it) and differs from the live value by hash. History PURGED
+  2026-08-30 on Geoff's go (git filter-repo: token redacted, browser-bookmarks blobs
+  dropped, HEAD tree verified byte-identical, force-pushed, 374 commits rewritten).
+  Pre-purge backup: `~/.local/state/workstation-prepurge-2026-08-30.bundle` (mode 600,
+  still contains the dead token; delete when no longer wanted). Secret scanning + push
+  protection are enabled on the repo, and the claude-secret-guard hook blocks
+  credential-shaped writes at the source.
 - **Also wrapped as a Workers Builds build token** (2026-08-22, Geoff's call): build token
   `503cd3fe-a701-4d5e-be7b-4c93a61335fa` "xcathletes build token (CLAUDE_CODE admin token)"
   backs the Workers Builds triggers for `xcathletes` and both `907-life` triggers (the

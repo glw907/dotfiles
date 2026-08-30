@@ -26,7 +26,11 @@ MIGRATION-BRIEF.md moved to `docs/`; docs/secrets.md merged into
 
 - **The 2026-01 token leak and its post-mortem** live in
   `secrets/registry.md` under CLOUDFLARE_API_TOKEN. The leaked value is dead
-  (verified against the API); the history purge is a ROADMAP decision item.
+  (verified against the API). The history purge ran the same day on Geoff's
+  go: git filter-repo over a mirror clone, HEAD tree verified identical,
+  force-pushed (all commit SHAs before 2026-08-30 changed; the pre-purge
+  bundle in `~/.local/state/` is the only place the old SHAs and the token
+  still exist).
 - **A stow package is pure payload**: the gate's own pytest run once wrote
   `__pycache__` into `bin/` and stow linked it into `~/.local/bin`.
   `PYTHONDONTWRITEBYTECODE=1` in check.sh plus `bin/.stow-local-ignore`

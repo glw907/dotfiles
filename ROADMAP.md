@@ -7,13 +7,6 @@ Current state lives in `docs/STATUS.md`; the per-pass ledger in
 
 ## Planned
 
-- **Git history purge**: the public repo's history carries a dead Cloudflare
-  token (2026-01-30 to 2026-03-19), a Firefox places.sqlite with expired
-  session JWTs, and browser bookmark exports (see `secrets/registry.md`'s
-  exposure post-mortem). All credentials verified dead 2026-08-30, so this is
-  privacy hygiene, not incident response. Needs `git filter-repo` plus a
-  force-push to main, which standing convention forbids; runs only on Geoff's
-  explicit go.
 - **musicbox repo split**: the music-VPS spec, plan, and library design
   (`docs/superpowers/plans/2026-08-30-music-vps-build.md`,
   `docs/superpowers/specs/2026-08-30-music-vps-build-design.md`,
