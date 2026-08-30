@@ -41,6 +41,20 @@ the right tier for a self-contained binary app with its own update mechanism).
 Homebrew has no Chromium or Firefox formula/cask on Linux — confirmed dead end, do not
 retry `brew install chromium` or similar.
 
+### Every install updates its manifest, same session
+
+Installing anything through any tier is half the job; the other half is recording it,
+in the same session, in the manifest that tier owns: `bluefin/Brewfile` (brew),
+`bluefin/flatpaks.txt` (flatpak, deliberate installs only), `bluefin/uv-tools.txt`
+(uv tools), `bluefin/layered-packages.txt` (layering, via the change-control rule),
+`bluefin/stow-packages.txt` (new stow packages), `bluefin/untracked-bin.txt` (a
+deliberately untracked `~/.local/bin` binary). `/etc` changes stage under
+`bluefin/etc/` first, per the drift discipline below. `check-drift` reconciles all
+of these against the live machine; a weekly user timer (`check-drift.timer`, the
+`upkeep` package) notifies on drift, and a session that installed or reconfigured
+anything runs `check-drift` before it closes. An install without its manifest line
+is drift you created knowingly.
+
 ### layered-packages.txt is the source of truth
 
 `~/.dotfiles/bluefin/layered-packages.txt` is the canonical list of what's layered via

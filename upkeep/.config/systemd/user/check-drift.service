@@ -1,0 +1,6 @@
+[Unit]
+Description=Reconcile ~/.dotfiles manifests against the live system
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/check-drift-notify

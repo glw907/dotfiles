@@ -324,6 +324,14 @@ setup_vale_styles() {
     (cd "$HOME/.config/vale" && vale sync)
 }
 
+setup_upkeep_timer() {
+    echo "== setup: weekly drift-reconciliation timer =="
+    # check-drift.timer arrives via the upkeep stow package; it notifies
+    # only when the repo and the live machine disagree.
+    systemctl --user daemon-reload || return 1
+    systemctl --user enable --now check-drift.timer
+}
+
 setup_contacts_timer() {
     echo "== setup: vdirsyncer user timer =="
     # The unit files arrive via the contacts stow package, but a stowed
@@ -794,6 +802,7 @@ phase_setup() {
         setup_stow
         setup_git_hooks
         setup_vale_styles
+        setup_upkeep_timer
         setup_contacts_timer
         setup_kitty
         setup_verify_claude_code

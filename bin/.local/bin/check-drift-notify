@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+# check-drift-notify: timer-facing wrapper around check-drift. Runs the
+# reconciler with a full PATH (systemd user units get a bare one), logs the
+# complete report to the journal, and raises a desktop notification only
+# when drift exists. Silent when clean, so the weekly timer never nags a
+# tidy machine.
+
+export PATH="$HOME/.local/bin:/home/linuxbrew/.linuxbrew/bin:/usr/bin:/usr/sbin:$PATH"
+
+out=$("$HOME/.local/bin/check-drift" 2>&1) && { echo "clean"; exit 0; }
+echo "$out"
+items=$(grep -c '^  x' <<< "$out" || true)
+notify-send --urgency=normal "Dotfiles drift" \
+    "${items} item(s) out of sync. Run check-drift in a terminal, then update the manifests." \
+    2>/dev/null || true
+exit 0

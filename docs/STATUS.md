@@ -30,8 +30,10 @@ actually stands, not the retired Mint 22 desktop setup.
 
 ## Immediate next action
 
-None. Steady state: routine `workstation-update` runs and `check-drift`
-checks. No pass is in flight.
+None. Steady state: routine `workstation-update` runs; `check-drift`
+reconciles every manifest against the live machine (weekly
+`check-drift.timer` notifies on drift; every install records itself in its
+tier's manifest same-session, per bluefin-admin.md). No pass is in flight.
 
 ## Open items
 

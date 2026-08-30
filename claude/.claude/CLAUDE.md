@@ -64,18 +64,20 @@ build of either: the sandbox blocks required native messaging. Read
 
 ## System Organization
 
-- Home dir (`~/`) minimal: scripts -> `~/.local/bin/`, configs -> `~/.config/`;
+- Home dir minimal: scripts -> `~/.local/bin/`, configs -> `~/.config/`;
   check `~/.dotfiles/` first
 - `/etc` changes land in `~/.dotfiles/bluefin/etc/` first, then install from
   there; never edit `/etc` directly (see `bluefin-admin.md`)
-- micro is the editor. Neovim is not installed; never suggest it or `nvim-journal`.
+- micro is the editor; Neovim is not installed, never suggest it.
 
 ## Dotfiles Management
 
-- **Location**: `~/.dotfiles`, GNU Stow; packages from
-  `bluefin/stow-packages.txt`: `bash beets bin claude contacts git kitty mise vale`
-- `check-drift` probes real stow state per package and git drift; new script:
-  add to `bin/.local/bin/`, then `stow -R bin`. Repo gate: `scripts/check.sh`.
+- **Location**: `~/.dotfiles`, GNU Stow; packages listed in
+  `bluefin/stow-packages.txt`
+- **Every install records itself in its tier's manifest, same session**
+  (map: `bluefin-admin.md`); `check-drift` reconciles, a weekly timer
+  notifies on drift. Repo gate: `scripts/check.sh`. New script:
+  `bin/.local/bin/` + `stow -R bin`.
 
 ## Git Conventions
 
