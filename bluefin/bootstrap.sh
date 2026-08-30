@@ -12,7 +12,7 @@ set -euo pipefail
 #   bootstrap.sh layer     # run once, after the reboot from `devmode`
 #   bootstrap.sh setup     # run once, right after the reboot from `layer`
 #   bootstrap.sh restore   # run once, after `setup` and the 1Password CLI
-#                          # toggle; executes MIGRATION-RUNBOOK.md section 4
+#                          # toggle; restores the pre-migration R2 backup
 #
 # Two reboots, and they are not optional. `devmode` rebases the image to
 # bluefin-dx (a staged bootc switch that only takes effect on boot), and
@@ -403,13 +403,14 @@ with 1Password CLI" (GUI-only toggle), then run:
 
   ~/.dotfiles/bluefin/bootstrap.sh restore
 
-It executes MIGRATION-RUNBOOK.md section 4 with the same hard stops.
+It restores the pre-migration R2 backup with the same hard stops.
 EOF
 }
 
 # --- restore phase -----------------------------------------------------------
-# Executes MIGRATION-RUNBOOK.md section 4 (Restore) step for step. The runbook
-# section is the specification and the manual fallback; keep the two in sync.
+# Restores the 2026-08 pre-migration backup step for step. The retired
+# MIGRATION-RUNBOOK.md section 4 (git history, removed 2026-08-30) was the
+# specification; this phase is now the record.
 # Fail-fast and rerunnable: completed steps detect their own state and skip.
 
 RESTORE_STAGING="$HOME/restore-staging"
@@ -677,13 +678,14 @@ restore_checklist() {
 
 - Diff the restored ~/.local/bin against the bin stow package and delete any
   Mint-only stray.
-- Section 5 (re-authentication) and section 6 (verification) remain, plus the
-  CLAUDE.md machine-section rewrite from CLAUDE-md-draft.md.
+- Re-authentication and verification checklists remain; the retired
+  MIGRATION-RUNBOOK.md (git history, removed 2026-08-30) carries them.
 
 Next: launch Claude Code (first launch asks you to log in), then hand it:
 
-  claude "Read ~/.dotfiles/bluefin/MIGRATION-RUNBOOK.md. Sections 1-4 are done.
-  Continue from section 5, then apply CLAUDE-md-draft.md per its header."
+  claude "The Bluefin restore phase is done. Recover the retired
+  MIGRATION-RUNBOOK.md from git history and run its re-authentication
+  and verification sections."
 EOF
 }
 

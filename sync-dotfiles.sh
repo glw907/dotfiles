@@ -18,6 +18,9 @@ needs_commit=false
 
 # 1. Check Stow-managed packages
 echo -e "${BOLD}📦 Checking Stow packages...${NC}"
+# Reads stow-packages.txt, dropping comment and blank lines (bootstrap.sh
+# reads the same file with its own read_list helper; kept separate here
+# since this script doesn't source bootstrap.sh).
 stow_packages=()
 mapfile -t stow_packages < <(grep -vE '^[[:space:]]*(#|$)' "$DOTFILES/bluefin/stow-packages.txt")
 for package in "${stow_packages[@]}"; do
