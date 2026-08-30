@@ -448,7 +448,14 @@ Preconditions before starting: mise's Node is active (`npx` resolves) and
    sudo restorecon -R -v /var/home/glw907
    ```
 
-10. Clean up the age key from tmpfs:
+10. **Extras archive, on demand only.** Alongside the main backup, R2 holds
+   `pre-bluefin/extras-chunk-*`: an age-encrypted last-sweep archive
+   (irreplaceable `~/Downloads` subset, the US Mobile invoice, a current
+   agent-memory copy newer than the one this restore just placed). It is not
+   part of this restore; `pre-bluefin/EXTRAS.md` in the same bucket carries
+   the contents list and reassembly commands.
+
+11. Clean up the age key from tmpfs:
 
    ```bash
    shred -u "/dev/shm/.age-key-$UID"
