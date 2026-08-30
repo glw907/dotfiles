@@ -18,7 +18,9 @@ needs_commit=false
 
 # 1. Check Stow-managed packages
 echo -e "${BOLD}📦 Checking Stow packages...${NC}"
-for package in bash bin claude git; do
+stow_packages=()
+mapfile -t stow_packages < <(grep -vE '^[[:space:]]*(#|$)' "$DOTFILES/bluefin/stow-packages.txt")
+for package in "${stow_packages[@]}"; do
     if [ -d "$DOTFILES/$package" ]; then
         echo -e "  ${GREEN}✓${NC} $package (Stow-managed)"
     fi

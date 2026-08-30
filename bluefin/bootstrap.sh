@@ -28,19 +28,22 @@ set -euo pipefail
 BLUEFIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(dirname "$BLUEFIN_DIR")"
 
+# Reads a list file, dropping comment and blank lines.
+read_list() {
+    grep -vE '^[[:space:]]*(#|$)' "$1"
+}
+
 # Shared between setup_stow and restore_place_home, which both pre-create
 # these dirs (to keep stow from folding them) and then run the same stow.
-STOW_PACKAGES=(bash bin claude git kitty contacts)
+# Single-sourced from stow-packages.txt so sync-dotfiles.sh can't drift from
+# what this script actually stows.
+STOW_PACKAGES=()
+mapfile -t STOW_PACKAGES < <(read_list "$BLUEFIN_DIR/stow-packages.txt")
 STOW_SHARED_DIRS=("$HOME/.local/bin" "$HOME/.claude" "$HOME/.config/khard" \
     "$HOME/.config/systemd/user")
 
 # Where stow_clear_conflicts parks files it moves out of the way.
 STOW_CONFLICT_BACKUP="$HOME/.dotfiles-preexisting"
-
-# Reads a list file, dropping comment and blank lines.
-read_list() {
-    grep -vE '^[[:space:]]*(#|$)' "$1"
-}
 
 # stow refuses to replace a real file at a target path, and a single conflict
 # fails the whole package. On a fresh install that is easy to hit: `gh auth
@@ -269,11 +272,12 @@ setup_mise_uv() {
     eval "$(mise activate bash)"
     mise use --global node@lts
 
-    # khard, vdirsyncer, yt-dlp are Python tools per the brief; installed via
-    # uv rather than Homebrew.
+    # khard, vdirsyncer, yt-dlp, ruff are Python tools per the brief;
+    # installed via uv rather than Homebrew.
     uv tool install khard
     uv tool install vdirsyncer
     uv tool install yt-dlp
+    uv tool install ruff
 }
 
 setup_stow() {
@@ -365,11 +369,11 @@ Android:
 Homebrew / mise / uv:
   - `brew doctor`
   - `mise doctor`
-  - `uv tool list` shows khard, vdirsyncer, yt-dlp
+  - `uv tool list` shows khard, vdirsyncer, yt-dlp, ruff
 
 Dotfiles:
-  - `stow -n bash bin claude git kitty contacts` reports no conflicts
-    (already stowed by this script; -n dry-runs to confirm).
+  - `stow -n $(grep -vE '^[[:space:]]*(#|$)' bluefin/stow-packages.txt)`
+    reports no conflicts (already stowed by this script; -n dry-runs to confirm).
 
 Terminal:
   - Ptyxis is the daily terminal and needs no setup; it ships with the image.

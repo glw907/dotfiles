@@ -1,9 +1,16 @@
-# Flatpak app IDs for a fresh Bluefin DX install.
-# Source: inventory/flatpaks-mint.txt, minus org.fedoraproject.MediaWriter
-# (that was the ISO-writing tool used to build the install media; not needed
-# on the installed system).
+# Flatpak app IDs to install deliberately, beyond what Bluefin DX ships by
+# default.
+#
+# Scoping rule: Bluefin's own stock flatpak set (GNOME core apps, Bazaar,
+# Flatseal, MissionCenter, etc., defined upstream in
+# /usr/share/ublue-os/homebrew/system-flatpaks.Brewfile and
+# system-dx-flatpaks.Brewfile, installed by `ujust install-system-flatpaks`
+# / the image build) stays implicit here because the image already provides
+# it. An app ID belongs in this file only if it is NOT present in either
+# upstream Brewfile. Check both files before adding or removing an entry.
 com.discordapp.Discord
 com.fastmail.Fastmail
+com.plexamp.Plexamp
 im.dino.Dino
 io.github.janbar.noson
 org.gajim.Gajim
