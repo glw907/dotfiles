@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+"""Markdown planner — weekly folders with daily task/event files and a journal."""
+
+import argparse
+import sys
+from datetime import date, timedelta
+from pathlib import Path
+
+PLANNER_DIR = Path.home() / "Planner"
+
+DAYS = [
+    "1-monday",
+    "2-tuesday",
+    "3-wednesday",
+    "4-thursday",
+    "5-friday",
+    "6-saturday",
+    "7-sunday",
+]
+
+
+def get_week_start(d: date) -> date:
+    """Return the Monday of the week containing date d."""
+    return d - timedelta(days=d.weekday())
+
+
+def get_daily_filename(d: date) -> str:
+    """Return the daily filename for a given date (e.g. '1-monday.md')."""
+    return f"{DAYS[d.weekday()]}.md"
+
+
+def build_daily_template(mission: str) -> str:
+    return f"""> Mission: {mission}
+
+# MITs
+
+- [ ]
+
+# Tasks
+
+- [ ]
+
+# Events
+
+-
+"""
+
+
+def format_date(d: date) -> str:
+    """Format as 'Saturday, March 28th'."""
+    day = d.day
+    if 11 <= day <= 13:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+    return f"{d.strftime('%A, %B')} {day}{suffix}"
+
+
+def build_journal(week_start: date) -> str:
+    lines = [f"# Week of {week_start.strftime('%B %-d, %Y')}", ""]
+    for i in range(7):
+        d = week_start + timedelta(days=i)
+        lines.extend([
+            f"## {format_date(d)}",
+            "",
+            "### 00:00 AM",
+            "",
+            "",
+            "### 00:00 PM",
+            "",
+            "",
+        ])
+    return "\n".join(lines)
+
+
+def extract_open_tasks(filepath: Path) -> list[str]:
+    """Extract unchecked, non-dropped task lines from a daily file."""
+    tasks = []
+    in_mits_or_tasks = False
+    for line in filepath.read_text().splitlines():
+        if line.startswith("# MITs") or line.startswith("# Tasks"):
+            in_mits_or_tasks = True
+            continue
+        if line.startswith("# "):
+            in_mits_or_tasks = False
+            continue
+        if in_mits_or_tasks and line.startswith("- [ ] ") and "~~" not in line:
+            stripped = line.strip()
+            if stripped != "- [ ]":
+                tasks.append(stripped)
+    return tasks
+
+
+def append_tasks(filepath: Path, tasks: list[str]):
+    """Append carried-forward tasks to the Tasks section of a daily file."""
+    lines = filepath.read_text().splitlines()
+    insert_idx = None
+    for i, line in enumerate(lines):
+        if line.startswith("# Events"):
+            insert_idx = i
+            while insert_idx > 0 and lines[insert_idx - 1].strip() == "":
+                insert_idx -= 1
+            break
+
+    if insert_idx is None:
+        return
+
+    new_lines = lines[:insert_idx]
+    for task in tasks:
+        new_lines.append(task)
+    new_lines.append("")
+    new_lines.extend(lines[lines.index("# Events"):])
+    filepath.write_text("\n".join(new_lines) + "\n")
+
+
+def append_tasks_to_end(filepath: Path, tasks: list[str]):
+    """Append tasks to the end of a file's Tasks section (for files without Events)."""
+    content = filepath.read_text().rstrip("\n")
+    lines = content.splitlines()
+    # Remove trailing empty placeholder
+    while lines and lines[-1].strip() in ("", "- [ ]"):
+        lines.pop()
+    for task in tasks:
+        lines.append(task)
+    filepath.write_text("\n".join(lines) + "\n")
+
+
+PLACEHOLDER_MISSION = "Set your mission"
+
+
+def build_week_template() -> str:
+    return f"""> Mission: {PLACEHOLDER_MISSION}
+
+# Tasks
+
+- [ ]
+"""
+
+
+def create_week(monday: date, base_dir: Path) -> bool:
+    """Create a single week folder. Returns True if created, False if it already exists."""
+    week_dir = base_dir / monday.isoformat()
+    if week_dir.exists():
+        return False
+
+    week_dir.mkdir(parents=True)
+
+    # Create week planning file
+    week_file = week_dir / "0-week.md"
+    week_file.write_text(build_week_template())
+
+    # Seed week tasks from previous week's Sunday
+    prev_sunday_dir = base_dir / (monday - timedelta(days=7)).isoformat()
+    prev_sunday_file = prev_sunday_dir / "7-sunday.md"
+    if prev_sunday_file.exists():
+        tasks = extract_open_tasks(prev_sunday_file)
+        if tasks:
+            append_tasks_to_end(week_file, tasks)
+
+    template = build_daily_template(PLACEHOLDER_MISSION)
+    for i in range(7):
+        day = monday + timedelta(days=i)
+        filename = get_daily_filename(day)
+        (week_dir / filename).write_text(template)
+
+    (week_dir / "journal.md").write_text(build_journal(monday))
+
+    return True
+
+
+def setup_week(base_dir: Path = PLANNER_DIR):
+    today = date.today()
+    this_monday = get_week_start(today)
+    next_monday = this_monday + timedelta(weeks=1)
+
+    for monday in [this_monday, next_monday]:
+        if create_week(monday, base_dir):
+            print(f"Created week: {base_dir / monday.isoformat()}")
+        else:
+            print(f"Already exists: {base_dir / monday.isoformat()}")
+
+
+def carry_forward(base_dir: Path = PLANNER_DIR, today_override: date | None = None):
+    today = today_override or date.today()
+    monday = get_week_start(today)
+    week_dir = base_dir / monday.isoformat()
+
+    if not week_dir.exists():
+        print(f"Error: No week folder for {monday.isoformat()}. Run 'planner week' first.", file=sys.stderr)
+        sys.exit(1)
+
+    today_file = week_dir / get_daily_filename(today)
+    if not today_file.exists():
+        print(f"Error: Today's file missing: {today_file}", file=sys.stderr)
+        sys.exit(1)
+
+    yesterday = today - timedelta(days=1)
+    yesterday_monday = get_week_start(yesterday)
+    yesterday_dir = base_dir / yesterday_monday.isoformat()
+    yesterday_file = yesterday_dir / get_daily_filename(yesterday)
+
+    if not yesterday_file.exists():
+        print("No yesterday file found — nothing to carry forward.")
+        return
+
+    tasks = extract_open_tasks(yesterday_file)
+    if not tasks:
+        print("No open tasks to carry forward.")
+        return
+
+    append_tasks(today_file, tasks)
+    print(f"Carried forward {len(tasks)} task(s) to {today_file.name}.")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Markdown planner")
+    sub = parser.add_subparsers(dest="command")
+
+    sub.add_parser("week", help="Set up current and next week")
+
+    sub.add_parser("day", help="Carry forward yesterday's incomplete tasks")
+
+    args = parser.parse_args()
+    if args.command is None:
+        parser.print_help()
+        sys.exit(1)
+
+    if args.command == "week":
+        setup_week(base_dir=PLANNER_DIR)
+    elif args.command == "day":
+        carry_forward(base_dir=PLANNER_DIR)
+
+
+if __name__ == "__main__":
+    main()
