@@ -129,6 +129,7 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | CMS_BOT_PAT         | ✓     | —        | —    | —        | —          |
 | RESEND_API_KEY      | ✓     | ✓        | ✓    | —        | —          |
 | CONTACT_EMAIL       | ✓     | —        | —    | —        | ✓          |
+| HCLOUD_TOKEN        | ✓     | —        | —    | —        | —          |
 | FASTMAIL_API_TOKEN  | ✓     | —        | —    | —        | —          |
 | GITHUB_APP_ID       | ✓     | ✓        | —    | —        | —          |
 | GITHUB_APP_INSTALLATION_ID | ✓ | ✓     | —    | —        | —          |
@@ -196,6 +197,13 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
   auto-deploy for both workers until a new build token is created
   (`POST /accounts/{id}/builds/tokens` with the new token id and value) and each trigger
   is PATCHed to it. Scope added 2026-08-22: Workers Builds Configuration: Edit.
+
+### HCLOUD_TOKEN
+- **Grants**: Hetzner Cloud API read/write, project `musicbox` only
+- **Token name at issuer**: claude-code-thinkpad-x1
+- **Used by**: musicbox provisioning (`scripts/provision.sh`, hcloud CLI)
+- **Rotate at**: console.hetzner.cloud > project musicbox > Security > API tokens
+- **Received 2026-08-30** via `secret-receive` (desktop dialog, value never in transcript)
 
 ### CF_ZT_TOKEN
 - **Grants**: Cloudflare Zero Trust API (Access apps, policies, identity providers)
