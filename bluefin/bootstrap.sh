@@ -456,7 +456,7 @@ restore_selinux() {
     sudo restorecon -R -v /var/home/glw907
 }
 
-# Runbook 4.10.
+# Runbook 4.11 (4.10 is the on-demand extras archive, not part of restore).
 restore_cleanup() {
     echo "== restore: cleanup =="
     shred -u "$AGE_KEY_CACHE"
