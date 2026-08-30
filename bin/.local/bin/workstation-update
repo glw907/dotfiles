@@ -1,25 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Workstation maintenance: update all tools not managed by apt
-# Usage: workstation-update [--apt]
+# Workstation maintenance: update tools outside the ujust update flow
+# Usage: workstation-update
 #
-# By default updates tools installed outside apt (kitty, Android SDK).
-# Pass --apt to also run apt update/upgrade/autoremove (requires sudo).
+# `ujust update` handles the system image, Flatpaks, and Homebrew together
+# (including Go, which is brewed) and is the preferred path for that tier;
+# run it separately, interactively, since it can prompt for a reboot.
 #
-# Scheduled weekly via cron (apt section skipped unless --apt is passed).
-# To run full update manually: workstation-update --apt
+# This script covers what ujust update does not: mise-managed runtimes, uv
+# tool installs, kitty (deliberately upstream-installed as a test harness,
+# never brewed or flatpaked), and the Android SDK.
+#
+# Scheduled weekly via cron.
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 BOLD='\033[1m'
 NC='\033[0m'
-
-RUN_APT=false
-for arg in "$@"; do
-    [[ "$arg" == "--apt" ]] && RUN_APT=true
-done
 
 ERRORS=()
 
@@ -31,43 +30,41 @@ section() {
 # ── kitty ──────────────────────────────────────────────────────────────────
 
 section "kitty"
-if command -v kitty &>/dev/null || [[ -x "$HOME/.local/kitty.app/bin/kitty" ]]; then
-    KITTY_BIN="$HOME/.local/kitty.app/bin/kitty"
-    BEFORE=$("$KITTY_BIN" --version 2>/dev/null | awk '{print $2}')
-    echo "Current: $BEFORE"
-    if curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n 2>&1; then
-        AFTER=$("$KITTY_BIN" --version 2>/dev/null | awk '{print $2}')
-        if [[ "$BEFORE" == "$AFTER" ]]; then
-            echo -e "${GREEN}✓ Already up to date (${AFTER})${NC}"
-        else
-            echo -e "${GREEN}✓ Updated: ${BEFORE} → ${AFTER}${NC}"
-        fi
-    else
-        echo -e "${RED}✗ kitty update failed${NC}"
+if command -v update-kitty &>/dev/null; then
+    if ! update-kitty; then
+        echo -e "${RED}✗ update-kitty failed${NC}"
         ERRORS+=("kitty")
     fi
 else
-    echo -e "${YELLOW}⚠ kitty not found, skipping${NC}"
+    echo -e "${YELLOW}⚠ update-kitty not on PATH, skipping${NC}"
 fi
 
-# ── Go ──────────────────────────────────────────────────────────────────────
+# ── mise ───────────────────────────────────────────────────────────────────
 
-section "Go"
-if command -v update-go &>/dev/null; then
-    if update-go; then
-        :
+section "mise"
+if command -v mise &>/dev/null; then
+    if mise upgrade; then
+        echo -e "${GREEN}✓ mise-managed runtimes updated${NC}"
     else
-        rc=$?
-        # exit 3 = minor-series bump withheld; surface but don't fail the run.
-        if [[ $rc -eq 3 ]]; then
-            echo -e "${YELLOW}⚠ Go minor-series bump pending — run: update-go --allow-minor${NC}"
-        else
-            echo -e "${RED}✗ update-go failed${NC}"
-            ERRORS+=("go")
-        fi
+        echo -e "${RED}✗ mise upgrade failed${NC}"
+        ERRORS+=("mise")
     fi
 else
-    echo -e "${YELLOW}⚠ update-go not on PATH, skipping${NC}"
+    echo -e "${YELLOW}⚠ mise not on PATH, skipping${NC}"
+fi
+
+# ── uv tools ───────────────────────────────────────────────────────────────
+
+section "uv tools"
+if command -v uv &>/dev/null; then
+    if uv tool upgrade --all; then
+        echo -e "${GREEN}✓ uv-managed tools updated${NC}"
+    else
+        echo -e "${RED}✗ uv tool upgrade failed${NC}"
+        ERRORS+=("uv")
+    fi
+else
+    echo -e "${YELLOW}⚠ uv not on PATH, skipping${NC}"
 fi
 
 # ── Android SDK ─────────────────────────────────────────────────────────────
@@ -83,24 +80,11 @@ else
     echo -e "${YELLOW}⚠ ANDROID_HOME not set or sdkmanager not found, skipping${NC}"
 fi
 
-# ── apt (optional) ───────────────────────────────────────────────────────────
-
-if [[ "$RUN_APT" == true ]]; then
-    section "apt"
-    if sudo -n true 2>/dev/null; then
-        sudo apt update -q && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt autoclean
-        echo -e "${GREEN}✓ apt packages updated${NC}"
-    else
-        echo -e "${YELLOW}⚠ sudo not available non-interactively, skipping apt${NC}"
-        echo "  Run manually: sudo apt update && sudo apt upgrade"
-    fi
-fi
-
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 section "Done"
 if [[ ${#ERRORS[@]} -eq 0 ]]; then
-    echo -e "${GREEN}✓ All updates completed$([ "$RUN_APT" == false ] && echo " — run with --apt to also update system packages")${NC}"
+    echo -e "${GREEN}✓ All updates completed — run 'ujust update' separately for the system image, Flatpaks, and Homebrew${NC}"
 else
     echo -e "${RED}✗ Errors in: ${ERRORS[*]}${NC}"
     exit 1
