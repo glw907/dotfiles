@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# check-drift: report stow and git drift for ~/.dotfiles. Read-only; it never
+# modifies the repo, the packages, or $HOME. Replaces the old sync-dotfiles.sh,
+# which only checked that package directories existed.
+#
+# Exit 0 when every package is fully stowed and the repo is clean; exit 1
+# otherwise, with per-package detail.
+
+DOTFILES="$HOME/.dotfiles"
+PKG_LIST="$DOTFILES/bluefin/stow-packages.txt"
+
+fail=0
+
+echo "Stow state (packages from bluefin/stow-packages.txt):"
+# Reads the list file, dropping comment and blank lines. Same expression as
+# bootstrap.sh's read_list; duplicated so this script stays standalone.
+mapfile -t packages < <(grep -vE '^[[:space:]]*(#|$)' "$PKG_LIST")
+for pkg in "${packages[@]}"; do
+    if [[ ! -d "$DOTFILES/$pkg" ]]; then
+        echo "  x $pkg: listed but no package directory"
+        fail=1
+        continue
+    fi
+    # A simulated plain stow plans no LINK for a fully stowed package;
+    # planned LINKs mean unstowed files, CONFLICTs mean foreign files in the
+    # way. Either is drift.
+    plan=$(cd "$DOTFILES" && stow -n -v "$pkg" 2>&1 | grep -E 'LINK|CONFLICT' || true)
+    if [[ -n "$plan" ]]; then
+        echo "  x $pkg: not fully stowed"
+        sed 's/^/      /' <<< "$plan"
+        fail=1
+    else
+        echo "  + $pkg"
+    fi
+done
+
+echo ""
+echo "Git state:"
+drift=$(cd "$DOTFILES" && git status --porcelain)
+if [[ -n "$drift" ]]; then
+    echo "  x uncommitted changes:"
+    sed 's/^/      /' <<< "$drift"
+    echo "  Review and commit the specific files (never git add -A)."
+    fail=1
+else
+    echo "  + working tree clean"
+fi
+
+exit "$fail"

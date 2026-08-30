@@ -27,19 +27,27 @@ deny() {
 allowed=$(grep -vE '^[[:space:]]*(#|$)' "$list" || true)
 
 # Collect non-flag arguments after the install verb. $cmd is deliberately
-# unquoted here so the command string splits into words.
+# unquoted here so the command string splits into words; set -f keeps a glob
+# character in the command from expanding against the cwd. A chain separator
+# ends the install command's own arguments, so scanning stops there instead
+# of denying on the next command's words.
 seen_install=0
 unlisted=()
+set -f
 for word in $cmd; do
   if [[ $seen_install -eq 0 ]]; then
     [[ "$word" == "install" ]] && seen_install=1
     continue
   fi
-  [[ "$word" == -* || "$word" == "&&" || "$word" == ";" ]] && continue
+  case "$word" in
+    '&&'|'||'|';'|'|') break ;;
+  esac
+  [[ "$word" == -* ]] && continue
   if ! grep -qx "$word" <<< "$allowed"; then
     unlisted+=("$word")
   fi
 done
+set +f
 
 if [[ ${#unlisted[@]} -gt 0 ]]; then
   deny "Package(s) not in layered-packages.txt: ${unlisted[*]}. The layered set stays minimal by policy. To add one: record it with a reason in ~/.dotfiles/bluefin/MIGRATION-BRIEF.md, add it to layered-packages.txt, commit, then retry. Prefer brew (CLI), flatpak (GUI), or mise/uv (runtimes) if the package fits a higher tier."

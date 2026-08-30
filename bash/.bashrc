@@ -116,9 +116,7 @@ if ! shopt -oq posix; then
   fi
 fi
 export PATH="$HOME/.local/bin:$PATH"
-# Claude mode aliases
-# Modal Claude launchers at ~/.local/bin/cld*
-# cld, cld-arch, cld-research, cld-write, cld-critic
+# cld: the Claude launcher at ~/.local/bin/cld
 
 # Claude sudo helper setup
 export SUDO_ASKPASS="$HOME/.local/bin/claude-askpass"

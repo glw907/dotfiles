@@ -134,12 +134,11 @@ sudo -A udevadm trigger`.
   incompatibility — don't suggest a Flatpak browser as a fallback for anything that
   needs either integration.
 
-Chromium policy files (telemetry, extensions, 1Password) are the same JSON shape as
-the old Mint setup, captured at `bluefin/etc/chromium-policies/` and installed to
-`/etc/chromium/policies/managed/`. Verify on first boot: confirm the layered
-Chromium reads the same policy keys — see `chromium-browser.md` for the verification
-commands (the `strings` grep and the `--vmodule` policy-load check), which still
-apply once the paths are confirmed to match.
+Chromium policy files (telemetry, extensions, 1Password) are captured at
+`bluefin/etc/chromium-policies/` and installed to `/etc/chromium/policies/managed/`.
+Verify on first boot: `chrome://policy` in the layered Chromium lists all three
+managed policies as active. (The retired Mint-era `chromium-browser.md` carried
+deeper verification recipes; it lives in git history, removed 2026-08-30.)
 
 ## SELinux for restored data
 

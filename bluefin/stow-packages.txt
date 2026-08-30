@@ -1,6 +1,6 @@
 # Stow packages this repo manages, one per line. Single source of truth for
-# bootstrap.sh's STOW_PACKAGES array and sync-dotfiles.sh's package check;
-# both read this file instead of carrying their own hardcoded list.
+# bootstrap.sh's STOW_PACKAGES array and check-drift's package probe; both
+# read this file instead of carrying their own hardcoded list.
 bash
 beets
 bin

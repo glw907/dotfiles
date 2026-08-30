@@ -12,7 +12,8 @@ set -euo pipefail
 # tool installs, kitty (deliberately upstream-installed as a test harness,
 # never brewed or flatpaked), and the Android SDK.
 #
-# Scheduled weekly via cron.
+# Run manually; nothing schedules it. After a brew Go bump, poplar's go.mod
+# toolchain pin is a deliberate per-repo commit, not this script's job.
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'

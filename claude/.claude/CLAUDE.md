@@ -47,8 +47,7 @@ Firefox (layered RPM) is the daily browser, with 1Password integration. Chromium
 (layered RPM) is the dev/testing browser Claude Code drives (claude-in-chrome,
 chrome-devtools MCP, `chromium-shot`); invoke as `chromium`. Never a Flatpak
 build of either: the sandbox blocks required native messaging. Read
-`~/.claude/docs/bluefin-admin.md` before browser or extension work (supersedes
-`chromium-browser.md`).
+`~/.claude/docs/bluefin-admin.md` before browser or extension work.
 
 ## Sysadmin Preferences
 
