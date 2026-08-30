@@ -27,8 +27,12 @@ the volume, the permissions model, the backup layout, and the import-script hard
   and state never compete with the OS for space. `music-import` aborts below a free-space
   threshold and pings a failure check, because a full disk during import means truncated
   files that a later backup would faithfully replicate.
-- **OS**: Debian 13, provisioned by cloud-init (SSH key, Docker, unattended security
-  upgrades). SSH is key-only; a Hetzner Cloud firewall admits only port 22. Routing SSH
+- **OS**: AlmaLinux 10, provisioned by cloud-init (SSH key, Docker CE from its RHEL
+  repo, dnf-automatic for security updates). Chosen for Red Hat-family consistency with
+  the Fedora-based workstation; Fedora Server was rejected for its 13-month lifecycle on
+  a box meant to idle for years, and Fedora CoreOS because Hetzner has no official image.
+  SELinux stays enforcing; container bind mounts carry `:Z` labels. SSH is key-only; a
+  Hetzner Cloud firewall admits only port 22. Routing SSH
   through the tunnel was considered and rejected: it adds client-side friction to every
   rsync and rclone call for marginal gain over key-only auth.
 - **Users and permissions**: one `music` system user owns `/srv/music`. The import timer

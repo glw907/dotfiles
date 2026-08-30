@@ -12,7 +12,7 @@ scripts run on the host as the `music` user under systemd timers. Cloudflare Tun
 publishes both hostnames; Access guards the inbox. Everything reproducible from the
 `~/Projects/musicbox` repo plus R2.
 
-**Tech Stack:** Debian 13, cloud-init, hcloud CLI, Docker Compose, Navidrome, FileBrowser
+**Tech Stack:** AlmaLinux 10, cloud-init, hcloud CLI, Docker Compose, Navidrome, FileBrowser
 Quantum, cloudflared, beets (uv), rclone, msmtp, bats-core for script tests.
 
 **Spec:** `~/.dotfiles/docs/superpowers/specs/2026-08-30-music-vps-build-design.md`
@@ -30,6 +30,8 @@ Model per dispatch: sonnet implementers, claude-opus-5 diff review, per conventi
 - Image tags and package versions pinned explicitly; no `latest`, no auto-updater.
 - One `music` system user (uid/gid fixed at 2000) owns `/srv/music`; containers run as
   2000:2000; inbox directories are setgid.
+- SELinux stays enforcing (AlmaLinux default): every container bind mount in
+  `compose.yaml` carries a `:Z` label; never `setenforce 0` as a fix.
 - R2 bucket layout is pinned: `library/`, `state/`, `_archive/<tree>/<date>/`. One rclone
   invocation per tree, always `--exclude "/_archive/**"`.
 - Bash scripts pass shellcheck; pure helper functions live in `scripts/lib.sh` and carry
@@ -71,13 +73,15 @@ talks to hcloud.
 
 - [ ] Git repo with README stating the architecture in one paragraph and pointing at the
       spec; STATUS per the three-ledger convention.
-- [ ] `cloud-init/user-data.yaml`: SSH key (workstation pubkey), Docker CE install,
-      unattended-upgrades, `music` user (uid 2000, no shell login), mount unit for the
+- [ ] `cloud-init/user-data.yaml`: SSH key (workstation pubkey), Docker CE install from
+      its RHEL repo, dnf-automatic (security-only), `music` user (uid 2000, no shell
+      login), mount unit for the
       volume at `/srv/music`, base directory tree (`library`, `inbox`, `review`, `state`,
       `staging`) owned 2000:2000 with setgid on `inbox`.
 - [ ] `scripts/provision.sh`: idempotent hcloud calls creating firewall `musicbox-fw`
       (inbound: 22/tcp only), 50 GB volume `musicbox-data` (location `hil`), server
-      `musicbox` (CPX21, `debian-13`, location `hil`, the firewall, the volume, the
+      `musicbox` (CPX21, `alma-10` — confirm via `hcloud image list`, fall back to
+      `alma-9` and record in STATUS — location `hil`, the firewall, the volume, the
       user-data). Prints the server IP. Reads `HCLOUD_TOKEN` from sourced secrets.
 - [ ] Constraint: record the console-confirmed US traffic allowance for CPX21 in STATUS
       (spec calls for it before family onboarding).
