@@ -2,7 +2,9 @@
 
 ## Work Autonomously Until Done
 
-Do not ask for review, confirmation, or approval until the task is fully complete. Keep working through all known issues until every quality gate passes. The only reason to stop is a genuine blocker requiring information only the user can provide.
+Do not ask for review or approval until the task is fully complete; keep working
+until every quality gate passes. Stop only for a genuine blocker needing
+information only the user can provide.
 
 ## Search before you spelunk (Geoff, 2026-07-13)
 
@@ -31,37 +33,50 @@ worktree; ~1.2M duplicated tokens, zero corruption.)
 
 ## Machine Environment
 
-- **OS**: Linux Mint 22.3 "Zena" (Ubuntu 24.04 base), Cinnamon desktop
-- **Shell**: bash | **Editor**: neovim (primary), micro (quick edits)
-- **Key paths**: `~/Projects/` (all repos), `~/.dotfiles/` (config), `~/.local/bin/` (scripts)
-- **Dev tools**: Python 3.12, Java 17 (OpenJDK), Node/nvm, Git 2.43, Go 1.26.1 (/usr/local/go)
-- **Android SDK**: `~/Android/` -- `ANDROID_HOME` set in .bashrc
+- **OS**: Bluefin DX, `stable` stream (Fedora 44 base, bootc/ostree)
+- **Desktop**: GNOME (Wayland) | **Shell**: bash | **Terminal**: Ptyxis. kitty exists
+  only as the `tui-visual-verify` gate (XWayland-forced for capture); never the
+  daily terminal.
+- **Key paths**: `~/Projects/` (repos), `~/.dotfiles/` (config), `~/.local/bin/` (scripts)
+- **Dev tools**: Node via mise, Python via uv, Go via Homebrew, Java 17 for
+  Android tooling (`~/Android/`, `ANDROID_HOME` set in `.bashrc`)
 
-## Browser: Chromium only
+## Browsers: Firefox + Chromium, no Flatpak
 
-Chrome and Firefox removed 2026-08-16; never suggest reinstalling either. Invoke as
-`chromium`. Telemetry is off by root-owned managed policy -- never quietly relax an entry.
-Read `~/.claude/docs/chromium-browser.md` before any browser, Playwright, or extension work.
+Firefox (layered RPM) is the daily browser, with 1Password integration. Chromium
+(layered RPM) is the dev/testing browser Claude Code drives (claude-in-chrome,
+chrome-devtools MCP, `chromium-shot`); invoke as `chromium`. Never a Flatpak
+build of either: the sandbox blocks required native messaging. Read
+`~/.claude/docs/bluefin-admin.md` before browser or extension work (supersedes
+`chromium-browser.md`).
 
 ## Sysadmin Preferences
 
-- **Troubleshooting**: Search web after 1-2 failed attempts -- include "Linux Mint 22" in queries
-- **sudo**: Always `sudo -A`. Decrypted automatically by `claude-askpass`. If the age file is missing or stale, run `claude-sudo-setup` (requires 1Password desktop app running and unlocked).
-- **Packages**: apt for system/CLI tools; flatpak for GUI apps
+- **Troubleshooting**: Search web after 1-2 failed attempts, with "Bluefin DX"
+  or "Universal Blue" in the query
+- **sudo**: Always `sudo -A` (via `claude-askpass`); stale age file ->
+  `claude-sudo-setup` (1Password desktop unlocked); failures -> the GID gotcha
+  in `bluefin-admin.md`.
+- **Software tiers**: mise/uv runtimes, Homebrew CLI, Flatpak GUI,
+  distrobox/devcontainers for dev envs, rpm-ostree layering last resort; source
+  of truth `~/.dotfiles/bluefin/layered-packages.txt` (additions also recorded
+  in `MIGRATION-BRIEF.md`); policy and command map: `bluefin-admin.md`.
 - **Destructive ops**: Show dry-run or confirmation step first
 
 ## System Organization
 
-- Home dir (`~/`) should have minimal loose files
-- Scripts -> `~/.local/bin/` | Configs -> `~/.config/`
-- When modifying configs: check if they belong in `~/.dotfiles/`
+- Home dir (`~/`) minimal: scripts -> `~/.local/bin/`, configs -> `~/.config/`;
+  check `~/.dotfiles/` first
+- `/etc` changes land in `~/.dotfiles/bluefin/etc/` first, then install from
+  there; never edit `/etc` directly (see `bluefin-admin.md`)
+- micro is the editor. Neovim is not installed; never suggest it or `nvim-journal`.
 
 ## Dotfiles Management
 
-- **Location**: `~/.dotfiles` (git: github.com/glw907/workstation), managed via GNU Stow
-- **Stow packages**: `bash`, `bin`, `claude`, `git`, `kitty`, `contacts`
-- **Sync script**: `~/.dotfiles/sync-dotfiles.sh` -- checks stow status, git drift
-- Adding new tracked script: copy to `~/.dotfiles/bin/.local/bin/`, then `cd ~/.dotfiles && stow -R bin`
+- **Location**: `~/.dotfiles` (git: github.com/glw907/workstation), managed via
+  GNU Stow; packages `bash bin claude git kitty contacts`
+- `sync-dotfiles.sh` checks stow status and git drift; new tracked script: add
+  to `bin/.local/bin/`, then `stow -R bin`
 
 ## Git Conventions
 
@@ -130,17 +145,10 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 
 ## Email (poplar)
 
-- **Client**: poplar, a bubbletea terminal email client built from `~/Projects/poplar/`
-- **Account**: Fastmail via JMAP (primary), Gmail via IMAP (v1 target)
-- **JMAP auth**: `$FASTMAIL_API_TOKEN` (in `~/.local/secrets`)
-- **Binary**: `~/.local/bin/poplar`, installed via `make install`
-- **API reference**: `~/.claude/instructions/fastmail-api.md` (JMAP endpoints, capabilities, examples)
-
-## Neovim
-
-- **Version**: 0.12.0-dev from `ppa:neovim-ppa/unstable`
-- **nvim-journal**: `~/.config/nvim-journal/` -- jrnl-md editor with zen-mode + typewriter scrolling
-- **Full setup docs**: `~/.claude/docs/neovim-setup.md` (read on demand)
+poplar, a bubbletea terminal email client from `~/Projects/poplar/`; binary
+`~/.local/bin/poplar` (`make install`). Fastmail via JMAP (Gmail IMAP is the v1
+target), `$FASTMAIL_API_TOKEN` in `~/.local/secrets`. API reference:
+`~/.claude/instructions/fastmail-api.md`.
 
 ## Visual fidelity (all projects, 2026-07-05)
 
@@ -183,7 +191,8 @@ and measurement methods: `aksailingclub-org/docs/2026-07-30-assets-substrate-har
 
 ## Claude Code Agent Usage
 
-Do not provide human-scale time estimates. Describe relative complexity: "quick", "straightforward", "multi-step". Focus on sequencing, dependencies, and testing steps.
+No human-scale time estimates; describe relative complexity ("quick",
+"multi-step") and focus on sequencing, dependencies, and testing steps.
 
 ## Conducting a pass (revised 2026-08-21; supersedes the 2026-07-26 Opus-executes rule)
 
