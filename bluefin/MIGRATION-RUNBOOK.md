@@ -247,6 +247,12 @@ launch.
 
 ## 4. Restore
 
+**Scripted path (preferred): run `~/.dotfiles/bluefin/bootstrap.sh restore`.**
+It executes steps 1-10 below in order with the same hard stops, is
+rerunnable (completed steps detect their state and skip), and prints the
+remaining judgment items when done. The steps below are its specification
+and the manual fallback; keep the two in sync when editing either.
+
 Preconditions before starting: mise's Node is active (`npx` resolves) and
 1Password desktop CLI integration is on (step 3.6).
 

@@ -4,13 +4,35 @@ Bootstrap artifacts for converting a workstation from Linux Mint to Bluefin
 DX (stable). Decisions record and fact base: `MIGRATION-BRIEF.md`. Read that
 file first; this directory implements it and does not repeat its reasoning.
 
+## Quick card: fresh Bluefin to working machine
+
+Every command to type on the new system, in order. Details and hard stops
+live in `MIGRATION-RUNBOOK.md`; nothing here requires reading it first.
+
+```bash
+git clone https://github.com/glw907/workstation.git ~/.dotfiles
+~/.dotfiles/bluefin/bootstrap.sh layer
+sudo systemctl reboot
+~/.dotfiles/bluefin/bootstrap.sh setup
+# 1Password app: sign in, then Settings -> Developer -> "Integrate with 1Password CLI"
+~/.dotfiles/bluefin/bootstrap.sh restore
+claude   # first launch asks you to log in
+```
+
+Then hand the Claude session this prompt, and it finishes the rest
+(re-authentication walkthrough, verification, the CLAUDE.md rewrite) with
+its full memory restored:
+
+> Read ~/.dotfiles/bluefin/MIGRATION-RUNBOOK.md. Sections 1-4 are done.
+> Continue from section 5, then apply CLAUDE-md-draft.md per its header.
+
 ## Contents
 
 | File | Purpose |
 |------|---------|
 | `MIGRATION-BRIEF.md` | Decisions, verified platform facts, backup state |
 | `MIGRATION-RUNBOOK.md` | Wipe-day and restore procedure, authoritative from step 7 |
-| `bootstrap.sh` | `layer` and `setup` phases, run in order below |
+| `bootstrap.sh` | `layer`, `setup`, and `restore` phases, run in order below |
 | `layered-packages.txt` | The minimal rpm-ostree layered set |
 | `flatpaks.txt` | Flatpak app IDs to install |
 | `Brewfile` | CLI tool formulae for `brew bundle` |
@@ -38,11 +60,15 @@ file first; this directory implements it and does not repeat its reasoning.
    ~/.dotfiles/bluefin/bootstrap.sh setup
    ```
    Read the verification checklist it prints at the end before moving on.
-7. Selective restore from the encrypted backup: `MIGRATION-RUNBOOK.md` is
-   authoritative from here on. It covers decrypting
-   `pre-bluefin-backup.tar.age` and which paths get restored, and is
-   self-contained for a fresh session with no memory of this directory's
-   other files.
+7. Selective restore from the encrypted backup:
+   ```
+   ~/.dotfiles/bluefin/bootstrap.sh restore
+   ```
+   This executes `MIGRATION-RUNBOOK.md` section 4 with the same hard stops
+   (checksum, decrypt, dotfiles-repo cleanliness). The runbook section
+   remains the specification and the manual fallback, and the runbook is
+   authoritative for everything after: re-authentication, verification, and
+   the CLAUDE.md rewrite.
 
 ## Second workstation
 
