@@ -28,7 +28,7 @@ echo -e "${GREEN}Current kitty version: ${CURRENT_VERSION}${NC}"
 echo "Checking for updates..."
 echo ""
 
-curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
 
 echo ""
 NEW_VERSION=$("$KITTY_BIN" --version 2>/dev/null | awk '{print $2}')
