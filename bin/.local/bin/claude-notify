@@ -1,20 +1,73 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-# claude-notify: Notification-hook wrapper for Claude Code. A bare notify-send
-# creates a new bubble per event, so repeated events (each permission prompt in
-# a stuck session) stack identical notifications. Persisting the last id and
-# passing --replace-id keeps one live bubble. replace-id 0 means "create new",
-# so a missing, empty, or corrupt state file degrades to the old behavior for
-# one call. The hook must not fail a session, so every path exits 0.
+# claude-notify: Notification-hook wrapper for Claude Code. The hook must
+# not fail a session, so every path exits 0. Persisting the last id and
+# passing --replace-id keeps one live bubble instead of stacking a new,
+# identical one per event; replace-id 0 means "create new", so a missing,
+# empty, or corrupt state file degrades to a fresh bubble for one call.
+# GNOME banners are headed by the sender's app name (a bare notify-send is
+# headed "notify-send"), so --app-name carries the real one.
+#
+# Only events that leave a session blocked on Geoff earn a bubble. An
+# absent or unknown notification_type fails open to a generic bubble.
 
 state_file="${XDG_RUNTIME_DIR:-/tmp}/claude-notify-id"
+
+# Input newer than this window means Geoff is at the machine, not away.
+active_window_ms=60000
+
+# Mutter counts milliseconds since the last input event. Its gdbus reply is
+# a tuple, "(uint64 4210,)", so the digit strip runs on the value field
+# alone; stripping the whole line would splice the 64 of uint64 onto the
+# front of the count. A missing or unparsable reading reports "not active",
+# which keeps the bubble rather than swallowing it.
+user_active_recently() {
+    local idle_ms
+    idle_ms=$(gdbus call --session --dest org.gnome.Mutter.IdleMonitor \
+        --object-path /org/gnome/Mutter/IdleMonitor/Core \
+        --method org.gnome.Mutter.IdleMonitor.GetIdletime 2>/dev/null |
+        awk '{gsub(/[^0-9]/, "", $2); print $2}')
+
+    [[ "$idle_ms" =~ ^[0-9]+$ ]] && ((idle_ms < active_window_ms))
+}
+
+# jq reads whatever the hook sent, including nothing at all. A missing
+# field or unparsable payload leaves these empty, and an empty type falls
+# open to the generic bubble below.
+payload=$(cat 2>/dev/null)
+notification_type=$(jq -r '.notification_type // empty' <<<"$payload" 2>/dev/null)
+project=$(jq -r '.cwd // empty' <<<"$payload" 2>/dev/null)
+project=${project##*/}
+
+case "$notification_type" in
+permission_prompt)
+    body="Waiting on a permission decision" ;;
+elicitation_dialog | elicitation_url_dialog)
+    body="An MCP server needs a response" ;;
+agent_needs_input)
+    body="A background agent needs input" ;;
+quota_auto_resume_stale | quota_auto_resume_disabled)
+    body="A paused task is waiting for a restart" ;;
+idle_prompt)
+    # This one fires 60s after every finished turn, so it is noise while
+    # Geoff is at the machine; the idle counter gates it to away-time.
+    user_active_recently && exit 0
+    body="Waiting for your input" ;;
+auth_success | elicitation_complete | elicitation_response | \
+    quota_auto_resume_fired | agent_completed)
+    exit 0 ;;
+*)
+    body="Needs your attention" ;;
+esac
+
+[[ -n "$project" ]] && body="$body ($project)"
 
 last_id=$(cat "$state_file" 2>/dev/null)
 [[ "$last_id" =~ ^[0-9]+$ ]] || last_id=0
 
-id=$(notify-send --print-id --replace-id="$last_id" --urgency=normal \
-    "Claude Code" "Needs your attention" 2>/dev/null) || exit 0
+id=$(notify-send --app-name="Claude Code" --print-id --replace-id="$last_id" \
+    --urgency=normal "Claude Code" "$body" 2>/dev/null) || exit 0
 
 # The shell reports a failed redirection itself, so the group carries the
 # silencing; losing the id only costs the next event its bubble reuse.
