@@ -1,6 +1,9 @@
-# musicbox Go rewrite: design
+# dubplate Go rewrite: design
 
-**Status: revised after adversarial review, pending Geoff's spec read.**
+**Status: approved 2026-08-30; estate rename ratified 2026-08-31.** The estate,
+repo, binary, paths, and env prefix ship as **dubplate** (dub culture: the
+exclusive pressing cut for your own sound system); every `musicbox` reference
+below reads as the pre-rename name, and the plan carries the rename tasks.
 Brainstormed 2026-08-30 during the architecture refinement pass; scope,
 placement, and sequencing ratified by Geoff (all box-side scripts, inside the
 musicbox repo, next pass after the refinement fix wave, upload-check builds on

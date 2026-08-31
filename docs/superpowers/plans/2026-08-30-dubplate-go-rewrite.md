@@ -1,9 +1,11 @@
-# musicbox Go rewrite: implementation plan
+# dubplate Go rewrite: implementation plan
 
 **Goal:** Replace the box-side shell layer with one Go binary per the approved
-design spec, migrated per-subcommand with rollback intact.
+design spec, migrated per-subcommand with rollback intact, and rename the
+estate from musicbox to dubplate throughout (project, repo, paths, binary,
+env, checks) — ratified by Geoff 2026-08-31 after a vetted naming brainstorm.
 
-**Spec:** `~/.dotfiles/docs/superpowers/specs/2026-08-30-musicbox-go-rewrite-design.md`
+**Spec:** `~/.dotfiles/docs/superpowers/specs/2026-08-30-dubplate-go-rewrite-design.md`
 (approved by Geoff 2026-08-30 after four adversarial reviews). The plan argues
 from the spec; executors read both.
 
@@ -24,7 +26,7 @@ closes. Implementer `general-purpose` pinned `model: sonnet`; reviewer
   `slog.NewTextHandler` to stderr inside `internal/`; table-driven tests with
   the assertion-discipline rules (no silent-success fakes, no self-derived
   expectations); atomic writes via `internal/atomicfile`; module path
-  `github.com/glw907/musicbox`, Go version matching the installed toolchain.
+  `github.com/glw907/dubplate`, Go version matching the installed toolchain.
 - Behavior source of truth is the shell layer at fix-wave close (repo HEAD
   when this pass starts) plus its bats suites. Each task's criteria say which
   bats cases pin it and how they map: ported as-is, re-expressed (curl-argv
@@ -40,7 +42,7 @@ closes. Implementer `general-purpose` pinned `model: sonnet`; reviewer
 ### T1: Module scaffold, CLI skeleton, gate wiring
 
 **Files:** `go.mod`, `go.sum`, `Makefile`, `.golangci.yml`,
-`cmd/musicbox/main.go`, `cmd/musicbox/root.go`, `cmd/musicbox/version.go`,
+`cmd/dubplate/main.go`, `cmd/dubplate/root.go`, `cmd/dubplate/version.go`,
 `internal/atomicfile/atomicfile.go`, modify `scripts/check.sh`.
 
 **Produces:** `newRootCmd() *cobra.Command` with `SilenceUsage` and
@@ -50,7 +52,7 @@ conventions `main()` shape (main is the only printer and the only `os.Exit`);
 
 **Criteria:** `make check` (build, vet, golangci-lint per the conventions
 config, test) passes and is invoked from `scripts/check.sh` so one gate covers
-both layers; `musicbox version` prints a version string; cross-compile target
+both layers; `dubplate version` prints a version string; cross-compile target
 `make build-linux` produces a static `CGO_ENABLED=0 GOOS=linux GOARCH=amd64`
 binary; `.golangci.yml` is the conventions v2 config verbatim, verified with
 `golangci-lint config verify`. No exit-code mapper: every failure exits 1
@@ -78,7 +80,7 @@ type Config struct {
     NavidromeDB   string            // path, required
     Paths         Paths             // LibraryDir, InboxDir, StagingDir, StateDir, RunDir, ReviewDir, QuarantineDir, BackupStaging
     Thresholds    Thresholds        // QuiescentMin, FreeFloorGB, ArchiveCapGB, RetentionDays, DiskPct: defaulted
-    PingURLs      map[string]string // MUSICBOX_PING_<SLUG>_URL prefix scan; empty map is valid
+    PingURLs      map[string]string // DUBPLATE_PING_<SLUG>_URL prefix scan; empty map is valid
 }
 var ErrMissing = errors.New("required setting unset") // Load wraps with the field name
 func LoadContributors(path string) (Roster, error)
@@ -113,7 +115,7 @@ var ErrHeld = errors.New("lock held")
 func Acquire(path string) (*Lock, error)                       // non-blocking flock
 func AcquireBlocking(ctx context.Context, path string) (*Lock, error)
 func (l *Lock) Release() error
-func (l *Lock) File() *os.File     // fd survives syscall.Exec for `musicbox beet`
+func (l *Lock) File() *os.File     // fd survives syscall.Exec for `dubplate beet`
 
 func NewClient() *Client   // defaults: 3 retries, 10s timeout (the shell's curl budget)
 type Client struct { Timeout time.Duration; Retries int }
@@ -125,7 +127,7 @@ func (c *Client) Fail(ctx context.Context, url string) error    // POST url + "/
 backup (T9/T10); two processes contending is proven with a real flock in a
 `t.TempDir()`. `Acquire` clears `FD_CLOEXEC` on the lock fd
 (`unix.FcntlInt(fd, unix.F_SETFD, 0)`) — Go opens files `O_CLOEXEC`, so
-without this the lock drops at `syscall.Exec` and `musicbox beet`'s
+without this the lock drops at `syscall.Exec` and `dubplate beet`'s
 guarantee is false; a unit test asserts the flag is clear. Ping is provider-agnostic per the spec: URL in, no slug or
 Worker knowledge; the fail verb is POST (matching the fix wave's corrected
 contract — verify against the wave's updated `lib.sh`/bats before coding);
@@ -253,7 +255,7 @@ failure returns an error the caller treats as best-effort.
 
 ### T9: Importer orchestration and e2e harness
 
-**Files:** `internal/importer/importer.go`, tests; `cmd/musicbox/import.go`;
+**Files:** `internal/importer/importer.go`, tests; `cmd/dubplate/import.go`;
 `e2e/main_test.go`, `e2e/import_test.go`, `e2e/testdata/`.
 
 **Interfaces — consumes everything above:** config.Load, lock.Acquire,
@@ -282,34 +284,33 @@ unknown-uploader paths (fix-wave M10 tests) port as e2e cases.
 
 ### T10: Backup, beet passthrough, ping-fail
 
-**Files:** `internal/backup/backup.go`, `cmd/musicbox/backup.go`,
-`cmd/musicbox/beet.go`, `cmd/musicbox/pingfail.go`, tests and e2e cases.
+**Files:** `internal/backup/backup.go`, `cmd/dubplate/backup.go`,
+`cmd/dubplate/beet.go`, `cmd/dubplate/pingfail.go`, tests and e2e cases.
 
 **Criteria:** backup ports `music-backup` at fix-wave HEAD: LIBRARY_DIR
 existence and non-empty guards, its own lock, sqlite3 `.backup` snapshot
 (subprocess), rclone sync (subprocess) with the `_archive/<tree>/<date>`
 layout untouched. Abort paths return an error and rely on `OnFailure=`; no
 in-process fail ping (spec doctrine — the shell's `ping_hc backup fail`
-call does not port). `musicbox beet -- <args>` acquires the import lock
+call does not port). `dubplate beet -- <args>` acquires the import lock
 blocking, then `syscall.Exec`s the real beet with argv, tty, and
 environment intact (T3's CLOEXEC-cleared fd keeps the lock held; e2e proves
-an overlapping `musicbox import` skips while beet runs). `musicbox
-ping-fail <slug>` is the `OnFailure=` chain's entry point and must never be
-silenced by unrelated config defects: it resolves `MUSICBOX_PING_<SLUG>_URL`
+an overlapping `dubplate import` skips while beet runs). `dubplate ping-fail <slug>` is the `OnFailure=` chain's entry point and must never be
+silenced by unrelated config defects: it resolves `DUBPLATE_PING_<SLUG>_URL`
 directly from the environment without a full `config.Load`; an unset URL is
 a logged no-op exiting 0 (monitoring never takes down what it monitors, and
 the no-Worker adopter case is valid); only a malformed URL exits nonzero.
 
 ### T11: Checks and doctor
 
-**Files:** `internal/checks/checks.go`, `cmd/musicbox/check.go`,
-`cmd/musicbox/doctor.go`, tests.
+**Files:** `internal/checks/checks.go`, `cmd/dubplate/check.go`,
+`cmd/dubplate/doctor.go`, tests.
 
-**Criteria:** `musicbox check <disk|navidrome>` (ExactArgs(1); bare `check`
+**Criteria:** `dubplate check <disk|navidrome>` (ExactArgs(1); bare `check`
 errors — a typoed ExecStart must not exit 0): disk compares the filesystem
 holding LibraryDir against Thresholds.DiskPct and pings success or fail;
 navidrome GETs `/rest/ping` and pings accordingly — both port the fix wave's
-shell checks and their bats cases. `musicbox doctor`: prints every config
+shell checks and their bats cases. `dubplate doctor`: prints every config
 field and its resolution state (using the joined ErrMissing list), probes
 SMTP (connect/EHLO/QUIT, no send), R2 (`rclone lsjson --max-depth 1`,
 read-only), Navidrome (GET `/rest/ping`); ping URLs are validated
@@ -324,24 +325,28 @@ names emerged), `~/.dotfiles/secrets/registry.md` (same commit discipline as
 the secrets flow), `systemd/` unit ExecStart edits for check and backup
 units.
 
-**Box steps, run with the box quiet:** deploy the binary; `musicbox doctor`
+**Box steps, run with the box quiet:** deploy the binary; `dubplate doctor`
 green on the box; supervised live `musicbox check disk`, `check navidrome`,
 and `musicbox backup` runs; flip those units' ExecStart. The shell scripts
 stay in place and in `SCRIPT_FILES` until T13.
 
 **Criteria:** deploy.sh gains the build-and-ship step (cross-compile, rsync,
-install 0755) and every manifest edit lands in the same commit as its flip;
-the `MUSICBOX_HC_*` → `MUSICBOX_PING_*` rename is **additive** — the box env
-and template carry both prefixes through the migration window, because the
-still-live shell scripts resolve `HC_` names via `ping_hc`, whose unset-var
-behavior is a silent no-op that would blind monitoring without error; the
-new required non-secret names (SMTP host/port/from, Navidrome admin user)
-are minted into the age store and registry exactly like the secret ones, the
-existing delivery path onto the box (the config-file overlay stays the
-packaging initiative's improvement); rollback is documented in the task
-report as ExecStart flip-back (scripts still present). One full timer cycle
-must elapse green (backup and both checks) before T13 starts — the conductor
-verifies via journal/pings evidence, not by waiting idle.
+install 0755) and every manifest edit lands in the same commit as its flip.
+The env migration window is **additive and carries the estate rename**: the
+box env and template hold both the old `MUSICBOX_*` names (the still-live
+shell scripts resolve `MUSICBOX_HC_*` via `ping_hc`, whose unset-var
+behavior is a silent no-op that would blind monitoring without error) and
+the new `DUBPLATE_*` names the binary reads, until T13 closes the window.
+Units flip under their new names: each flip ships a `dubplate-*.service`/
+`.timer` replacing its `music-*`/`musicbox-*` unit, with the old unit
+disabled in the same step. The new required non-secret names (SMTP
+host/port/from, Navidrome admin user) are minted into the age store and
+registry exactly like the secret ones, the existing delivery path onto the
+box (the config-file overlay stays the packaging initiative's improvement);
+rollback is documented in the task report as ExecStart flip-back (old units
+and scripts still present). One full timer cycle must elapse green (backup
+and both checks) before T13 starts — the conductor verifies via
+journal/pings evidence, not by waiting idle.
 
 ### T13: Final flips and closeout (box task)
 
@@ -359,16 +364,16 @@ directory and would turn the gate red; `cloud-init/user-data.yaml`;
 bats files that tested deleted scripts (removed with them; the Go suites are
 the coverage now).
 
-**Box steps:** supervised live `musicbox import` with real content; flip
+**Box steps:** supervised live `dubplate import` with real content; flip
 import and ping-failure units; swap `/usr/local/bin/music-beet` for the
 passthrough; after one green import timer cycle, delete the scripts from box
 and repo.
 
 **Criteria:** notify parity test has passed before msmtp leaves; cloud-init
 drops msmtp, yq, jq but keeps metaflac's package alongside flac, ffmpeg,
-rclone, sqlite3 (the binary shells to them); the `MUSICBOX_HC_*` names
-leave the env, template, and age store in the same commit that deletes
-`lib.sh` (closing T12's additive window); runbook's package gate and
+rclone, sqlite3 (the binary shells to them); every `MUSICBOX_*` name
+leaves the env, template, and age store in the same commit that deletes
+`lib.sh` (closing T12's additive rename window); runbook's package gate and
 STATUS's pin table updated in the same commit, so a mid-migration fresh
 provision cannot build a box the binary can't run on; `bash
 scripts/check.sh` is green after every deletion; rollback from here is
@@ -377,6 +382,30 @@ to deleted scripts anywhere in the repo (`grep` proves it, and the grep
 scope includes the T11-ported shell checks).
 
 ---
+
+### T14: Estate rename closeout (box + estate task)
+
+**Files:** the repo itself (rename `glw907/musicbox` → `glw907/dubplate` on
+GitHub if a remote exists, and `~/Projects/musicbox` → `~/Projects/dubplate`
+locally); `README.md`, `docs/STATUS.md`, `docs/HISTORY.md` (header note
+only — history entries stay as written), `docs/bringup-runbook.md`,
+`ROADMAP.md`; the pings repo's check registrations; the workstation memory
+note (`music-library-setup`).
+
+**Box steps:** move `/etc/musicbox` → `/etc/dubplate` and update every unit's
+`EnvironmentFile=` in one step with a deploy; re-register the pings checks
+under `dubplate-*` slugs via `add-check` and retire the `musicbox-*` slugs
+via `remove-check` inside one grace window so no false alert fires; rename
+`/opt/musicbox` and `/srv` paths only if the config actually references
+them — `/srv/music` stays (it names the content, not the project).
+
+**Criteria:** after this task, `grep -ri musicbox` across the repo returns
+only HISTORY entries and dated archive docs (the historical record keeps its
+name; everything operative says dubplate); the artifact diagram, STATUS, and
+the spec chain pointers are updated; cloud-init provisions a fresh box that
+never carries the old name. This task runs last, after T13's window closes,
+and — like every task in this pass — only starts once no other executor
+holds the repo.
 
 ## Review provenance
 
