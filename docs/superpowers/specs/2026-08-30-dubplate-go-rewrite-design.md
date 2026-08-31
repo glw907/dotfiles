@@ -41,7 +41,12 @@ is what gets ported.
   runbook's hand-run preflight, and monitoring works against any per-check
   ping URL provider, with the pings Worker as one such provider.
 - **Ease of setup by a stranger is a primary product goal of the estate**
-  (Geoff, 2026-08-31), not a someday ambition. This pass ships the binary-side
+  (Geoff, 2026-08-31), not a someday ambition. The audience: somebody wanting
+  a hosted family music system, assembling it from ingredients they bring —
+  Navidrome, beets, this binary, their own Cloudflare account and domain, and
+  a VPS from any provider. dubplate is the recipe and conductor for those
+  ingredients; cloud-init is the provider-portable provisioning substrate
+  (Hetzner automation is a reference module, not a requirement). This pass ships the binary-side
   half; the packaging pass (provider seam for provisioning, scripted
   Cloudflare wiring, parameterized pings provision, non-secret config file,
   adopter-facing docs) is planned work. Its first design decision is the
