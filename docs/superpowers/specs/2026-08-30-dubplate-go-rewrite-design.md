@@ -44,12 +44,15 @@ is what gets ported.
   (Geoff, 2026-08-31), not a someday ambition. This pass ships the binary-side
   half; the packaging pass (provider seam for provisioning, scripted
   Cloudflare wiring, parameterized pings provision, non-secret config file,
-  adopter-facing docs) is planned work with a definition of done: clone the
-  repo, fill in the template, run two scripts — and the clone stays cleanly
-  updatable from upstream, because no tracked file carries site state
-  (contributors.yaml, the tunnel config, and filebrowser.yaml hostnames all
-  move to untracked or generated config). Every pass between now and
-  then takes adopter cost into account when it designs a surface.
+  adopter-facing docs) is planned work. Its first design decision is the
+  distribution model: the lean candidate is binary-as-installer (templates
+  embedded via go:embed, an `init` subcommand scaffolds the instance, the
+  adopter downloads one binary and never clones; the repo serves
+  developers), with clone-and-configure as the fallback floor (then no
+  tracked file may carry site state — contributors.yaml, the tunnel config,
+  and filebrowser.yaml hostnames move to untracked or generated config — so
+  a clone stays updatable from upstream). Every pass between now and then
+  takes adopter cost into account when it designs a surface.
 
 ## Non-goals
 
