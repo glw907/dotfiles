@@ -44,8 +44,11 @@ is what gets ported.
   (Geoff, 2026-08-31), not a someday ambition. This pass ships the binary-side
   half; the packaging pass (provider seam for provisioning, scripted
   Cloudflare wiring, parameterized pings provision, non-secret config file,
-  adopter-facing docs) is planned work with a definition of done: fork the
-  repo, fill in the template, run two scripts. Every pass between now and
+  adopter-facing docs) is planned work with a definition of done: clone the
+  repo, fill in the template, run two scripts — and the clone stays cleanly
+  updatable from upstream, because no tracked file carries site state
+  (contributors.yaml, the tunnel config, and filebrowser.yaml hostnames all
+  move to untracked or generated config). Every pass between now and
   then takes adopter cost into account when it designs a surface.
 
 ## Non-goals
