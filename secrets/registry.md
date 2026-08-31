@@ -148,12 +148,22 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | MUSICBOX_R2_SECRET_ACCESS_KEY | ✓ | — | —    | —        | —          |
 | MUSIC_R2_RO_ACCESS_KEY_ID | ✓ | —      | —    | —        | —          |
 | MUSIC_R2_RO_SECRET_ACCESS_KEY | ✓ | — | —    | —        | —          |
+| MUSICBOX_HC_BACKUP_URL | ✓ | —      | —    | —        | —          |
+| MUSICBOX_HC_IMPORT_URL | ✓ | —      | —    | —        | —          |
+| MUSICBOX_HC_DISK_URL | ✓   | —      | —    | —        | —          |
+| PINGS_ADMIN_TOKEN | ✓       | —      | —    | —        | —          |
 
 > The musicbox rows are Local-only by design: none of these secrets touch a Cloudflare
 > Worker. `MUSICBOX_TUNNEL_TOKEN` and the Navidrome values land on the VPS via
 > `musicbox/scripts/deploy.sh` writing `/etc/musicbox/env` (root:root 0600); the R2 pairs
 > are consumed directly by rclone on the box (`MUSICBOX_R2_*`) and on the workstation
 > (`MUSIC_R2_RO_*`). See `~/Projects/musicbox/docs/STATUS.md` for the current build state.
+
+> The `MUSICBOX_HC_*_URL` and `PINGS_ADMIN_TOKEN` rows are also Local-only: the ping URLs
+> reach the musicbox VPS via its own env, and `PINGS_ADMIN_TOKEN` is consumed by
+> workstation scripts (`scripts/add-check`/`remove-check`) — neither is ever a `pings`
+> Worker secret. Provisioned live 2026-08-31 (pings Task P2b); see
+> `~/Projects/pings/docs/STATUS.md`.
 
 > The ecxc worker stopped needing `GITHUB_APP_ID`/`GITHUB_APP_INSTALLATION_ID` as secrets at
 > the Waymark rebuild (2026-07-05): the v2 adapter commits both in `cairn.config.ts` (they
@@ -211,6 +221,12 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
   auto-deploy for both workers until a new build token is created
   (`POST /accounts/{id}/builds/tokens` with the new token id and value) and each trigger
   is PATCHed to it. Scope added 2026-08-22: Workers Builds Configuration: Edit.
+- **Issuer-side token name**: "Cloudflare Admin 2026-07" (Cloudflare dashboard > Manage
+  Account > API Tokens). Permission groups added 2026-08-30 for the pings Worker build-out
+  (Task P2b): Workers KV Storage: Edit, Email Routing Addresses: Edit — plus Cloudflare
+  Tunnel: Edit (closed the same day, the musicbox `CF_ZT_TOKEN` blocker above). The token
+  cannot edit its own permissions (confirmed: `GET /user/tokens/{id}` 403s even for this
+  token against itself), so any future scope gap needs the same dashboard-edit path.
 
 ### HCLOUD_TOKEN
 - **Grants**: Hetzner Cloud API read/write, project `musicbox` only
@@ -228,11 +244,13 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
   applications and policies, and read Access identity providers (`onetimepin`,
   `google-apps`) — the general-purpose `CLOUDFLARE_API_TOKEN` gets `auth.forbidden` on
   the identity-providers endpoint, so this token is the one to use for IdP lookups.
-  **Does NOT carry Cloudflare Tunnel:Edit** — `POST .../cfd_tunnel` 403s
-  `{"code":10000,"message":"Authentication error"}` on both this token and
-  `CLOUDFLARE_API_TOKEN`; tunnel creation needs that permission group added to one of
-  them via the dashboard before it will work (API token self-management is deliberately
-  not grantable via the API itself).
+  **Carries Cloudflare Tunnel:Edit as of 2026-08-30** — previously missing on both this
+  token and `CLOUDFLARE_API_TOKEN` (`POST .../cfd_tunnel` 403ing
+  `{"code":10000,"message":"Authentication error"}`); Geoff added the permission group to
+  `CLOUDFLARE_API_TOKEN` via the dashboard the same day as the pings-Worker permission
+  fixes noted on that entry above (API token self-management is deliberately not
+  grantable via the API itself). Resume point for the still-pending musicbox tunnel
+  creation: musicbox `docs/STATUS.md`.
 - **Used by**: ASC ops dashboard configuration scripts; musicbox Cloudflare Access wiring
   (Task 5)
 - **Rotate at**: https://dash.cloudflare.com/profile/api-tokens
@@ -408,6 +426,26 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 - **Rotate at**: Cloudflare dashboard > R2 > Manage API tokens (revoke
   "claude-code-thinkpad-x1", mint a replacement scoped identically, then `secret-set.sh`
   both halves).
+
+### MUSICBOX_HC_BACKUP_URL / MUSICBOX_HC_IMPORT_URL / MUSICBOX_HC_DISK_URL
+- **Grants**: a ping-only URL for exactly one dead-man's-switch check on the `pings`
+  Worker (`pings.907.life`) — musicbox's daily backup, hourly import, and hourly disk
+  checks respectively. The threat model is stated plainly in the pings spec: a ping URL
+  is not read-only, so it carries the same sensitivity as the monitored service's own
+  secrets (anyone holding one can keep a dead check reading green forever).
+- **Used by**: the musicbox VPS's timer scripts (`ping_hc`), via `/etc/musicbox/env`.
+- **Rotate at**: `~/Projects/pings/scripts/remove-check <name>` then
+  `add-check <name> --period ... --grace ...` piped straight into `secret-set.sh
+  <NAME> --stdin` — a fresh slug each time, never edited in place.
+
+### PINGS_ADMIN_TOKEN
+- **Grants**: the `pings` Worker's `/admin/checks` endpoints (register/deregister a
+  check) — a workstation-only credential, never held by any monitored service.
+- **Used by**: workstation scripts only (`~/Projects/pings/scripts/add-check`,
+  `remove-check`).
+- **Rotate at**: re-run `~/Projects/pings/scripts/provision.sh` (idempotent by design;
+  every run rotates `ADMIN_TOKEN` into both the Worker secret and this store, invalidating
+  any prior copy).
 
 ---
 
