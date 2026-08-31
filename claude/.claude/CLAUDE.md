@@ -130,11 +130,11 @@ Use API or CLI first for external services -- never suggest the web dashboard un
   stored; the upstream issuer (GCP IAM, GitHub App settings, ...) is the mint-a-new-one origin.
   Exception: ASC secrets use the ASC per-project store (`aksailingclub-legacy/secrets/`), and
   per-site rotatable HMAC keys (MAGIC_LINK_SECRET/SESSION_SECRET) stay worker-only by design.
-- **Receiving a secret value FROM Geoff (Geoff, 2026-08-31): Geoff runs `secret-set.sh`
-  himself, via a `!` command Claude prepares exactly. Never offer paste-into-chat** — the
-  tool exists so values never transit the conversation. Claude wires the name end to end
-  first (manifest, registry row `pending`, consumer config), hands over the command, flips
-  the registry ✓ after the mint.
+- **Receiving a secret value FROM Geoff (Geoff, 2026-08-31): Claude runs
+  `secret-receive NAME [--hint …|--op REF]` — a desktop paste dialog (or 1Password read)
+  piped straight into the age store. Never offer paste-into-chat or hand-run commands.**
+  Wire the name first (manifest, registry `pending`, consumer config); flip the registry ✓
+  after the mint.
 - **Cloudflare estate + how each secret is reached**: `~/.claude/docs/cloudflare-estate-inventory.md`
   (values-free inventory of D1/R2/workers/Access + the authorization model; worker secrets are
   write-only, so a value comes from its origin store, not the worker). Read it before hunting a

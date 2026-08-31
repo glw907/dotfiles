@@ -142,8 +142,8 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | VAPID_PRIVATE_KEY   | ✓     | —        | —    | —        | ✓          |
 | MUSICBOX_TUNNEL_TOKEN | ✓ | —      | —    | —        | —          |
 | ND_PASSWORDENCRYPTIONKEY | ✓ | —       | —    | —        | —          |
-| ND_SPOTIFY_ID       | pending | —      | —    | —        | —          |
-| ND_SPOTIFY_SECRET   | pending | —      | —    | —        | —          |
+| ND_SPOTIFY_ID       | ✓     | —        | —    | —        | —          |
+| ND_SPOTIFY_SECRET   | ✓     | —        | —    | —        | —          |
 | NAVIDROME_ADMIN_USER | ✓    | —        | —    | —        | —          |
 | NAVIDROME_ADMIN_PASSWORD | ✓ | —       | —    | —        | —          |
 | FILEBROWSER_ADMIN_PASSWORD | ✓ | —     | —    | —        | —          |
