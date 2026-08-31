@@ -149,9 +149,11 @@ provisioned by `deploy.sh`.
 
 ## Workstation changes
 
-`music-sync` (committed 2026-08-30, laptop-pushes-to-replicas) is replaced by
-`music-pull`: `rclone copy` (never sync) of `library/` to `~/Music` with the read-only
-token, for local listening. Geoff contributes either through the web inbox like everyone
+`music-sync` (laptop-pushes-to-replicas) was retired 2026-08-30: it is dead code from the
+superseded PikaPods architecture, and running it would `rclone sync` `~/Music` onto the
+`music-library` bucket root, deleting the box's backups. Its replacement, `music-pull`
+(`rclone copy`, never sync, of `library/` to `~/Music` with the read-only token, for local
+listening), has not been built yet. Geoff contributes either through the web inbox like everyone
 else or by `rsync` over SSH into his inbox directory; a dedicated `music-drop` SFTP
 account was considered and cut (rsync over the SSH access he already has is the whole
 feature). The beets stow package remains as the layout/plugin reference the VPS config

@@ -1,5 +1,8 @@
 # Music library and family streaming
 
+**Status: superseded by `2026-08-30-music-vps-build-design.md`.** This PikaPods-era design
+is not the current architecture; read the VPS build design instead.
+
 The music system masters a FLAC library on the workstation, streams it to family through a
 Navidrome pod on PikaPods, and backs it up to R2. The laptop copy in `~/Music` is the single
 master; every replica is a one-way push, so no merge case exists. Expected size is 100 to 200
