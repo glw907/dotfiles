@@ -11,6 +11,12 @@ import:
   move: yes
   write: yes
 
+# Tag reissues and remasters by their original release year, so
+# "Buhloone Mindstate" sorts as 1993, not as its remaster date.
+original_date: yes
+# Multi-disc albums number tracks per disc instead of one long run.
+per_disc_numbering: yes
+
 paths:
   default: $albumartist/$album%aunique{}/$track $title
   singleton: Singles/$artist - $title
