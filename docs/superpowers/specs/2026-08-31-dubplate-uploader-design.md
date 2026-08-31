@@ -1,10 +1,10 @@
 # dubplate uploader: design
 
 **Status: revised after three adversarial reviews (product, technical, stack),
-pending Geoff's spec read.** Brainstormed with Geoff 2026-08-31; supersedes
+approved by Geoff 2026-08-31 (framework decision included: standalone
+Svelte 5).** Brainstormed with Geoff 2026-08-31; supersedes
 `2026-08-30-upload-check-design.md`. Implements as its own pass after the Go
-rewrite; the plan and its review happen at that pass's kickoff. One decision
-is deliberately left to Geoff (Development shape: Kit or standalone Svelte).
+rewrite; the plan and its review happen at that pass's kickoff.
 
 ## Product frame
 
@@ -141,19 +141,14 @@ The app lives in `web/`, compiled by Vite to static assets the Go build
 embeds; `make check` gains the web build and Svelte gates; deploy.sh orders
 vite before go. Dev loop: Vite dev server proxying to a local serve.
 
-**Framework — Geoff decides at pass kickoff, one line to flip:** the stack
-review's recommendation is **Svelte 5 standalone** (runes, components,
-svelte-conventions, DaisyUI, identical embedding — minus Kit's adapter, SPA
-fallback in the Go file server, and the Kit 3 migration; Kit's services are
-all unused on a one-route page). The honest counter-argument: the cairn
-fleet is migrating through Kit 3 anyway, so Kit's marginal cost here is near
-zero if this repo rides that migration. DaisyUI holds either way (it is
-framework-agnostic CSS, carries most of the review infrastructure, and can
-even run without Node via the Tailwind standalone CLI). If Kit is chosen,
-start on Kit 3, and pre-decide the three embed frictions: explicit SPA
-fallback in the Go handler, `Cache-Control` for immutable assets (embed.FS
-has no mtimes), `paths.base`/`ssr=false` agreed between dev proxy and
-embedded serving.
+**Framework — decided by Geoff 2026-08-31: Svelte 5 standalone** (no
+SvelteKit): runes, components, svelte-conventions, and DaisyUI, compiled by
+Vite into `web/dist` and embedded — no adapter, no SPA-fallback routing in
+the Go file server (one `index.html`, one asset dir), no Kit migration
+surface. DaisyUI is framework-agnostic CSS and carries most of the review
+infrastructure. Two embed details still pre-decided at plan time:
+`Cache-Control` for hashed immutable assets (embed.FS carries no mtimes),
+and the Vite base path agreed between the dev proxy and embedded serving.
 
 serve is the estate's first internet-facing unit: its systemd hardening is
 written explicitly in the plan (not by reference), reviewed by
