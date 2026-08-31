@@ -140,6 +140,20 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | TWILIO_API_KEY_SECRET | ✓   | —        | —    | —        | ✓          |
 | TWILIO_AUTH_TOKEN   | ✓     | —        | —    | —        | ✓          |
 | VAPID_PRIVATE_KEY   | ✓     | —        | —    | —        | ✓          |
+| MUSICBOX_TUNNEL_TOKEN | ✓   | —        | —    | —        | —          |
+| ND_PASSWORDENCRYPTIONKEY | ✓ | —       | —    | —        | —          |
+| NAVIDROME_ADMIN_USER | ✓    | —        | —    | —        | —          |
+| NAVIDROME_ADMIN_PASS | ✓    | —        | —    | —        | —          |
+| MUSICBOX_R2_ACCESS_KEY_ID | ✓ | —      | —    | —        | —          |
+| MUSICBOX_R2_SECRET_ACCESS_KEY | ✓ | — | —    | —        | —          |
+| MUSIC_R2_RO_ACCESS_KEY_ID | ✓ | —      | —    | —        | —          |
+| MUSIC_R2_RO_SECRET_ACCESS_KEY | ✓ | — | —    | —        | —          |
+
+> The musicbox rows are Local-only by design: none of these secrets touch a Cloudflare
+> Worker. `MUSICBOX_TUNNEL_TOKEN` and the Navidrome values land on the VPS via
+> `musicbox/scripts/deploy.sh` writing `/etc/musicbox/env` (root:root 0600); the R2 pairs
+> are consumed directly by rclone on the box (`MUSICBOX_R2_*`) and on the workstation
+> (`MUSIC_R2_RO_*`). See `~/Projects/musicbox/docs/STATUS.md` for the current build state.
 
 > The ecxc worker stopped needing `GITHUB_APP_ID`/`GITHUB_APP_INSTALLATION_ID` as secrets at
 > the Waymark rebuild (2026-07-05): the v2 adapter commits both in `cairn.config.ts` (they
@@ -204,10 +218,23 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 - **Used by**: musicbox provisioning (`scripts/provision.sh`, hcloud CLI)
 - **Rotate at**: console.hetzner.cloud > project musicbox > Security > API tokens
 - **Received 2026-08-30** via `secret-receive` (desktop dialog, value never in transcript)
+- **Rotated 2026-08-30**: the value in the store as of this date is the rotated token
+  (superseding whatever the account held before); confirmed live via `hcloud` calls
+  during musicbox Task 4 provisioning the same day.
 
 ### CF_ZT_TOKEN
-- **Grants**: Cloudflare Zero Trust API (Access apps, policies, identity providers)
-- **Used by**: ASC ops dashboard configuration scripts
+- **Grants**: Cloudflare Zero Trust API (Access apps, policies, identity providers).
+  Empirically confirmed 2026-08-30 (musicbox Task 5): can create/read Access
+  applications and policies, and read Access identity providers (`onetimepin`,
+  `google-apps`) — the general-purpose `CLOUDFLARE_API_TOKEN` gets `auth.forbidden` on
+  the identity-providers endpoint, so this token is the one to use for IdP lookups.
+  **Does NOT carry Cloudflare Tunnel:Edit** — `POST .../cfd_tunnel` 403s
+  `{"code":10000,"message":"Authentication error"}` on both this token and
+  `CLOUDFLARE_API_TOKEN`; tunnel creation needs that permission group added to one of
+  them via the dashboard before it will work (API token self-management is deliberately
+  not grantable via the API itself).
+- **Used by**: ASC ops dashboard configuration scripts; musicbox Cloudflare Access wiring
+  (Task 5)
 - **Rotate at**: https://dash.cloudflare.com/profile/api-tokens
 
 ### CF_ACCESS_CLIENT_SECRET
@@ -326,6 +353,61 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
   until its own service worker fires `pushsubscriptionchange` and re-subscribes, and a phone
   that never opens the app again never recovers. Rotate only on suspected compromise, and
   change `VAPID_PUBLIC_KEY` in `wrangler.jsonc` in the same deploy.
+
+### MUSICBOX_TUNNEL_TOKEN
+- **Grants**: connects the musicbox VPS's `cloudflared` container to the Cloudflare edge
+  as the named tunnel `musicbox` (config-managed, ingress set via the Cloudflare API —
+  see `musicbox/config/cloudflared-tunnel-config.json`). No inbound port is opened on the
+  box; this token is how it dials out to publish `music.907.life` and `inbox.907.life`.
+- **Used by**: the `cloudflared` service in `musicbox/compose.yaml` (`TUNNEL_TOKEN` env,
+  via `/etc/musicbox/env`, written by `deploy.sh`).
+- **Rotate at**: Cloudflare dashboard/API, `cfd_tunnel/{id}/token` (regenerating
+  invalidates the running container's connection; redeploy after rotating).
+- **Status 2026-08-30**: not yet minted. Tunnel creation (`POST .../cfd_tunnel`) 403s on
+  both `CLOUDFLARE_API_TOKEN` and `CF_ZT_TOKEN` — neither carries Cloudflare Tunnel:Edit.
+  Blocked on Geoff adding that permission group to one token via the dashboard (see the
+  `CF_ZT_TOKEN` entry above); musicbox `docs/STATUS.md` carries the resume step.
+
+### ND_PASSWORDENCRYPTIONKEY
+- **Grants**: nothing external; it is Navidrome's at-rest encryption key for the user
+  passwords it must keep recoverable (Subsonic token auth requires the server to
+  reconstruct the plaintext password, so Navidrome cannot hash-and-forget like a normal
+  auth system). Generated 2026-08-30 with `openssl rand -hex 32`.
+- **Used by**: the Navidrome container in `musicbox/compose.yaml` (`ND_PASSWORDENCRYPTIONKEY`
+  env, via `/etc/musicbox/env`).
+- **Rotate at**: nowhere upstream; generate a fresh value locally. **Rotation makes every
+  stored user password unrecoverable** — Navidrome cannot decrypt passwords written under
+  the old key, so every account (admin and family) needs its password reset after a
+  rotation. Rotate only on suspected compromise.
+
+### NAVIDROME_ADMIN_USER / NAVIDROME_ADMIN_PASS
+- **Grants**: the Navidrome admin account on `music.907.life`, created on first boot.
+  Username fixed to `admin`; password generated 2026-08-30 with `openssl rand -hex 16`.
+- **Used by**: Navidrome first-run bootstrap (`musicbox/compose.yaml` / `deploy.sh`);
+  delivered to Geoff out of band per the spec's unique-password note (Task 8).
+- **Rotate at**: Navidrome's own admin UI (change password), or reset via its CLI on the
+  box; update the store afterward so `deploy.sh` reruns stay accurate. Family accounts
+  (Task 8) are separate logins, not derived from this one.
+
+### MUSICBOX_R2_ACCESS_KEY_ID / MUSICBOX_R2_SECRET_ACCESS_KEY
+- **Grants**: R2 API token "musicbox-vps" — Object Read & Write, scoped to bucket
+  `music-library` only.
+- **Used by**: the musicbox VPS's `music-backup` script (rclone sync of `library/` and
+  `state/` to R2, per the pinned bucket layout in the design spec).
+- **Rotate at**: Cloudflare dashboard > R2 > Manage API tokens (revoke "musicbox-vps",
+  mint a replacement scoped identically, then `secret-set.sh` both halves and rerun
+  `deploy.sh` so the box picks up the new pair).
+
+### MUSIC_R2_RO_ACCESS_KEY_ID / MUSIC_R2_RO_SECRET_ACCESS_KEY
+- **Grants**: R2 API token "claude-code-thinkpad-x1" — Object Read only, scoped to bucket
+  `music-library` only. Deliberately read-only: the workstation mirror pull
+  (`music-pull`, Task 8) can never delete or overwrite the box's backup, so no
+  argument-order slip in a local script can wipe R2.
+- **Used by**: the workstation's `music-pull` script (`rclone copy` of `library/` to
+  `~/Music`).
+- **Rotate at**: Cloudflare dashboard > R2 > Manage API tokens (revoke
+  "claude-code-thinkpad-x1", mint a replacement scoped identically, then `secret-set.sh`
+  both halves).
 
 ---
 
