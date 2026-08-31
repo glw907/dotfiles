@@ -119,6 +119,19 @@ Main loop ranks confirmed + endorsed findings by severity × fix cost × ownersh
 proposed fix-wave task list to Geoff as the pass's combined question. Fix wave
 runs as implementer → diff-reviewer → gate chains, checkpoint every 4 tasks.
 
+## STATUS checkpoint — Phase A complete (2026-08-30)
+
+Phase A ran as workflow `wf_c6eee9bd-5ed`: 18 agents, ~1.77M subagent tokens
+(ceiling 2.5M), zero errors. 72 raw findings → 40 confirmed, 12 endorsed, 20
+downgraded, 5 duplicates, 0 refuted, 0 needs-box. Full findings with verdicts:
+`2026-08-30-musicbox-arch-refinement-findings.json` (this directory, committed).
+CF probe notable: `music.907.life` has no Access app (Navidrome auth is the only
+gate) — decision item, likely intentional for Subsonic clients. Phase B shrinks
+to harvesting the bring-up agent's runbook execution plus a post-fix live
+failure-ping and DR-drill verification (no needs-box verdicts remained).
+musicbox `docs/STATUS.md` deliberately not touched yet: the pre-clear bring-up
+agent may still edit it. Next: triage question to Geoff, then fix wave.
+
 ## Out of scope
 
 New features, upload-check work, Immich, anything merely nicer rather than
