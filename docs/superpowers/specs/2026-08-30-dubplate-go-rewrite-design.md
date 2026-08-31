@@ -24,6 +24,24 @@ behavior, not shape: where tests pin behavior the port preserves it; where the
 review found the behavior itself defective, the fix wave's corrected behavior
 is what gets ported.
 
+## Why Go (language decision, interrogated 2026-08-31)
+
+Geoff pressure-tested the language choice against the obvious alternatives;
+the rationale, so the question stays answered: **Python** wins on beets
+integration (importable library, no tag-log parsing) but forfeits the
+single-static-binary distribution that is the adoption goal's cornerstone,
+and its environment fragility is a failure class this box has already
+exhibited live (the beets replaygain env failure); the beets-database read
+recovers most of the integration win from Go. **Rust** ties on the binary
+and exceeds on type rigor, but its decisive advantages (memory safety sans
+GC, fearless concurrency, performance) target risks this sequential
+subprocess-orchestrator does not have, while its costs land on the
+ten-year maintainer, who works in Go daily on a workstation with Go
+conventions, gates, and reviewers and no Rust footprint. **tusd**, the one
+hard uploader dependency, embeds as a Go library and nowhere else. Go is
+the corner where the product boundary, the failure model, and the
+maintainer agree.
+
 ## Goals
 
 - One static binary, subcommand per current entry point, systemd-invoked
