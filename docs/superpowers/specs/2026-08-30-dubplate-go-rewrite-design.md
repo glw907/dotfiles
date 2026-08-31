@@ -40,6 +40,13 @@ is what gets ported.
 - Adoption gets cheaper, not just cleaner: a `doctor` subcommand replaces the
   runbook's hand-run preflight, and monitoring works against any per-check
   ping URL provider, with the pings Worker as one such provider.
+- **Ease of setup by a stranger is a primary product goal of the estate**
+  (Geoff, 2026-08-31), not a someday ambition. This pass ships the binary-side
+  half; the packaging pass (provider seam for provisioning, scripted
+  Cloudflare wiring, parameterized pings provision, non-secret config file,
+  adopter-facing docs) is planned work with a definition of done: fork the
+  repo, fill in the template, run two scripts. Every pass between now and
+  then takes adopter cost into account when it designs a surface.
 
 ## Non-goals
 
