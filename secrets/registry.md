@@ -140,7 +140,7 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | TWILIO_API_KEY_SECRET | ✓   | —        | —    | —        | ✓          |
 | TWILIO_AUTH_TOKEN   | ✓     | —        | —    | —        | ✓          |
 | VAPID_PRIVATE_KEY   | ✓     | —        | —    | —        | ✓          |
-| MUSICBOX_TUNNEL_TOKEN | — (pending) | — | —    | —        | —          |
+| MUSICBOX_TUNNEL_TOKEN | ✓ | —      | —    | —        | —          |
 | ND_PASSWORDENCRYPTIONKEY | ✓ | —       | —    | —        | —          |
 | NAVIDROME_ADMIN_USER | ✓    | —        | —    | —        | —          |
 | NAVIDROME_ADMIN_PASS | ✓    | —        | —    | —        | —          |
@@ -381,10 +381,13 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
   via `/etc/musicbox/env`, written by `deploy.sh`).
 - **Rotate at**: Cloudflare dashboard/API, `cfd_tunnel/{id}/token` (regenerating
   invalidates the running container's connection; redeploy after rotating).
-- **Status 2026-08-30**: not yet minted. Tunnel creation (`POST .../cfd_tunnel`) 403s on
-  both `CLOUDFLARE_API_TOKEN` and `CF_ZT_TOKEN` — neither carries Cloudflare Tunnel:Edit.
-  Blocked on Geoff adding that permission group to one token via the dashboard (see the
-  `CF_ZT_TOKEN` entry above); musicbox `docs/STATUS.md` carries the resume step.
+- **Status 2026-08-31**: minted. Tunnel `musicbox` (id `66fa450c-5abb-459d-a1f8-b80d8d19e07c`,
+  `config_src: cloudflare`) created and configured via `CLOUDFLARE_API_TOKEN` once Cloudflare
+  Tunnel:Edit landed on it 2026-08-30; ingress PUT from
+  `musicbox/config/cloudflared-tunnel-config.json` and verified by GET. DNS: `music.907.life`
+  and `inbox.907.life` are proxied CNAMEs to `66fa450c-5abb-459d-a1f8-b80d8d19e07c.cfargotunnel.com`
+  on zone `907.life`. `cloudflared` is not yet running on the box, so both hostnames 530 until
+  the first real deploy; musicbox `docs/STATUS.md` carries the resume step.
 
 ### ND_PASSWORDENCRYPTIONKEY
 - **Grants**: nothing external; it is Navidrome's at-rest encryption key for the user
