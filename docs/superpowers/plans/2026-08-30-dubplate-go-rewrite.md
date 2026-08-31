@@ -442,7 +442,12 @@ via `remove-check` inside one grace window so no false alert fires; rename
 `/opt/musicbox` and `/srv` paths only if the config actually references
 them — `/srv/music` stays (it names the content, not the project).
 
-**Criteria:** after this task, `grep -ri musicbox` across the repo returns
+**Criteria:** the spec and plan chain migrates into the repo
+(`docs/superpowers/specs/` and `plans/`, following the cairn-family
+convention) — the dubplate rewrite and uploader designs move from
+`~/.dotfiles/docs/superpowers/` with dotfiles-side pointers left behind, so
+the repo owns its documents as an adopter-facing project should; after this
+task, `grep -ri musicbox` across the repo returns
 only HISTORY entries and dated archive docs (the historical record keeps its
 name; everything operative says dubplate); the artifact diagram, STATUS, and
 the spec chain pointers are updated; cloud-init provisions a fresh box that
