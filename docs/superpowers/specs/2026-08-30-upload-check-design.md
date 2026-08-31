@@ -1,5 +1,15 @@
 # Check-on-upload: the family upload page (musicbox pass 2)
 
+**Status (Geoff, 2026-08-31): input to a brainstorm, not a build-ready
+spec.** The uploader effort starts with a fresh brainstorm that weighs the
+product framing established after this document was written: the product
+essence (a group building a well-organized library for a shared Navidrome
+server), the adopter audience and ease-of-setup goal, the design bar below,
+and the Go rewrite's internal/gate and internal/reject packages as the
+build substrate. This document's mechanisms (stream validation, ZIP
+central-directory peeking, the friendly-wording contract) enter that
+brainstorm as prior art.
+
 **Design bar (Geoff, 2026-08-31):** the upload experience is the estate's
 one user-facing surface and carries the most product weight; it must be
 well-polished, not merely functional. The product essence it serves: a group
