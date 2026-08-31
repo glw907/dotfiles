@@ -92,17 +92,17 @@ common=(
 case $mode in
     dom)
         # Chromium writes renderer noise to stderr; the DOM goes to stdout.
-        chromium "${common[@]}" --dump-dom "$target" 2>/dev/null
+        chromium-browser "${common[@]}" --dump-dom "$target" 2>/dev/null
         ;;
     pdf)
         out=${out:-shot.pdf}
-        chromium "${common[@]}" --no-pdf-header-footer \
+        chromium-browser "${common[@]}" --no-pdf-header-footer \
             --print-to-pdf="$out" "$target" 2>/dev/null
         printf '%s\n' "$out"
         ;;
     png)
         out=${out:-shot.png}
-        chromium "${common[@]}" --screenshot="$out" "$target" 2>/dev/null
+        chromium-browser "${common[@]}" --screenshot="$out" "$target" 2>/dev/null
         printf '%s\n' "$out"
         ;;
 esac
