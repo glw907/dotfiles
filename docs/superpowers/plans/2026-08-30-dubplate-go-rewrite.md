@@ -279,7 +279,14 @@ re-expresses as abort-plus-nonzero-exit, not a ping assertion; per-item
 failures accumulate into a run report struct logged at end and never abort;
 lock contention pings success and returns nil (exit 0) — pinned by a ported
 bats case; ping/notify/scan failures are logged and swallowed at these call
-sites only. Both admin summary subjects and body shapes are asserted in e2e
+sites only. The run report is also written as versioned JSON to the state
+dir (atomicfile), on every exit path including held-lock (a report saying
+so) — the uploader pass builds its journey truth on this artifact (spec:
+2026-08-31-dubplate-uploader-design.md). It carries per-album provenance:
+uploader, source inbox directory, outcome (imported / review / quarantined
+/ rejected), and for imported albums the library paths resolved by querying
+the beets database after the run; the tag log records only skips and beets
+renames every file, so the database is the only success record. Both admin summary subjects and body shapes are asserted in e2e
 against the test SMTP server. The e2e harness
 builds the real binary and stub `beet`/`rclone`/`sqlite3` Go programs in
 `TestMain`, runs against the fixture inbox, and asserts filed outcomes,
