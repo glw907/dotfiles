@@ -70,15 +70,21 @@ overlaps another run or an interactive session) every 15 minutes:
    untrusted) into a staging directory. Bandcamp delivers ZIPs; without this step the
    iPad contributor's uploads dead-end.
 3. Abort if volume free space is below threshold; ping the failure check.
-4. Run `beet import -q -l <logfile>` over the staging directories. Quiet mode
+4. Quality gate (Geoff, 2026-08-30: only high-quality FLAC enters the library).
+   Every extracted audio file must be FLAC, pass `flac -t` (full decode test,
+   catching corrupt or truncated uploads), and carry at least 44.1 kHz / 16-bit.
+   Failures move to `review/` with an email to the uploader naming the file and
+   the reason; nothing is silently discarded, and a lossy-only album is Geoff's
+   call in review. Spectral fake-FLAC detection is out of scope until it shows up.
+5. Run `beet import -q -l <logfile>` over the staging directories. Quiet mode
    auto-accepts confident MusicBrainz matches; the logfile is the mechanism that names
    what was skipped (weak match, duplicate, junk).
-5. Move logged skips to `/srv/music/review/` (admin-only; contributors cannot fix a bad
+6. Move logged skips to `/srv/music/review/` (admin-only; contributors cannot fix a bad
    MusicBrainz match, and a shared review folder would let any contributor delete
    another's files). Email the uploader and Geoff via Fastmail SMTP (msmtp; a small
    contributor-to-email map in config). A retention sweep expires review items after 60
    days so duplicates do not accumulate.
-6. Trigger a Navidrome scan through its API. The filesystem watcher is disabled (it would
+7. Trigger a Navidrome scan through its API. The filesystem watcher is disabled (it would
    index albums mid-move) and `Scanner.Schedule` is set as a daily backstop only.
 
 Expectation set honestly: Bandcamp self-released material is often absent from
