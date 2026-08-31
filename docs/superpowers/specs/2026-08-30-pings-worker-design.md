@@ -34,8 +34,12 @@ jobs: probing pull checks and pinging the external watchdog.
   gateway can never trigger it.
 - Anything else 404. No listing endpoint.
 - Check metadata (name, kind, period, grace) lives in the DO plus a values-safe KV
-  `check:<name>` record that carries NO slug, so definitions are printable; the slug
-  exists only in the age-store URL and as the DO address.
+  `check:<name>` record that carries NO slug, so definitions are printable. A
+  `route:<name>` KV key does hold the slug (ratified deviation, 2026-08-30: required
+  by remove-check and the digest), so inspecting route keys is an admin-only act; the
+  ping URL otherwise exists only in the consuming service's secret store. The
+  `alerted` flag means "the human was actually told": a cooldown-suppressed alert
+  leaves it clear, and no recovery email ever references an alert never delivered.
 
 ## Alerting rules (where the review found the real defects)
 
