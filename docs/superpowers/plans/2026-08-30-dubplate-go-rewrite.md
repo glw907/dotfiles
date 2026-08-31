@@ -10,10 +10,14 @@ env, checks) — ratified by Geoff 2026-08-31 after a vetted naming brainstorm.
 from the spec; executors read both.
 
 **Budget:** ceiling 4M tokens; checkpoint (STATUS write) every 4 tasks.
-**Execution:** pass-execute workflow, sequential, after the refinement fix wave
-closes. Implementer `general-purpose` pinned `model: sonnet`; reviewer
+**Execution:** a FRESH session executes this plan (decided 2026-08-31; the
+refinement-pass session closes after its own close-out and does not launch
+this). Entry point: read this plan, the spec, and musicbox `docs/STATUS.md`,
+verify no other executor holds the repo, then run the pass-execute workflow,
+sequential. Implementer `general-purpose` pinned `model: sonnet`; reviewer
 `diff-reviewer` (opus). Repo gate: `bash scripts/check.sh` (which gains
-`make check` in T1).
+`make check` in T1). The repo directory is still `~/Projects/musicbox` at
+start; T14 renames it.
 
 ## Global constraints (every task)
 
