@@ -18,8 +18,12 @@ binds: site specifics enter through config only.
 
 Carried from 2026-08-30: FileBrowser retires; Cloudflare Access is the only
 login; validation happens at upload time with the emails' friendly wording;
-uploads are resumable (tus today; the transport sits behind a seam because
-the protocol is standardizing as IETF resumable-uploads, native in iOS 17+).
+uploads are resumable: tus via `tus-js-client` pinned at 4.3.x (the only
+serious client; stable since 2025-01 with a stalled 5.0 pre-release — a
+watch item, not a blocker). The transport seam is thinner than first
+assumed: 4.3.0 already speaks the IETF resumable-upload draft behind a
+`protocol` option, so migrating off classic tus is a config flag on the
+same client — do not over-abstract the seam.
 
 Ratified 2026-08-31: bespoke UI over a tus core; the contributor sees their
 album's journey; the uploader is `dubplate serve` in the one binary; uploads
@@ -173,6 +177,29 @@ gate itself are unchanged.
    config default.
 3. iOS Safari picker behavior verified on the actual iPad before the copy
    is written.
+
+## Prior art (scouted 2026-08-31)
+
+No Svelte-native resumable-upload UI exists; the bespoke plan is confirmed,
+not redundant. Rulings for the pass:
+
+- **Adopt** `tus-js-client` directly, not through Uppy: 13 KB gz vs 35 KB
+  plus Preact and lodash in the embedded bundle, and Uppy's file-state
+  machine is replaced by our album-as-verdict-unit logic anyway. Pre-decide
+  the Vite browser-entry/export-condition config: tus-js-client carries Node
+  path dependencies and three of its last four releases were bundler fixes.
+- **Crib, don't depend**: shadcn-svelte-extras' `FileDropZone`
+  decomposition (Root / Trigger / DragOverlay, page-wide drag overlay,
+  paste-to-upload) copied in and restyled to DaisyUI; Uppy 6's headless
+  naming shape as the contract for the runes store.
+- **Reject** svelte-file-dropzone (Svelte-3-era internals), svelte-filepond
+  (dead adapter), svelte-dropzone-runes (one maintainer, nine stars).
+- **DaisyUI `steps`** carries the linear journey spine
+  (step-primary/success/error, data-content glyphs); the three branch
+  outcomes render as an alert beside a frozen spine, never a fifth step.
+  `steps` ships zero ARIA — add `aria-current="step"` and a live region —
+  and horizontal steps overflow iPad portrait: `steps-vertical
+  sm:steps-horizontal` or an overflow wrapper.
 
 ## Out of scope
 
