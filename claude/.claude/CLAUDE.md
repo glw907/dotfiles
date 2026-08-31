@@ -12,8 +12,7 @@ When a symptom looks framework- or library-specific (a form that will not submit
 fails in one runtime, an API rejecting a shaped request), spend one web search on the exact
 symptom BEFORE opening an interactive debugging loop: a documented quirk or GitHub issue often
 names the cause in one shot that hands-on probing reaches only after many expensive main-model
-turns (proven twice 2026-07-13, when one search found the SvelteKit remote-form cause a long
-browser loop had missed). Both budgets favor the search. Corollary: never read a file's
+turns (proven twice 2026-07-13). Both budgets favor the search. Corollary: never read a file's
 "current state" to draw conclusions while a background agent is editing it; you will read a
 half-applied change. Verify against committed state or wait for the agent.
 
@@ -26,10 +25,9 @@ journal mtimes, and the status docs (a "fresh session executes this" line means 
 already be running; when in doubt, one sentence to Geoff beats a race). Warm uncommitted code
 at dispatch time is a stop-and-investigate signal, never free progress. If a live executor is
 found, stand down or coordinate: two conductors never both run a close ritual, merge, or
-release on one branch. Mid-flight contention recovery is verify-not-duplicate: stop editing
-contested files, wait for the other's commit, verify it against the acceptance criteria,
-report it as verified. (Born 2026-07-14: two workflows raced the cairn nav-layout plan in one
-worktree; ~1.2M duplicated tokens, zero corruption.)
+release on one branch. Mid-flight contention: stop editing contested
+files, wait for the other's commit, verify it, report verified. (Born 2026-07-14: two
+workflows raced one worktree; ~1.2M duplicated tokens.)
 
 ## Machine Environment
 
@@ -45,7 +43,7 @@ worktree; ~1.2M duplicated tokens, zero corruption.)
 
 Firefox (layered RPM) is the daily browser, with 1Password integration. Chromium
 (layered RPM) is the dev/testing browser Claude Code drives (claude-in-chrome,
-chrome-devtools MCP, `chromium-shot`); invoke as `chromium`. Never a Flatpak
+chrome-devtools MCP, `chromium-shot`); the binary is `chromium-browser`. Never a Flatpak
 build of either: the sandbox blocks required native messaging. Read
 `~/.claude/docs/bluefin-admin.md` before browser or extension work.
 
@@ -81,7 +79,7 @@ build of either: the sandbox blocks required native messaging. Read
 
 ## Git Conventions
 
-- **Before committing code changes, run Anthropic's official `code-simplifier` agent** over the code you just changed (dispatch the `code-simplifier` subagent). It refines recently-modified code for clarity, consistency, and maintainability while preserving behavior; review and apply its refinements, then commit. Docs-only commits don't need it. Skip only when explicitly told to. (poplar keeps its own Go-aware `simplify` skill.)
+- **Before committing code changes, run Anthropic's official `code-simplifier` agent** over the code you just changed (dispatch the `code-simplifier` subagent). It refines recently-changed code preserving behavior; apply its refinements, then commit. Docs-only commits don't need it. Skip only when explicitly told to. (poplar keeps its own Go-aware `simplify` skill.)
 - Imperative mood: "Add feature" not "Added feature"
 - Co-authored footer: `Co-Authored-By: Claude <noreply@anthropic.com>`
 - Commit specific files, not `git add -A`
@@ -119,8 +117,8 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 - **1Password: sudo semantics, never a loop.** The first `op` call in a session fires ONE
   desktop approval; that is the session's authentication, and later calls ride it. Fetch
   once (`op item get <id> --format json`) and parse locally. The `claude-block-op` hook
-  enforces only the loop half: 3+ `op` calls in a minute deny (repaired 2026-08-16 from a
-  blanket deny; ruling: authenticate once per session, like sudo). Passkeys are used, never
+  enforces only the loop half: 3+ `op` calls in a minute deny (ruling 2026-08-16:
+  authenticate once per session, like sudo). Passkeys are used, never
   read: a passkey-gated flow routes through the browser, Geoff's touch as approval.
 - **Installing a NEW long-lived secret, every project (Geoff, 2026-07-13): the workstation
   age store is the origin, never a loose file and never only `wrangler secret put`.** The flow:
@@ -132,6 +130,11 @@ Use API or CLI first for external services -- never suggest the web dashboard un
   stored; the upstream issuer (GCP IAM, GitHub App settings, ...) is the mint-a-new-one origin.
   Exception: ASC secrets use the ASC per-project store (`aksailingclub-legacy/secrets/`), and
   per-site rotatable HMAC keys (MAGIC_LINK_SECRET/SESSION_SECRET) stay worker-only by design.
+- **Receiving a secret value FROM Geoff (Geoff, 2026-08-31): Geoff runs `secret-set.sh`
+  himself, via a `!` command Claude prepares exactly. Never offer paste-into-chat** — the
+  tool exists so values never transit the conversation. Claude wires the name end to end
+  first (manifest, registry row `pending`, consumer config), hands over the command, flips
+  the registry ✓ after the mint.
 - **Cloudflare estate + how each secret is reached**: `~/.claude/docs/cloudflare-estate-inventory.md`
   (values-free inventory of D1/R2/workers/Access + the authorization model; worker secrets are
   write-only, so a value comes from its origin store, not the worker). Read it before hunting a
@@ -147,8 +150,8 @@ Use API or CLI first for external services -- never suggest the web dashboard un
 ## Email (poplar)
 
 poplar, a bubbletea terminal email client from `~/Projects/poplar/`; binary
-`~/.local/bin/poplar` (`make install`). Fastmail via JMAP (Gmail IMAP is the v1
-target), `$FASTMAIL_API_TOKEN` in `~/.local/secrets`. API reference:
+`~/.local/bin/poplar` (`make install`). Fastmail via JMAP,
+`$FASTMAIL_API_TOKEN` in `~/.local/secrets`. API reference:
 `~/.claude/instructions/fastmail-api.md`.
 
 ## Visual fidelity (all projects, 2026-07-05)
@@ -158,7 +161,7 @@ invokes the `visual-fidelity` skill at the start and gates on the `visual-verifi
 Core rules even without the skill: reference screenshots before any plan (never build from a
 verbal description); the context that built the UI never grades it; nothing deploys to
 production without a full-page render read in the main loop; user-facing sites get Geoff's
-before/after. (Born from two same-day production misses with all-green mechanical gates.)
+before/after. (Born from two same-day production misses.)
 
 ## Engine-level UI mechanics, every cairn site (Geoff, 2026-07-30; consultation 2026-08-26)
 
@@ -181,8 +184,7 @@ four-field item schema, and its triage runs through `engine-triage` against the 
 (`cairn-cms/docs/internal/engine-rulings.md`). **A repeated local
 workaround is the loudest signal that something sits at the wrong altitude**: "this repo has
 patched this before" is an automatic filing trigger, not a reason to patch it faster. (Born
-2026-07-30: a pass patched DaisyUI's invisible dark-mode `.btn` edge a third time, the pattern
-already in agent memory, and filed nothing until Geoff asked.)
+2026-07-30: a third repeat patch of the same DaisyUI edge, filed only when Geoff asked.)
 
 Two qualifications. A mechanic that is always right becomes a silent default (`text-box-trim`
 for optical centering); one whose answer depends on what the content means makes the choice
