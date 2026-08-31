@@ -93,6 +93,10 @@ go-conventions standard (invoked before any Go is written):
   - `musicbox doctor` — validates parsed config, prints every required field
     and whether it resolved, probes SMTP, R2, Navidrome, and the ping URLs
     read-only, exits nonzero on any miss; retires bring-up runbook step 1
+  - `musicbox restore --to <dir>` — pulls the library and database snapshots
+    back from R2 into a target tree, read-only toward the bucket, verifying
+    the databases; the executable DR drill, and the adopter's path for
+    migrating an existing collection in (added 2026-08-31, Geoff)
   - `musicbox version`
 - Built `CGO_ENABLED=0 GOOS=linux GOARCH=amd64` on the workstation, shipped by
   `deploy.sh` alongside the config files it already ships.
@@ -163,7 +167,9 @@ consumer are files inside their consumer, not packages.
   re-reads the per-run tag log under the state dir, parses the skip lines,
   and triggers the Subsonic scan with credentials in an `http.Request` URL
   that never touches argv (the `curl --config` temp-file dance dies).
-- `internal/importer`, `internal/backup` — orchestration of the above.
+- `internal/importer`, `internal/backup`, `internal/restore` — orchestration
+  of the above; restore is backup's read-only inverse, sharing its rclone and
+  sqlite3 subprocess seams.
 - File mutations go through the standard's `atomicfile` helper; sensitive
   files at 0600.
 

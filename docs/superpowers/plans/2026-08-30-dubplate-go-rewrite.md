@@ -305,6 +305,29 @@ directly from the environment without a full `config.Load`; an unset URL is
 a logged no-op exiting 0 (monitoring never takes down what it monitors, and
 the no-Worker adopter case is valid); only a malformed URL exits nonzero.
 
+### T10b: Restore
+
+**Files:** `internal/restore/restore.go`, `cmd/dubplate/restore.go`, tests and
+an e2e case with the stubbed rclone.
+
+**Produces:** `dubplate restore --to <dir>` — pulls `library/` and the
+`state/` database snapshots from the R2 bucket into a target tree and
+verifies what arrived.
+
+**Criteria:** strictly read-only toward the bucket (`rclone copy`, never a
+sync that could delete remote objects); refuses a non-empty target without
+`--force`; verifies both restored databases via `sqlite3 "PRAGMA
+integrity_check"` (subprocess, like backup); restores `state/` and
+`library/` only — the dated `_archive/` trees are listed in the report but
+not pulled by default; the run report enumerates restored file counts and
+any bucket-only differences, doctor-style. Works from any machine with
+rclone and the env vars — no box access required. This is the executable
+half of the charter's "runbooks executed skeptically": the DR drill at pass
+end is running this against a temp dir and playing the result in a local
+Navidrome. It is also the adopter's migration path — importing an existing
+collection into a fresh estate is a restore. Approved as added scope by
+Geoff 2026-08-31 (one task, before launch).
+
 ### T11: Checks and doctor
 
 **Files:** `internal/checks/checks.go`, `cmd/dubplate/check.go`,
