@@ -42,6 +42,13 @@ can see inside the ZIPs that are the primary upload unit.
   appear in the library within about 15 minutes"). No upload history is kept.
 - **Review status stays email-only** (the pass-1 friendly email); the page never
   tracks import outcomes.
+- **The UI is stock Uppy Dashboard, themed to match Navidrome** as closely as easy
+  effort allows (Geoff, 2026-08-30): Uppy's dark theme plus CSS-variable overrides
+  for Navidrome's palette and type, and page chrome that reads as a sibling of the
+  library UI. Theming is CSS-level only — no headless rebuild unless the family
+  finds the result jarring. Execution follows the visual-fidelity method: reference
+  screenshots of the deployed Navidrome UI anchor the work, and Geoff's eyes gate it
+  before family onboarding.
 
 ## Kickoff questions (deliberately open)
 
