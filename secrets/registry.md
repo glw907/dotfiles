@@ -140,7 +140,7 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | TWILIO_API_KEY_SECRET | ✓   | —        | —    | —        | ✓          |
 | TWILIO_AUTH_TOKEN   | ✓     | —        | —    | —        | ✓          |
 | VAPID_PRIVATE_KEY   | ✓     | —        | —    | —        | ✓          |
-| MUSICBOX_TUNNEL_TOKEN | ✓   | —        | —    | —        | —          |
+| MUSICBOX_TUNNEL_TOKEN | — (pending) | — | —    | —        | —          |
 | ND_PASSWORDENCRYPTIONKEY | ✓ | —       | —    | —        | —          |
 | NAVIDROME_ADMIN_USER | ✓    | —        | —    | —        | —          |
 | NAVIDROME_ADMIN_PASS | ✓    | —        | —    | —        | —          |
