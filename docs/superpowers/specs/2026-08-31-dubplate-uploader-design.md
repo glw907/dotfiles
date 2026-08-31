@@ -27,7 +27,12 @@ same client — do not over-abstract the seam.
 
 Ratified 2026-08-31: bespoke UI over a tus core; the contributor sees their
 album's journey; the uploader is `dubplate serve` in the one binary; uploads
-nudge the import; no group feed, own uploads only. Stack: Svelte + DaisyUI
+nudge the import; no group feed, own uploads only; **the page carries a
+collection picker** (Geoff, 2026-08-31) — Navidrome ≥0.58 multi-library
+maps collections to library-root subtrees, the session metadata carries the
+choice, the importer routes via a beets flexible attribute, and the picker
+is hidden entirely when only one collection is configured, so
+single-collection estates never see it. Stack: Svelte + DaisyUI
 (see Development shape), built statically and embedded via `go:embed`; Node
 is a workstation build-time dependency only.
 
@@ -95,7 +100,7 @@ Web Storage fingerprints do not survive an iPad reload).
   email-to-directory-name index instead, so the identity flip needs no
   pipeline change.
 - **Session ID as the spine** — minted at tus upload creation, carried in
-  upload metadata, and stamped into the batch directory name
+  upload metadata alongside the chosen collection, and stamped into the batch directory name
   (`inbox/<user>/<sessionid>__<album>/`) so it survives staging; the
   importer's run report carries per-session provenance (uploader, source
   dir, outcome, and the imported library paths resolved from the beets

@@ -85,6 +85,7 @@ type Config struct {
     Paths         Paths             // LibraryDir, InboxDir, StagingDir, StateDir, RunDir, ReviewDir, QuarantineDir, BackupStaging
     Thresholds    Thresholds        // QuiescentMin, FreeFloorGB, ArchiveCapGB, RetentionDays, DiskPct: defaulted
     PingURLs      map[string]string // DUBPLATE_PING_<SLUG>_URL prefix scan; empty map is valid
+    Collections   []string          // collection names; first is the default; defaults to one unnamed default collection (today's layout)
 }
 var ErrMissing = errors.New("required setting unset") // Load wraps with the field name
 func LoadContributors(path string) (Roster, error)
@@ -286,7 +287,15 @@ so) — the uploader pass builds its journey truth on this artifact (spec:
 uploader, source inbox directory, outcome (imported / review / quarantined
 / rejected), and for imported albums the library paths resolved by querying
 the beets database after the run; the tag log records only skips and beets
-renames every file, so the database is the only success record. Both admin summary subjects and body shapes are asserted in e2e
+renames every file, so the database is the only success record. The beets
+invocation gains `--set collection=<c>` (the batch's collection, default
+`Collections[0]`; per-batch overrides arrive with the uploader pass's
+session metadata), and `config/beets-config.yaml` gains query-prefixed path
+formats routing non-default collections into `<collection>/` subtrees while
+the default collection keeps today's exact layout — zero migration of the
+existing library (ratified by Geoff 2026-08-31; Navidrome ≥0.58 maps each
+subtree to a library with per-user visibility, estate-side admin config,
+not code). Both admin summary subjects and body shapes are asserted in e2e
 against the test SMTP server. The e2e harness
 builds the real binary and stub `beet`/`rclone`/`sqlite3` Go programs in
 `TestMain`, runs against the fixture inbox, and asserts filed outcomes,
