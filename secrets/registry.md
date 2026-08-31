@@ -142,8 +142,11 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | VAPID_PRIVATE_KEY   | ✓     | —        | —    | —        | ✓          |
 | MUSICBOX_TUNNEL_TOKEN | ✓ | —      | —    | —        | —          |
 | ND_PASSWORDENCRYPTIONKEY | ✓ | —       | —    | —        | —          |
+| ND_SPOTIFY_ID       | pending | —      | —    | —        | —          |
+| ND_SPOTIFY_SECRET   | pending | —      | —    | —        | —          |
 | NAVIDROME_ADMIN_USER | ✓    | —        | —    | —        | —          |
-| NAVIDROME_ADMIN_PASS | ✓    | —        | —    | —        | —          |
+| NAVIDROME_ADMIN_PASSWORD | ✓ | —       | —    | —        | —          |
+| FILEBROWSER_ADMIN_PASSWORD | ✓ | —     | —    | —        | —          |
 | MUSICBOX_R2_ACCESS_KEY_ID | ✓ | —      | —    | —        | —          |
 | MUSICBOX_R2_SECRET_ACCESS_KEY | ✓ | — | —    | —        | —          |
 | MUSIC_R2_RO_ACCESS_KEY_ID | ✓ | —      | —    | —        | —          |
@@ -151,6 +154,7 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | MUSICBOX_HC_BACKUP_URL | ✓ | —      | —    | —        | —          |
 | MUSICBOX_HC_IMPORT_URL | ✓ | —      | —    | —        | —          |
 | MUSICBOX_HC_DISK_URL | ✓   | —      | —    | —        | —          |
+| MUSICBOX_HC_NAVIDROME_URL | ✓ | —    | —    | —        | —          |
 | PINGS_ADMIN_TOKEN | ✓       | —      | —    | —        | —          |
 
 > The musicbox rows are Local-only by design: none of these secrets touch a Cloudflare
@@ -416,14 +420,33 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
   the old key, so every account (admin and family) needs its password reset after a
   rotation. Rotate only on suspected compromise.
 
-### NAVIDROME_ADMIN_USER / NAVIDROME_ADMIN_PASS
+### NAVIDROME_ADMIN_USER / NAVIDROME_ADMIN_PASSWORD
 - **Grants**: the Navidrome admin account on `music.907.life`, created on first boot.
   Username fixed to `admin`; password generated 2026-08-30 with `openssl rand -hex 16`.
+  Stored under `NAVIDROME_ADMIN_PASSWORD` (renamed from an earlier
+  `NAVIDROME_ADMIN_PASS` key 2026-08-31 — same value, no rotation — to match the exact
+  name `env/musicbox.env.template` and `deploy.sh` require; the old key can be dropped
+  next rotation).
 - **Used by**: Navidrome first-run bootstrap (`musicbox/compose.yaml` / `deploy.sh`);
   delivered to Geoff out of band per the spec's unique-password note (Task 8).
 - **Rotate at**: Navidrome's own admin UI (change password), or reset via its CLI on the
   box; update the store afterward so `deploy.sh` reruns stay accurate. Family accounts
   (Task 8) are separate logins, not derived from this one.
+
+### FILEBROWSER_ADMIN_PASSWORD
+- **Grants**: FileBrowser Quantum's built-in admin-bootstrap account on
+  `inbox.907.life` (username fixed to `admin`, not configurable). Minted 2026-08-31,
+  discovered as a hard blocker during musicbox's first live deploy: with no value set,
+  the container's own first-run admin creation used a shorter-than-8-char default,
+  which `config/filebrowser.yaml`'s `auth.methods.password.minLength: 8` rejected,
+  crash-looping the container (`store.Users.Save: password must be at least 8
+  characters long`).
+- **Used by**: `musicbox/compose.yaml`'s `filebrowser` service
+  (`FILEBROWSER_ADMIN_PASSWORD` env var, FileBrowser's own native name; config
+  equivalent `auth.methods.password.adminPassword`).
+- **Rotate at**: `secret-set.sh FILEBROWSER_ADMIN_PASSWORD --stdin` then redeploy —
+  FileBrowser re-applies this value to the admin account on every boot. Task 8
+  replaces this bootstrap account with per-contributor accounts.
 
 ### MUSICBOX_R2_ACCESS_KEY_ID / MUSICBOX_R2_SECRET_ACCESS_KEY
 - **Grants**: R2 API token "musicbox-vps" — Object Read & Write, scoped to bucket
@@ -445,13 +468,20 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
   "claude-code-thinkpad-x1", mint a replacement scoped identically, then `secret-set.sh`
   both halves).
 
-### MUSICBOX_HC_BACKUP_URL / MUSICBOX_HC_IMPORT_URL / MUSICBOX_HC_DISK_URL
+### MUSICBOX_HC_BACKUP_URL / MUSICBOX_HC_IMPORT_URL / MUSICBOX_HC_DISK_URL / MUSICBOX_HC_NAVIDROME_URL
 - **Grants**: a ping-only URL for exactly one dead-man's-switch check on the `pings`
-  Worker (`pings.907.life`) — musicbox's daily backup, hourly import, and hourly disk
-  checks respectively. The threat model is stated plainly in the pings spec: a ping URL
-  is not read-only, so it carries the same sensitivity as the monitored service's own
-  secrets (anyone holding one can keep a dead check reading green forever).
+  Worker (`pings.907.life`) — musicbox's daily backup, hourly import, hourly disk, and
+  Navidrome-heartbeat checks respectively. The threat model is stated plainly in the
+  pings spec: a ping URL is not read-only, so it carries the same sensitivity as the
+  monitored service's own secrets (anyone holding one can keep a dead check reading
+  green forever).
 - **Used by**: the musicbox VPS's timer scripts (`ping_hc`), via `/etc/musicbox/env`.
+  `_DISK_URL` and `_NAVIDROME_URL` were pre-minted (2026-08-31, period 60/grace 15,
+  matching `_IMPORT_URL`'s cadence) so `deploy.sh`'s all-vars-present render gate
+  passes ahead of Task 6's disk-space and Navidrome-heartbeat scripts; each sits
+  unpinged (and past its default one-period arming window) until that task wires a
+  real `ping_hc disk` / `ping_hc navidrome` call — an expected, already-armed alert,
+  not a defect.
 - **Rotate at**: `~/Projects/pings/scripts/remove-check <name>` then
   `add-check <name> --period ... --grace ...` piped straight into `secret-set.sh
   <NAME> --stdin` — a fresh slug each time, never edited in place.
