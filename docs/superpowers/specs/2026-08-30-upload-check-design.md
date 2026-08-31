@@ -29,20 +29,26 @@ can see inside the ZIPs that are the primary upload unit.
   upload-time checks are the fast 95%, not a replacement.
 - Accepted uploads land in `/srv/music/inbox/<user>/` exactly as FileBrowser's did;
   the pass-1 pipeline is unchanged.
-- FileBrowser Quantum is then retired unless something still needs it, removing a
-  single-maintainer dependency, a second login, and the estate's largest
+
+## Decisions (brainstormed with Geoff, 2026-08-30)
+
+- **FileBrowser Quantum retires.** The upload page fully replaces it for the family,
+  removing a single-maintainer dependency, a second login, and the estate's largest
   attack-surface component. (Admin file access over SSH is unaffected.)
+- **Uploads are resumable** (tus-style chunking): a dropped residential or iPad
+  connection resumes instead of restarting a 700 MB ZIP. Prefer a proven embeddable
+  Go tus implementation over hand-rolled chunking; evaluate at kickoff.
+- **Success feedback is a stateless confirmation with an ETA** ("your album should
+  appear in the library within about 15 minutes"). No upload history is kept.
+- **Review status stays email-only** (the pass-1 friendly email); the page never
+  tracks import outcomes.
 
 ## Kickoff questions (deliberately open)
 
-- What did the first weeks of real family uploads reveal — does the email loop
-  actually annoy anyone, and what rejection reasons dominate?
-- Chunked/resumable upload need at family album sizes (~300-700 MB) over residential
-  connections — plain multipart with generous timeouts, or tus-style resumability?
-- Whether the pass-1 bring-up found FileBrowser Quantum post-upload hooks good enough
-  to lower this pass's urgency.
-- Mobile Safari drag-and-drop ergonomics for the iPad contributor (file picker
-  fallback).
+- Whatever the family's early uploads reveal about dominant rejection reasons.
+- Mobile Safari upload ergonomics for the iPad contributor (file picker fallback to
+  drag-and-drop).
+- Exact tus library choice and its SELinux/systemd hardening posture on the box.
 
 ## Out of scope
 
