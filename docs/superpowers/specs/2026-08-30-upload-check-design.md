@@ -27,6 +27,14 @@ can see inside the ZIPs that are the primary upload unit.
   without decoding. Reject per-file with the pass-1 reason wording, rendered in the
   page. The pass-1 pipeline gate stays as the deep check (`flac -t` full decode);
   upload-time checks are the fast 95%, not a replacement.
+- **Pluggable validator seam** (Geoff, 2026-08-30): the checks sit behind a small Go
+  interface (validator takes an upload's files, returns per-file verdicts with
+  human-readable reasons), and the audio rules are its first implementation. The seam
+  costs nothing now and is what would let the tool generalize to any validated-intake
+  problem (or publish usefully) later; no second validator gets built in this pass.
+  The identity check gets the same treatment for the same reason: a verifier
+  interface with the Cloudflare Access JWT verifier as the sole implementation
+  (trusted-header verifiers for Authelia-style setups are a someday, not a task).
 - Accepted uploads land in `/srv/music/inbox/<user>/` exactly as FileBrowser's did;
   the pass-1 pipeline is unchanged.
 
