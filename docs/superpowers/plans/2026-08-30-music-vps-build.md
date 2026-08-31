@@ -179,8 +179,15 @@ curl with `CLOUDFLARE_API_TOKEN` per the standing rule.
       `secret-set.sh`; redeploy env.
 - [ ] Run `music-backup` once by hand; verify objects under `library/` (empty is fine
       pre-content), `state/` holds both DB backups, ping registered.
-- [ ] Seed content: import one real purchase through the full path (upload via inbox →
-      timer import → visible in Navidrome → next backup includes it).
+- [ ] Seed content: rsync the nine Bandcamp ZIPs from the workstation's ~/Downloads
+      into the geoff inbox and let the full pipeline process them (quiescence →
+      extraction → headless import → review queue for any MusicBrainz misses →
+      Navidrome scan → next backup includes them).
+- [ ] Transcoding bring-up (Geoff, 2026-08-30): verify Navidrome's default Opus
+      transcoding profile exists (enable ND_ENABLETRANSCODINGCONFIG only for the
+      admin session that confirms it, then disable); record in the onboarding doc
+      that Symfonium and Amperfy should stream original quality on wifi and Opus
+      ~128 kbps on cellular, and that ReplayGain should be enabled in both.
 
 **Acceptance:** all four checks green on the healthchecks dashboard; the seeded album
 streams in Navidrome's web player; R2 layout matches the pinned prefixes exactly.
