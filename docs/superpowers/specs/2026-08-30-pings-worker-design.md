@@ -69,15 +69,19 @@ returns HTTP 200 with `status="failed"` when unauthenticated (verified), so
 status-only probes are documented as tunnel-liveness only. Each check's handling wraps
 in try/catch so one malformed record cannot kill a tick.
 
-**The watchdog (what monitors the monitor).** Cloudflare has no alert for a cron that
-stops firing, no Workers alerting at all, and community reports of silent multi-day cron
-stalls; a deploy from a config missing `triggers.crons` silently removes them. The cron
-therefore ends every successful tick by pinging one **free healthchecks.io check** — a
-cross-vendor dead-man's switch on the dead-man's switch, with a notification path
-Cloudflare cannot take down. This readmits the healthchecks.io account in a one-check
-watchdog role (decision recorded 2026-08-30; the alternative of watching from the
-musicbox box was rejected: the box must not monitor its own monitor). Provisioning also
-asserts post-deploy that the cron schedule is registered via the API.
+**What monitors the monitor.** Cloudflare has no alert for a cron that stops firing, no
+Workers alerting at all, and community reports of silent multi-day cron stalls; a deploy
+from a config missing `triggers.crons` silently removes them. An external cross-vendor
+watchdog (one free healthchecks.io check pinged each tick) was proposed and **declined**
+(Geoff, 2026-08-30: no extra account). The accepted answer is the weekly all-clear
+digest: if the digest stops arriving, the monitor itself is down, and Geoff notices at
+human timescale rather than machine timescale. That residual risk — up to a week of
+monitor silence — is owned, not accidental. The code keeps a `WATCHDOG_URL` var that,
+when set, is pinged each successful tick and skipped with a log line when unset, so
+reversing the decision later is one secret, zero code changes. Provisioning asserts
+post-deploy that the cron schedule is registered via the API, and DO alarms (the push
+path) are independent of the cron entirely, so a dead cron silences only pull probes and
+the digest, never overdue-push detection.
 
 ## Forensics
 

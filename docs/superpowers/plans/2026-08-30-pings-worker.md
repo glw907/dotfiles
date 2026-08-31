@@ -6,7 +6,7 @@
 
 **Goal:** Build and deploy the estate dead-man's-switch Worker at `pings.907.life`, wire
 musicbox's checks into it, and retire healthchecks.io from the musicbox plan except as
-the Worker's own one-check watchdog.
+its declined-watchdog role (decision in the spec).
 
 **Architecture:** One Durable Object per check (alarm-driven, single-writer state);
 `*/5` cron only for pull probes and the external watchdog ping; `send_email` binding
@@ -86,9 +86,8 @@ convention runs shellcheck + the P1 gate).
       post-deploy via API that the cron schedule is registered and the custom domain
       active; create the Email Routing verified destination address for
       geoff-login@907.life via API if absent (the confirmation click is Geoff's, listed
-      in P2c); print instructions for the watchdog (healthchecks.io check URL →
-      `secret-set.sh PINGS_WATCHDOG_URL --stdin` → `wrangler secret put WATCHDOG_URL`,
-      pending the account decision recorded in the spec).
+      in P2c); leave `WATCHDOG_URL` unset (external watchdog declined 2026-08-30,
+      decision in the spec; the weekly digest is the monitor-of-the-monitor).
 - [ ] `add-check NAME --period MIN --grace MIN [--arming MIN] [--email ADDR]` and
       `add-check NAME --pull URL --expect-body SUBSTR`: slug via `openssl rand -hex
       16`; POST /admin/checks; write `check:<name>` KV metadata (no slug); emit the
