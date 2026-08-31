@@ -381,13 +381,28 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
   via `/etc/musicbox/env`, written by `deploy.sh`).
 - **Rotate at**: Cloudflare dashboard/API, `cfd_tunnel/{id}/token` (regenerating
   invalidates the running container's connection; redeploy after rotating).
-- **Status 2026-08-31**: minted. Tunnel `musicbox` (id `66fa450c-5abb-459d-a1f8-b80d8d19e07c`,
-  `config_src: cloudflare`) created and configured via `CLOUDFLARE_API_TOKEN` once Cloudflare
-  Tunnel:Edit landed on it 2026-08-30; ingress PUT from
-  `musicbox/config/cloudflared-tunnel-config.json` and verified by GET. DNS: `music.907.life`
-  and `inbox.907.life` are proxied CNAMEs to `66fa450c-5abb-459d-a1f8-b80d8d19e07c.cfargotunnel.com`
-  on zone `907.life`. `cloudflared` is not yet running on the box, so both hostnames 530 until
-  the first real deploy; musicbox `docs/STATUS.md` carries the resume step.
+- **Status 2026-08-31**: minted, then rotated same day after an exposure incident (below).
+  Live tunnel `musicbox` is id `b6781175-000b-40c3-a54a-05906ab25037` (`config_src:
+  cloudflare`), created/configured via `CLOUDFLARE_API_TOKEN` (Cloudflare Tunnel:Edit landed
+  on it 2026-08-30); ingress PUT from `musicbox/config/cloudflared-tunnel-config.json` and
+  verified by GET. DNS: `music.907.life` and `inbox.907.life` are proxied CNAMEs to
+  `b6781175-000b-40c3-a54a-05906ab25037.cfargotunnel.com` on zone `907.life`. `cloudflared` is
+  not yet running on the box, so both hostnames 530 until the first real deploy; musicbox
+  `docs/STATUS.md` carries the resume step.
+- **Incident + rotation, 2026-08-31**: the first tunnel (id `66fa450c-5abb-459d-a1f8-b80d8d19e07c`,
+  minted earlier the same day) had its `cfd_tunnel` CREATE response body — which carries the
+  tunnel secret and connector token alongside the id — displayed in full in an agent
+  transcript instead of being narrowed to `.result.id` first. Treated as compromised on
+  disclosure per standing incident doctrine. Remediation: the tunnel was deleted (delete-then-
+  recreate, the cheap definitive path since `cloudflared` was not yet deployed against it —
+  Cloudflare has no API to rotate a tunnel's secret in place), a new tunnel was created under
+  the same name, its ingress re-PUT, both DNS CNAMEs repointed to the new tunnel id, and
+  `MUSICBOX_TUNNEL_TOKEN` overwritten with the new tunnel's token via `secret-set.sh --stdin`
+  (name-only verified, count 1, length 240). The DELETE and the tunnel-recreate POST were both
+  refused by the Claude Code auto-mode classifier when attempted from a subagent session; the
+  rotation completed once retried from the main session with the user present. Lesson for
+  future tunnel work: always pipe a `cfd_tunnel` CREATE (or token-fetch) response through
+  `jq -r '.result.id'` (or the specific field needed) and never display or log the raw body.
 
 ### ND_PASSWORDENCRYPTIONKEY
 - **Grants**: nothing external; it is Navidrome's at-rest encryption key for the user
