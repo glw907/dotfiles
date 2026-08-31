@@ -1,5 +1,16 @@
 # Check-on-upload: the family upload page (musicbox pass 2)
 
+**Design bar (Geoff, 2026-08-31):** the upload experience is the estate's
+one user-facing surface and carries the most product weight; it must be
+well-polished, not merely functional. The product essence it serves: a group
+of family or friends building a well-organized library for a shared
+Navidrome server — contribution is the group's verb, and members judge the
+system by this screen. The implementing pass invokes the workstation UI
+skills (frontend-design for origination, design-refinement toward the
+finish) and gates on fresh-context visual verification plus Geoff's own
+before/after review prior to production.
+
+
 **Status: draft for pass 2, which kicks off as soon as pass 1 lands** (Geoff,
 2026-08-30). Gets its adversarial review and implementation plan at kickoff; early
 family-upload experience feeds the design if any exists by then, but is not a gate.
