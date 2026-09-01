@@ -142,6 +142,8 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | VAPID_PRIVATE_KEY   | ✓     | —        | —    | —        | ✓          |
 | MUSICBOX_TUNNEL_TOKEN | ✓ | —      | —    | —        | —          |
 | ND_PASSWORDENCRYPTIONKEY | ✓ | —       | —    | —        | —          |
+| DUBPLATE_SMTP_PASSWORD | ✓  | —        | —    | —        | —          |
+| MUSICBOX_SMTP_PASSWORD | ✓  | —        | —    | —        | —          |
 | ND_SPOTIFY_ID       | ✓     | —        | —    | —        | —          |
 | ND_SPOTIFY_SECRET   | ✓     | —        | —    | —        | —          |
 | NAVIDROME_ADMIN_USER | ✓    | —        | —    | —        | —          |
@@ -156,6 +158,11 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 | MUSICBOX_HC_DISK_URL | ✓   | —      | —    | —        | —          |
 | MUSICBOX_HC_NAVIDROME_URL | ✓ | —    | —    | —        | —          |
 | PINGS_ADMIN_TOKEN | ✓       | —      | —    | —        | —          |
+
+> `DUBPLATE_SMTP_PASSWORD` (Fastmail app password, SMTP scope, minted 2026-08-31 replacing a
+> never-valid predecessor) is canonical; `MUSICBOX_SMTP_PASSWORD` is a same-value alias the
+> still-live shell layer consumes, retiring at the rewrite's T13 rename close. Rotation:
+> Fastmail app-passwords page + secret-receive + deploy.
 
 > The musicbox rows are Local-only by design: none of these secrets touch a Cloudflare
 > Worker. `MUSICBOX_TUNNEL_TOKEN` and the Navidrome values land on the VPS via
