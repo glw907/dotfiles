@@ -624,9 +624,16 @@ restyled to stock DaisyUI classes only) with paste-to-upload; every
 platform: the primary control is a large native-picker button —
 drag-drop is enhancement, never required. ZIP is the primary path
 everywhere; folder-select renders only where `webkitdirectory`
-feature-detects (hidden, not disabled, on iOS Safari); iPad/iPhone copy
-presents multi-FLAC selection and "zip it first" as first-class per gate
-3. `SpecCard` publishes formats, the CD-quality floor, and caps up front
+feature-detects (hidden, not disabled, on iOS Safari — WebKit 271705
+confirms it unimplemented); **accept values are extension-first, never
+bare `audio/*`** (a documented WebKit UTI bug greys out audio files in
+the Files picker for MIME-wildcard accepts; extension lists are the
+field workaround — research 2026-08-31, probe confirms when run);
+iPad/iPhone copy presents multi-FLAC selection and "zip it first" as
+first-class per gate 3, and explicitly surfaces the **"⋯ → Select"
+multi-select gesture** (iPadOS hides multi-select behind it —
+discoverability is a copy job, not an assumption).
+`SpecCard` publishes formats, the CD-quality floor, and caps up front
 from `/api/config`, in the educational register. No client-side
 full-file reads ever. **Verdict timing is path-honest (M7):** on the
 multi-file path, per-file verdict rows genuinely stream as each upload's
