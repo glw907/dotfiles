@@ -175,8 +175,10 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 > these DUBPLATE_ names are then the only ones. Uploader Pass A adds (2026-09-01):
 > UPLOADS_DIR, SERVE_BIND_ADDRS (loopback now; the bridge IP joins at U12a), SERVE_PORT,
 > PUBLIC_NAVIDROME_URL, ACCESS_TEAM_DOMAIN (the account's one Zero Trust org), and
-> TRIGGER_DIR (conductor's TriggerDir ruling). DUBPLATE_ACCESS_AUD stays UNMINTED until
-> U12a creates the Access app; deploys render-fail on it until then, by design.
+> TRIGGER_DIR (conductor's TriggerDir ruling). DUBPLATE_ACCESS_AUD minted 2026-09-01 at
+> U12a: the AUD of Access app "dubplate uploader" (upload.907.life, app id
+> b9d9f27d-bfbf-4c66-a437-5b3074785eee); rotate by recreating the app and re-running
+> secret-set.sh. SERVE_BIND_ADDRS gains the pinned compose bridge gateway at U12a deploy.
 
 > The musicbox rows are Local-only by design: none of these secrets touch a Cloudflare
 > Worker. `MUSICBOX_TUNNEL_TOKEN` and the Navidrome values land on the VPS via
