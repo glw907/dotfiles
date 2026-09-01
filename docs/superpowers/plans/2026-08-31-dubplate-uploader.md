@@ -86,23 +86,39 @@ and Access — which is exactly what Pass A ships. They therefore run
 **after Pass A, against the deployed serve**, not before anything exists.
 
 1. **SSE spike (post-A):** against U7's dedicated probe endpoint
-   (`GET /api/stream/probe` — Pass A ships it precisely so this gate has
-   a real target; see U7), prove `text/event-stream` +
-   `X-Accel-Buffering: no` + `no-transform`, ≤20s heartbeat,
-   `Last-Event-ID` replay, and the "session expired — reload to sign in"
-   state through the real tunnel and Access — or record the decision to
-   ship polling-only (the design survives it; Pass B's U11 then ships
-   polling alone and the client seam stays).
-2. **Chunk-size timing (post-A):** timed large-chunk PATCHes through the
-   tunnel from a residential link against the deployed serve; confirms or
-   amends the `UploadChunkMB` default of 8 (range 5–16).
-3. **iPad picker check (pre-Phase-P):** on real iPadOS Safari — a cloud
-   device farm by default (infra researched 2026-08-31; Geoff is final
-   eye and design taste, not routine tester), the household iPad only if
-   farm devices cannot drive the Files picker. The probe instrument is
-   published (claude.ai artifact "Dubplate Picker Probe"): what the
-   picker can select (multi-FLAC? ZIP? third-party providers?); feeds
-   the prototyping brief and U10's copy.
+   (Pass A ships it precisely so this gate has a real target; see U7),
+   with the field-proven mitigation set applied from the start
+   (research 2026-08-31: cloudflared buffers GET-opened SSE —
+   cloudflared#1449 — and its HTTP/2 path cuts idle streams near 60s):
+   the probe stream is **POST-opened**, `text/event-stream` +
+   `no-transform`, heartbeat comment every **15s**, flush after every
+   write; prove incremental delivery, `Last-Event-ID` replay, and the
+   "session expired — reload to sign in" state through the real tunnel
+   and Access. If it misbehaves with all four mitigations in place,
+   record polling-only and stop chasing (the design survives it; U11
+   ships polling alone and the client seam stays).
+2. **Chunk timing AND resumability (post-A):** timed large-chunk PATCHes
+   through the tunnel from a residential link against the deployed serve
+   — field reports converge on 5–10MB chunks (confirming the 8MB
+   default; 16MB risks the 100s window on slow uplinks) — AND verify
+   **offset persistence**: interrupt an upload mid-chunk and confirm
+   tus HEAD reports real partial progress through the tunnel (a
+   community report claims proxy buffering can hide offsets until
+   request completion — unverified; this gate settles it). Confirm the
+   zone's request-body cap once against the chunk size.
+3. **iPad picker check (pre-Phase-P):** on real iPadOS Safari. Route
+   decided by the 2026-08-31 infra research: the household iPad over
+   USB to the workstation via usbmuxd + ios-webkit-debug-proxy (free;
+   real console/network visibility during real uploads — Geoff's
+   testing role is plugging the cable in; he remains final eye and
+   design taste only). Farms are the fallback: BrowserStack's free tier
+   is ruled out (file injection paywalled); LambdaTest ~$15/mo only
+   after verifying large-file injection. Playwright WebKit is CI smoke
+   for form JS only, never iOS truth (documented file-input
+   divergence). The probe instrument is published (claude.ai artifact
+   "Dubplate Picker Probe"): what the picker can select (multi-FLAC?
+   ZIP? third-party providers?); feeds the prototyping brief and U10's
+   copy.
 
 ## Gate outcomes (filled before Pass B starts)
 
@@ -578,7 +594,9 @@ unit-tested: state transitions; the honest-progress split; resume
 anchoring (persists only the tus upload URL — no IndexedDB/localStorage
 file caching; "re-select the file after a full browser close" is a store
 state, not a surprise); **the retry ladder (M14)**: explicit
-`retryDelays`; on repeated 502/504/524 at the same offset, halve
+`retryDelays` starting from the field-proven default
+`[0, 3000, 5000, 10000, 20000]`; on repeated 502/504/524 at the same
+offset, halve
 `chunkSize` down to a 1MB floor and surface a "your connection is slow —
 using smaller pieces" note; when the budget is exhausted, a distinct
 honest stalled state with manual retry (downshift ladder unit-tested
