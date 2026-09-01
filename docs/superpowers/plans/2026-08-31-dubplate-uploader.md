@@ -1,8 +1,8 @@
 # dubplate uploader: implementation plan
 
-**STATUS: DRAFT — research folded; two adversarial rounds folded (32
-findings + 13 verification findings, see Review provenance); awaiting
-Geoff's approval. Do not execute.**
+**STATUS: APPROVED by Geoff 2026-08-31 ("the plan looks good") after two
+adversarial rounds (32 findings + 13 verification findings, see Review
+provenance). Executes after the Go rewrite pass closes (T14 included).**
 
 **Goal:** Build the estate's one user-facing surface — `dubplate serve` plus a
 bespoke Svelte 5 / DaisyUI upload page replacing FileBrowser — with album-unit
