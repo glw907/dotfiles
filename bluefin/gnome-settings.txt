@@ -1,0 +1,10 @@
+# Curated GNOME settings: each line is one deliberate deviation from the
+# stock Bluefin/GNOME defaults, as "schema key value", where value is the
+# serialized form `gsettings get` prints. bootstrap.sh applies the lines;
+# check-drift compares them against the live dconf database. Keep this
+# file curated by hand; never regenerate it from `dconf dump`, which
+# captures transient state (window sizes, recent files) alongside intent.
+
+# Stock GNOME suspends after 15 idle minutes even on AC power. Battery
+# keeps the stock suspend behavior on purpose.
+org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'

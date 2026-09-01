@@ -373,6 +373,17 @@ setup_kitty() {
     ln -sf "$HOME/.local/kitty.app/bin/kitten" "$HOME/.local/bin/kitten"
 }
 
+setup_gnome_settings() {
+    echo "== setup: GNOME settings (gnome-settings.txt) =="
+    # Manifest values are the serialized form `gsettings get` prints, which
+    # `gsettings set` parses back for every key type, so no per-type quoting
+    # is needed here.
+    local schema key value
+    while read -r schema key value; do
+        gsettings set "$schema" "$key" "$value" || return 1
+    done < <(read_list "$BLUEFIN_DIR/gnome-settings.txt")
+}
+
 # Claude Code comes from the Homebrew cask in the Brewfile, installed by
 # setup_brew like every other CLI tool. The brief originally called for the
 # native installer into ~/.local/bin; the cask is the idiomatic tier for a
@@ -805,6 +816,7 @@ phase_setup() {
         setup_upkeep_timer
         setup_contacts_timer
         setup_kitty
+        setup_gnome_settings
         setup_verify_claude_code
         setup_syncthing
     )

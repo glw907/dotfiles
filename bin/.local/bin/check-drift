@@ -126,6 +126,19 @@ strays=$(comm -23 \
     || ok "no unexplained strays"
 
 echo ""
+echo "GNOME settings (bluefin/gnome-settings.txt):"
+# Manifest values are the serialized form `gsettings get` prints, so the
+# two sides compare byte for byte.
+while read -r schema key want; do
+    live=$(gsettings get "$schema" "$key" 2>/dev/null)
+    if [[ "$live" == "$want" ]]; then
+        ok "$schema $key = $want"
+    else
+        bad "$schema $key is ${live:-unreadable}, manifest says $want"
+    fi
+done < <(read_list "$BLUEFIN/gnome-settings.txt")
+
+echo ""
 echo "Git state:"
 drift=$(cd "$DOTFILES" && git status --porcelain)
 if [[ -n "$drift" ]]; then
