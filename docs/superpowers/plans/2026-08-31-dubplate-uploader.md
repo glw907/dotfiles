@@ -96,9 +96,13 @@ and Access — which is exactly what Pass A ships. They therefore run
 2. **Chunk-size timing (post-A):** timed large-chunk PATCHes through the
    tunnel from a residential link against the deployed serve; confirms or
    amends the `UploadChunkMB` default of 8 (range 5–16).
-3. **iPad picker check (pre-Phase-P):** on the actual iPad (Geoff's
-   hands): what the Files-app picker can select (multi-FLAC? ZIP? from
-   third-party providers?); feeds the prototyping brief and U10's copy.
+3. **iPad picker check (pre-Phase-P):** on real iPadOS Safari — a cloud
+   device farm by default (infra researched 2026-08-31; Geoff is final
+   eye and design taste, not routine tester), the household iPad only if
+   farm devices cannot drive the Files picker. The probe instrument is
+   published (claude.ai artifact "Dubplate Picker Probe"): what the
+   picker can select (multi-FLAC? ZIP? third-party providers?); feeds
+   the prototyping brief and U10's copy.
 
 ## Gate outcomes (filled before Pass B starts)
 
