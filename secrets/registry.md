@@ -172,7 +172,11 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 > Navidrome URL, config/library paths) that were script constants before the rewrite; the
 > authoritative name list and per-name comments live in musicbox
 > env/musicbox.env.template's T12 block. The MUSICBOX_*/ND-alias generation retires at T13;
-> these DUBPLATE_ names are then the only ones.
+> these DUBPLATE_ names are then the only ones. Uploader Pass A adds (2026-09-01):
+> UPLOADS_DIR, SERVE_BIND_ADDRS (loopback now; the bridge IP joins at U12a), SERVE_PORT,
+> PUBLIC_NAVIDROME_URL, ACCESS_TEAM_DOMAIN (the account's one Zero Trust org), and
+> TRIGGER_DIR (conductor's TriggerDir ruling). DUBPLATE_ACCESS_AUD stays UNMINTED until
+> U12a creates the Access app; deploys render-fail on it until then, by design.
 
 > The musicbox rows are Local-only by design: none of these secrets touch a Cloudflare
 > Worker. `MUSICBOX_TUNNEL_TOKEN` and the Navidrome values land on the VPS via
