@@ -164,6 +164,16 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 > still-live shell layer consumes, retiring at the rewrite's T13 rename close. Rotation:
 > Fastmail app-passwords page + secret-receive + deploy.
 
+> **DUBPLATE_* additive block (minted 2026-08-31, rewrite T12; 30 names, all Local-only,
+> rendered to the box env by musicbox/scripts/deploy.sh).** Aliases carrying an existing
+> secret's value under the new name: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY,
+> NAVIDROME_ADMIN_{USER,PASSWORD}, PING_{BACKUP,DISK,NAVIDROME}_URL, SMTP_PASSWORD (above).
+> The rest are NEW non-secret values (SMTP host/port/user/from, R2 account/bucket/remote,
+> Navidrome URL, config/library paths) that were script constants before the rewrite; the
+> authoritative name list and per-name comments live in musicbox
+> env/musicbox.env.template's T12 block. The MUSICBOX_*/ND-alias generation retires at T13;
+> these DUBPLATE_ names are then the only ones.
+
 > The musicbox rows are Local-only by design: none of these secrets touch a Cloudflare
 > Worker. `MUSICBOX_TUNNEL_TOKEN` and the Navidrome values land on the VPS via
 > `musicbox/scripts/deploy.sh` writing `/etc/musicbox/env` (root:root 0600); the R2 pairs
