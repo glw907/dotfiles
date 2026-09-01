@@ -38,12 +38,22 @@ scaffold header, and a bold-lead bullet list.
 4. **Comment registers discriminate well.** go-doc-comments and python-docstrings showed
    the clearest quality gaps (missing package comment; 13-line Args:/Yields: docstrings
    restating hints), all caught by assertions grounded in the conventions skills.
-5. **Lexicon status.** The slop lexicon in the grader is the provisional local list; the
-   external-research pass (published tell taxonomies, evidenced word lists) had not
-   landed when these numbers were taken. Regrade after extending it; em-dash and
-   structural checks, which produced every finding above, will not change.
+5. **Lexicon status.** After the external-research pass landed
+   (`../../research/2026-09-01-ai-tell-evidence-base.md`), the grader's lexicon was
+   rebuilt evidence-tiered (Kobak Tier-A hard list, register rules labeled as such) and
+   two checks were added (participial-tail, assistant-voice). Regrading all 24 drafts
+   changed nothing: zero lexical or syntactic hits in either arm. On current Claude-family
+   models the surviving tells are structural and punctuational (spaced em dashes, scaffold
+   headers, bold-lead bullets, flat cadence), which matches the published decay finding
+   that famous marker words collapsed after mid-2024 while register signals persist.
 
 ## Method notes for the next run
 
-Keep the A/B alternation and the three grading layers. Fix the explainer assertion.
-Consider a second run per arm to expose variance before trusting single-digit deltas.
+Keep the A/B alternation and the three grading layers; the research validates the design
+(decomposed binary checklists roughly double judge-human agreement versus holistic
+scores). Three corrections it argues for: the judges here are Opus grading Sonnet, both
+Anthropic, and same-family judge and subject share blind spots, so add a cross-family
+judge or at least note the bias; the flat-cadence CV threshold of 0.35 is self-chosen
+since no published threshold exists, so calibrate it against a local human corpus before
+trusting flat-cadence flags; and fix the explainer lead-with-diagnosis assertion. Consider
+a second run per arm to expose variance before trusting single-digit deltas.

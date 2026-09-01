@@ -96,6 +96,36 @@ func TestScanFindings(t *testing.T) {
 			want:     []string{"hedging-filler"},
 		},
 		{
+			name:     "participial tail flagged",
+			input:    "The library commits every edit to GitHub, ensuring nothing is lost.",
+			register: Docs,
+			want:     []string{"participial-tail"},
+		},
+		{
+			name:     "plain gerund without comma not flagged",
+			input:    "The hook runs before saving and after loading.",
+			register: Docs,
+			absent:   []string{"participial-tail"},
+		},
+		{
+			name:     "assistant voice flagged",
+			input:    "Set the ORIGIN variable and redeploy. I hope this helps!",
+			register: Reply,
+			want:     []string{"assistant-voice"},
+		},
+		{
+			name:     "lowercase certainly mid-sentence not flagged",
+			input:    "The rewrite is certainly, on balance, an improvement.",
+			register: Reply,
+			absent:   []string{"assistant-voice"},
+		},
+		{
+			name:     "metacommentary flagged as setup colon",
+			input:    "At its core, the library is a commit pipeline.",
+			register: Docs,
+			want:     []string{"setup-colon"},
+		},
+		{
 			name: "bold lead bullets",
 			input: "- **Fast**: does things quickly\n" +
 				"- **Safe**: never corrupts data\n" +

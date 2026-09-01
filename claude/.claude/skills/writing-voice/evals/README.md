@@ -13,6 +13,9 @@ produces better prose than drafting bare, on the same model and the same tasks.
   flat cadence) and reports JSON. `make -C tellgrader check` is its gate.
 - `results/`: one dated directory per benchmark run holding `benchmark.json`,
   `benchmark.md`, and analyst notes. This is the trend line; compare across dates.
+- `research/`: the external evidence base behind the grader's checks and lexicon
+  (published tell taxonomies, excess-vocabulary ratios, judge-bias numbers), with the
+  license-clean source wordlists under `research/data/`.
 
 ## How a run works
 
