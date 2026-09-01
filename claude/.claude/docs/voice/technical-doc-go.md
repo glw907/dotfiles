@@ -20,6 +20,10 @@ This register is the Go-prose arm of the authoring charter (`~/.claude/docs/auth
 - Lead with the most important information. State what a thing does before how it works.
 - Plain words over jargon and filler. Cut "simply", "easily", "just", "in order to", and
   marketing adjectives.
+- Write only what you know to be true of the system. A confident specific the source material
+  does not state (a flag, a default, an output line) is an invention the reader will act on.
+  Where a detail is unknown, leave it out; fluency in this register makes invented specifics
+  sound authoritative, which makes them worse, not better.
 
 ## Exemplars
 

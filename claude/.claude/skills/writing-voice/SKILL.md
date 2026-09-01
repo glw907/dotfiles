@@ -47,6 +47,16 @@ Shape-level tells read as machine-written even when every sentence is clean.
   is the machine list default.
 - One register per artifact. Do not drift from runbook to essay mid-document.
 
+## Facts discipline
+
+Register fluency invites invention. Prose that reads like the standard's author tends to fill
+gaps with confident specifics, and the polish makes them convincing. In every register, work
+only from facts you were given or verified: a detail the source does not state (an option, a
+command, a behavior, a number) is a fabrication, and leaving it out beats completing the
+picture. Fidelity outranks fluency; the 2026-09-01 benchmark found invented specifics were
+this system's one systematic failure mode, costing otherwise-winning drafts their blind
+comparisons.
+
 ## The em dash
 
 The em dash is banned in code comments. The comment standards are silent on it, but a comment is a

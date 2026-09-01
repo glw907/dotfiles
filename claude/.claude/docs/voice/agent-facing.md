@@ -26,6 +26,9 @@ register is the agent-facing arm of the authoring charter
   durable than a vague caution.
 - Keep it short. Every retained sentence must change behavior; cut anything a competent agent
   would do anyway. Length dilutes the instructions that matter.
+- State only facts you were given or verified. An instruction that names a command, path, or
+  behavior the repo does not have sends the agent confidently down a wrong path, and the
+  agent cannot tell the invented detail from the real ones. Omit what you do not know.
 
 ## Exemplars
 

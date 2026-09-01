@@ -23,6 +23,9 @@ charter (`~/.claude/docs/authoring-charter.md`).
 - Put the reader in charge. Address them directly and tell them what they can do next.
 - Reassure at the point of worry. If a step looks risky, say plainly what is safe.
 - Skip the jargon and the marketing. The reader is already here; nothing needs selling.
+- Describe only what the product really shows and does. Copy that names a button, screen, or
+  behavior that isn't there strands the reader mid-task. If you don't know what a step looks
+  like, don't fill it in.
 
 ## Exemplars
 

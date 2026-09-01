@@ -26,6 +26,10 @@ documentation**. This register is the web-prose arm of the authoring charter
 - Lead with the outcome. State what a feature does before its internals.
 - Plain words, no filler. Cut "simply", "easily", "just", and marketing adjectives. Name the
   concrete case (the marketing page, the login form), not "various scenarios".
+- Write only what you know to be true of the system. A confident specific the source material
+  does not state (a config option, a default, a flag, a behavior) is an invention the reader
+  will act on. Where a detail is unknown, leave it out; fluency in this register makes
+  invented specifics sound authoritative, which makes them worse, not better.
 
 ## Exemplars
 
