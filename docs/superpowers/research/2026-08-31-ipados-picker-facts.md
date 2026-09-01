@@ -31,11 +31,24 @@ the session transcript; key ones inline.
 - Multi-select gesture: on iPadOS the picker hides multi-select behind
   "... -> Select" (Apple dev forums). U10 copy must surface the gesture.
 
-## Open - one probe run on any iPad answers
+## CLOSED by the prior-art round (same day)
 
-ZIP selection via accept=".zip"; audio/* greyout currency on current
-iPadOS; webkitdirectory degradation shape; provider-specific multi-select
-quirks; iPadOS 17->18 diffs (thinnest area). The published probe
-(claude.ai artifact "Dubplate Picker Probe", accept-variant version)
-records all of these in one two-minute tap-through by ANY family member;
-no rig, cable, or farm required.
+A second research round (prior art + Apple developer docs) closed the
+residuals; gate 3 needs NO device:
+- audio/* greyout: CONFIRMED ALIVE through iOS 18.3.1 - WebKit bug
+  242110 (accept="audio/*" treated as video/*), status NEW since 2022,
+  reproduced May 2025 in WordPress/Gutenberg#70119, corroborated by
+  react-dropzone#1039 and gradio; no Safari 18.0-18.5 release note
+  fixes it. Extension-first accepts are REQUIRED, not defensive.
+- ZIP selection: works in production (WeTransfer's mobile-web docs
+  assume it; the documented iOS ZIP problem is download-side only).
+- Multi-select gesture ("... -> Select"): Apple documents it; no
+  shipping uploader's help center does - dubplate's coaching copy
+  exceeds prior art.
+- Large uploads: no documented iOS byte ceiling anywhere; chunked
+  resumable (tus) is the production norm; WeTransfer's "use the app"
+  nudge cites reliability, not a platform limit.
+- Only unknown left: exact accept strings of auth-walled uploaders
+  (Dropbox/Drive/WeTransfer SPAs) - academic, gates nothing.
+The published probe (claude.ai artifact "Dubplate Picker Probe") is a
+courtesy runtime confirmation only.

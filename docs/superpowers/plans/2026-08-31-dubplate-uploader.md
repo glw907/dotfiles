@@ -124,7 +124,21 @@ and Access — which is exactly what Pass A ships. They therefore run
 
 - Gate 1 (SSE): _unrecorded_
 - Gate 2 (chunk): _unrecorded_
-- Gate 3 (iPad): _unrecorded_
+- Gate 3 (iPad): **CLOSED documentarily 2026-08-31, no device needed**
+  (two research rounds; artifacts in the research dir). Rulings for
+  U10: (a) accept values are extension-first, never bare `audio/*` —
+  WebKit bug 242110 (audio/* treated as video/*, files greyed out) is
+  confirmed unfixed through iOS 18.3.1 (Gutenberg #70119, May 2025) and
+  no Safari 18.x release note remediates it; (b) ZIP selection through
+  the Files picker works in production (WeTransfer's own mobile-web
+  docs; the famous iOS ZIP problem is download-side, never selection);
+  (c) multi-select exists behind the "⋯ → Select" gesture — Apple
+  documents it, NO shipping uploader's help does, so dubplate's copy
+  coaching the gesture exceeds prior art; (d) `webkitdirectory` is
+  absent (WebKit 271705), folder-select stays hidden on iOS; (e) no
+  picker-side size ceiling exists — chunked resumable uploads are the
+  production norm with no documented iOS byte cap. The published probe
+  artifact remains a courtesy runtime confirmation, gating nothing.
 
 ## Phase P: UI/UX prototyping (post-gates, before U9–U11)
 
