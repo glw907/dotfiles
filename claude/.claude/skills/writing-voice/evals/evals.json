@@ -116,7 +116,7 @@
       "expected_output": "A chat reply that leads with the diagnosis, walks the causal chain once in plain prose, gives the fix, and stops. No headers, no bullet spray, no em dashes.",
       "files": [],
       "assertions": [
-        "The first sentence states the diagnosis: SvelteKit's origin check rejects the POST, not Cloudflare Access",
+        "Leads with the answer: within the first two sentences the reply delivers the diagnosis (SvelteKit's origin check rejects the POST) or the fix (set the ORIGIN environment variable), and it explicitly clears Cloudflare Access as the cause",
         "Walks the causal chain once: Access cookie is fine, the Worker sees an internal forwarded hostname, so the origin check fails",
         "Gives the exact fix: set the ORIGIN environment variable on the Worker to the public URL",
         "Uses no headers, no bullet lists, and no em dashes"
