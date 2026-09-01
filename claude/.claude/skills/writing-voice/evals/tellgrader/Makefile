@@ -13,7 +13,7 @@ lint:
 	golangci-lint run ./...
 
 install:
-	go install ./cmd/tellgrader
+	go build -o $(HOME)/.local/bin/$(BINARY) ./cmd/tellgrader
 
 check: vet lint test
 

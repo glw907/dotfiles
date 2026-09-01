@@ -14,7 +14,11 @@ findings as proposals unless Geoff has delegated application.
 Run Vale on the target(s) from the repo root (the in-tree `.vale.ini` carries the Google
 package plus the Cairn slop style: VirtueClaims, Marketing, ContrastFrame, Announcement).
 Error-tier findings are defects; fix or flag them before spending agent tokens. Warnings and
-suggestions ride along as advisory context only.
+suggestions ride along as advisory context only. Also run `tellgrader --register docs <file>`
+(the workstation tell scanner) for the classes Vale does not carry: connector openers, the
+evidence-tiered slop lexicon, scaffold headers, bold-lead bullets, flat cadence. Its docs
+register only approximates cairn's own voice, so treat its findings as advisory candidates for
+Gate 2, not automatic defects.
 
 ## Gate 2: register (the editor's ear)
 

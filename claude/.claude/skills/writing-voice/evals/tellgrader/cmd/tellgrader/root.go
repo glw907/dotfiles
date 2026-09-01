@@ -2,33 +2,47 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 
+	"github.com/glw907/workstation/tellgrader/internal/posthook"
 	"github.com/glw907/workstation/tellgrader/internal/tellscan"
 	"github.com/spf13/cobra"
 )
 
 type flags struct {
 	register string
+	hook     bool
 }
 
 func newRootCmd() *cobra.Command {
 	var f flags
 
 	cmd := &cobra.Command{
-		Use:          "tellgrader --register <name> file...",
-		Short:        "Scan prose for AI-writing tells and report cadence statistics as JSON",
-		Args:         cobra.MinimumNArgs(1),
-		RunE:         func(cmd *cobra.Command, args []string) error { return run(args, &f) },
-		SilenceUsage: true,
+		Use:           "tellgrader --register <name> file...",
+		Short:         "Scan prose for AI-writing tells and report cadence statistics as JSON",
+		Args:          cobra.ArbitraryArgs,
+		RunE:          func(cmd *cobra.Command, args []string) error { return run(args, &f) },
+		SilenceUsage:  true,
+		SilenceErrors: true,
 	}
 	cmd.Flags().StringVar(&f.register, "register", "docs",
 		"register to grade against: docs, editor, commit, reply, agent, comments")
+	cmd.Flags().BoolVar(&f.hook, "hook", false,
+		"read a Claude Code PostToolUse event on stdin and emit advisory context")
 	return cmd
 }
 
 func run(paths []string, f *flags) error {
+	if f.hook {
+		runHook()
+		return nil
+	}
+	if len(paths) == 0 {
+		return errors.New("no files to scan")
+	}
 	reg, err := tellscan.ParseRegister(f.register)
 	if err != nil {
 		return err
@@ -52,4 +66,16 @@ func run(paths []string, f *flags) error {
 		return enc.Encode(reports[0])
 	}
 	return enc.Encode(reports)
+}
+
+// runHook is advisory-only and fails open: it returns no error, so a
+// hook problem exits 0 and never disrupts the session.
+func runHook() {
+	raw, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		return
+	}
+	if out := posthook.Run(raw); out != "" {
+		fmt.Println(out)
+	}
 }

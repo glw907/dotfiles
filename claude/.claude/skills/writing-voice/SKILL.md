@@ -83,5 +83,10 @@ Site content follows the site's voice. Overuse is a tell in any register.
   editor copy: the deterministic net on docs prose. The `vale-hook` feeds its findings back as advisory
   context on save, and CI runs the same config. The native comment linters cover code comments (gofmt and
   go vet, ESLint jsdoc and tsdoc, ruff `D`).
+- `tellgrader` (`~/.local/bin`, source in this skill's `evals/tellgrader/`): the register-aware
+  AI-tell scanner, evidence-grounded in `evals/research/`. It catches what Vale does not (contrast
+  frames, connector openers, the slop lexicon, scaffold headers, flat cadence, per-register em-dash
+  rules) and runs on save via its `--hook` mode alongside `vale-hook`. The `prose-voice-reviewer`
+  agent runs it as the deterministic floor before spending judgment.
 - The `writing-voice` output style: the always-on audience-invariant core.
 - This skill: the router and the shape rules.

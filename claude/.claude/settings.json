@@ -75,6 +75,12 @@
           },
           {
             "type": "command",
+            "command": "tellgrader --hook",
+            "timeout": 10,
+            "statusMessage": "Scanning changed prose for tells"
+          },
+          {
+            "type": "command",
             "command": "claude-context-budget --hook",
             "timeout": 10,
             "statusMessage": "Checking context-file budgets"

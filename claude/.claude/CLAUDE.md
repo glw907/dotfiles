@@ -351,8 +351,9 @@ Conventional Commits, code comments their language standard (Go Doc Comments via
 go-conventions, TSDoc via ts-/svelte-conventions, PEP 257 via python-conventions). Site
 content is the one personal voice, in the site repo's own content guide. Imitate the
 standard's canonical exemplars. Vale (Google package on developer docs, Microsoft on editor
-copy) plus the native comment linters are the deterministic net, fed back by `vale-hook` on
-save; a clean run is necessary, never sufficient. Draft clean the first time.
+copy), the native comment linters, and `tellgrader` (see the writing-voice skill) are the
+deterministic net, all fed back on save; a clean run is necessary, never sufficient. Draft
+clean the first time.
 
 The highest-frequency tells, inline so they are unmissable:
 - One idea per sentence. Do not bridge two or three clauses into one.
