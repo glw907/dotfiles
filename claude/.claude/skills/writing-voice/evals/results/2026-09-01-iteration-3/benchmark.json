@@ -1,0 +1,1226 @@
+{
+  "metadata": {
+    "skill_name": "writing-voice",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-09-01T21:18:55Z",
+    "evals_run": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States that content lives as markdown files in the consuming repo and that there is no database",
+          "passed": true,
+          "evidence": "\"fieldnote stores content as markdown files in your site's own repository, so there is no database to provision or back up.\""
+        },
+        {
+          "text": "Explains that saving an edit becomes a GitHub commit through a GitHub App",
+          "passed": true,
+          "evidence": "\"It opens a commit on your site's GitHub repository through a GitHub App installation.\""
+        },
+        {
+          "text": "Invents no features beyond the facts given in the task",
+          "passed": false,
+          "evidence": "\"your existing history, review process, and deploy pipeline see it the same way\" asserts a review process the facts do not describe, and \"access control is a question of who can receive mail at an address you've authorized\" asserts an authorized-address list the task never states. \"fieldnote reads and writes them directly\" also contradicts the draft's own later line that saves go through GitHub rather than a disk write."
+        },
+        {
+          "text": "Stays within 300-450 words of prose",
+          "passed": true,
+          "evidence": "355 words (wc -w)."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.68 over 21 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States the resolution order exactly: flags, then TIDEWATCH_* environment variables, then config.toml, then defaults, highest wins",
+          "passed": true,
+          "evidence": "\"resolves them in order of precedence, highest first: command-line flags, `TIDEWATCH_*` environment variables, the config file at `~/.config/tidewatch/config.toml`, and built-in defaults. A setting from a higher-precedence source overrides the same setting from a lower one.\""
+        },
+        {
+          "text": "Documents all three settings with their defaults (station no default, units feet, alert_window 45m)",
+          "passed": true,
+          "evidence": "station: \"There is no default.\"; units: \"either `feet` or `meters`. The default is `feet`.\"; alert_window: \"as a Go duration string ... The default is `45m`.\""
+        },
+        {
+          "text": "Includes a syntactically valid example config.toml covering the three settings",
+          "passed": true,
+          "evidence": "```toml block with station = \"9414290\", units = \"feet\", alert_window = \"45m\" \u2014 three valid TOML key/value pairs, all three settings covered"
+        },
+        {
+          "text": "Mentions tidewatch config show as the way to verify resolved configuration",
+          "passed": true,
+          "evidence": "\"Run `tidewatch config show` to print the fully resolved configuration.\" under its own \"Viewing the resolved configuration\" heading"
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.84 over 22 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Breaking changes and the migration command appear before new features",
+          "passed": true,
+          "evidence": "\"## Breaking changes\" heads the note; the migration command is on line 5, before \"## New\" on line 7."
+        },
+        {
+          "text": "Includes the exact command npx fieldnote migrate-sessions",
+          "passed": true,
+          "evidence": "\"run `npx fieldnote migrate-sessions` once against your existing site\""
+        },
+        {
+          "text": "Covers all five facts: createCms renamed to mountCms, KV to D1 session move, R2 image uploads, drag-and-drop reordering, RSS draft fix",
+          "passed": true,
+          "evidence": "All five present: rename line 3, \"Workers KV to D1\" line 5, \"R2 bucket that you configure\" line 9, \"Drag a post in the editor to reorder it\" line 11, RSS fix line 15."
+        },
+        {
+          "text": "Contains no hype or marketing language",
+          "passed": true,
+          "evidence": "Plain declaratives throughout; only \"directly\" in \"Upload images directly from the editor\" edges toward filler, and no marketing adjectives appear."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.57 over 12 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "All four pieces are present and labeled a through d",
+          "passed": true,
+          "evidence": "Four labeled sections: \"**a. Empty state**\", \"**b. Upload error (file over 10 MB)**\", \"**c. Delete confirmation dialog**\", \"**d. Help panel introduction**\", with the empty state split into \"Heading:\" and \"Body:\"."
+        },
+        {
+          "text": "The upload error names the 10 MB limit and does not blame the user",
+          "passed": true,
+          "evidence": "\"This file is too large to upload. Choose a file under 10 MB, or resize your image and try again.\" \u2014 the file is the subject, not the reader; \"under 10 MB\" is a slightly loose reading of a 10 MB limit."
+        },
+        {
+          "text": "The delete confirmation states the image is used on 3 pages and what will happen to them",
+          "passed": true,
+          "evidence": "\"This image is used on 3 pages. If you delete it, it will disappear from all of them, and you'll need to add a new image in its place. This can't be undone.\""
+        },
+        {
+          "text": "Speaks to the editor in second person without technical jargon",
+          "passed": true,
+          "evidence": "\"When you're ready, select Upload to add your first image.\" \u2014 no jargon anywhere; no file formats, MIME types, or CMS internals."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.84 over 18 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States the invariant that an applied migration is never edited and a mistake gets a new migration",
+          "passed": true,
+          "evidence": "\"Never edit a migration that has already been applied.\" and \"write a new migration that fixes it instead of touching the old one.\""
+        },
+        {
+          "text": "Includes both commands verbatim: npm run db:new-migration <name> and npm run db:migrate",
+          "passed": true,
+          "evidence": "\"Create one with `npm run db:new-migration <name>` and apply it locally with `npm run db:migrate`.\""
+        },
+        {
+          "text": "States that CI applies migrations on deploy (merging is deploying) and the destructive-migration backfill rule",
+          "passed": true,
+          "evidence": "\"CI applies all pending migrations on deploy, so merging to main is deploying\" plus \"must ship together with a paired backfill script in `db/backfills`\""
+        },
+        {
+          "text": "Stays within 120-200 words",
+          "passed": true,
+          "evidence": "wc -w reports 160 words including the heading"
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.54 over 10 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The commit subject follows Conventional Commits with a type, in imperative mood",
+          "passed": true,
+          "evidence": "\"refactor(fetch): extract retry logic into a helper\" \u2014 valid type, optional scope, imperative and lowercase, no trailing period, exactly 50 characters (the canonical target)."
+        },
+        {
+          "text": "The commit body explains what changed and why, not a file-by-file list",
+          "passed": true,
+          "evidence": "Opens on the motivating fragility: \"httpFetch and jsonFetch each duplicated their own retry loop.\" Names the helper and the timing change; no file-by-file enumeration."
+        },
+        {
+          "text": "The PR body explicitly flags the one behavior change: fixed-interval retry became exponential backoff with jitter capped at 30 seconds",
+          "passed": true,
+          "evidence": "\"The helper changes the retry timing: exponential backoff with jitter, capped at 30 seconds, in place of the old fixed interval. No other behavior changes.\""
+        },
+        {
+          "text": "Invents no issue numbers, reviewers, or facts beyond the task",
+          "passed": true,
+          "evidence": "No issue refs, no reviewers, no claimed test run \u2014 the \"Test plan\" line states only \"Unit tests for withRetry are added in src/lib/retry.test.ts\". The Co-Authored-By trailer matches the standard's own exemplar footer."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.57 over 6 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Commits to a single recommendation rather than hedging between the options",
+          "passed": true,
+          "evidence": "Leads with \"Recommendation: build the search index at publish time with minisearch\" and closes with \"Recommend the minisearch static-JSON option.\""
+        },
+        {
+          "text": "Weighs index size and staleness against query latency and operational surface using the given constraints (50-2000 pages, results as you type, two-person team)",
+          "passed": true,
+          "evidence": "\"At 2000 pages, a full-text index is the largest artifact the browser downloads for search\"; staleness via \"content changes only on publish, so the index never has to track live edits\"; ops surface via \"no server component to run, patch, or monitor, and no database schema to migrate\"."
+        },
+        {
+          "text": "States what condition would change the recommendation",
+          "passed": true,
+          "evidence": "\"Revisit D1 FTS5 only if a site's page count grows past what a trimmed index keeps comfortably small in the browser\" (a condition, though it names no threshold)."
+        },
+        {
+          "text": "Stays within 350-500 words",
+          "passed": true,
+          "evidence": "474 words."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.45 over 17 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 7,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The first sentence states the diagnosis: SvelteKit's origin check rejects the POST, not Cloudflare Access",
+          "passed": false,
+          "evidence": "First sentence is the remedy, not the diagnosis: \"Set the ORIGIN environment variable on the Worker to your public URL.\" The diagnosis (\"The actual failure is SvelteKit's built-in cross-site form protection\") arrives in the third paragraph sentence."
+        },
+        {
+          "text": "Walks the causal chain once: Access cookie is fine, the Worker sees an internal forwarded hostname, so the origin check fails",
+          "passed": true,
+          "evidence": "One pass, in order: \"the browser sends the Access cookie and the request reaches your Worker fine\" then \"the Worker sees an internal forwarded hostname instead of your public domain\" then \"SvelteKit treats every POST as cross-site and rejects it with a 403.\""
+        },
+        {
+          "text": "Gives the exact fix: set the ORIGIN environment variable on the Worker to the public URL",
+          "passed": true,
+          "evidence": "\"Set the ORIGIN environment variable on the Worker to your public URL.\" Named variable, named target, named public URL."
+        },
+        {
+          "text": "Uses no headers, no bullet lists, and no em dashes",
+          "passed": true,
+          "evidence": "Zero \"#\" lines, zero \"-\"/\"*\" list markers, zero em dashes across all three paragraphs."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.53 over 9 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 8,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Has a package comment and a doc comment on every exported symbol, each starting with the symbol's name and ending with a period",
+          "passed": false,
+          "evidence": "No package comment: line 1 is a bare \"package debounce\" with nothing above it. The 4 symbol docs are correct (\"A Debouncer\", \"New returns\", \"Do schedules\", \"Stop cancels\", all period-terminated), but the required package comment is absent."
+        },
+        {
+          "text": "Comments state contract facts (a later Do call replaces the pending one, fn runs after the delay, Stop cancels a pending call) rather than paraphrasing signatures",
+          "passed": true,
+          "evidence": "\"canceling any call scheduled by a still-pending prior call to Do\"; \"delays a function call until d has elapsed since the most recent call to Do\"; \"Stop cancels a pending scheduled call, if any. The Debouncer can be reused afterward by calling Do again.\""
+        },
+        {
+          "text": "Contains no em dashes in comments",
+          "passed": true,
+          "evidence": "grep for U+2014 returns 0 matches in the file."
+        },
+        {
+          "text": "The code is unchanged except for comments",
+          "passed": true,
+          "evidence": "Stripping comment and blank lines yields md5 35a1b31bb3fac8abc37dbc6480005c74, identical to the other draft; mutex, duration field, timer field, and all three function bodies untouched."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.46 over 7 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 9,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Documents the contract: input without frontmatter returns empty data and the full body; unterminated frontmatter throws FrontmatterError with line semantics",
+          "passed": true,
+          "evidence": "\"Returns `{ data: {}, body: src }` unchanged when `src` does not open with a `---` line.\" plus \"@throws FrontmatterError if the opening delimiter has no closing `---` line.\" and on the field \"1-based line number in the source document where the malformed content starts.\""
+        },
+        {
+          "text": "Does not restate types the signatures already carry",
+          "passed": true,
+          "evidence": "No `{type}` braces anywhere; the closest brush, \"Key-value pairs from the frontmatter block, or `{}` if the document had none\", earns its place by stating the empty-data semantic, and the `unknown` mention on parseYamlish states a contract the type cannot ( \"every entry is a trimmed string despite the `unknown` return type\")."
+        },
+        {
+          "text": "The internal helper gets at most a brief comment, not a full doc block",
+          "passed": false,
+          "evidence": "parseYamlish carries a five-line `/** ... */` block with an `@throws` tag, plus a second two-line inline comment inside the loop; the standard says \"a one-line private helper gets a `//` at most, and most get nothing.\""
+        },
+        {
+          "text": "The code is unchanged except for comments",
+          "passed": true,
+          "evidence": "Comment-stripped diff against the prompt source is empty (verified programmatically)."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.38 over 13 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 10,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A reader can execute it top to bottom: install (both methods), first-run station prompt, tidewatch next, tidewatch watch",
+          "passed": true,
+          "evidence": "Both installs, then 'The first time you run any tidewatch command, it prompts you for a NOAA station ID', then 'tidewatch next', then 'tidewatch watch'."
+        },
+        {
+          "text": "All commands appear in fenced code blocks",
+          "passed": true,
+          "evidence": "Four fenced blocks (untagged ```), one per command."
+        },
+        {
+          "text": "Stays within 150-250 words",
+          "passed": false,
+          "evidence": "102 words total (84 excluding fenced command lines), 48 short of the 150-word floor."
+        },
+        {
+          "text": "Contains no marketing framing",
+          "passed": true,
+          "evidence": "Purely declarative throughout: 'This command runs in the foreground and sends a desktop notification 45 minutes before each high tide.'"
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.61 over 8 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 11,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Docstrings are one line, imperative mood, period-terminated (PEP 257 shape)",
+          "passed": true,
+          "evidence": "All three are single physical lines opening imperatively and ending in a period: \"Yield successive chunks of size items; the final chunk may be shorter.\", \"Throttle calls to no more than per_second per second.\", \"Block until at least one interval has elapsed since the last acquire().\""
+        },
+        {
+          "text": "Docstrings state contracts the type hints cannot (the final chunk may be short; acquire blocks until the interval has passed)",
+          "passed": true,
+          "evidence": "\"the final chunk may be shorter\" and \"Block until at least one interval has elapsed since the last acquire()\" name both contracts; the inline comment adds the first-call-never-waits consequence of last = 0.0."
+        },
+        {
+          "text": "No Args:/Returns: blocks that restate what the type hints already say",
+          "passed": true,
+          "evidence": "grep for 'Args:'/'Returns:'/'Raises:' returns 0 hits; no parameter or return type is narrated in prose."
+        },
+        {
+          "text": "The code is unchanged except for docstrings and comments",
+          "passed": true,
+          "evidence": "Stripping docstring and # lines and diffing against the prompt source yields no differences (IDENTICAL)."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.12 over 4 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States that content lives as markdown files in the consuming repo and that there is no database",
+          "passed": true,
+          "evidence": "\"Fieldnote stores your content as markdown files inside your own repository. There's no database: every page and post is a file...\""
+        },
+        {
+          "text": "Explains that saving an edit becomes a GitHub commit through a GitHub App",
+          "passed": true,
+          "evidence": "\"Fieldnote creates a commit on your site's GitHub repository, through a GitHub App installed on that repo.\""
+        },
+        {
+          "text": "Invents no features beyond the facts given in the task",
+          "passed": true,
+          "evidence": "The only additions are derivations from stated facts (\"the commit history on GitHub is the only record\" follows from no database; the deploy claim is hedged as \"if your deploy already triggers on a push\"). No unsupported config option, flag, or default appears."
+        },
+        {
+          "text": "Stays within 300-450 words of prose",
+          "passed": true,
+          "evidence": "346 words (wc -w)."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.63 over 19 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States the resolution order exactly: flags, then TIDEWATCH_* environment variables, then config.toml, then defaults, highest wins",
+          "passed": true,
+          "evidence": "\"Command-line flags win first, then `TIDEWATCH_*` environment variables, then `~/.config/tidewatch/config.toml`, then the built-in defaults. A value from a higher source overrides the same setting from a lower one\""
+        },
+        {
+          "text": "Documents all three settings with their defaults (station no default, units feet, alert_window 45m)",
+          "passed": true,
+          "evidence": "\"A string, with no default\"; \"Defaults to `feet`\"; \"Defaults to `45m`\" \u2014 all three bullets carry the default"
+        },
+        {
+          "text": "Includes a syntactically valid example config.toml covering the three settings",
+          "passed": true,
+          "evidence": "```toml block with station = \"9414290\", units = \"feet\", alert_window = \"45m\" \u2014 valid TOML, all three settings"
+        },
+        {
+          "text": "Mentions tidewatch config show as the way to verify resolved configuration",
+          "passed": true,
+          "evidence": "\"Run `tidewatch config show` to print the configuration tidewatch will actually use, after resolving flags, environment variables, the config file, and defaults against each other.\""
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": false,
+          "evidence": "findings: em-dash-spaced, em-dash-spaced, em-dash-spaced (3)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.91 over 21 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Breaking changes and the migration command appear before new features",
+          "passed": true,
+          "evidence": "\"## Breaking changes\" is the first heading; the migrate-sessions line sits in it, ahead of \"## New\" on line 11."
+        },
+        {
+          "text": "Includes the exact command npx fieldnote migrate-sessions",
+          "passed": true,
+          "evidence": "\"run `npx fieldnote migrate-sessions` once against your existing site\""
+        },
+        {
+          "text": "Covers all five facts: createCms renamed to mountCms, KV to D1 session move, R2 image uploads, drag-and-drop reordering, RSS draft fix",
+          "passed": true,
+          "evidence": "All five present: \"`createCms` export is renamed to `mountCms`\", \"Session storage moves from Workers KV to D1\", \"Configure an R2 bucket\", \"reorder posts in the editor by dragging them\", \"Draft posts no longer appear in the RSS feed\"."
+        },
+        {
+          "text": "Contains no hype or marketing language",
+          "passed": true,
+          "evidence": "No marketing adjectives, no \"simply/easily/powerful\"; the strongest phrasing is the neutral \"You can now upload images from the editor.\""
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.58 over 15 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "All four pieces are present and labeled a through d",
+          "passed": true,
+          "evidence": "Lines begin \"a.\", \"b.\", \"c.\", \"d.\"; the empty state carries \"**Heading:**\" and \"**Supporting text:**\"."
+        },
+        {
+          "text": "The upload error names the 10 MB limit and does not blame the user",
+          "passed": true,
+          "evidence": "\"This file is too large. Images must be 10 MB or smaller. Try a smaller file, or resize this one and upload it again.\" \u2014 precise on the boundary, and no \"you uploaded\" phrasing."
+        },
+        {
+          "text": "The delete confirmation states the image is used on 3 pages and what will happen to them",
+          "passed": true,
+          "evidence": "\"This image appears on 3 pages. If you delete it, it disappears from all of them, and you can't get it back.\""
+        },
+        {
+          "text": "Speaks to the editor in second person without technical jargon",
+          "passed": true,
+          "evidence": "\"Anything you add here, you can reuse across your site instead of uploading it again.\" \u2014 plain words throughout."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.69 over 14 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States the invariant that an applied migration is never edited and a mistake gets a new migration",
+          "passed": true,
+          "evidence": "\"Never edit an applied migration.\" and \"If a migration turns out wrong, write a new migration that fixes it forward, rather than touching the old file.\""
+        },
+        {
+          "text": "Includes both commands verbatim: npm run db:new-migration <name> and npm run db:migrate",
+          "passed": true,
+          "evidence": "\"Create one with `npm run db:new-migration <name>`; apply it locally with `npm run db:migrate`.\""
+        },
+        {
+          "text": "States that CI applies migrations on deploy (merging is deploying) and the destructive-migration backfill rule",
+          "passed": true,
+          "evidence": "\"CI applies pending migrations on deploy, so a merge to main is a deploy\" plus \"A destructive migration, one that drops or renames a column, must ship with a paired backfill script in `db/backfills`\""
+        },
+        {
+          "text": "Stays within 120-200 words",
+          "passed": true,
+          "evidence": "wc -w reports 158 words including the heading"
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.68 over 9 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The commit subject follows Conventional Commits with a type, in imperative mood",
+          "passed": true,
+          "evidence": "\"feat(fetch): back off retries with jitter instead of a fixed interval\" \u2014 type, scope, imperative, lowercase; conformant, though 69 characters against the standard's 50-character target."
+        },
+        {
+          "text": "The commit body explains what changed and why, not a file-by-file list",
+          "passed": true,
+          "evidence": "States the why twice: \"a retry change had to be made twice and could drift out of sync\" and \"so repeated retries against a struggling endpoint spread out\". No file listing, but it runs as one unbroken nine-line paragraph."
+        },
+        {
+          "text": "The PR body explicitly flags the one behavior change: fixed-interval retry became exponential backoff with jitter capped at 30 seconds",
+          "passed": true,
+          "evidence": "\"The old logic retried at a fixed interval... The new helper retries with exponential backoff and jitter, capped at 30 seconds, instead of the fixed interval.\""
+        },
+        {
+          "text": "Invents no issue numbers, reviewers, or facts beyond the task",
+          "passed": true,
+          "evidence": "No issue refs or reviewers. \"httpFetch and jsonFetch keep their existing call signatures\" and the drift rationale are interpolations from \"behavior is otherwise unchanged\" and the stated duplication, not new specifics."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.6 over 12 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Commits to a single recommendation rather than hedging between the options",
+          "passed": true,
+          "evidence": "\"Recommend Option A.\" opens the final paragraph, with no fallback or 'it depends' qualifier attached to the choice itself."
+        },
+        {
+          "text": "Weighs index size and staleness against query latency and operational surface using the given constraints (50-2000 pages, results as you type, two-person team)",
+          "passed": true,
+          "evidence": "\"At 50 pages, a minisearch index is small enough that fetching it costs nothing worth measuring. At 2000 pages, the index is larger\"; staleness handled by \"the index is never stale between builds\"; ops surface by \"No database, no schema, no migration\" and \"new code the team has to write and maintain\"."
+        },
+        {
+          "text": "States what condition would change the recommendation",
+          "passed": true,
+          "evidence": "\"Revisit this if a site's page count grows well past 2000 and the index payload becomes the limiting factor.\""
+        },
+        {
+          "text": "Stays within 350-500 words",
+          "passed": true,
+          "evidence": "475 words including the title line, 467 excluding it."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": false,
+          "evidence": "findings: em-dash-spaced (1)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.59 over 22 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 7,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The first sentence states the diagnosis: SvelteKit's origin check rejects the POST, not Cloudflare Access",
+          "passed": false,
+          "evidence": "First sentence is the remedy, not the diagnosis: \"The fix is setting the ORIGIN environment variable on the Worker to your public URL.\" The diagnosis (\"The real failure is SvelteKit's built-in cross-site form protection\") comes four sentences later."
+        },
+        {
+          "text": "Walks the causal chain once: Access cookie is fine, the Worker sees an internal forwarded hostname, so the origin check fails",
+          "passed": true,
+          "evidence": "One pass: \"the browser is sending the Access cookie correctly, so authentication isn't the problem\" then \"the Worker sees an internal forwarded hostname instead of your public domain\" then \"Every POST to the form action fails that comparison and gets rejected with a 403.\""
+        },
+        {
+          "text": "Gives the exact fix: set the ORIGIN environment variable on the Worker to the public URL",
+          "passed": true,
+          "evidence": "\"The fix is setting the ORIGIN environment variable on the Worker to your public URL.\""
+        },
+        {
+          "text": "Uses no headers, no bullet lists, and no em dashes",
+          "passed": true,
+          "evidence": "Zero \"#\" lines, zero list markers, zero em dashes across all four paragraphs."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.51 over 9 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 8,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Has a package comment and a doc comment on every exported symbol, each starting with the symbol's name and ending with a period",
+          "passed": true,
+          "evidence": "Package comment present (\"// Package debounce coalesces a burst of calls into one delayed call.\"), plus 4 doc comments on Debouncer, New, Do, Stop; each opens with the identifier (\"A Debouncer delays\", \"New returns\", \"Do schedules\", \"Stop cancels\") and every comment block ends with a period."
+        },
+        {
+          "text": "Comments state contract facts (a later Do call replaces the pending one, fn runs after the delay, Stop cancels a pending call) rather than paraphrasing signatures",
+          "passed": true,
+          "evidence": "\"Each call to Do restarts the delay and replaces any call still pending\"; \"Do cancels it first, so only the most recent fn runs\"; \"Stop cancels a pending call scheduled by Do. It is safe to call Stop when no call is pending.\" Adds the concurrency contract: \"safe for concurrent use by multiple goroutines.\""
+        },
+        {
+          "text": "Contains no em dashes in comments",
+          "passed": true,
+          "evidence": "grep for U+2014 returns 0 matches in the file."
+        },
+        {
+          "text": "The code is unchanged except for comments",
+          "passed": true,
+          "evidence": "Stripping comment and blank lines yields md5 35a1b31bb3fac8abc37dbc6480005c74, identical to the other draft and to the prompt's source ordering; struct fields, New, Do, Stop bodies byte-for-byte as given."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.37 over 9 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 9,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Documents the contract: input without frontmatter returns empty data and the full body; unterminated frontmatter throws FrontmatterError with line semantics",
+          "passed": true,
+          "evidence": "\"A document that does not open with a `---` fence carries no frontmatter: `data` comes back empty and `body` is the source unchanged.\" plus \"@throws FrontmatterError if the opening fence has no matching `---` close.\" and \"1-indexed line within the original source where the parse failed.\""
+        },
+        {
+          "text": "Does not restate types the signatures already carry",
+          "passed": true,
+          "evidence": "Interface fields `data` and `body` carry no per-field type narration at all; the contract lives in one `@remarks` block, and no `{type}` brace appears in the file."
+        },
+        {
+          "text": "The internal helper gets at most a brief comment, not a full doc block",
+          "passed": true,
+          "evidence": "parseYamlish gets a two-line `//` comment (\"Line numbers are offset by 2: one for the opening `---` fence the caller already consumed, one because the loop index below is 0-based.\") and no doc block."
+        },
+        {
+          "text": "The code is unchanged except for comments",
+          "passed": true,
+          "evidence": "Comment-stripped diff against the prompt source is empty (verified programmatically)."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.61 over 10 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 10,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A reader can execute it top to bottom: install (both methods), first-run station prompt, tidewatch next, tidewatch watch",
+          "passed": true,
+          "evidence": "Sequence is complete and in order: 'go install github.com/geo/tidewatch@latest', 'brew install geo/tap/tidewatch', 'it prompts you for a NOAA station ID and writes the value to `~/.config/tidewatch/config.toml`', 'tidewatch next', 'tidewatch watch'."
+        },
+        {
+          "text": "All commands appear in fenced code blocks",
+          "passed": true,
+          "evidence": "Four ```sh fences, one per command; no command appears only inline."
+        },
+        {
+          "text": "Stays within 150-250 words",
+          "passed": true,
+          "evidence": "172 words total (154 excluding the fenced command lines); inside the range either way."
+        },
+        {
+          "text": "Contains no marketing framing",
+          "passed": true,
+          "evidence": "No adjectives or promises of the 'powerful / easily / in no time' kind; the closest is the plain consequence 'so you have time to act before the water reaches its peak'."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.6 over 11 sentences"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 11,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Docstrings are one line, imperative mood, period-terminated (PEP 257 shape)",
+          "passed": true,
+          "evidence": "Three single-line docstrings, imperative and period-terminated: \"Yield successive chunks of iterable, the final one possibly shorter than size.\", \"Block acquire() callers so calls land no closer than 1 / per_second apart.\", \"Block, if needed, until enough time has passed since the last acquire() call.\""
+        },
+        {
+          "text": "Docstrings state contracts the type hints cannot (the final chunk may be short; acquire blocks until the interval has passed)",
+          "passed": true,
+          "evidence": "\"the final one possibly shorter than size\" covers the short chunk; the class line \"no closer than 1 / per_second apart\" carries the spacing contract, though acquire's own line softens to \"until enough time has passed\"."
+        },
+        {
+          "text": "No Args:/Returns: blocks that restate what the type hints already say",
+          "passed": true,
+          "evidence": "No 'Args:', 'Returns:', or 'Raises:' sections anywhere in the file."
+        },
+        {
+          "text": "The code is unchanged except for docstrings and comments",
+          "passed": true,
+          "evidence": "Stripping docstring and # lines and diffing against the prompt source yields no differences (IDENTICAL)."
+        },
+        {
+          "text": "Tell scan: zero register violations from the deterministic grader",
+          "passed": true,
+          "evidence": "findings:  (0)"
+        },
+        {
+          "text": "Cadence: sentence-length variation is not machine-flat (CV >= 0.35 when 8+ sentences)",
+          "passed": true,
+          "evidence": "cadence_cv 0.08 over 4 sentences"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "old_skill": {
+      "pass_rate": {
+        "mean": 0.9306,
+        "stddev": 0.0858,
+        "min": 0.8333,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9583,
+        "stddev": 0.0754,
+        "min": 0.8333,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "-0.03",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": []
+}

@@ -57,6 +57,15 @@ picture. Fidelity outranks fluency; the 2026-09-01 benchmark found invented spec
 this system's one systematic failure mode, costing otherwise-winning drafts their blind
 comparisons.
 
+## The brief is a contract
+
+A stated length, count, or format in the brief is a requirement, not a suggestion. Terseness
+trims padding; it does not license undershooting a floor the brief sets (the 2026-09
+benchmark lost drafts to this exact trade). When the given facts run out before the floor,
+meet it by saying more about those facts: what the reader sees when a command runs, why a
+step matters, what a value controls. Never meet it by inventing new facts, and never treat
+brevity as permission to deliver less than the brief asked for.
+
 ## The em dash
 
 The em dash is banned in code comments. The comment standards are silent on it, but a comment is a

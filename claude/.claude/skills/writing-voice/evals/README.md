@@ -32,7 +32,10 @@ baseline told to draft directly. Three grading layers score every draft:
    factual fidelity.
 3. **Blind preference.** The same judge sees the two drafts as anonymous A and B (which
    arm is A alternates by eval to cancel position bias) and picks the better piece of
-   writing for the audience.
+   writing for the audience. Since iteration 3 the judge carries an explicit priority:
+   factual fidelity outweighs polish, so a draft that invents facts loses to one that
+   does not unless it is otherwise unusable, and deriving an obvious specific from a
+   stated fact (a flag name from a named setting) counts as interpolation, not invention.
 
 The primary trend metric is tells per 1000 words from layer 1. The quality verdict is the
 blind win rate from layer 3.
