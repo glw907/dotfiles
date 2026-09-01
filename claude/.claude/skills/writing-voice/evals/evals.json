@@ -1,0 +1,186 @@
+{
+  "skill_name": "writing-voice",
+  "description": "Benchmark corpus for the workstation voice system. Each prompt is a realistic drafting task in one of the registers the writing-voice router names. Runs compare a with-skill draft against a bare baseline on three layers: deterministic tell scan (tell-grader.py), register-fidelity rubric (fresh-context judge against the register's named standard), and blind A/B quality comparison.",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "readme-architecture-web",
+      "register": "technical-doc-web",
+      "standard": "Google Developer Documentation Style Guide",
+      "prompt": "Write the Architecture section for the README of fieldnote, a TypeScript library that embeds a markdown-based CMS into SvelteKit sites. Work only from these facts: content lives as markdown files inside the consuming repo, so there is no database; editing happens in the browser through an editor route the library mounts at /admin; saving an edit creates a commit on the site's GitHub repo through a GitHub App installation; sign-in is a magic link sent by email; the library ships as an npm package and a site adopts it by calling one function from its root +layout.server.ts. The reader is a developer deciding whether to adopt the library. 300-450 words of markdown, headings and code identifiers where they help.",
+      "expected_output": "A README Architecture section that explains the commit-as-database design clearly for an evaluating developer, in Google developer-docs register, with no invented features.",
+      "files": [],
+      "assertions": [
+        "States that content lives as markdown files in the consuming repo and that there is no database",
+        "Explains that saving an edit becomes a GitHub commit through a GitHub App",
+        "Invents no features beyond the facts given in the task",
+        "Stays within 300-450 words of prose"
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "go-cli-config-docs",
+      "register": "technical-doc-go",
+      "standard": "Google Developer Documentation Style Guide",
+      "prompt": "Write the Configuration page for the docs of tidewatch, a Go CLI that watches NOAA tide tables and alerts before high water. Work only from these facts: settings resolve in this order, highest wins: command-line flags, then TIDEWATCH_* environment variables, then ~/.config/tidewatch/config.toml, then built-in defaults. There are three settings: station (NOAA station ID, string, no default), units (feet or meters, default feet), alert_window (how long before a tide event to alert, Go duration string, default 45m). Users can print the fully resolved configuration with tidewatch config show. Include one example config.toml. 250-400 words of markdown.",
+      "expected_output": "A docs page stating the resolution order and the three settings precisely, with a correct example TOML block, in Google developer-docs register.",
+      "files": [],
+      "assertions": [
+        "States the resolution order exactly: flags, then TIDEWATCH_* environment variables, then config.toml, then defaults, highest wins",
+        "Documents all three settings with their defaults (station no default, units feet, alert_window 45m)",
+        "Includes a syntactically valid example config.toml covering the three settings",
+        "Mentions tidewatch config show as the way to verify resolved configuration"
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "release-notes",
+      "register": "technical-doc-web",
+      "standard": "Google Developer Documentation Style Guide (changelog form)",
+      "prompt": "Write the GitHub release notes for fieldnote v0.8.0, a TypeScript CMS library for SvelteKit sites. Work only from these facts. Breaking: the createCms export is renamed to mountCms; session storage moved from Workers KV to D1, and existing sites must run npx fieldnote migrate-sessions once before deploying. New: image uploads, stored in an R2 bucket the site configures; drag-and-drop reordering of posts in the editor. Fixed: draft posts no longer appear in the RSS feed. 150-300 words of markdown.",
+      "expected_output": "Release notes that lead with the breaking changes and the required migration command, then new features, then the fix, without hype language.",
+      "files": [],
+      "assertions": [
+        "Breaking changes and the migration command appear before new features",
+        "Includes the exact command npx fieldnote migrate-sessions",
+        "Covers all five facts: createCms renamed to mountCms, KV to D1 session move, R2 image uploads, drag-and-drop reordering, RSS draft fix",
+        "Contains no hype or marketing language"
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "editor-product-copy",
+      "register": "editor",
+      "standard": "Microsoft Writing Style Guide",
+      "prompt": "Write the UI copy for the media library screen of a CMS editor used by non-technical site editors. Four pieces: (a) the empty-state heading plus one supporting sentence, shown before any image has been uploaded; (b) the error message when an upload exceeds the 10 MB limit; (c) the body text of the confirmation dialog when the editor deletes an image that is currently used on 3 pages; (d) a 2-3 sentence introduction for the help panel explaining what the media library is and what lives there. Label each piece a, b, c, d.",
+      "expected_output": "Four short pieces of product copy in Microsoft-guide register: warm, direct, second person, no blame in the error, concrete consequence in the delete confirmation.",
+      "files": [],
+      "assertions": [
+        "All four pieces are present and labeled a through d",
+        "The upload error names the 10 MB limit and does not blame the user",
+        "The delete confirmation states the image is used on 3 pages and what will happen to them",
+        "Speaks to the editor in second person without technical jargon"
+      ]
+    },
+    {
+      "id": 4,
+      "eval_name": "claude-md-section",
+      "register": "agent-facing",
+      "standard": "Anthropic Claude Code best practices",
+      "prompt": "Write a CLAUDE.md section, 120-200 words, telling Claude Code how database migrations work in this repo. Work only from these facts: migrations are numbered SQL files in db/migrations; an applied migration is never edited, a mistake gets a new migration; create one with npm run db:new-migration <name>; apply locally with npm run db:migrate; CI applies pending migrations on deploy, so merging is deploying; a destructive migration (dropping or renaming a column) must ship with a paired backfill script in db/backfills.",
+      "expected_output": "A CLAUDE.md section that an agent can follow mechanically: the invariant (never edit applied), the commands, and the destructive-migration rule, with no filler.",
+      "files": [],
+      "assertions": [
+        "States the invariant that an applied migration is never edited and a mistake gets a new migration",
+        "Includes both commands verbatim: npm run db:new-migration <name> and npm run db:migrate",
+        "States that CI applies migrations on deploy (merging is deploying) and the destructive-migration backfill rule",
+        "Stays within 120-200 words"
+      ]
+    },
+    {
+      "id": 5,
+      "eval_name": "commit-and-pr",
+      "register": "commit-and-pr",
+      "standard": "Conventional Commits and the git-commit canon",
+      "prompt": "You just made this change to a TypeScript repo: the retry logic duplicated between httpFetch and jsonFetch in src/lib/fetch.ts is extracted into a shared withRetry helper in a new file src/lib/retry.ts; both call sites now use it; the helper adds exponential backoff with jitter, capped at 30 seconds, where the old inline logic retried at a fixed interval; unit tests for withRetry are added in src/lib/retry.test.ts. Behavior is otherwise unchanged. Write the commit message, then the PR body, clearly separated.",
+      "expected_output": "A Conventional Commits subject in imperative mood with a body explaining what and why, and a PR body that flags the one behavior change (backoff timing) for the reviewer.",
+      "files": [],
+      "assertions": [
+        "The commit subject follows Conventional Commits with a type, in imperative mood",
+        "The commit body explains what changed and why, not a file-by-file list",
+        "The PR body explicitly flags the one behavior change: fixed-interval retry became exponential backoff with jitter capped at 30 seconds",
+        "Invents no issue numbers, reviewers, or facts beyond the task"
+      ]
+    },
+    {
+      "id": 6,
+      "eval_name": "design-note-search",
+      "register": "technical-doc-web",
+      "standard": "Google Developer Documentation Style Guide (design-doc form)",
+      "prompt": "Write a design note, 350-500 words, for a two-person team choosing full-text search for a markdown-based CMS running on Cloudflare Workers. Option A: a build-time index generated with minisearch, shipped as static JSON the browser fetches and queries client-side. Option B: Cloudflare D1 with the FTS5 extension, queried server-side per keystroke. Known constraints: sites range from 50 to 2000 pages; editors expect results as they type; content changes only on publish; the team wants minimal operational surface. Compare honestly and recommend one.",
+      "expected_output": "A design note that weighs index size and staleness against query latency and operational surface, commits to a recommendation, and states what would change the answer.",
+      "files": [],
+      "assertions": [
+        "Commits to a single recommendation rather than hedging between the options",
+        "Weighs index size and staleness against query latency and operational surface using the given constraints (50-2000 pages, results as you type, two-person team)",
+        "States what condition would change the recommendation",
+        "Stays within 350-500 words"
+      ]
+    },
+    {
+      "id": 7,
+      "eval_name": "explainer-reply",
+      "register": "reply",
+      "standard": "workstation reply register (writing-voice output style)",
+      "prompt": "You are a coding agent finishing a debugging session in a terminal chat. Write your final reply to the user explaining why their SvelteKit form action works locally but returns 403 in production. What you established: the production site sits behind Cloudflare Access; the browser does send the Access cookie; the real failure is SvelteKit's cross-site form protection, because the Worker sees an internal forwarded hostname rather than the public origin, so the action's origin check rejects every POST; the fix is setting the ORIGIN environment variable on the Worker to the public URL, after which the origin check passes. Write only the reply message. Lead with the answer.",
+      "expected_output": "A chat reply that leads with the diagnosis, walks the causal chain once in plain prose, gives the fix, and stops. No headers, no bullet spray, no em dashes.",
+      "files": [],
+      "assertions": [
+        "The first sentence states the diagnosis: SvelteKit's origin check rejects the POST, not Cloudflare Access",
+        "Walks the causal chain once: Access cookie is fine, the Worker sees an internal forwarded hostname, so the origin check fails",
+        "Gives the exact fix: set the ORIGIN environment variable on the Worker to the public URL",
+        "Uses no headers, no bullet lists, and no em dashes"
+      ]
+    },
+    {
+      "id": 8,
+      "eval_name": "go-doc-comments",
+      "register": "go-comments",
+      "standard": "Go Doc Comments, Effective Go",
+      "prompt": "Add doc comments to this Go file. Change nothing but comments. Return the complete file.\n\npackage debounce\n\nimport (\n\t\"sync\"\n\t\"time\"\n)\n\ntype Debouncer struct {\n\tmu    sync.Mutex\n\td     time.Duration\n\ttimer *time.Timer\n}\n\nfunc New(d time.Duration) *Debouncer {\n\treturn &Debouncer{d: d}\n}\n\nfunc (db *Debouncer) Do(fn func()) {\n\tdb.mu.Lock()\n\tdefer db.mu.Unlock()\n\tif db.timer != nil {\n\t\tdb.timer.Stop()\n\t}\n\tdb.timer = time.AfterFunc(db.d, fn)\n}\n\nfunc (db *Debouncer) Stop() {\n\tdb.mu.Lock()\n\tdefer db.mu.Unlock()\n\tif db.timer != nil {\n\t\tdb.timer.Stop()\n\t\tdb.timer = nil\n\t}\n}",
+      "expected_output": "Godoc-shaped comments: package comment, each exported symbol's comment starting with its name, contract facts (last call wins, fn runs on its own goroutine, Stop cancels pending) rather than signature paraphrase, no em dashes.",
+      "files": [],
+      "assertions": [
+        "Has a package comment and a doc comment on every exported symbol, each starting with the symbol's name and ending with a period",
+        "Comments state contract facts (a later Do call replaces the pending one, fn runs after the delay, Stop cancels a pending call) rather than paraphrasing signatures",
+        "Contains no em dashes in comments",
+        "The code is unchanged except for comments"
+      ]
+    },
+    {
+      "id": 9,
+      "eval_name": "tsdoc-comments",
+      "register": "ts-comments",
+      "standard": "TSDoc",
+      "prompt": "Add TSDoc comments to this TypeScript module. Change nothing but comments. Return the complete file.\n\nexport interface FrontmatterResult {\n  data: Record<string, unknown>;\n  body: string;\n}\n\nexport class FrontmatterError extends Error {\n  readonly line: number;\n  constructor(message: string, line: number) {\n    super(message);\n    this.name = 'FrontmatterError';\n    this.line = line;\n  }\n}\n\nexport function parseFrontmatter(src: string): FrontmatterResult {\n  if (!src.startsWith('---\\n')) {\n    return { data: {}, body: src };\n  }\n  const end = src.indexOf('\\n---\\n', 4);\n  if (end === -1) {\n    throw new FrontmatterError('unterminated frontmatter block', 1);\n  }\n  const raw = src.slice(4, end);\n  const body = src.slice(end + 5);\n  return { data: parseYamlish(raw), body };\n}\n\nfunction parseYamlish(raw: string): Record<string, unknown> {\n  const out: Record<string, unknown> = {};\n  for (const [i, lineText] of raw.split('\\n').entries()) {\n    if (!lineText.trim()) continue;\n    const sep = lineText.indexOf(':');\n    if (sep === -1) {\n      throw new FrontmatterError('expected key: value', i + 2);\n    }\n    out[lineText.slice(0, sep).trim()] = lineText.slice(sep + 1).trim();\n  }\n  return out;\n}",
+      "expected_output": "TSDoc comments documenting the contract (missing frontmatter returns empty data, throw condition and line semantics) without restating types the signatures carry; internal helper gets at most a brief comment.",
+      "files": [],
+      "assertions": [
+        "Documents the contract: input without frontmatter returns empty data and the full body; unterminated frontmatter throws FrontmatterError with line semantics",
+        "Does not restate types the signatures already carry",
+        "The internal helper gets at most a brief comment, not a full doc block",
+        "The code is unchanged except for comments"
+      ]
+    },
+    {
+      "id": 10,
+      "eval_name": "quickstart-readme",
+      "register": "technical-doc-go",
+      "standard": "Google Developer Documentation Style Guide",
+      "prompt": "Write the Quickstart section for the README of tidewatch, a Go CLI that watches NOAA tide tables and alerts before high water. Work only from these facts: install with go install github.com/geo/tidewatch@latest, or on macOS with brew install geo/tap/tidewatch; the first run of any command prompts for a NOAA station ID and writes ~/.config/tidewatch/config.toml; tidewatch next prints the next high and low tide for the configured station; tidewatch watch runs in the foreground and sends a desktop notification 45 minutes before each high tide. 150-250 words of markdown with fenced code blocks for the commands.",
+      "expected_output": "A quickstart a reader can execute top to bottom: install, first run, the two commands, in Google developer-docs register with correct code fencing.",
+      "files": [],
+      "assertions": [
+        "A reader can execute it top to bottom: install (both methods), first-run station prompt, tidewatch next, tidewatch watch",
+        "All commands appear in fenced code blocks",
+        "Stays within 150-250 words",
+        "Contains no marketing framing"
+      ]
+    },
+    {
+      "id": 11,
+      "eval_name": "python-docstrings",
+      "register": "python-comments",
+      "standard": "PEP 257, PEP 8",
+      "prompt": "Add docstrings and any needed comments to this Python module. Change nothing but docstrings and comments. Return the complete file.\n\nimport time\nfrom collections.abc import Iterable, Iterator\nfrom itertools import islice\n\n\ndef chunked(iterable: Iterable, size: int) -> Iterator[list]:\n    it = iter(iterable)\n    while batch := list(islice(it, size)):\n        yield batch\n\n\nclass RateLimiter:\n    def __init__(self, per_second: float) -> None:\n        self.interval = 1.0 / per_second\n        self.last = 0.0\n\n    def acquire(self) -> None:\n        now = time.monotonic()\n        wait = self.last + self.interval - now\n        if wait > 0:\n            time.sleep(wait)\n        self.last = time.monotonic()",
+      "expected_output": "PEP 257 one-line docstrings in imperative mood stating contracts the hints cannot (final short chunk, blocking acquire, not thread-safe if noted), no Args:/Returns: blocks restating types, no comment narrating obvious lines.",
+      "files": [],
+      "assertions": [
+        "Docstrings are one line, imperative mood, period-terminated (PEP 257 shape)",
+        "Docstrings state contracts the type hints cannot (the final chunk may be short; acquire blocks until the interval has passed)",
+        "No Args:/Returns: blocks that restate what the type hints already say",
+        "The code is unchanged except for docstrings and comments"
+      ]
+    }
+  ]
+}
