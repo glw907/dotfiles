@@ -176,7 +176,7 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 > UPLOADS_DIR, SERVE_BIND_ADDRS (loopback now; the bridge IP joins at U12a), SERVE_PORT,
 > PUBLIC_NAVIDROME_URL, ACCESS_TEAM_DOMAIN (the account's one Zero Trust org), and
 > TRIGGER_DIR (conductor's TriggerDir ruling). DUBPLATE_ACCESS_AUD minted 2026-09-01 at
-> U12a: the AUD of Access app "dubplate uploader" (upload.907.life, app id
+> U12a: the AUD of Access app "dubplate uploader" (path-scoped music.907.life/upload, app id
 > b9d9f27d-bfbf-4c66-a437-5b3074785eee); rotate by recreating the app and re-running
 > secret-set.sh. SERVE_BIND_ADDRS gains the pinned compose bridge gateway at U12a deploy.
 
