@@ -177,8 +177,14 @@ fixes every doc its change touched, including the inbound references on other pa
   `docs/internal/engine-rulings.md` in the same pass (accepts close with the one-line
   seam-fit report).
 - Append any design friction the writing surfaced to `docs/internal/docs-friction-log.md`, one entry
-  per finding with its perspective (developer or editor) and a short note. Triage candidates into
-  `ROADMAP.md` (Now or Next) and the STATUS carry-forwards. This repo keeps no separate backlog file.
+  per finding with its perspective (developer or editor) and a short note.
+- **Triage the WHOLE friction log, complete-or-move, every pass (Geoff, 2026-09-01).** The log is a
+  staging area measured by what leaves it, so the pass-end sweep reads every open finding, not only
+  the ones this pass added. Each entry resolves one of three ways: fixed and deleted (when the fix is
+  cheap and in this pass's blast radius), promoted to the `ROADMAP.md` tier where it bites or to the
+  pass that first leans on it (with the log entry removed on promotion), or deleted as overtaken.
+  Verify against the code before acting; an entry records what was true when written. A ritual that
+  only appended has not run this step. This repo keeps no separate backlog file.
 - Keep `ROADMAP.md` current, the same as the reference docs. A pass that shipped a roadmap item marks it
   done and removes it from the live tiers; a pass that surfaced a new direction files it into the right
   tier. The roadmap is a forward view, not a changelog: shipped history lives in STATUS and the
