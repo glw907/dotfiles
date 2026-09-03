@@ -200,7 +200,11 @@ No human-scale time estimates; describe relative complexity ("quick",
 ## Conducting a pass (revised 2026-08-21; supersedes the 2026-07-26 Opus-executes rule)
 
 Two co-equal budgets govern every initiative at the same quality bar: total tokens spent and
-Geoff's attended time. Clock time is not a budget: prefer the serial, cheaper path. When the
+Geoff's attended time. Clock time is a watched metric, never a budget. Parallelize wherever
+tasks are genuinely independent (Geoff, 2026-09-03: a standing goal; parallel dispatch of
+independent work costs the same tokens and none of his attention); serialize only under real
+contention or dependency, and be able to name the contended resource. Plans mark independent
+tasks so pass-execute's parallel mode can take them. When the
 budgets conflict, spend the one that can buy the thing: tokens for anything research,
 verification, or a retry can resolve; attended time only for taste, priorities, and product
 forks.
