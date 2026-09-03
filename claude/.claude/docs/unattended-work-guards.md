@@ -43,6 +43,16 @@ write STATUS with the exact resume prompt (including any `resumeFromRunId`), rel
 inhibitor so the machine may sleep, and report. Suspend evidence lives in `journalctl`;
 check it before diagnosing any long-running background work as slow or stalled.
 
+## Restart recovery re-arms the FULL set (born of a 7% near-miss, 2026-09-03)
+
+A harness process restart orphans every background guard at once. Recovery after ANY
+restart re-arms ALL layers as one checklist, never just the guard for the work being
+relaunched. The set: (1) the workflow runaway guard, (2) the battery watchdog, (3) both sleep
+inhibitors. "It's on AC right now" is not a reason to skip the battery layer: the
+watchdog is silent on AC by design so it is already armed when someone later unplugs.
+The one recorded failure: a session re-armed only the transcript guard after a crash,
+the laptop was unplugged hours later, and the battery hit 7% with nothing watching (caught by Geoff, not the machinery).
+
 ## Concurrent sessions (Geoff runs several at once)
 
 Guards are per-session and stack safely: the machine stays awake while ANY session holds
