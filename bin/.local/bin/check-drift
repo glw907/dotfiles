@@ -116,6 +116,8 @@ for f in "$BLUEFIN"/etc/chromium-policies/*.json; do
 done
 etc_pair "$BLUEFIN/etc/udev/51-android.rules" /etc/udev/rules.d/51-android.rules
 etc_pair "$BLUEFIN/etc/yum.repos.d/1password.repo" /etc/yum.repos.d/1password.repo
+etc_pair "$BLUEFIN/etc/gdm/custom.conf" /etc/gdm/custom.conf
+etc_pair "$BLUEFIN/etc/systemd/system/systemd-remount-fs.service" /etc/systemd/system/systemd-remount-fs.service
 
 echo ""
 echo "Untracked ~/.local/bin executables (bluefin/untracked-bin.txt):"
