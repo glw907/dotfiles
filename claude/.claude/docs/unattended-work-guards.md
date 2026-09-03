@@ -36,3 +36,14 @@ down: TaskStop the workflow and guards, WIP-commit partial work on the feature b
 write STATUS with the exact resume prompt (including any `resumeFromRunId`), release the
 inhibitor so the machine may sleep, and report. Suspend evidence lives in `journalctl`;
 check it before diagnosing any long-running background work as slow or stalled.
+
+## Concurrent sessions (Geoff runs several at once)
+
+Guards are per-session and stack safely: the machine stays awake while ANY session holds
+an inhibitor, and sleep returns when the last one releases. At the battery floor every
+session's watchdog fires and each saves its OWN state; no cross-session coordination is
+needed. Two rules follow. Name each inhibitor for its initiative (`--who` /
+`--app-id`) so ownership is legible in `systemd-inhibit --list`. And touch only your
+own guards: never TaskStop, kill, or release an inhibitor, runaway guard, or watchdog
+another session armed; `pgrep` and inhibitor listings will show siblings, and a
+same-named process from another session is theirs, not a leak.
