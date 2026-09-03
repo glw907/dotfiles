@@ -24,8 +24,11 @@ target, which makes `agent()` calls throw at the ceiling.
 
 GNOME suspends this laptop after 15 idle minutes ON BATTERY (AC never suspends), which
 freezes agents mid-flight and can kill their API streams (proven 2026-09-02: a suspend
-orphaned an implementer's stream and stalled a pass ~2 hours). Long unattended work arms
-BOTH: a sleep inhibitor held for the duration (background Bash, self-expiring, released
+orphaned an implementer's stream and stalled a pass ~2 hours). Size hold durations from
+the clock, never as a round number of hours: an overnight hold ends around 09:00 local
+(Geoff, 2026-09-03; compute `sleep` seconds as time-until-09:00), and a daytime hold ends
+when the dispatched work is expected done, renewing if it runs long. Long unattended work
+arms BOTH: a sleep inhibitor held for the duration (background Bash, self-expiring, released
 at pass end; hold BOTH channels, since GNOME's idle logic honors its own session
 inhibitors while logind honors systemd ones: `systemd-inhibit --what=sleep ... sleep NNN`
 AND `gnome-session-inhibit --inhibit suspend ... sleep NNN`; inhibit `suspend` ONLY, never
