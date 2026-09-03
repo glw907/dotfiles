@@ -28,7 +28,10 @@ orphaned an implementer's stream and stalled a pass ~2 hours). Long unattended w
 BOTH: a sleep inhibitor held for the duration (background Bash, self-expiring, released
 at pass end; hold BOTH channels, since GNOME's idle logic honors its own session
 inhibitors while logind honors systemd ones: `systemd-inhibit --what=sleep ... sleep NNN`
-AND `gnome-session-inhibit --inhibit suspend:idle ... sleep NNN`), and a battery watchdog
+AND `gnome-session-inhibit --inhibit suspend ... sleep NNN`; inhibit `suspend` ONLY, never
+`suspend:idle`: the `idle` flag stops the session from ever counting as idle, which keeps
+the DISPLAY awake for the whole hold (Geoff caught this live 2026-09-02), while `suspend`
+alone blocks auto-suspend and lets the screen blank), and a battery watchdog
 polling
 `/sys/class/power_supply/BAT*/{capacity,status}` every ~2 minutes, triggering at 11%
 while `Discharging` (silent on AC; 11% so state is saved by 10%). On trigger, stand
