@@ -182,6 +182,9 @@ export CLAUDE_CODE_SUBAGENT_MODEL=inherit
 # age key for ASC project encryption
 export AGE_KEY_FILE="$HOME/.config/age/asc-key.txt"
 
+# MusicBrainz contact for the dubplate harness User-Agent (public per MB terms)
+export DUBPLATE_HARNESS_CONTACT="geoff@907.life"
+
 
 # Load workstation secrets (decrypted by ~/.dotfiles/scripts/secrets/sync.sh)
 # Run sync.sh after any credential rotation to update this file.
