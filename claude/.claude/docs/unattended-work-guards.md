@@ -25,8 +25,11 @@ target, which makes `agent()` calls throw at the ceiling.
 GNOME suspends this laptop after 15 idle minutes ON BATTERY (AC never suspends), which
 freezes agents mid-flight and can kill their API streams (proven 2026-09-02: a suspend
 orphaned an implementer's stream and stalled a pass ~2 hours). Long unattended work arms
-BOTH: a `systemd-inhibit --what=sleep` held for the duration (background Bash,
-self-expiring, released at pass end), and a battery watchdog polling
+BOTH: a sleep inhibitor held for the duration (background Bash, self-expiring, released
+at pass end; hold BOTH channels, since GNOME's idle logic honors its own session
+inhibitors while logind honors systemd ones: `systemd-inhibit --what=sleep ... sleep NNN`
+AND `gnome-session-inhibit --inhibit suspend:idle ... sleep NNN`), and a battery watchdog
+polling
 `/sys/class/power_supply/BAT*/{capacity,status}` every ~2 minutes, triggering at 11%
 while `Discharging` (silent on AC; 11% so state is saved by 10%). On trigger, stand
 down: TaskStop the workflow and guards, WIP-commit partial work on the feature branch,
