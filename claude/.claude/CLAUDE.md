@@ -255,16 +255,14 @@ explicit opt-in ("use a workflow"). When a task would clearly benefit (a large r
 where adversarial find-and-verify beats a flat fan-out, a repo-wide audit or migration, deep
 multi-source research) suggest it in one sentence naming the shape and rough scale.
 
-**Runaway guard, mandatory on any workflow expected to run past ~30 minutes.** Nothing
-intervenes unless the main loop watches from outside (proven 2026-07-02: a sweep agent burned
-~5 hours grooming its own agent-memory index). At launch, arm a background Bash guard polling
-the workflow transcript dir every ~5 minutes, alarming on either signature: `journal.jsonl`
-idle past ~25 minutes (stall), or any `agent-*.jsonl` past ~900KB and still growing (token
-runaway; ~3.5-4 chars/token). Intervention: TaskStop, relaunch with `resumeFromRunId` (done
-steps replay from cache). Prevention rides the prompts: memory-keeping agentTypes get an
-explicit "skip agent-memory maintenance" line, and each step states a scope expectation so an
-agent that blows past it self-reports. For expensive sweeps, add a hard turn-level token
-target, which makes `agent()` calls throw at the ceiling.
+**Guards on long unattended work, both mandatory; procedures in
+`~/.claude/docs/unattended-work-guards.md` (read it when arming either).** Any workflow
+expected past ~30 minutes gets the runaway guard: a background Bash watcher on the transcript
+dir alarming on the stall and token-runaway signatures; intervention is TaskStop plus
+`resumeFromRunId`. Long unattended work ON BATTERY also arms a `systemd-inhibit --what=sleep`
+plus a battery watchdog (11% while `Discharging` → save state by 10%: TaskStop, WIP-commit,
+STATUS with the resume prompt, release the inhibitor). GNOME suspends after 15 idle minutes
+on battery; check `journalctl` for suspends before calling background work stalled.
 
 ## Initiative-scoped sessions (globalized 2026-07-13)
 
