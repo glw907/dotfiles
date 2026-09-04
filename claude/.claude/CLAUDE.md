@@ -201,8 +201,7 @@ No human-scale time estimates; describe relative complexity ("quick",
 
 Two co-equal budgets govern every initiative at the same quality bar: total tokens spent and
 Geoff's attended time. Clock time is a watched metric, never a budget. Parallelize wherever
-tasks are genuinely independent (Geoff, 2026-09-03: a standing goal; parallel dispatch of
-independent work costs the same tokens and none of his attention); serialize only under real
+tasks are genuinely independent (Geoff, 2026-09-03); serialize only under real
 contention or dependency, and be able to name the contended resource. Plans mark independent
 tasks so pass-execute's parallel mode can take them. When the
 budgets conflict, spend the one that can buy the thing: tokens for anything research,
@@ -210,7 +209,7 @@ verification, or a retry can resolve; attended time only for taste, priorities, 
 forks.
 
 Fable conducts coding projects from brainstorm through post-mortem in one session. The
-plan-approval gate is the single human gate and is no longer a model boundary. **The
+plan-approval gate is the single human gate. **The
 conductor is thin:** during execution it never reads a source file, a diff, a test log, or a
 gate transcript. It consumes structured agent reports and decides only what needs judgment
 (accept, re-dispatch with a correction, split, upshift, stop). A conductor caught reading
@@ -223,17 +222,18 @@ and returns accept, fix, or escalate with `file:line` findings. The repo's full 
 inside the chain, never in the main loop. One re-dispatch on `fix`; a second `fix` is the
 conductor's decision. Domain reviewers still fan out at pass end. Below six tasks, dispatch
 the chain per task with the Agent tool; at six or more, or when the plan marks tasks
-independent, run `~/.claude/workflows/pass-execute.js`, which pipelines the chain and returns
-one report per task. A plan that names the workflow mode is the opt-in.
+independent, run `~/.claude/workflows/pass-execute.js` (a plan
+naming the mode is the opt-in).
 
 Every dispatch names a model and an effort: `sonnet` by default, `haiku` for mechanical
-search, `claude-opus-5` for reviewers (cross-model diversity against correlated blind spots).
-Unpinned agents (`general-purpose`, `Plan`, `claude`, Workflow `agent()` without `model`)
-inherit Fable at Fable price. Upshift one dispatch to `opus` only for novel
-correctness-critical logic the plan does not specify; `fable` only when an Opus verdict
-hedges on something that matters. Effort is the cheaper lever in both directions. Subagents
-start with zero context and read the dispatch literally: pre-extract what the task needs.
-When a dispatch runs surprisingly slow, expensive, or weak, check which model ran.
+search, `claude-opus-5` for reviewers (cross-model diversity). A dispatch without a model
+falls to `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` (settings `env`); a frontmatter pin or a
+per-dispatch model wins, so upshifts pass `model` explicitly: `opus` for novel
+correctness-critical logic the plan does not specify, `fable` only when an Opus verdict
+hedges on something that matters. Effort stays `high`; raise it for research-shaped turns
+rather than lowering it (Fable 5.1 at `low` answers from memory), and `max` is for one
+adjudication. Subagents start with zero context: pre-extract what the task needs. When a
+dispatch runs slow, expensive, or weak, check which model ran.
 
 Every pass plan header carries a token ceiling and a checkpoint interval (default four
 tasks). At each checkpoint, at any split, and before any question to Geoff, write STATUS
@@ -241,10 +241,9 @@ tasks). At each checkpoint, at any split, and before any question to Geoff, writ
 80% of the ceiling, finish the task, write STATUS, and ask one combined question. Pre-bake
 before executing: commit the plan, point STATUS at it, refresh memory; anything load-bearing
 lives in an artifact, never only in the conversation. Do not run the `writing-plans` "which
-execution method?" question. Fable on Max draws from the shared weekly pool up to a 50% cap
-(verified 2026-08-21); the cap, not API price, is the constraint, so minimize Fable context,
-never Fable turns. Pricing, history, and the overflow playbook:
-`~/.claude/docs/model-economy.md`.
+execution method?" question. Fable on Max draws from the weekly pool up to a 50% cap
+(verified 2026-08-21); how the pool meters Fable tokens is unpublished, so minimize Fable context,
+never Fable turns (`~/.claude/docs/model-economy.md`).
 
 ## Compact instructions
 
