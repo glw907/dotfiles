@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+# model-review-notify: timer-facing reminder for the monthly Claude model,
+# effort, and skill review. Always notifies; the review itself runs in a
+# Claude Code session from the spec named below. Logs to the journal so
+# a missed notification is still recorded.
+
+export PATH="$HOME/.local/bin:/usr/bin:$PATH"
+
+spec="$HOME/.dotfiles/docs/superpowers/specs/2026-09-04-fable-5-1-infra-update-design.md"
+echo "monthly model review due; template $spec"
+notify-send --urgency=normal "Monthly Claude model review due" \
+    "Open Claude Code and say: run the monthly model review. Checklist: ROADMAP.md, Active." \
+    2>/dev/null || true
+exit 0

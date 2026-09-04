@@ -5,6 +5,20 @@ standing decisions other work is measured against. Managed by `/log-project`.
 Current state lives in `docs/STATUS.md`; the per-pass ledger in
 `docs/HISTORY.md`.
 
+## Active
+
+- **Monthly model, effort, and skill review** (Geoff, 2026-09-04): on the
+  first of each month `model-review.timer` raises a reminder and a small
+  pass runs the "Monthly review checklist" in
+  `docs/superpowers/specs/2026-09-04-fable-5-1-infra-update-design.md`:
+  model releases against the pins, prices and the plan-usage page, effort
+  defaults and saved levels, the usage glance, the open skill experiments,
+  and a fresh prompt audit when the target model changed. Standing inputs:
+  `claude/.claude/docs/model-economy.md` and
+  `docs/superpowers/plans/2026-09-04-prompt-audit-report.md`. Each review
+  records its verdicts in `docs/HISTORY.md` and its tokens and interaction
+  points per the pass scoring rule. First review due 2026-10-01.
+
 ## Planned
 
 - **musicbox repo split**: the music-VPS spec, plan, and library design

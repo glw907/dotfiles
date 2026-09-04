@@ -1,0 +1,6 @@
+[Unit]
+Description=Remind Geoff that the monthly Claude model review is due
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/model-review-notify

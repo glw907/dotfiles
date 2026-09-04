@@ -1,0 +1,10 @@
+[Unit]
+Description=Monthly Claude model, effort, and skill review reminder
+
+[Timer]
+OnCalendar=monthly
+Persistent=true
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target
