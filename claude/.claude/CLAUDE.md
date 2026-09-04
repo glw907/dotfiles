@@ -232,8 +232,7 @@ per-dispatch model wins, so upshifts pass `model` explicitly: `opus` for novel
 correctness-critical logic the plan does not specify, `fable` only when an Opus verdict
 hedges on something that matters. Effort defaults to `medium` (settings, Geoff 2026-09-04);
 raise it to `high` for plan authorship, adjudication, and research-shaped turns rather than
-lowering it (Fable 5.1 at `low` answers from memory); `max` is for one adjudication. `/effort`
-writes the level into settings.json, so reset it before the session ends. Subagents start
+lowering it (Fable 5.1 at `low` answers from memory); `max` is for one adjudication. `/effort` persists the level into settings.json; reset it before the session ends. Subagents start
 with zero context: pre-extract what the task needs. When a dispatch runs slow, expensive, or
 weak, check which model ran.
 
@@ -260,20 +259,20 @@ explicit opt-in ("use a workflow"). When a task would clearly benefit (a large r
 where adversarial find-and-verify beats a flat fan-out, a repo-wide audit or migration, deep
 multi-source research) suggest it in one sentence naming the shape and rough scale.
 
-**Guards on long unattended work, both mandatory; procedures in
-`~/.claude/docs/unattended-work-guards.md` (read it when arming either).** Any workflow
-expected past ~30 minutes gets the runaway guard: a background Bash watcher on the transcript
-dir alarming on the stall and token-runaway signatures; intervention is TaskStop plus
-`resumeFromRunId`. Long unattended work ON BATTERY also arms a `systemd-inhibit --what=sleep`
-plus a battery watchdog (11% while `Discharging` → save state by 10%: TaskStop, WIP-commit,
-STATUS with the resume prompt, release the inhibitor). GNOME suspends after 15 idle minutes
-on battery; check `journalctl` for suspends before calling background work stalled.
+**Guards on long unattended work, both mandatory: procedures in
+`~/.claude/docs/unattended-work-guards.md` (read before arming either).** Past ~30 minutes,
+arm the runaway guard: a background Bash watcher on the transcript dir alarming on
+stall/token-runaway signatures; intervene with TaskStop plus `resumeFromRunId`. On battery, arm
+`systemd-inhibit --what=sleep` plus a battery watchdog (11% while `Discharging` → save state
+by 10%: TaskStop, WIP-commit, STATUS with the resume prompt, release the inhibitor). GNOME
+suspends after 15 idle minutes on battery; check `journalctl` for suspends before calling it
+stalled.
 
 ## Initiative-scoped sessions (globalized 2026-07-13)
 
 One session per initiative, not one per week: every turn re-reads the whole cached
-conversation, so a long session's meter compounds even with disciplined steps (the cairn arc's
-ledger was dominated by one five-day session's cache reads). When an initiative lands (pass
+conversation, so a long session's meter compounds even with disciplined steps (seen in the cairn
+arc). When an initiative lands (pass
 shipped, post-mortem recorded, STATUS pointed at the next action), close the session; the
 artifacts are the handoff. The same force argues for batching questions and dispatching reads
 within a session: each extra turn re-buys the context.
