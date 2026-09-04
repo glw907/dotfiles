@@ -116,7 +116,7 @@
     }
   },
   "outputStyle": "writing-voice",
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "tui": "fullscreen",
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,

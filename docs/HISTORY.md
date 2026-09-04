@@ -58,6 +58,13 @@ request, and the Workflow and monthly-cadence grants. One question (a
 nothing; the review round removed it. That question is the pass's one
 interaction defect.
 
+Same day, on the outside evidence (`docs/superpowers/plans/2026-09-04-fable-5-1-outside-evidence.md`),
+Geoff moved the committed Fable effort default from `high` to `medium`, with
+`high` raised deliberately for plan authorship, adjudication, and research
+turns. The evidence: the system card's peak FrontierCode score at `medium`,
+CodeRabbit's review eval where `low` beat `high`, and transcript measurements
+of about 2x output tokens per turn against Fable 5.
+
 ## 2026-08-30 -- Post-review fix pass
 
 The adversarial three-lens review at the reorg close (correctness,

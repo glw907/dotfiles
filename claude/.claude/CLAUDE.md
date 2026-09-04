@@ -230,10 +230,12 @@ search, `claude-opus-5` for reviewers (cross-model diversity). A dispatch withou
 falls to `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` (settings `env`); a frontmatter pin or a
 per-dispatch model wins, so upshifts pass `model` explicitly: `opus` for novel
 correctness-critical logic the plan does not specify, `fable` only when an Opus verdict
-hedges on something that matters. Effort stays `high`; raise it for research-shaped turns
-rather than lowering it (Fable 5.1 at `low` answers from memory), and `max` is for one
-adjudication. Subagents start with zero context: pre-extract what the task needs. When a
-dispatch runs slow, expensive, or weak, check which model ran.
+hedges on something that matters. Effort defaults to `medium` (settings, Geoff 2026-09-04);
+raise it to `high` for plan authorship, adjudication, and research-shaped turns rather than
+lowering it (Fable 5.1 at `low` answers from memory); `max` is for one adjudication. `/effort`
+writes the level into settings.json, so reset it before the session ends. Subagents start
+with zero context: pre-extract what the task needs. When a dispatch runs slow, expensive, or
+weak, check which model ran.
 
 Every pass plan header carries a token ceiling and a checkpoint interval (default four
 tasks). At each checkpoint, at any split, and before any question to Geoff, write STATUS

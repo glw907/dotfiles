@@ -58,13 +58,15 @@ machine. The thin-conductor rule stays as strict as it is.
    `opus`) keeps working. The variable does not reach the built-in `Explore`
    and `Plan` agents (`Explore` is already capped at Opus); forcing it onto
    them would also override every pin, which this pass does not want.
-2. **Effort policy is written down.** `effortLevel: high` stays the default
-   and the standing rule: conducting and plan authorship run `high`; raise
-   effort for research-shaped turns rather than lowering it, because Fable
-   5.1 at `low` answers from memory; `max` is for one adjudication and is
-   session-only. No standing `medium`: `/effort` saves the level per model
-   into `settings.json` through the stow symlink, so a "routine" `medium`
-   would become the default and show up as dotfiles drift. Sonnet and Opus
+2. **Effort policy is written down.** Revised by Geoff on 2026-09-04 after
+   the outside evidence (the system card's peak coding score at `medium`,
+   CodeRabbit's low-beats-high review eval, and the measured 2x output
+   tokens per turn): `effortLevel: medium` is the committed default; raise
+   to `high` for plan authorship, adjudication, and research-shaped turns
+   rather than lowering, because Fable 5.1 at `low` answers from memory;
+   `max` is for one adjudication and is session-only. `/effort` saves the
+   level per model into `settings.json` through the stow symlink, so a
+   raised session shows as a modified file until reset. Sonnet and Opus
    agent efforts are untouched (the guidance is Fable-specific).
 3. **The economy docs carry the 5.1 facts.** `model-economy.md` gets the
    price table with primary sources, the benchmark delta with its caveats,

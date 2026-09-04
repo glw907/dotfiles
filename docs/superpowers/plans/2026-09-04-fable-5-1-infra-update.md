@@ -390,12 +390,14 @@ prints nothing.
     (already capped at Opus) or `Plan`; forcing it onto them would also
     override every frontmatter pin. The plugin `code-simplifier` is pinned
     `opus` in its own frontmatter and was never at Fable price.
-  - Effort: conducting and plan authorship at `high` (the default); raise
-    effort for research-shaped turns rather than lowering it, because Fable
-    5.1 at `low` searches less and answers from memory; `max` only for one
-    adjudication, and it is session-only. No standing `medium`: `/effort`
-    saves the level per model into `settings.json` through the stow symlink,
-    so a saved level is dotfiles drift.
+  - Effort: `medium` is the committed default (Geoff, 2026-09-04, on the
+    outside evidence in `2026-09-04-fable-5-1-outside-evidence.md`); raise
+    to `high` for plan authorship, adjudication, and research-shaped turns
+    rather than lowering, because Fable 5.1 at `low` searches less and
+    answers from memory; `max` only for one adjudication, and it is
+    session-only. `/effort` saves the level per model into `settings.json`
+    through the stow symlink, so a raised session is visible drift until
+    reset.
   - Reviewer pins stay `claude-opus-5`: half the output price, fresh-context
     work that is not cache-heavy, cross-model diversity, and Anthropic's own
     recommendation to start with Opus 5 for most workloads. Implementers
