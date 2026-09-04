@@ -33,42 +33,42 @@ case give the exact resume prompt and the launch directory).
 
 ## Starting a pass
 
-1. Read `docs/STATUS.md` to get the current pass number and starter prompt.
-2. Read the plan doc for the current pass. If none exists and the starter
-   prompt lists open questions, brainstorm first (invoke
-   `superpowers:brainstorming`), then run the engine-contact enumeration
-   per the `engine-consult` skill and record its outcome in the plan
-   header (either the consultation-brief link or the one-line "no engine
-   asks"), then write a plan at
-   `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` (see `plan-template.md`;
-   its header carries a token ceiling and a checkpoint interval, default
-   four tasks), then pre-bake before executing: commit the plan and point
-   STATUS.md's starter prompt at it. Then execute here in this same
-   session, regardless of model.
-3. **Consultation backstop, blocking.** If the plan header carries neither
-   a consultation-brief link nor the "no engine asks" line, run the
-   engine-contact enumeration per the `engine-consult` skill now and
-   append the resulting line to the committed plan. This is a blocking
-   precondition on the first implementer dispatch: no `site-implementer`
-   dispatch until the plan header carries one of the two.
-4. Each task runs as a chain. `site-implementer` (pinned Sonnet for token
-   economy) makes the failing check green, clears the repo gate, and
-   returns files touched, the gate result, and anything it could not do.
-   The `diff-reviewer` agent (`claude-opus-5`) then reads the diff against
-   the task's acceptance criteria and returns accept, fix, or escalate with
-   `file:line` findings; the conductor does not read the diff itself. One
-   re-dispatch on `fix`; a second `fix` verdict goes to the conductor as a
-   decision. Below six tasks, dispatch the chain per task with the Agent
-   tool. At six or more, or when the plan marks tasks independent, run
-   `~/.claude/workflows/pass-execute.js` with `{repo: "<site repo>", gate:
-   "<repo's full gate command>", implementer: "site-implementer", tasks:
-   [{id, title, criteria, files, notes}]}`.
-5. Implement a task inline, or upshift the dispatch to `model: opus`, only
-   for novel correctness-critical logic the plan does not fully specify;
-   `model: fable` only when an Opus verdict itself hedges on something that
-   matters. At each checkpoint, at any split, and before any question to
-   the user, write STATUS.md (task ledger, decisions taken, spend, next
-   task), then continue.
+Three things are true before the first implementer dispatch:
+
+- You hold the pass number and starter prompt (from `docs/STATUS.md`) and
+  the pass plan. If no plan exists and the starter prompt lists open
+  questions, brainstorm first (`superpowers:brainstorming`), then write the
+  plan at `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` from
+  `plan-template.md`.
+- The plan header carries a token ceiling, a checkpoint interval (default
+  four tasks), and exactly one of a consultation-brief link or the line
+  "no engine asks", produced by the `engine-consult` skill. If it carries
+  neither, run the engine-contact enumeration per `engine-consult` now and
+  append the resulting line to the committed plan. This is blocking: no
+  `site-implementer` dispatch until the header carries one of the two.
+- The plan is committed and STATUS.md's starter prompt points at it.
+
+Constraints while executing, in this session regardless of model:
+
+- Each task runs as the chain. `site-implementer` (Sonnet) makes the
+  failing check green, clears the repo gate, and returns files touched,
+  the gate result, and anything it could not do. `diff-reviewer`
+  (`claude-opus-5`) reads the diff against the task's acceptance criteria
+  and returns accept, fix, or escalate with `file:line` findings; the
+  conductor does not read the diff. One re-dispatch on `fix`; a second
+  `fix` is the conductor's decision.
+- Below six tasks, dispatch the chain per task with the Agent tool. At six
+  or more, or when the plan marks tasks independent, run
+  `~/.claude/workflows/pass-execute.js` with `{repo: "<site repo>", gate:
+  "<repo's full gate command>", implementer: "site-implementer", tasks:
+  [{id, title, criteria, files, notes}]}`.
+- Implement a task inline, or upshift a dispatch to `model: opus`, only
+  for novel correctness-critical logic the plan does not fully specify;
+  `model: fable` only when an Opus verdict itself hedges on something that
+  matters.
+- At each checkpoint, at any split, and before any question to the user,
+  write STATUS.md (task ledger, decisions taken, spend, next task), then
+  continue.
 
 ## Ending a pass: the consolidation ritual
 
@@ -197,16 +197,15 @@ next pass's direction is unsettled. See the
 
 ## Execution discipline
 
-- **One implementer per dispatch, verified.** When dispatching
-  `site-implementer`, wait for each result and verify its commit (git log
-  and status) before depending on it. On an API overload or 5xx, wait and
-  retry once deliberately; never fire a second dispatch while one may still
-  be in flight.
+- **One implementer per dispatch, verified.** Wait for each
+  `site-implementer` result and verify its commit (git log and status)
+  before depending on it. On an API overload or 5xx, wait and retry once
+  deliberately; never fire a second dispatch while one may still be in
+  flight.
 - **Suggest the Workflow tool at the right moments.** It runs only on the
-  user's explicit opt-in ("use a workflow"), so name the moment when it
-  would pay off: a plan whose tasks are mostly independent, the review gate
-  of a large pass, or a site-wide audit or migration. One sentence naming
-  the shape and rough scale is enough.
+  user's explicit opt-in ("use a workflow"), so name the moment it would
+  pay off (mostly independent tasks, a large review gate, a site-wide
+  audit or migration) in one sentence with the shape and rough scale.
 
 ## Starter-prompt format
 
