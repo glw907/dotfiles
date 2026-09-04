@@ -48,7 +48,7 @@ brew "uv"
 # Claude Code. The cask, not the native ~/.local/bin installer: Homebrew is
 # the CLI tier on this machine, and the cask updates with `ujust update`
 # alongside everything else instead of self-updating on its own schedule.
-cask "claude-code"
+cask "claude-code@latest" # switched from stable cask 2026-09-04: Fable 5.1 needs >=2.1.251, stable lagged at 2.1.236
 
 # No font casks, deliberately. The Bluefin base image already ships
 # JetBrains Mono and Symbols Nerd Font Mono, which is what kitty.conf now
