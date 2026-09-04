@@ -3,6 +3,61 @@
 Per-pass ledger, newest first. Current state lives in `docs/STATUS.md`;
 strategic initiatives spanning passes live in `ROADMAP.md`.
 
+## 2026-09-04 -- Fable 5.1 model, effort, and skill update
+
+Fable 5.1 (shipped 2026-09-01; same $10/$50, cache reads $0.25/MTok) became
+the session model on 2026-09-04. This pass tuned the configuration around
+it (plan `docs/superpowers/plans/2026-09-04-fable-5-1-infra-update.md`,
+spec `docs/superpowers/specs/2026-09-04-fable-5-1-infra-update-design.md`,
+revised after a three-lens adversarial review of 49 findings).
+`CLAUDE_CODE_SUBAGENT_MODEL` moved from a `.bashrc` export of `inherit` to
+a settings `env` entry of `sonnet`, so dispatches without a model
+(general-purpose, claude, Workflow agent() without model) stopped running
+at Fable price; pins still win, proven by session-pinned transcript.
+CLAUDE.md gained the effort rule (conducting at `high`, raise for research
+turns, `max` for one adjudication, no standing `medium`) and landed at
+5,986 tokens under its 6,000 budget. The model-economy doc update (plan
+task 3) waits on another session's uncommitted edit to the same file and
+is carried in STATUS. An Opus prompt audit wrote
+`docs/superpowers/plans/2026-09-04-prompt-audit-report.md` (nothing
+applied). `site-pass`'s start and discipline sections were restated as
+outcomes and constraints with every rule kept and the pass-end ritual
+byte-identical, as a measured experiment. A monthly `model-review.timer`
+and a ROADMAP Active entry put the review on a cadence; first due
+2026-10-01.
+
+**What a later pass should not rediscover**:
+
+- **The `.bashrc` comment was wrong about precedence.** It claimed a
+  global `CLAUDE_CODE_SUBAGENT_MODEL` would override frontmatter. The
+  documented order is per-dispatch model, then frontmatter, then the
+  variable, then the session model. The variable never reaches `Explore`
+  or `Plan`, and forcing it onto them would override every pin.
+- **A settings `env` value beats the shell and reaches running
+  sessions.** `.bashrc` was the weakest home for this variable.
+- **`/usage`'s plan-limit breakdown has no per-model share.** Plan bars
+  are shared across models; attribution is by skill, subagent, plugin, and
+  MCP server. The Session block's per-model token counts are session API
+  totals, not plan draw. Do not plan a per-model pool measurement from it.
+- **`/effort` persists per model into `settings.json`** through the stow
+  symlink, so an interactive effort change is dotfiles drift.
+- **CLAUDE.md sits at the budget edge.** `claude-context-budget` was
+  already failing (6,034) before this pass; any addition is paid for in
+  the same file.
+- **The site-pass experiment is open.** Its verdict comes from the next
+  ecxc-ski or 907-life pass's HISTORY numbers, recorded here when known.
+  A worse result reverts commit 8a958fe.
+
+Budgets: roughly 2.2M subagent tokens against a 1.5M ceiling. The plan's own
+execution (the workflow run, the close-out, and one report fix) took about
+1.0M; Geoff's same-day additions after the ceiling was set took the rest
+(two adversarial review rounds, about 1.0M, and the outside-evidence
+research, about 0.25M). Human touchpoints: the approval, the review
+request, and the Workflow and monthly-cadence grants. One question (a
+`/usage` baseline percentage) went unanswered and turned out to measure
+nothing; the review round removed it. That question is the pass's one
+interaction defect.
+
 ## 2026-08-30 -- Post-review fix pass
 
 The adversarial three-lens review at the reorg close (correctness,
