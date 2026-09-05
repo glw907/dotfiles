@@ -197,7 +197,7 @@ and measurement methods: `aksailingclub-org/docs/2026-07-30-assets-substrate-har
 No human-scale time estimates; describe relative complexity ("quick",
 "multi-step") and focus on sequencing, dependencies, and testing steps.
 
-## Conducting a pass (revised 2026-08-21)
+## Conducting a pass
 
 Two co-equal budgets govern every initiative at the same quality bar: total tokens spent and
 Geoff's attended time. Clock time is a watched metric, never a budget. Attended time is spent
