@@ -1,5 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+  },
   "permissions": {
     "allow": [
       "Bash(chromium:*)",
@@ -8,9 +11,6 @@
     "defaultMode": "auto"
   },
   "model": "fable",
-  "env": {
-    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -117,6 +117,11 @@
   },
   "outputStyle": "writing-voice",
   "effortLevel": "medium",
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    }
+  },
   "tui": "fullscreen",
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,

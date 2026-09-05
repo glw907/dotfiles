@@ -254,8 +254,9 @@ Preferred, not skippable lightly. The just-landed pass is fresh now: its pattern
 carried follow-ups, and lessons are in context, and re-deriving them cold next
 session is waste. So before stopping, draft the next plan. Run
 `superpowers:brainstorming` first to settle the open design decisions with the user
-(the spec locks most of it; surface only what it leaves open), then
-`superpowers:writing-plans` to author the numbered plan file. Keep the
+(the spec locks most of it; surface only what it leaves open). Probe until the plan
+carries no open readings; the brainstorm's length is never a cost to trim (Geoff,
+2026-09-04). Then `superpowers:writing-plans` to author the numbered plan file. Keep the
 design-and-approval gate: never auto-write a plan without the user's calls on the
 open decisions. The plan stays revisable next session. Skip only when the next pass's
 direction is unsettled or the user wants to stop here.

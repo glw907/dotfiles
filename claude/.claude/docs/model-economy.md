@@ -161,3 +161,39 @@ token cost favor the clean boundary.
 - GitHub issue 41143
   (https://github.com/anthropics/claude-code/issues/41143): `maxTurns` is
   documented but not reliably enforced.
+
+## Fable 5.1 (noted 2026-09-04)
+
+Fable 5.1 shipped 2026-09-01 (Mythos 5.1 alongside; no Opus or Sonnet
+5.1). Same $10/$50 per MTok as Fable 5, with cache reads cut 75% —
+directly favorable for long conducting sessions, whose meters are
+dominated by cache-read compounding. Geoff moved sessions to 5.1 on
+2026-09-04. Reviewer pins stay `claude-opus-5` and implementer aliases
+stay `sonnet` (both still their tiers' heads); unpinned subagents
+inherit the session model, so they follow the switch automatically.
+
+## Interaction is front-loaded, never minimized (Geoff, 2026-09-04)
+
+Until 2026-09-04 the pass-end score counted every question, approval, and
+correction as an interaction point and called a question that did not change
+the outcome a defect. Geoff retracted that framing as too blunt. The goal was
+always interaction that is batched and, preferably, front-loaded. Extended
+back-and-forth on requirements and design is wanted, and it is worth the time
+to remove every ambiguity before a plan is approved.
+
+The old rule carried the wrong incentive. A defect-per-question score pushed
+the conductor toward guessing at planning time, the one place a wrong guess
+costs a whole pass, while the questions it discouraged were the cheap ones.
+The score now separates the phases. Planning misses count each ambiguity that
+surfaced after approval and a planning question would have caught. Execution
+sittings count each time Geoff was pulled in after approval, with one combined
+checkpoint question counting once. Planning questions never count against the
+score.
+
+Cadence follows the same split. Before approval, ask one question at a time
+by default, with a recommendation attached; a few tightly related questions
+may share a message. After approval, judgment calls batch into one combined
+question at a checkpoint, and only a genuine blocker or scope change stops the
+pass early. CLAUDE.md carries the rule in "Conducting a pass" and "Process
+proportionality"; the `geoff-works-autonomously` memory carries the standing
+preference.

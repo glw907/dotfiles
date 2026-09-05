@@ -197,16 +197,16 @@ and measurement methods: `aksailingclub-org/docs/2026-07-30-assets-substrate-har
 No human-scale time estimates; describe relative complexity ("quick",
 "multi-step") and focus on sequencing, dependencies, and testing steps.
 
-## Conducting a pass (revised 2026-08-21; supersedes the 2026-07-26 Opus-executes rule)
+## Conducting a pass (revised 2026-08-21)
 
 Two co-equal budgets govern every initiative at the same quality bar: total tokens spent and
-Geoff's attended time. Clock time is a watched metric, never a budget. Parallelize wherever
-tasks are genuinely independent (Geoff, 2026-09-03); serialize only under real
-contention or dependency, and be able to name the contended resource. Plans mark independent
-tasks so pass-execute's parallel mode can take them. When the
-budgets conflict, spend the one that can buy the thing: tokens for anything research,
-verification, or a retry can resolve; attended time only for taste, priorities, and product
-forks.
+Geoff's attended time. Clock time is a watched metric, never a budget. Attended time is spent
+front-loaded: understanding requirements and design comes first, and the back-and-forth it
+takes is that budget's best use (Geoff, 2026-09-04). After plan approval, tokens buy anything
+research, verification, or a retry can resolve; attended time buys only taste, priorities, and
+product forks. Parallelize wherever tasks are genuinely independent (Geoff, 2026-09-03);
+serialize only under real contention or dependency, and name the contended resource. Plans
+mark independent tasks so pass-execute's parallel mode can take them.
 
 Fable conducts coding projects from brainstorm through post-mortem in one session. The
 plan-approval gate is the single human gate. **The
@@ -230,11 +230,10 @@ search, `claude-opus-5` for reviewers (cross-model diversity). A dispatch withou
 falls to `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` (settings `env`); a frontmatter pin or a
 per-dispatch model wins, so upshifts pass `model` explicitly: `opus` for novel
 correctness-critical logic the plan does not specify, `fable` only when an Opus verdict
-hedges on something that matters. Effort defaults to `medium` (settings, Geoff 2026-09-04);
-raise it to `high` for plan authorship, adjudication, and research-shaped turns rather than
-lowering it (Fable 5.1 at `low` answers from memory); `max` is for one adjudication. `/effort` persists the level into settings.json; reset it before the session ends. Subagents start
-with zero context: pre-extract what the task needs. When a dispatch runs slow, expensive, or
-weak, check which model ran.
+hedges on something that matters. Effort defaults to `high` (settings, Geoff 2026-09-04);
+lower it only for mechanical dispatches, never to `low` (Fable 5.1 at `low` answers from
+memory); `max` is for one adjudication. Subagents start with zero context: pre-extract what
+the task needs. When a dispatch runs slow, expensive, or weak, check which model ran.
 
 Every pass plan header carries a token ceiling and a checkpoint interval (default four
 tasks). At each checkpoint, at any split, and before any question to Geoff, write STATUS
@@ -242,9 +241,9 @@ tasks). At each checkpoint, at any split, and before any question to Geoff, writ
 80% of the ceiling, finish the task, write STATUS, and ask one combined question. Pre-bake
 before executing: commit the plan, point STATUS at it, refresh memory; anything load-bearing
 lives in an artifact, never only in the conversation. Do not run the `writing-plans` "which
-execution method?" question. Fable on Max draws from the weekly pool up to a 50% cap
-(verified 2026-08-21); how the pool meters Fable tokens is unpublished, so minimize Fable context,
-never Fable turns (`~/.claude/docs/model-economy.md`).
+execution method?" question. Fable on Max draws from the weekly pool up to a 50% cap; its
+metering is unpublished, so minimize Fable context, never Fable turns
+(`~/.claude/docs/model-economy.md`).
 
 ## Compact instructions
 
@@ -255,18 +254,16 @@ STATUS resume prompt. Drop tool output, diffs, and agent transcripts.
 ## Multi-agent workflows: suggest, never launch unprompted
 
 Outside a pass plan that names the workflow mode, the Workflow tool runs only on Geoff's
-explicit opt-in ("use a workflow"). When a task would clearly benefit (a large review gate
-where adversarial find-and-verify beats a flat fan-out, a repo-wide audit or migration, deep
-multi-source research) suggest it in one sentence naming the shape and rough scale.
+explicit opt-in ("use a workflow"). When a task would clearly benefit (a large adversarial
+review gate, a repo-wide audit or migration, deep multi-source research) suggest it in one
+sentence naming the shape and rough scale.
 
-**Guards on long unattended work, both mandatory: procedures in
+**Guards on long unattended work, both mandatory; procedures in
 `~/.claude/docs/unattended-work-guards.md` (read before arming either).** Past ~30 minutes,
-arm the runaway guard: a background Bash watcher on the transcript dir alarming on
-stall/token-runaway signatures; intervene with TaskStop plus `resumeFromRunId`. On battery, arm
-`systemd-inhibit --what=sleep` plus a battery watchdog (11% while `Discharging` → save state
-by 10%: TaskStop, WIP-commit, STATUS with the resume prompt, release the inhibitor). GNOME
-suspends after 15 idle minutes on battery; check `journalctl` for suspends before calling it
-stalled.
+arm the runaway guard, a transcript-dir watcher; intervene with TaskStop plus
+`resumeFromRunId`. On battery, arm `systemd-inhibit --what=sleep` plus the battery watchdog
+(save state by 10%). GNOME suspends after 15 idle minutes on battery; check `journalctl` for
+suspends before calling it stalled.
 
 ## Initiative-scoped sessions (globalized 2026-07-13)
 
@@ -274,8 +271,8 @@ One session per initiative, not one per week: every turn re-reads the whole cach
 conversation, so a long session's meter compounds even with disciplined steps (seen in the cairn
 arc). When an initiative lands (pass
 shipped, post-mortem recorded, STATUS pointed at the next action), close the session; the
-artifacts are the handoff. The same force argues for batching questions and dispatching reads
-within a session: each extra turn re-buys the context.
+artifacts are the handoff. The same force argues for dispatching reads within a session:
+each extra turn re-buys the context.
 
 ## Project ledgers: STATUS is present tense (Geoff, 2026-08-21)
 
@@ -325,21 +322,25 @@ known wrong, and say so when doing it.
 
 ## Process proportionality
 
-The human gate is plan approval, once. After approval, execution runs to completion with no
-per-task check-ins; the automated layers replace the mid-loop human: the per-task chain, the
-quality gates, the pass-end reviewer fan-out. Batch mid-execution judgment calls into one
-combined question; stop early only for a genuine blocker or scope change.
+Interaction is batched and front-loaded, never minimized (Geoff, 2026-09-04). Before plan
+approval, probe requirements and design until the plan carries no open readings; a long
+brainstorm is the budget working as intended. Ask one question at a time by default, group
+only a few tightly related ones, and lead each with a recommendation. After approval,
+execution runs to completion with no per-task check-ins; the per-task chain, the quality
+gates, and the pass-end reviewer fan-out replace the mid-loop human. Batch mid-execution
+judgment calls into one combined question at a checkpoint; stop early only for a genuine
+blocker or scope change.
 
 Plans specify outcomes, constraints, and acceptance criteria per task, never implementation
 code. Small tasks skip the ceremony: a change touching a handful of files, fully specified by
 the request or existing tests, adding no new public surface, schema, or auth behavior, goes
-straight to implementation through the gates and code-simplifier. When the track is genuinely
-unclear, ask in one sentence.
+straight to implementation through the gates and code-simplifier.
 
-Score both budgets at pass end: tokens spent against the plan's ceiling (from `/cost` or the
-usage console) and human interaction points (every question, approval, and correction that
-pulled Geoff in; a question that did not change the outcome is a defect). Record the numbers
-even when they look bad; the trend is the signal.
+Score both budgets at pass end: tokens against the plan's ceiling (`/cost` or the usage
+console), and attended time as two counts. A planning miss is an ambiguity that surfaced after
+approval and a planning question would have caught. An execution sitting is each pull-in after
+approval, one combined question counting once. Planning questions never count against the
+score. Record the numbers even when they look bad; the trend is the signal.
 
 ## Writing voice
 

@@ -39,7 +39,8 @@ Three things are true before the first implementer dispatch:
   the pass plan. If no plan exists and the starter prompt lists open
   questions, brainstorm first (`superpowers:brainstorming`), then write the
   plan at `docs/superpowers/plans/YYYY-MM-DD-<topic>.md` from
-  `plan-template.md`.
+  `plan-template.md`. The brainstorm probes until the plan carries no open
+  readings; its length is never a cost to trim (Geoff, 2026-09-04).
 - The plan header carries a token ceiling, a checkpoint interval (default
   four tasks), and exactly one of a consultation-brief link or the line
   "no engine asks", produced by the `engine-consult` skill. If it carries
