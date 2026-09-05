@@ -230,10 +230,12 @@ search, `claude-opus-5` for reviewers (cross-model diversity). A dispatch withou
 falls to `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` (settings `env`); a frontmatter pin or a
 per-dispatch model wins, so upshifts pass `model` explicitly: `opus` for novel
 correctness-critical logic the plan does not specify, `fable` only when an Opus verdict
-hedges on something that matters. Effort defaults to `high` (settings, Geoff 2026-09-04);
-lower it only for mechanical dispatches, never to `low` (Fable 5.1 at `low` answers from
-memory); `max` is for one adjudication. Subagents start with zero context: pre-extract what
-the task needs. When a dispatch runs slow, expensive, or weak, check which model ran.
+hedges on something that matters. Effort defaults to `medium` (settings, Geoff 2026-09-04);
+raise it to `high` for plan authorship, adjudication, and research turns, never lower it to
+`low` (Fable 5.1 at `low` answers from memory); `max` is for one adjudication. `/effort`
+persists to settings.json; reset it at session end. Subagents start with zero context:
+pre-extract what the task needs. When a dispatch runs slow, expensive, or weak, check which
+model ran.
 
 Every pass plan header carries a token ceiling and a checkpoint interval (default four
 tasks). At each checkpoint, at any split, and before any question to Geoff, write STATUS
@@ -255,8 +257,8 @@ STATUS resume prompt. Drop tool output, diffs, and agent transcripts.
 
 Outside a pass plan that names the workflow mode, the Workflow tool runs only on Geoff's
 explicit opt-in ("use a workflow"). When a task would clearly benefit (a large adversarial
-review gate, a repo-wide audit or migration, deep multi-source research) suggest it in one
-sentence naming the shape and rough scale.
+review gate, a repo-wide audit or migration, deep research) suggest it in one sentence with
+the shape and rough scale.
 
 **Guards on long unattended work, both mandatory; procedures in
 `~/.claude/docs/unattended-work-guards.md` (read before arming either).** Past ~30 minutes,
@@ -265,11 +267,11 @@ arm the runaway guard, a transcript-dir watcher; intervene with TaskStop plus
 (save state by 10%). GNOME suspends after 15 idle minutes on battery; check `journalctl` for
 suspends before calling it stalled.
 
-## Initiative-scoped sessions (globalized 2026-07-13)
+## Initiative-scoped sessions
 
 One session per initiative, not one per week: every turn re-reads the whole cached
-conversation, so a long session's meter compounds even with disciplined steps (seen in the cairn
-arc). When an initiative lands (pass
+conversation, so a long session's meter compounds even with disciplined steps. When an
+initiative lands (pass
 shipped, post-mortem recorded, STATUS pointed at the next action), close the session; the
 artifacts are the handoff. The same force argues for dispatching reads within a session:
 each extra turn re-buys the context.
@@ -336,8 +338,8 @@ code. Small tasks skip the ceremony: a change touching a handful of files, fully
 the request or existing tests, adding no new public surface, schema, or auth behavior, goes
 straight to implementation through the gates and code-simplifier.
 
-Score both budgets at pass end: tokens against the plan's ceiling (`/cost` or the usage
-console), and attended time as two counts. A planning miss is an ambiguity that surfaced after
+Score both budgets at pass end: tokens against the plan's ceiling (`/cost`), and attended
+time as two counts. A planning miss is an ambiguity that surfaced after
 approval and a planning question would have caught. An execution sitting is each pull-in after
 approval, one combined question counting once. Planning questions never count against the
 score. Record the numbers even when they look bad; the trend is the signal.
