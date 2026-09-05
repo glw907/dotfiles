@@ -15,3 +15,4 @@ im.dino.Dino
 io.github.janbar.noson
 org.gajim.Gajim
 io.github.screwys.Rufin
+md.obsidian.Obsidian

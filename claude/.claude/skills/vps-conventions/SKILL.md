@@ -87,4 +87,5 @@ its write targets — "argued statically" is acceptable, "assumed" is not.
 | "`ReadWritePaths` will allow the dir once the script mkdirs it" | Startup fails before the script runs. Pre-create on the host. |
 | "The path unit will catch every trigger" | Coalesced while active, lost in the re-arm gap. Timer backstop required. |
 | "Add the package to cloud-init and the box has it" | Only the next box. Live boxes need remediation, same commit as the gate update. |
+| "`compose up -d` after an ipam change converges the stack" | It recreates the network but reattaches live containers WITHOUT their service aliases, so container-name DNS (`navidrome`) silently dies while static `extra_hosts` routes keep working. Follow any compose network change with `up -d --force-recreate`. (Born 2026-09-01: dubplate subnet pin 502'd Navidrome.) |
 | "It's a helper/template unit, hardening is for the main services" | Helpers run with the same privileges. Harden every unit. |

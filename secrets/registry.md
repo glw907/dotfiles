@@ -179,9 +179,10 @@ of truth; a mismatch between this table and that table is a bug in whichever cha
 > U12a: the AUD of Access app "dubplate uploader" (path-scoped music.907.life/upload, app id
 > b9d9f27d-bfbf-4c66-a437-5b3074785eee); rotate by recreating the app and re-running
 > secret-set.sh. SERVE_BIND_ADDRS gains the pinned compose bridge gateway at U12a deploy.
-> DUBPLATE_SERVE_SITE_NAME minted 2026-09-01 at U12b: non-secret masthead text ("Wright
-> Family Music"), in the age store only because the env manifest's values all originate
-> there; change it by re-running secret-set.sh and deploy.sh.
+> DUBPLATE_SERVE_SITE_NAME minted 2026-09-01 at U12b: non-secret masthead text, in the
+> age store only because the env manifest's values all originate there; change it by
+> re-running secret-set.sh and deploy.sh. Value set to "907 Music" 2026-09-02 (Geoff's
+> pick at the Pass B attended gate; was "Wright Family Music").
 
 > The musicbox rows are Local-only by design: none of these secrets touch a Cloudflare
 > Worker. `MUSICBOX_TUNNEL_TOKEN` and the Navidrome values land on the VPS via

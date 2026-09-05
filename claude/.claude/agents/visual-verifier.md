@@ -1,7 +1,7 @@
 ---
 name: visual-verifier
 description: Fresh-context visual fidelity grader. Compares rendered UI against reference images (separate labeled blocks, never composited) and verdicts per visual device, COSMETIC vs STRUCTURAL. Use as the verification gate in any visual-fidelity pass — it must NOT be the context that built the work. Read-only plus rendering.
-model: fable
+model: claude-fable-5-1
 tools: Read, Bash, Grep, Glob
 ---
 
