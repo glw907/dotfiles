@@ -14,9 +14,10 @@ revised after a three-lens adversarial review of 49 findings).
 a settings `env` entry of `sonnet`, so dispatches without a model
 (general-purpose, claude, Workflow agent() without model) stopped running
 at Fable price; pins still win, proven by session-pinned transcript.
-CLAUDE.md gained the effort rule (conducting at `high`, raise for research
-turns, `max` for one adjudication, no standing `medium`) and landed at
-5,986 tokens under its 6,000 budget. The model-economy doc update (plan
+CLAUDE.md gained the effort rule (`medium` as the committed default, raised
+to `high` for plan authorship, adjudication, and research turns, `max` for
+one adjudication; revised to medium the same day on the outside evidence)
+and landed at 5,986 tokens under its 6,000 budget. The model-economy doc update (plan
 task 3) waits on another session's uncommitted edit to the same file and
 is carried in STATUS. An Opus prompt audit wrote
 `docs/superpowers/plans/2026-09-04-prompt-audit-report.md` (nothing

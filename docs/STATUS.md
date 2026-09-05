@@ -31,8 +31,8 @@ actually stands, not the retired Mint 22 desktop setup.
 ## Immediate next action
 
 Three items are open from the 2026-09-04 Fable 5.1 pass. Run plan task 3
-(the model-economy doc update) once `claude/.claude/docs/model-economy.md`
-is clean; the task text is in the plan. Record the site-pass experiment's
+(the model-economy doc update); `claude/.claude/docs/model-economy.md` has
+been clean since commit 3345620, and the task text is in the plan. Record the site-pass experiment's
 verdict in `docs/HISTORY.md` when the next ecxc-ski or 907-life pass
 closes. Run the first monthly model review on 2026-10-01 from the
 checklist in
