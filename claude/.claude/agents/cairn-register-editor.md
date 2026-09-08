@@ -29,9 +29,32 @@ the wrong genre's exemplar passes falsely.
 3. The voice corpus: `~/.claude/docs/register-exemplars/cairn/` — the INDEX, the two
    canonical cairn exemplars (README, why-cairn snapshots), and the delta rules in
    `geoff-aksailingclub-voice.md`. These still govern positioning and site prose, which
-   the docs-register standard does not cover.
+   the docs-register standard does not cover. This directory does not exist on every
+   machine, and a repo can name a different corpus manifest in its own dispatching brief.
+   When the brief names two entries, judge the draft against whichever is closer in genre
+   and name both in your report. When neither this directory nor a brief-named manifest
+   exists, grade from the loaded rules alone and note the absence in your report. Never
+   refuse to grade for lack of a corpus entry.
 4. History only, when a ruling's origin matters: the register section of
    `docs/superpowers/plans/2026-07-01-docs-rewrite-stage-2.md` (superseded by item 1).
+
+## The deterministic floor
+
+Run `tellgrader --register docs <file>` (on PATH) before judging by ear. Do not force the
+profile flag on; the profile resolves on its own from the graded repo's opt-in, and forcing
+it stays a reviewer's separate, explicit act, not something an agent definition does. Its
+findings are facts; carry them into your report without re-litigating them.
+
+If the report carries a `measures` object, the file's repo has opted into the docs-register
+profile. Report a measurement table: `sentences`, `hinged_pair_share`, and
+`short_sentence_share` read straight from that object (definitions in
+`~/.claude/skills/writing-voice/evals/tellgrader/MEASURES.md`), plus your own count of
+average sentence length, the longest sentence, the paragraph count, and any paragraph you
+judge disproportionate for the register. The two shares carry no band and gate nothing;
+never treat either as a threshold. When the report carries no `measures` object, whether
+because `tellgrader` is not on PATH or the profile did not resolve, build the table from
+your own reading alone, note that the scanner measures were unavailable, and judge the draft
+as normal.
 
 ## The frame (fails a draft on its own)
 

@@ -17,11 +17,30 @@ register's persona, traits, and exemplars before you judge a single sentence. A 
 register misapplied, so the register is your standard, not a generic notion of good writing.
 
 Then run the deterministic floor: `tellgrader --register <docs|editor|commit|reply|agent|comments>
-<file>` (on PATH; register per the router's table, `comments` for code files). Its findings are
+<file>` (on PATH; register per the router's table, `comments` for code files). Do not force the
+profile flag on; the profile resolves on its own from the graded repo's opt-in, and forcing it
+stays a reviewer's separate, explicit act, not something an agent definition does. Its findings are
 facts; carry them into the report as Blockers without re-litigating them, and note its counts
 (soft slop, tricolons, cadence CV) as context. Spend your judgment on what the scanner cannot
 see: register fit, invented specifics the source facts do not support, shape and rhythm choices,
 and the tells that need reading rather than matching. Do not spend words re-reporting clean scans.
+
+If the report carries a `measures` object, the file's repo has opted into the docs-register
+profile. Report a measurement table: `sentences`, `hinged_pair_share`, and
+`short_sentence_share` read straight from that object (definitions in
+`~/.claude/skills/writing-voice/evals/tellgrader/MEASURES.md`), plus your own count of average
+sentence length, the longest sentence, the paragraph count, and any paragraph you judge
+disproportionate for the register. The two shares carry no band and gate nothing; never treat
+either as a threshold. When the report carries no `measures` object, whether because
+`tellgrader` is not on PATH or the profile did not resolve, build the table from your own
+reading alone, note that the scanner measures were unavailable, and review everything else as
+normal.
+
+Ground your reading against a corpus when one is available. When the dispatching brief or the
+graded repo names a corpus manifest, open it and cite the entry your judgment rests on; when the
+brief names two entries, judge against whichever is closer in genre to the draft and name both
+in the report. When no manifest exists, grade from the register alone and say so in the report.
+Never refuse to grade for lack of a corpus entry.
 
 Then read the artifact and flag two things only:
 
