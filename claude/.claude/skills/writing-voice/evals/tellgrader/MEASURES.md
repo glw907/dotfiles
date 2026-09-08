@@ -18,7 +18,8 @@ docs-register measures: markdown decoration (heading markers, bullet and numbere
 markers, and `**`/`__` emphasis markers) is stripped first, each paragraph (text between
 blank lines) is flattened to one line, and the flattened text is split on runs of `.`,
 `!`, or `?` followed by whitespace or end of string. No sentence is dropped for being
-short.
+short. "Between blank lines" means the literal two-newline run `\n\n`: a line holding
+only spaces does not split a paragraph, since it is not itself an empty line.
 
 ## The selector: prose
 
@@ -27,8 +28,8 @@ list item. The selector, `proseOnly`, blanks two kinds of line before the senten
 splitter runs, preserving each line's newline so line numbers still map to the input:
 
 - A **heading line**, recognized by `headingRe`: a line starting with one to six `#`
-  markers followed by whitespace. A heading is not a sentence, so its whole line is
-  removed, not merely its `#` marker.
+  markers followed by whitespace, optionally indented. A heading is not a sentence, so its
+  whole line is removed, not merely its `#` marker.
 - A **list item**, recognized the same way the scanner's other checks recognize one, by
   `bulletRe` (a leading `-`, `*`, or `+` marker) or `numberedListRe` (a leading `1.`-style
   marker), together with every line that continues it. A **continuation line**, matched by
@@ -83,6 +84,10 @@ legitimate zero share never reads as "not measured."
 
 ## Divergences from cairn's measure-prose.mjs
 
+This section compares the measured *pipeline*, `Scan`'s prose-preparation steps feeding
+`measureShares`, against `measure-prose.mjs` end to end, not either implementation's
+individual functions in isolation.
+
 `measure-prose.mjs` (`/var/home/glw907/Projects/cairn-cms/scripts/checks/measure-prose.mjs`)
 is a separate implementation, not generated from this one. Every place it diverges from the
 definition above:
@@ -94,6 +99,14 @@ definition above:
   any chunk under three words (`.filter((x) => x.split(/\s+/).length >= 3)`). `tellgrader`'s
   `splitSentences` drops no sentence for being short, so the two denominators differ on any
   document containing a sub-three-word fragment.
+- **The sentence-boundary test.** `measure-prose.mjs`'s `splitSentences` splits only at
+  ``(?<=[.!?])\s+(?=[A-Z"'(`])``: a sentence-ending mark followed by whitespace counts as a
+  boundary only when the next character is a capital letter or an opening quote or
+  parenthesis. `tellgrader`'s `sentenceEnd` is `[.!?]+(?:\s+|$)`, with no such lookahead, so
+  it splits on every run of `.`, `!`, or `?` followed by whitespace or end of string
+  regardless of what follows. "Version 1.0. the gate ran fine here today." is one sentence
+  under `measure-prose.mjs` (lowercase `the` fails its lookahead) and two under `tellgrader`
+  (`1.0.` alone satisfies `sentenceEnd`).
 - **The coordinator set.** `measure-prose.mjs` splits the coordinator test across two
   patterns: `HINGE_SUB` unconditionally hinges a comma followed by `but`, `so`, `yet`,
   `which`, `where`, `while`, `because`, `since`, `although`, `though`, or `as` (no
@@ -110,14 +123,36 @@ definition above:
   or on `, which` / `, that` followed by two more words. `tellgrader` requires two or more
   occurrences of `which` or `who` (case-sensitive, not `where` or `that`) anywhere in the
   sentence, with no comma required and no single occurrence counted.
-- **Selector differences that remain after the heading and list-continuation fix.**
-  `measure-prose.mjs` also strips fenced code, tables, link targets, and inline code before
-  building its blocks, none of which `tellgrader`'s `proseOnly` or `splitSentences` strip.
-  `measure-prose.mjs`'s list-item recognition (`^\s*(?:[-*]|\d+\.)\s+`) does not match a `+`
-  bullet, where `tellgrader`'s `bulletRe` does.
+- **The continuation-indent test.** `measure-prose.mjs` recognizes a list item's wrapped
+  continuation line with `^\s{2,}\S`, requiring two or more leading spaces. `tellgrader`'s
+  `continuationRe` is `^[ \t]+\S`, matching a single leading space or tab. A line indented by
+  exactly one space after a bullet is a continuation under `tellgrader` (blanked out of the
+  prose selector, along with its marker line) and a new prose block under `measure-prose.mjs`
+  (contributing its own sentence). This is a choice to revisit if the two are meant to
+  converge, not a settled difference.
+- **Emphasis stripping.** `tellgrader`'s `mdDecoration` strips both `**` and `__` before
+  counting words or splitting sentences. `measure-prose.mjs` strips only `**`
+  (`text.replace(/\*\*([^*]+)\*\*/g, '$1')`); a `__bold__` span survives with its markers
+  intact.
+- **Selector differences that remain after the heading and list-continuation fix.** Fenced
+  code is not a divergence: `Scan` blanks it (`blankFencedCode`, `scan.go:123`) before the
+  prose-only selector or the measures ever run, and `measure-prose.mjs` strips it too. Inline
+  code is a divergence in kind rather than in scope: both implementations remove the span,
+  but `tellgrader` blanks it to whitespace while `measure-prose.mjs` substitutes the literal
+  word `Code` (``text.replace(/`[^`]*`/g, 'Code')``, line ~116), so the word contributes to
+  `measure-prose.mjs`'s word and sentence-length counts and not to `tellgrader`'s.
+  `measure-prose.mjs` also strips tables and link targets before building its blocks, neither
+  of which `tellgrader`'s `proseOnly` or `splitSentences` strip, and its list-item
+  recognition (`^\s*(?:[-*]|\d+\.)\s+`) does not match a `+` bullet, where `tellgrader`'s
+  `bulletRe` does.
 
-The serial-list exclusion itself is **not** a divergence: both implementations exclude a
-comma-plus-coordinator match when an earlier comma already appears in the sentence.
+The serial-list exclusion is a divergence for every coordinator but `and`/`or`.
+`measure-prose.mjs` applies the exclusion only within `HINGE_AND`; its `HINGE_SUB` pattern
+(`but`, `so`, `yet`, and the subordinators) hinges on the first match regardless of an
+earlier comma. `tellgrader` applies the exclusion to its whole coordinator set. The two
+implementations agree only on the `and`/`or` case: "It listed a, b, and c." excludes under
+both, but "It listed a, b, but the plan failed." hinges under `measure-prose.mjs` and does
+not hinge under `tellgrader`, because the earlier comma excludes it there.
 
 ## The `~/.claude` symlink caveat
 
