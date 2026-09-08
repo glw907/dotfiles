@@ -30,18 +30,12 @@ actually stands, not the retired Mint 22 desktop setup.
 
 ## Immediate next action
 
-Three items are open from the 2026-09-04 Fable 5.1 pass. Run plan task 3
-(the model-economy doc update); `claude/.claude/docs/model-economy.md` has
-been clean since commit 3345620, and the task text is in the plan. Record the site-pass experiment's
-verdict in `docs/HISTORY.md` when the next ecxc-ski or 907-life pass
-closes. Run the first monthly model review on 2026-10-01 from the
-checklist in
-`docs/superpowers/specs/2026-09-04-fable-5-1-infra-update-design.md`
-(`model-review.timer` reminds). Otherwise steady state: routine
-`workstation-update` runs; `check-drift` reconciles every manifest against
-the live machine (weekly `check-drift.timer` notifies on drift; every
-install records itself in its tier's manifest same-session, per
-bluefin-admin.md).
+Execute the docs-standard Claude infrastructure pass,
+`docs/superpowers/plans/2026-09-08-docs-standard-claude-infra.md` (plan one of three for the
+cairn documentation standard; approved 2026-09-08). Main-loop dispatch per task through the
+implementer-review-gate chain; gate `bash ~/.dotfiles/scripts/check.sh`. Task 1a is next. The
+three open items from the 2026-09-04 Fable 5.1 pass (plan task 3, the model-economy doc update,
+and its siblings) queue behind it.
 
 ## Open items
 
