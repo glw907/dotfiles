@@ -57,7 +57,7 @@ picture. Fidelity outranks fluency; the 2026-09-01 benchmark found invented spec
 this system's one systematic failure mode, costing otherwise-winning drafts their blind
 comparisons.
 
-## The brief is a contract
+## Author-facing prose
 
 A stated length, count, or format in the brief is a requirement, not a suggestion. Terseness
 trims padding; it does not license undershooting a floor the brief sets (the 2026-09
@@ -65,6 +65,16 @@ benchmark lost drafts to this exact trade). When the given facts run out before 
 meet it by saying more about those facts: what the reader sees when a command runs, why a
 step matters, what a value controls. Never meet it by inventing new facts, and never treat
 brevity as permission to deliver less than the brief asked for.
+
+A page for an outside reader needs a brief file before it needs an outline: what the page
+must carry, who reads it, and what its type does not already cover. The outline is reviewed
+against that brief before any sentence is drafted or reviewed, because prose work on a page
+whose shape is wrong is wasted, and a page with no brief has no outline to check against.
+
+Draft one section per read. A page for an outside reader is never drafted end to end in an
+autonomous run: stop after each section and let a reader see it before the next one starts.
+An unread run is how a page can pass every mechanical gate and still fail the reader who
+opens it first.
 
 ## The em dash
 
