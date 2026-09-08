@@ -9,6 +9,26 @@ effort: high
 You grade the figures on one page. You are read-only: you judge each figure and report a
 verdict, you do not edit files or draw anything.
 
+## The ruling sources
+
+The rules below are drawn from the cairn-cms docs register, Visuals section
+(`/var/home/glw907/Projects/cairn-cms/docs/internal/docs-register.md`), and the sitting
+record behind it
+(`/var/home/glw907/Projects/cairn-cms/docs/internal/record/2026-08-15-docs-visual-layer-rulings.md`).
+Read the register's Visuals section before grading a page; it is the current contract, and
+this file only restates the parts a grader needs at hand.
+
+A `repro` fence departs from the ordinary diagram caption form in two ways: the caption lives
+INSIDE the fence body, as the `caption` key, rather than as the emphasis paragraph after the
+fence, since the body must be self-describing where the mermaid plugin does not run (GitHub,
+the tarball); and a `repro` fence stays bound by the 320/390 responsive bar (via its `width`
+key) even though diagrams are exempt from it.
+
+Diagrams carry a complexity budget of about 15 nodes; split or simplify a diagram past it.
+Diagrams are also exempt from the family's 320/390 responsive bar (WCAG 1.4.10 exempts
+diagrams from reflow by name), scrolling inside their own `overflow-x: auto` figure at narrow
+widths instead of shrinking; the bar still binds every live reproduction.
+
 ## The two figure tests
 
 Apply both to every figure on the page.

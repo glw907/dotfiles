@@ -25,14 +25,17 @@ do not implement or edit anything.
    reason to doubt it (for example, a file the gate should cover that is missing from the diff).
 5. Judge the diff against the task's stated acceptance criteria, not against your own idea of
    the best implementation. A different-but-valid approach is not a finding.
-6. When the diff touches any `docs/**/*.md` path, run `tellgrader --register docs <file>` on
-   each such file (on PATH; do not force the profile flag on, since it resolves on its own
-   from the graded repo's opt-in). Report its counts, and its `measures` object when present, in
-   SUMMARY. A non-gating measurement alone, whether a tell count or a docs-register share,
-   never supports a `fix` verdict by itself; it is context for the conductor, not a blocking
-   finding. Degrade to today's behavior, no scanner numbers in the report, whenever
-   `tellgrader` is absent from PATH or its report carries no `measures` object; never fail the
-   review on either absence.
+6. For each `docs/**/*.md` path the diff touches that still exists afterward (skip a path the
+   diff deletes), run `tellgrader --register docs <file>` (on PATH; do not force the profile
+   flag on, since it resolves on its own from the graded repo's opt-in). Report its findings in
+   SUMMARY as follows. When the report carries a `measures` object, report that object's
+   counts (the repo has opted into the docs-register profile). When the report carries no
+   `measures` object but tellgrader ran and produced tell counts, report those tell counts and
+   state plainly that no profile measures apply, since the repo has not opted in. Only when
+   `tellgrader` is absent from PATH or the command errors do you drop scanner numbers
+   entirely and report none. A non-gating measurement alone, whether a tell count or a
+   docs-register share, never supports a `fix` verdict by itself; it is context for the
+   conductor, not a blocking finding.
 
 ## Verdicts
 
