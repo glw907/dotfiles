@@ -66,6 +66,35 @@ func TestHasHingedPairSerialListExclusion(t *testing.T) {
 	}
 }
 
+// TestProseOnlyDropsHeadings holds the conductor ruling that a heading is not a sentence:
+// proseOnly must remove a heading line entirely, not leave its text to be flattened into
+// an adjacent paragraph.
+func TestProseOnlyDropsHeadings(t *testing.T) {
+	text := "# A Heading With No Punctuation\n\nActual prose sentence stays.\n"
+	sentences := splitSentences(proseOnly(text))
+	if len(sentences) != 1 {
+		t.Fatalf("sentences = %v, want exactly 1 (the heading must not become a sentence)", sentences)
+	}
+	if sentences[0] != "Actual prose sentence stays" {
+		t.Errorf("sentences[0] = %q, want %q", sentences[0], "Actual prose sentence stays")
+	}
+}
+
+// TestProseOnlyDropsListContinuations holds the conductor ruling that a list item's
+// wrapped continuation lines are dropped along with the marker line: an indented line
+// following a marker line, up to a blank line or a non-indented line, never contributes a
+// sentence.
+func TestProseOnlyDropsListContinuations(t *testing.T) {
+	text := "- A list item that wraps\n  onto a continued line with words here.\n\nActual prose sentence stays.\n"
+	sentences := splitSentences(proseOnly(text))
+	if len(sentences) != 1 {
+		t.Fatalf("sentences = %v, want exactly 1 (the list item and its continuation must not become a sentence)", sentences)
+	}
+	if sentences[0] != "Actual prose sentence stays" {
+		t.Errorf("sentences[0] = %q, want %q", sentences[0], "Actual prose sentence stays")
+	}
+}
+
 func TestIsShortSentence(t *testing.T) {
 	if !isShortSentence("Too short.") {
 		t.Error("isShortSentence(\"Too short.\") = false, want true")

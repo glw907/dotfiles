@@ -293,7 +293,7 @@ which put the canonical definition inside the one repo the spec says must not ow
 implementing or checking a second implementation. It states:
 
 - The sentence splitter, exactly: the regex, whether short sentences are dropped (tellgrader
-  drops none), and the fact that the denominator is shared with `CadenceCV`.
+  drops none), and that the denominator is the prose-only sentence count.
 - The selector: `prose` only, list items excluded, and how a list item is recognized.
 - The hinged-pair rule: two clauses joined by a comma plus a coordinator, a colon, a
   semicolon, a spaced dash, or a chain of relative clauses, **including the serial-list
@@ -838,10 +838,12 @@ Every item the spec assigns to the workstation, and the task that carries it.
   which is heavier than any comparable instrument. Revision 3 drops all of it. Bands, if any
   are ever wanted, come from plan two's measured corpus and live in the consuming repo's
   `.tellgrader.json`. The hinged-pair share stays unbanded.
-- **The hinged-pair definition is unsettled.** `MEASURES.md` is the canonical statement, and
-  `measure-prose.mjs` diverges today in three ways that move the number: a different sentence
-  splitter that drops sentences under three words, an unstated selector, and a missing
-  serial-list exclusion. It also emits integer percentages where the scanner emits fractions.
+- **The hinged-pair definition is unsettled.** `MEASURES.md` is the canonical statement.
+  `measure-prose.mjs` already implements the serial-list exclusion; its divergences are the
+  ones `MEASURES.md`'s "Divergences from cairn's measure-prose.mjs" section names: a different
+  sentence splitter that drops sentences under three words, a narrower coordinator set, a
+  colon/semicolon test that requires trailing whitespace, a different relative-clause rule,
+  and it emits integer percentages where the scanner emits fractions.
   Plan two conforms it or retires it. Nothing gates on either number, which is what keeps the
   risk cheap.
 - **The gate now depends on `go` and `golangci-lint`.** Task 1a's `check.sh` line fails loudly
