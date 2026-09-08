@@ -26,6 +26,10 @@ Code the reader will type is a code block, not a figure.
 
 ## The two-lane routing rule
 
+See the register's Visuals section
+(`~/Projects/cairn-cms/docs/internal/docs-register.md`) for the current rules; this section
+only restates what a builder needs at hand.
+
 Mermaid in the page is the default: a diagram that is text in the same commit as its prose
 renders in the corpus's own docs theme and in a plain GitHub view, and it cannot go stale
 without the diff showing it. Hand-authored SVG is the exception, reached for only when a
@@ -37,15 +41,36 @@ uses it: the mermaid block in the page itself, or the SVG's source file and the 
 generated it. A figure with no committed source is a finding on its own, independent of
 whether it earns its place.
 
+A diagram carries a complexity budget of about 15 nodes; split or simplify a diagram past it.
+Diagrams render in cairn's own theme: the stock `neutral` mermaid render never ships, and a
+diagram the themed render cannot carry at the polish bar is hand-authored SVG, never a
+drawing-tool screenshot.
+
 ## The text-alternative and containment rules
 
-Every image and diagram carries alt text: the kind first (diagram, screenshot,
-reproduction), never "Image of", stating what the reader learns rather than what the pixels
-show. A decorative image gets `alt=""`, never an omitted attribute. A complex diagram carries
-a two-part alternative, a short alt plus the essential information in body text, not only in
-the alt. Every authored diagram and every live reproduction carries a caption in complete
-sentences, never redundant with the alt and never referring to the figure spatially ("the
-image above").
+See the register's Visuals section
+(`~/Projects/cairn-cms/docs/internal/docs-register.md`) for the current rules; this section
+only restates what a builder needs at hand.
+
+Every image and diagram carries alt text, capped at 150 characters: the kind first (diagram,
+screenshot, reproduction), never "Image of", stating what the reader learns rather than what
+the pixels show. A decorative image gets `alt=""`, never an omitted attribute, and is authored
+as HTML (`<img alt="" ...>`) so the empty alt is visibly deliberate; markdown image syntax
+(`![...]`) always carries real alt text. A complex diagram carries a two-part alternative, a
+short alt plus the essential information in body text, not only in the alt. Every authored
+diagram and every live reproduction carries a caption in complete sentences, never redundant
+with the alt and never referring to the figure spatially ("the image above").
+
+A `repro` fence carries its caption a different way: the caption lives INSIDE the fence body,
+as the `caption` key, not as an emphasis paragraph after the fence, because the body must be
+self-describing where the mermaid plugin does not run (GitHub, the tarball). The fence's
+`width` key is what satisfies the 320/390 bar the diagram bullet above is exempt from; a live
+reproduction stays bound by that bar. The key shape, as the register states it:
+
+```repro
+caption: "..."
+width: 390
+```
 
 Authored docs diagrams are exempt from the family's 320/390 responsive bar (WCAG 1.4.10
 exempts diagrams from reflow by name): they scroll inside their own `overflow-x: auto` figure
