@@ -93,6 +93,19 @@ to your config before upgrading; there is no default.
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
+## The docs-register measures
+
+The docs-register profile resolves by path, against a repo's declared `include` and
+`exclude` globs, and a commit message or a PR body is never a path on disk that profile
+resolution can match. `tellgrader` never reports `hinged_pair_share` or
+`short_sentence_share` for one, so this section records the measures' existence and this
+register's exemption from them rather than a practice to follow.
+
+The definitions, for a reader who reaches this file from the docs-register measures
+section in a sibling register, live in
+`/var/home/glw907/.dotfiles/claude/.claude/skills/writing-voice/evals/tellgrader/MEASURES.md`.
+They are report-only everywhere they do apply, carry no band, and gate nothing.
+
 ## Off-voice contrast
 
 The same change in the register this file exists to prevent (no type prefix, past tense,

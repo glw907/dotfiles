@@ -43,6 +43,18 @@ Avoid these structural habits:
   with a bolded lead phrase.
 - The definitional pivot ("the honest test…", "the real question…") that stages a
   point instead of stating it. Say the point plainly.
+- The two-headed heading: a heading that names two things joined by "and" or a colon,
+  so the section under it covers two ideas. One heading, one topic. Cited: the Google
+  developer documentation style guide's headings guidance
+  (https://developers.google.com/style/headings).
+- The abstract noun standing in for the concrete thing ("the solution", "the
+  approach", "the mechanism") where the concrete name was already available. Name the
+  function, the file, or the flag instead. Reported-only: the 2026-09 benchmark
+  observation; no external standard is cited for this one.
+- The page describing itself ("this guide explains", "this section covers") instead
+  of doing the thing it describes. Open with the content, not a description of the
+  content. Reported-only: the 2026-09 benchmark observation; no external standard is
+  cited for this one.
 
 The marketing, slop, and filler words are tells everywhere, and the external standards
 all rule them out. Vale, with the Google package on developer docs and the Microsoft

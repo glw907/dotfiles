@@ -73,6 +73,17 @@ Deleting a bucket is permanent. After you delete a bucket, its name is released 
 user can claim it. Move any data you want to keep to another bucket before you continue.
 ```
 
+## The docs-register measures
+
+For a file in a repo that has opted in, `tellgrader` reports two cadence measures,
+`hinged_pair_share` and `short_sentence_share`, whose definitions live in
+`/var/home/glw907/.dotfiles/claude/.claude/skills/writing-voice/evals/tellgrader/MEASURES.md`.
+
+The measures are report-only. They carry no band and gate nothing, and the hinged-pair
+definition is unsettled; no number here is a threshold. The corpus for this audience is
+held by the consuming repo and reaches a review through the dispatching brief. No file in
+this directory names a cairn corpus entry id.
+
 ## Off-voice contrast
 
 The same content in the register this file exists to prevent (marketing tone, filler,
