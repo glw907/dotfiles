@@ -55,10 +55,19 @@ func (r Register) emDashBanned() bool {
 }
 
 // Options configures a Scan. Path selects comment extraction: a .go,
-// .ts, or .py file is scanned on its comment text only.
+// .ts, or .py file is scanned on its comment text only. Path also
+// anchors docs-register profile resolution when Profile is empty.
 type Options struct {
 	Register Register
 	Path     string
+
+	// Profile forces the docs-register profile: ProfileDocsRegister turns
+	// it on, ProfileNone turns it off, and "" resolves it from the repo's
+	// own .tellgrader.json opt-in.
+	Profile string
+	// HomeDir is the stop root for the opt-in walk: a session's real home
+	// directory in production, and a hermetic stand-in a test controls.
+	HomeDir string
 }
 
 // Finding is one register violation, anchored to a line of the input.
@@ -80,6 +89,23 @@ type Report struct {
 	Counts            map[string]int `json:"counts"`
 	Findings          []Finding      `json:"findings"`
 	TellsPer1000Words float64        `json:"tells_per_1000_words"`
+
+	// Profile and Measures are present only when the docs-register
+	// profile applies to this scan; both are absent as a unit otherwise,
+	// which keeps a legitimate zero share from reading as omitted.
+	Profile  string    `json:"profile,omitempty"`
+	Measures *Measures `json:"measures,omitempty"`
+}
+
+// Measures carries the docs-register cadence measures for one file:
+// report-only figures with no band and no gate. See MEASURES.md next to
+// the scanner for their definitions.
+type Measures struct {
+	Unit               string  `json:"unit"`
+	Selector           string  `json:"selector"`
+	Sentences          int     `json:"sentences"`
+	HingedPairShare    float64 `json:"hinged_pair_share"`
+	ShortSentenceShare float64 `json:"short_sentence_share"`
 }
 
 // Scan runs every check for the register over the input and returns the
@@ -146,6 +172,15 @@ func Scan(input string, opts Options) *Report {
 
 	if r.Words > 0 {
 		r.TellsPer1000Words = float64(len(r.Findings)) / float64(r.Words) * 1000
+	}
+
+	if profile := resolveProfile(opts.Path, opts.HomeDir, opts.Profile); profile != "" {
+		r.Profile = profile
+		r.Measures = &Measures{
+			Unit:      "fraction",
+			Selector:  "prose",
+			Sentences: r.Sentences,
+		}
 	}
 	return r
 }

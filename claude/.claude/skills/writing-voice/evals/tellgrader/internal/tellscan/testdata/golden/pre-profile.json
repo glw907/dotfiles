@@ -1,0 +1,79 @@
+{
+  "note": "Captured pre-profile (before the --profile flag existed). Every case's findings, exit code, and tells_per_1000_words is the regression baseline task 1a's criterion 7 and 8 hold against.",
+  "scans": {
+    "site-content": {
+      "path": "testdata/repo/src/content/posts/spring.md",
+      "exit_code": 0,
+      "report": {
+        "path": "testdata/repo/src/content/posts/spring.md",
+        "register": "docs",
+        "words": 20,
+        "sentences": 3,
+        "cadence_cv": 0.5787918451395113,
+        "counts": {},
+        "findings": [],
+        "tells_per_1000_words": 0
+      }
+    },
+    "docs-extend": {
+      "path": "testdata/repo/docs/extend/seam.md",
+      "exit_code": 0,
+      "report": {
+        "path": "testdata/repo/docs/extend/seam.md",
+        "register": "docs",
+        "words": 23,
+        "sentences": 3,
+        "cadence_cv": 0.48023308770379397,
+        "counts": {},
+        "findings": [],
+        "tells_per_1000_words": 0
+      }
+    },
+    "docs-internal": {
+      "path": "testdata/repo/docs/internal/note.md",
+      "exit_code": 0,
+      "report": {
+        "path": "testdata/repo/docs/internal/note.md",
+        "register": "docs",
+        "words": 19,
+        "sentences": 3,
+        "cadence_cv": 0.39385867229199384,
+        "counts": {},
+        "findings": [],
+        "tells_per_1000_words": 0
+      }
+    },
+    "docs-extend-tell": {
+      "path": "testdata/repo/docs/extend/tell.md",
+      "exit_code": 0,
+      "report": {
+        "path": "testdata/repo/docs/extend/tell.md",
+        "register": "docs",
+        "words": 11,
+        "sentences": 3,
+        "cadence_cv": 0.128564869306645,
+        "counts": {
+          "connector-opener": 1
+        },
+        "findings": [
+          {
+            "check": "connector-opener",
+            "line": 3,
+            "excerpt": ". Moreover,"
+          }
+        ],
+        "tells_per_1000_words": 90.9090909090909
+      }
+    }
+  },
+  "hook": {
+    "clean": {
+      "input": "{\"tool_name\": \"Write\", \"tool_input\": {\"file_path\": \"/var/home/glw907/.dotfiles/claude/.claude/skills/writing-voice/evals/tellgrader/internal/tellscan/testdata/repo/docs/extend/seam.md\", \"content\": \"# The extension seam\\n\\nA developer builds on top of the seam. It stays stable across releases,\\nso an upgrade never forces a rewrite.\\n\"}}",
+      "output": ""
+    },
+    "with-finding": {
+      "input": "{\"tool_name\": \"Write\", \"tool_input\": {\"file_path\": \"/var/home/glw907/.dotfiles/claude/.claude/skills/writing-voice/evals/tellgrader/internal/tellscan/testdata/repo/docs/extend/tell.md\", \"content\": \"# A tell fixture\\n\\nThe cache buffers reads. Moreover, it lowers latency.\\n\"}}",
+      "output": "{\"hookSpecificOutput\":{\"additionalContext\":\"tellgrader advisory (docs register): 1 tell finding(s) on the lines just edited in /var/home/glw907/.dotfiles/claude/.claude/skills/writing-voice/evals/tellgrader/internal/tellscan/testdata/repo/docs/extend/tell.md. Nothing is blocked; revise if these sit in prose just written.\\nline 3 [connector-opener]: . Moreover,\\n\",\"hookEventName\":\"PostToolUse\"}}\n"
+    }
+  }
+}

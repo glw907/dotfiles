@@ -35,6 +35,7 @@ check_bash_syntax() {
 }
 
 run "bash -n over tracked shell scripts" check_bash_syntax
+run "tellgrader go check" make -C claude/.claude/skills/writing-voice/evals/tellgrader check
 run "ruff docstring rules (python)" bash scripts/check-py-comments.sh
 run "vale-hook test suite" uv run --with pytest --no-project python -m pytest tests/ -q
 run "vale style fixtures" bash tests/vale/run-fixtures.sh

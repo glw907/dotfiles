@@ -15,6 +15,7 @@ import (
 type flags struct {
 	register string
 	hook     bool
+	profile  string
 }
 
 func newRootCmd() *cobra.Command {
@@ -32,6 +33,9 @@ func newRootCmd() *cobra.Command {
 		"register to grade against: docs, editor, commit, reply, agent, comments")
 	cmd.Flags().BoolVar(&f.hook, "hook", false,
 		"read a Claude Code PostToolUse event on stdin and emit advisory context")
+	cmd.Flags().StringVar(&f.profile, "profile", "",
+		"docs-register measures profile: docs-register forces it on, none forces it off, "+
+			"omit to resolve from the scanned repo's .tellgrader.json")
 	return cmd
 }
 
@@ -47,6 +51,12 @@ func run(paths []string, f *flags) error {
 	if err != nil {
 		return err
 	}
+	switch f.profile {
+	case "", tellscan.ProfileDocsRegister, tellscan.ProfileNone:
+	default:
+		return fmt.Errorf("unknown profile %q (want %s or %s)", f.profile, tellscan.ProfileDocsRegister, tellscan.ProfileNone)
+	}
+	home, _ := os.UserHomeDir()
 
 	reports := make([]*tellscan.Report, 0, len(paths))
 	for _, p := range paths {
@@ -57,6 +67,8 @@ func run(paths []string, f *flags) error {
 		reports = append(reports, tellscan.Scan(string(data), tellscan.Options{
 			Register: reg,
 			Path:     p,
+			Profile:  f.profile,
+			HomeDir:  home,
 		}))
 	}
 
