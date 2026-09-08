@@ -103,8 +103,9 @@ register's exemption from them rather than a practice to follow.
 
 The definitions, for a reader who reaches this file from the docs-register measures
 section in a sibling register, live in
-`/var/home/glw907/.dotfiles/claude/.claude/skills/writing-voice/evals/tellgrader/MEASURES.md`.
-They are report-only everywhere they do apply, carry no band, and gate nothing.
+`~/.claude/skills/writing-voice/evals/tellgrader/MEASURES.md`.
+They are report-only everywhere they do apply, carry no band, and gate nothing, and the
+hinged-pair definition is unsettled; no number in that file is a threshold.
 
 ## Off-voice contrast
 

@@ -43,17 +43,19 @@ Avoid these structural habits:
   with a bolded lead phrase.
 - The definitional pivot ("the honest test…", "the real question…") that stages a
   point instead of stating it. Say the point plainly.
-- The two-headed heading: a heading that names two things joined by "and" or a colon,
-  so the section under it covers two ideas. One heading, one topic. Cited: the Google
-  developer documentation style guide's headings guidance
-  (https://developers.google.com/style/headings).
+- The two-headed heading: a section heading that names two things joined by "and" or by
+  a colon is two sections, or one heading with the second half dropped; page titles are
+  exempt. This is the workstation register ruling of 2026-09-08, recorded in cairn's
+  docs-register.md, with Google's headings guidance standing as adjacent support only:
+  "Keep punctuation simple. Punctuation can be a sign that your heading is too
+  complicated." (https://developers.google.com/style/headings)
 - The abstract noun standing in for the concrete thing ("the solution", "the
   approach", "the mechanism") where the concrete name was already available. Name the
-  function, the file, or the flag instead. Reported-only: the 2026-09 benchmark
-  observation; no external standard is cited for this one.
+  function, the file, or the flag instead. This is reported-only, from the 2026-09
+  benchmark; no external standard is cited for this one.
 - The page describing itself ("this guide explains", "this section covers") instead
   of doing the thing it describes. Open with the content, not a description of the
-  content. Reported-only: the 2026-09 benchmark observation; no external standard is
+  content. This is reported-only, from the 2026-09 benchmark; no external standard is
   cited for this one.
 
 The marketing, slop, and filler words are tells everywhere, and the external standards

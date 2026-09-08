@@ -77,7 +77,7 @@ again. If you still can't sign in, select Forgot password to reset it.
 
 For a file in a repo that has opted in, `tellgrader` reports two cadence measures,
 `hinged_pair_share` and `short_sentence_share`, whose definitions live in
-`/var/home/glw907/.dotfiles/claude/.claude/skills/writing-voice/evals/tellgrader/MEASURES.md`.
+`~/.claude/skills/writing-voice/evals/tellgrader/MEASURES.md`.
 
 The measures are report-only. They carry no band and gate nothing, and the hinged-pair
 definition is unsettled; no number here is a threshold. The corpus for this audience is
