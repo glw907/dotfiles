@@ -110,12 +110,14 @@ def main():
         return 0
     tool_input = data.get("tool_input", {})
     path = tool_input.get("file_path", "")
-    if not path.endswith(".md"):
+    if os.path.splitext(path)[1] != ".md":
         return 0  # prose hook: Markdown only; code comments are the comment arm's
     # Once-off planning docs (specs, plans, post-mortems) are internal engineering artifacts,
     # not the published developer documentation the Google standard governs, so the hook skips
     # them rather than spend tokens on advisory findings that do not matter for a write-once doc.
-    if "/superpowers/" in path:
+    # A path-segment test: a repo whose own directory happens to be named "superpowers" is not
+    # exempted, only a "superpowers" segment anywhere in the path is.
+    if "superpowers" in path.split(os.sep):
         return 0
     try:
         with open(path, encoding="utf-8") as handle:
@@ -125,7 +127,8 @@ def main():
     root = config_root(os.path.dirname(path))
     if root is None:
         return 0  # no .vale.ini up the tree: no declared audience, nothing to say
-    report = run_vale(root, os.path.relpath(os.path.abspath(path), root))
+    rel_path = os.path.relpath(os.path.abspath(path), root)
+    report = run_vale(root, rel_path)
     if report is None:
         return 0  # Vale missing or its output unreadable: fail open
     findings = kept_findings(report, changed_span(saved, new_text(data.get("tool_name", ""), tool_input)))
@@ -134,14 +137,16 @@ def main():
     body = _format(findings, path)
     if any(f.get("Severity") == "error" for f in findings):
         sys.stderr.write(
-            f"Vale found {len(findings)} issue(s) on the lines just edited in {path}.\n"
+            f"Vale found {len(findings)} issue(s) on the lines just edited in {path}\n"
+            f"(graded from config root {root}, as {rel_path}).\n"
             f"{body}\n"
             "These are facts from the Vale check on the changed lines; pre-existing text "
             "was not scanned.\n"
         )
         return 2
     note = (
-        f"Vale advisory: {len(findings)} style finding(s) on the lines just edited in {path}. "
+        f"Vale advisory: {len(findings)} style finding(s) on the lines just edited in {path}\n"
+        f"(graded from config root {root}, as {rel_path}). "
         "Nothing is blocked; revise if these sit in prose just written.\n"
     )
     sys.stdout.write(json.dumps({"hookSpecificOutput": {
