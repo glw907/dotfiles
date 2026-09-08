@@ -77,6 +77,10 @@ func resolveProfile(path, home, forced string) string {
 // findConfig walks upward from dir for the nearest .tellgrader.json, stopping at stopAt
 // (inclusive) or the filesystem root. It returns the directory the config was found in, so
 // callers can resolve a scanned path relative to that repo's declared root.
+//
+// A malformed .tellgrader.json fails off: findConfig reports no config found rather than
+// an error, so a broken opt-in file silently leaves every scan in that tree at today's
+// behavior instead of blocking it.
 func findConfig(dir, stopAt string) (root string, cfg *tellgraderConfig, ok bool) {
 	current := dir
 	for {
@@ -111,8 +115,9 @@ func matchAny(rel string, patterns []string) bool {
 
 // globMatch reports whether name matches pattern, a doublestar glob: "**" matches any
 // sequence including "/", "*" matches within one path segment, and "?" matches one
-// non-separator character. This is the glob convention `.tellgrader.json`'s include and
-// exclude lists use.
+// non-separator character. A leading or medial "**/" also matches zero directories, the
+// doublestar convention that lets "**/x.md" match a root-level x.md. This is the glob
+// convention `.tellgrader.json`'s include and exclude lists use.
 func globMatch(pattern, name string) bool {
 	re, err := globRegexp(pattern)
 	if err != nil {
@@ -126,6 +131,9 @@ func globRegexp(pattern string) (*regexp.Regexp, error) {
 	b.WriteByte('^')
 	for i := 0; i < len(pattern); i++ {
 		switch c := pattern[i]; {
+		case c == '*' && i+2 < len(pattern) && pattern[i+1] == '*' && pattern[i+2] == '/':
+			b.WriteString("(?:.*/)?")
+			i += 2
 		case c == '*' && i+1 < len(pattern) && pattern[i+1] == '*':
 			b.WriteString(".*")
 			i++

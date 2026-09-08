@@ -34,6 +34,16 @@ func TestRegisterFor(t *testing.T) {
 	}
 }
 
+func TestScanOptionsForcesProfileOff(t *testing.T) {
+	opts := scanOptions(tellscan.Docs, "docs/extend/seam.md")
+	if opts.Profile != tellscan.ProfileNone {
+		t.Errorf("Profile = %q, want %q: the hook never reports docs-register measures", opts.Profile, tellscan.ProfileNone)
+	}
+	if opts.HomeDir == "" {
+		t.Error("HomeDir = \"\", want the session's home directory")
+	}
+}
+
 func event(t *testing.T, tool, path, newStr, content string) []byte {
 	t.Helper()
 	raw, err := json.Marshal(map[string]any{

@@ -69,6 +69,9 @@ because they own their own install or update path:
 
 - **poplar** -- a terminal email client, installed from its own repo via
   `make install`, not Stow or Homebrew.
+- **tellgrader** -- the tell-scanner CLI. Its source is tracked in this repo under the
+  `claude` package, at `claude/.claude/skills/writing-voice/evals/tellgrader/`, and its own
+  `make install` builds the binary to `~/.local/bin`, alongside poplar's entry.
 - **Standalone binaries** -- `harper-ls`, `marksman`, `perfspike`,
   `samfusdl`, `odin4`. Each ships as a single binary with no package manager
   of its own; they live in `~/.local/bin` without a tracked source.

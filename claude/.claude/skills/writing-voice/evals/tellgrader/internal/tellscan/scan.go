@@ -175,11 +175,14 @@ func Scan(input string, opts Options) *Report {
 	}
 
 	if profile := resolveProfile(opts.Path, opts.HomeDir, opts.Profile); profile != "" {
+		measureSentences, hingedShare, shortShare := measureShares(prose)
 		r.Profile = profile
 		r.Measures = &Measures{
-			Unit:      "fraction",
-			Selector:  "prose",
-			Sentences: r.Sentences,
+			Unit:               "fraction",
+			Selector:           "prose",
+			Sentences:          len(measureSentences),
+			HingedPairShare:    hingedShare,
+			ShortSentenceShare: shortShare,
 		}
 	}
 	return r

@@ -46,6 +46,20 @@ func agentFacing(path string) bool {
 		strings.Contains(path, "/.claude/agents/") || strings.Contains(path, "/.claude/commands/")
 }
 
+// scanOptions builds the Scan options for a hook-triggered save. The hook grades one
+// register per file and never reports docs-register measures, so the profile is forced
+// off rather than resolved: an unforced Options would otherwise walk from path up to home
+// on every save, computing a report field the hook's own output never surfaces.
+func scanOptions(reg tellscan.Register, path string) tellscan.Options {
+	home, _ := os.UserHomeDir()
+	return tellscan.Options{
+		Register: reg,
+		Path:     path,
+		Profile:  tellscan.ProfileNone,
+		HomeDir:  home,
+	}
+}
+
 // Run handles one PostToolUse event and returns the advisory JSON for
 // stdout, or "" when there is nothing to say. It never asks to block.
 func Run(raw []byte) string {
@@ -68,7 +82,7 @@ func Run(raw []byte) string {
 		return ""
 	}
 	text := string(saved)
-	report := tellscan.Scan(text, tellscan.Options{Register: reg, Path: path})
+	report := tellscan.Scan(text, scanOptions(reg, path))
 	findings := keptFindings(report, text, &in)
 	if len(findings) == 0 {
 		return ""

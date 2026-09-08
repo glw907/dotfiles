@@ -172,6 +172,18 @@ func TestResolveProfileNearestConfigWins(t *testing.T) {
 	}
 }
 
+func TestGlobMatchLeadingDoubleStarMatchesZeroDirectories(t *testing.T) {
+	if !globMatch("**/x.md", "x.md") {
+		t.Error("globMatch(\"**/x.md\", \"x.md\") = false, want true: a leading **/ matches a root-level file too")
+	}
+	if !globMatch("**/x.md", "a/b/x.md") {
+		t.Error("globMatch(\"**/x.md\", \"a/b/x.md\") = false, want true")
+	}
+	if globMatch("**/x.md", "x.txt") {
+		t.Error("globMatch(\"**/x.md\", \"x.txt\") = true, want false")
+	}
+}
+
 func must(t *testing.T, err error) {
 	t.Helper()
 	if err != nil {
@@ -182,6 +194,7 @@ func must(t *testing.T, err error) {
 // goldenReport mirrors the fields of Report that the profile change must
 // leave untouched.
 type goldenReport struct {
+	Path              string         `json:"path"`
 	Register          string         `json:"register"`
 	Words             int            `json:"words"`
 	Sentences         int            `json:"sentences"`
@@ -252,6 +265,9 @@ func TestGoldenRegressionScans(t *testing.T) {
 			}
 			if got.Register != sc.Report.Register {
 				t.Errorf("Register = %q, want %q", got.Register, sc.Report.Register)
+			}
+			if got.Path != sc.Report.Path {
+				t.Errorf("Path = %q, want %q", got.Path, sc.Report.Path)
 			}
 		})
 	}
