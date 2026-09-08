@@ -19,6 +19,15 @@ Current state lives in `docs/STATUS.md`; the per-pass ledger in
   records its verdicts in `docs/HISTORY.md` and its tokens and interaction
   points per the pass scoring rule. First review due 2026-10-01.
 
+- **cairn documentation standard** (Geoff, 2026-09-08): three plans against the standing spec
+  `~/Projects/cairn-cms/docs/superpowers/specs/2026-09-08-docs-standard-design.md`. Plan one,
+  the workstation's Claude infrastructure, is closed
+  (`docs/superpowers/plans/2026-09-08-docs-standard-claude-infra.md`); its hand-off is
+  `docs/superpowers/plans/2026-09-08-docs-standard-claude-infra-handoff.md`. Plan two (cairn's
+  own toolset) and plan three (the docs rewrite) build against it next. The workstation's
+  continuing obligation: the scanner, the voice files, the agents, and the skills this pass
+  shipped stay in step with the standard as plan two and plan three exercise them.
+
 ## Planned
 
 - **musicbox repo split**: the music-VPS spec, plan, and library design

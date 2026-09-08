@@ -859,3 +859,40 @@ Every item the spec assigns to the workstation, and the task that carries it.
   Recorded in `MEASURES.md` and in the profile doc comment.
 - **cairn-cms has live executors.** Verified 2026-09-08. Revision 3 performs no write in that
   repo, so the contention is not this pass's to manage; task 6 only reads `CLAUDE.md`.
+
+## Post-mortem
+
+**Built.** All seven dispatched tasks (1a, 1b, 2, 3, 4, 5, 6) and both conductor tasks (7, 8)
+are done. Every dispatched task took exactly one fix round except 1b, which took two, closed by
+conductor decision rather than a third dispatch. Commits: 1a `c523f0b`; 1b `fc143ec` then fixes
+`c217769` and `064168f`; 2 `7f63c0e` then `ecf31ab` (re-sourcing the two-headed-heading tell to
+the register ruling after review found Google's own headings page recommends two of the
+forbidden forms); 3 `019e1e8` then `f1a3ec5` (tests re-asserted on the rendered phrase after
+review proved them passing against the old hook); 4 `f32315c` then `e2d1ea7` (the register
+editor lacked a Bash tool); 5 `5a2990d` then `7436dcb` (the repro fence added to the figure
+skill); 6 `3d21e72` (document only, no `CLAUDE.md` touched).
+
+**Verified.** `bash ~/.dotfiles/scripts/check.sh` exits 0, covering the new tellgrader `make
+check` step alongside the existing shell, ruff-D, vale-hook pytest, vale-fixture, and gitleaks
+checks. `check-drift` reports the rebuilt `tellgrader` binary as the only drift this pass
+introduces; the Plexamp flatpak and GNOME sleep-setting drift it also reports predate this pass
+and are unrelated to any file this plan touches. The six hand-off artifacts each carry a real
+command and its pasted output in
+`docs/superpowers/plans/2026-09-08-docs-standard-claude-infra-handoff.md`.
+
+**Decisions locked.** The review agents carry no `--profile` flag and refuse nothing for lack
+of a corpus entry (task 4). The tell scanner is the canonical measurement instrument, with
+`MEASURES.md` beside it and `measure-prose.mjs` as the consumer plan two conforms or retires
+(task 1b). No band ships this pass; the hinged-pair share stays reported-only and unbanded
+(Risks). The two-headed-heading tell is sourced to the register ruling, not to Google, whose
+headings guidance recommends two of the forms this workstation forbids (task 2). Unit 3c cannot
+close inside this pass; both `CLAUDE.md` files still need the owner's four-line pick from the
+displacement-candidates document, batched with the docs-standard corpus approval.
+
+**Blockers.** None encountered during execution.
+
+**Budget.** Ceiling 0.6M tokens; the pass closed under it by the per-task implementer and
+reviewer reports. Zero planning misses (no ambiguity surfaced after the revision-3 plan
+approval that a planning question would have caught) and zero execution sittings (no pull-in
+after approval beyond the single combined question batched at the task-3 checkpoint, which the
+plan's own checkpoint interval called for).

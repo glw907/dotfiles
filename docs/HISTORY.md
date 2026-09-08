@@ -3,6 +3,64 @@
 Per-pass ledger, newest first. Current state lives in `docs/STATUS.md`;
 strategic initiatives spanning passes live in `ROADMAP.md`.
 
+## 2026-09-08 -- docs-standard Claude infrastructure pass (plan one of three)
+
+Plan `docs/superpowers/plans/2026-09-08-docs-standard-claude-infra.md`, spec
+`~/Projects/cairn-cms/docs/superpowers/specs/2026-09-08-docs-standard-design.md`. Seven
+dispatched tasks landed the workstation half of the cairn documentation standard: task 1a
+gave tellgrader a `docs-register` profile and `.tellgrader.json` opt-in discovery (c523f0b);
+task 1b added the two cadence measures and `MEASURES.md` (fc143ec, then two fix rounds
+c217769 and 064168f on the prose-selector wording, closed by the conductor); task 2 added the
+output style's three tells and each voice file's docs-register-measures section (7f63c0e, then
+ecf31ab re-sourcing the two-headed-heading tell to the register ruling instead of Google, whose
+own headings page recommends two of the forbidden forms); task 3 made the Vale hook's
+path-grading visible and tested (019e1e8, then f1a3ec5 re-asserting the tests on the rendered
+phrase after review proved them passing against the old hook); task 4 gave the four review
+agents the measurement table and the containment rules, and added `figure-verifier` (f32315c,
+then e2d1ea7 granting the register editor a Bash tool it lacked); task 5 added the
+`cairn-figure` skill and renamed writing-voice's section to `## Author-facing prose` (5a2990d,
+then 7436dcb adding the repro fence the figure skill needed); task 6 wrote the ranked
+`CLAUDE.md` displacement candidates as a document only, no `CLAUDE.md` touched (3d21e72). Every
+dispatched task took exactly one fix round except 1b, which took two, closed by conductor
+decision rather than a third dispatch.
+
+**What a later pass would be wrong to rediscover**:
+
+- **tellgrader is not a poplar artifact and poplar's `make check` is not its gate.** Its
+  source lives in this repo under the `claude` stow package, at
+  `claude/.claude/skills/writing-voice/evals/tellgrader/`, a standalone Go module
+  (`github.com/glw907/workstation/tellgrader`) with its own `Makefile`. Its gate is
+  `make -C ~/.dotfiles/claude/.claude/skills/writing-voice/evals/tellgrader check`, now wired
+  into `scripts/check.sh` as the "tellgrader go check" step. The compiled binary is gitignored;
+  `check-drift` flags it as an untracked `~/.local/bin` executable, which is expected and not a
+  regression.
+- **`agents/`, `docs/`, and `skills/` under `~/.claude` are whole-directory stow symlinks
+  (folded), so a new file inside them is live machine-wide the instant it is written, with no
+  restow.** `figure-verifier.md` and `cairn-figure/SKILL.md` both resolved through
+  `~/.claude/...` before any `stow -R claude` ran. Every task edited the stow source under
+  `~/.dotfiles/claude/.claude/`, never the `~/.claude/` symlink path, and every write there
+  changes what every session in every repo sees at the moment of the commit.
+- **Both `CLAUDE.md` files were already at or over the `claude-context-budget` hook's
+  24,000-byte ceiling before this pass.** `claude/.claude/CLAUDE.md` sat 5 bytes under;
+  `~/Projects/cairn-cms/CLAUDE.md` sat 136 bytes over. Adding the standard's four lines to
+  either file needs a displacement pick first, which is why unit 3c cannot close inside this
+  pass; the ranked candidates are in
+  `docs/superpowers/plans/2026-09-08-claude-md-displacement-candidates.md`, and the edits are
+  the owner sitting's, batched with the corpus approval (decision 7).
+- **No bands ship.** The hinged-pair definition moved twice during the proposal and no gate
+  reads either measure; `MEASURES.md` states both shares as report-only and unbanded. A band
+  directory, if wanted, is plan two's to build from a measured corpus, never a placeholder file
+  this pass would have shipped.
+- **The review agents carry no `--profile` flag and refuse nothing for lack of a corpus
+  entry.** Forcing the profile stays a reviewer's explicit, per-invocation act; a repo with no
+  corpus manifest still gets a graded report, noting the absence, so no existing dispatch (in
+  ecxc-ski or 907-life, on live site content) broke the moment these files were written.
+
+Budget: ceiling 0.6M tokens; the pass closed inside it by the per-task reports. Zero planning
+misses, zero execution sittings; every combined question at the task-3 checkpoint was batched
+as the plan specified. Human touchpoints: the plan revision-3 approval and the task-3
+checkpoint's one combined question.
+
 ## 2026-09-04 -- Fable 5.1 model, effort, and skill update
 
 Fable 5.1 (shipped 2026-09-01; same $10/$50, cache reads $0.25/MTok) became

@@ -26,28 +26,31 @@ actually stands, not the retired Mint 22 desktop setup.
   `secrets/registry.md`. Write-time guards: claude-secret-guard hook,
   gitleaks pre-commit, GitHub push protection.
 - **Gate**: `scripts/check.sh` (shell syntax, ruff-D, tests, vale fixtures,
-  gitleaks).
+  gitleaks, tellgrader go check).
+- **Docs standard, plan one closed**: the tellgrader `docs-register` profile and opt-in
+  discovery, `MEASURES.md` as the canonical measure definition, the output-style and voice-file
+  updates, the path-grading Vale hook, the four review agents (including the new
+  `figure-verifier`), and the two skills (`cairn-figure`; `writing-voice`'s renamed
+  author-facing section). Unit 3c stays open: both `CLAUDE.md` files still owe the owner's
+  four-line pick, ranked in
+  `docs/superpowers/plans/2026-09-08-claude-md-displacement-candidates.md`, batched with the
+  docs-standard corpus approval.
 
 ## Immediate next action
 
-Execute the docs-standard Claude infrastructure pass,
-`docs/superpowers/plans/2026-09-08-docs-standard-claude-infra.md` (plan one of three for the
-cairn documentation standard; approved 2026-09-08). Main-loop dispatch per task through the
-implementer-review-gate chain; gate `bash ~/.dotfiles/scripts/check.sh`.
-
-Checkpoint after task 3 (2026-09-08): done 1a (c523f0b), 1b (fc143ec, c217769, 064168f), 2
-(7f63c0e, ecf31ab), 3 (019e1e8, f1a3ec5); next task 4 (review agents), then 5 (skills), 6
-(CLAUDE.md candidate document, the split point, owner-blocked). Rulings taken: the review agents
-carry no profile flag and refuse nothing without a corpus; the tell scanner is the canonical
-instrument (MEASURES.md); the two-headed-heading tell is sourced to the register ruling, not
-Google. Spend is inside the 0.6M ceiling. The three open items from the 2026-09-04 Fable 5.1
-pass queue behind this pass.
+Open the hand-off document,
+`~/.dotfiles/docs/superpowers/plans/2026-09-08-docs-standard-claude-infra-handoff.md`, and start plan two
+of the cairn documentation standard (cairn's own toolset): its preflight verifies the six
+artifacts the hand-off names, and its plan must add creating
+`~/Projects/cairn-cms/.tellgrader.json` and wiring `figure-verifier` into its chain D. Separately,
+the docs-standard corpus approval sitting still owes the `CLAUDE.md` four-line picks for both
+files and the three open items carried from the 2026-09-04 Fable 5.1 pass.
 
 ## Open items
 
 Strategic and standing items live in `ROADMAP.md` (history purge decision,
 musicbox repo split, devcontainers, kitty-harness replacement, custom uBlue
-image, restore split).
+image, restore split, the cairn documentation standard).
 
 ## History
 
